@@ -2,6 +2,7 @@
 
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 type ForgotPasswordFormValues = {
@@ -14,10 +15,12 @@ export default function ForgotPasswordForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<ForgotPasswordFormValues>();
+  const router = useRouter()
 
   const onSubmit = (data: ForgotPasswordFormValues) => {
     console.log('OTP request sent to:', data.email);
     // Trigger your OTP send logic here
+    router.push("/otp-verification")
   };
 
   return (
