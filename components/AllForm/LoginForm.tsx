@@ -25,7 +25,7 @@ export default function LoginForm() {
     <div className="flex items-center justify-center px-4">
       <div className="w-full space-y-6">
         <div>
-          <h2 className="text-3xl lg:text-5xl font-bold leading-[126%] text-gray-900">Welcome back</h2>
+          <h2 className="text-3xl lg:text-5xl font-medium leading-[126%] text-blackColor">Welcome back</h2>
           <p className="mt-1 text-descriptionColor text-lg leading-[100%]">Welcome back! Please enter your details.</p>
         </div>
 
