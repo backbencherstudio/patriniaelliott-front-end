@@ -24,7 +24,7 @@ export default function RegisterForm() {
         <div className=" flex items-center justify-center  px-4">
             <div className=" w-full space-y-6">
                 <div className="">
-                    <h2 className="text-3xl lg:text-5xl leading-[126%] capitalize font-bold text-gray-900">Create New Account</h2>
+                    <h2 className="text-3xl lg:text-5xl font-medium leading-[126%] text-blackColor">Create New Account</h2>
                     <p className="mt-1 text-descriptionColor text-lg leading-[100%]">Get started for free today!</p>
                 </div>
 
