@@ -32,15 +32,15 @@ export default function TourCard({
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full ">
             <div className="relative">
                 <div className=' p-3'>
- <Image
-                    src={image}
-                    alt={title}
-                    width={500}
-                    height={250}
-                    className="w-full h-full object-cover"
-                />
+                    <Image
+                        src={image}
+                        alt={title}
+                        width={500}
+                        height={250}
+                        className="w-full h-full object-cover"
+                    />
                 </div>
-               
+
                 <span className="absolute top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
                     {tag}
                 </span>
@@ -64,7 +64,6 @@ export default function TourCard({
                     ))}
 
                 </div>
-
                 <p className="text-sm text-[#0068EF]">Free cancellation <span className='text-grayColor1 text-xs'>{cancelNote}</span></p>
 
                 <div className="flex  text-xs text-gray-600 mt-2 mb-4">
@@ -96,7 +95,6 @@ export default function TourCard({
 
                     </div>
                 </div>
-
                 <div className="flex justify-between items-center pt-4 border-t ">
                     <div>
                         <p className="text-grayColor1 text-sm font-semibold">
