@@ -1,3 +1,5 @@
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 export default function FrontEndLayout({
     children,
@@ -6,7 +8,9 @@ export default function FrontEndLayout({
 }) {
     return (
         <div >
+            <Navbar/>
             <div>{children}</div>
+            <Footer/>
         </div>
     );
 }

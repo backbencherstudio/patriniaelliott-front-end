@@ -1,126 +1,129 @@
-"use client";
-import rateLogo from "@/public/logo/Logo.png";
-import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { BsList } from "react-icons/bs";
-import { MdClose } from "react-icons/md";
-import NavSearch from "./AllForm/NavSearch";
-import { ProfilePopover } from "./profile/PofilePopovar";
+'use client';
 
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { BsGlobe2 } from 'react-icons/bs';
+import { HiOutlineMenu, HiX } from 'react-icons/hi';
 
-const Navbar = () => {
-  const [isShow, setIsShow] = useState<boolean>(false);
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+
+const menuItems = [
+  { en: 'Home', bn: 'হোম', slug: '/' },
+  { en: 'Apartment', bn: 'অ্যাপার্টমেন্ট', slug: '/apartment' },
+  { en: 'Hotel', bn: 'হোটেল', slug: '/hotel' },
+  { en: 'Tours', bn: 'ট্যুর', slug: '/tours' },
+  { en: 'Contact Us', bn: 'যোগাযোগ', slug: '/contact' },
+];
+
+export default function Navbar() {
   const pathname = usePathname();
-const isLogin = pathname === "/dj" || pathname === "/profile";
-
-
-  const navItems = [
-    { name: "Home", href: "/" },
-    { name: "About Us", href: "/about-us" },
-    { name: "DJ’s", href: "/dj" },
-    { name: "Contact Us", href: "/contact-us" },
-  ];
+  const [language, setLanguage] = useState<'en' | 'bn'>('en');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div
-      className={`sticky top-0 left-0 z-40 ${
-        pathname === "/" ? "bg-[rgba(0,23,33,0.6)]" : "bg-blackColor"
-      } text-whiteColor`}
-    >
-      <nav className="container xl:max-w-7xl mx-auto py-2 lg:py-4 px-2.5">
-        <div className="grid grid-cols-12 gap-4 justify-between items-center">
-          {/* Logo */}
-          <div className="col-span-4 md:col-span-6 lg:col-span-7 xl:col-span-8">
-            <NavSearch />
+    <header className="bg-primaryColor py-4 px-4">
+      <div className="container mx-auto flex justify-between items-center">
+        {/* Left: Logo */}
+        <div className="text-white text-3xl font-semibold tracking-wide">
+          LOGO
+        </div>
+
+        {/* Desktop Menu */}
+        <nav className="hidden md:flex space-x-6 text-base">
+          {menuItems.map((item) => (
+            <Link
+              key={item.slug}
+              href={item.slug}
+              className={cn(
+                'hover:text-secondaryColor transition',
+                pathname === item.slug ? 'text-secondaryColor' : 'text-white'
+              )}
+            >
+              {language === 'en' ? item.en : item.bn}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Right: Language, Auth Buttons */}
+        <div className="hidden md:flex items-center space-x-[14px]">
+          {/* Language Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="text-white text-base flex focus:outline-0 cursor-pointer items-center gap-[6px]">
+              <BsGlobe2  /> {language.toUpperCase()}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setLanguage('en')}>
+                English
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage('bn')}>
+                বাংলা
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Link href="/login" className="text-white text-base">
+            Login
+          </Link>
+          <Link href='/registration' className="bg-secondaryColor text-blackColor font-medium cursor-pointer  text-base px-4 py-2 rounded-[8px]">
+            Sign up
+          </Link>
+        </div>
+
+        {/* Mobile Menu Toggle */}
+        <div className="md:hidden">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="text-white text-2xl">
+            {menuOpen ? <HiX /> : <HiOutlineMenu />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Content */}
+      {menuOpen && (
+        <div className="md:hidden px-4 mt-4 space-y-3">
+          {menuItems.map((item) => (
+            <Link
+              key={item.slug}
+              href={item.slug}
+              className={cn(
+                'block text-base py-2',
+                pathname === item.slug ? 'text-secondaryColor' : 'text-white'
+              )}
+              onClick={() => setMenuOpen(false)}
+            >
+              {language === 'en' ? item.en : item.bn}
+            </Link>
+          ))}
+
+          {/* Language Dropdown (Mobile) */}
+          <div className="text-white text-base flex items-center gap-2 mt-2">
+            <BsGlobe2 />
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as 'en' | 'bn')}
+              className="bg-transparent outline-none text-white"
+            >
+              <option value="en" className="text-black">English</option>
+              <option value="bn" className="text-black">বাংলা</option>
+            </select>
           </div>
 
-          {/* Right Side */}
-          <div className="md:col-span-6 lg:col-span-5 xl:col-span-4 col-span-8 flex justify-end items-center">
-            <div className="flex lg:gap-7">
-
-          
-            {isLogin ? (
-              <div className="">
-
-                <ProfilePopover  />
-              </div>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="text-base lg:text-lg text-whiteColor font-[DM_Mono] hover:bg-whiteColor hover:text-blackColor sm:px-3 py-1 px-2 lg:px-6 lg:py-2 rounded-full transition-colors"
-                >
-                  Log In
-                </Link>
-                <Link
-                  href="/community"
-                  className="text-base lg:text-lg text-whiteColor font-[DM_Mono] hover:bg-whiteColor hover:text-blackColor lg:px-6 lg:py-2 sm:px-3 py-1 px-2 rounded-full transition-colors"
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-
-            <button
-              onClick={() => setIsShow(!isShow)}
-              className="group flex gap-1 lg:gap-2 items-center z-50 cursor-pointer"
-            >
-              {isShow ? (
-                <MdClose className="text-2xl lg:text-[36px] group-hover:text-redColor transition-colors" />
-              ) : (
-                <BsList className="group-hover:text-redColor transition-colors text-2xl lg:text-[36px]" />
-              )}
-              <Image
-                src={rateLogo}
-                alt="AI Logo"
-                width={40}
-                height={40}
-                className="w-6 h-6 lg:w-10 lg:h-10"
-              />
+          <div className="flex flex-col space-y-2 mt-4">
+            <Link href="/login" className="text-white text-base">
+              Login
+            </Link>
+            <button className="bg-setext-secondaryColor text-black hover:bg-yellow-500 text-base px-4 py-2 rounded-md w-fit">
+              Sign up
             </button>
-
-            {/* Mobile Menu */}
-            <AnimatePresence>
-              {isShow && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "100vh" }}
-                  exit={{ height: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="absolute top-0 left-0 w-full bg-blackColor overflow-hidden"
-                >
-                  <ul className="container mx-auto flex flex-col md:flex-row justify-center items-center md:justify-between h-full p-4 gap-8">
-                    {navItems.map((item) => (
-                      <motion.li
-                        key={item.name}
-                        onClick={() => setIsShow(false)}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
-                        transition={{ delay: 0.1 }}
-                        className="flex items-center px-5"
-                      >
-                        <Link
-                          href={item.href}
-                          className="text-center text-primaryColor font-mono text-3xl lg:text-[40px] font-normal leading-[140%] tracking-[-0.3px] uppercase"
-                        >
-                          {item.name}
-                        </Link>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </motion.div>
-              )}
-            </AnimatePresence>
-              </div>
           </div>
         </div>
-      </nav>
-    </div>
+      )}
+    </header>
   );
-};
-
-export default Navbar;
+}
