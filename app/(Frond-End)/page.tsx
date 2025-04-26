@@ -1,7 +1,16 @@
+import Banner from "@/components/home/Banner";
+import TopDestination from "@/components/home/TopDestination";
+import TourList from "@/components/home/TourList";
+import WhyTravelWithUs from "@/components/home/WhyTravelWithUs";
+
+
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1>Hello World</h1>
+    <div className="">
+      <Banner/>
+      <TopDestination/>
+      <WhyTravelWithUs/>
+      <TourList/>
     </div>
   );
 }
