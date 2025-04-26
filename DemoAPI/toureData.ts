@@ -1,0 +1,81 @@
+import t1 from "@/public/toure/t1.jpg";
+import t2 from "@/public/toure/t2.jpg";
+import t3 from "@/public/toure/t3.jpg";
+import t4 from "@/public/toure/t4.jpg";
+import t5 from "@/public/toure/t5.jpg";
+import t6 from "@/public/toure/t6.jpg";
+
+export const toursData = [
+  {
+    image: t1,
+    location: "Beijing, China",
+    tag: "Featured",
+    type: "Hotel + All inclusive",
+    title: "Discover the Wonders of China: Intimate Small Group Tour",
+    rating: 4.7,
+    cancelNote: "(Cancel within 24h)",
+    duration: "2 days",
+    groupSize: "12 people",
+    price: "$1999",
+  },
+  {
+    image: t2,
+    location: "Cairo, Egypt",
+    tag: "Popular",
+    type: "Cruise + Hotel",
+    title: "Explore Ancient Egypt with Guided Nile River Cruise",
+    rating: 5,
+    cancelNote: "(Cancel within 48h)",
+    duration: "5 days",
+    groupSize: "20 people",
+    price: "$2499",
+  },
+  {
+    image: t3,
+    location: "Paris, France",
+    tag: "Trending",
+    type: "City + Gourmet",
+    title: "Romantic Getaway in Paris with Fine Dining Experience",
+    rating: 4.3,
+    cancelNote: "(Cancel within 24h)",
+    duration: "3 days",
+    groupSize: "10 people",
+    price: "$1899",
+  },
+  {
+    image: t4,
+    location: "Bali, Indonesia",
+    tag: "Top Rated",
+    type: "Resort + Wellness",
+    title: "Bali Escape: Yoga Retreat and Luxury Spa Package",
+    rating: 5,
+    cancelNote: "(Cancel within 72h)",
+    duration: "4 days",
+    groupSize: "8 people",
+    price: "$1399",
+  },
+  {
+    image: t5,
+    location: "Swiss Alps",
+    tag: "Adventure",
+    type: "Hiking + Nature",
+    title: "Alpine Hiking Tour with Breathtaking Views",
+    rating: 4.5,
+    cancelNote: "(Cancel within 24h)",
+    duration: "6 days",
+    groupSize: "15 people",
+    price: "$2199",
+  },
+  {
+    image: t6,
+    location: "New York, USA",
+    tag: "Weekend",
+    type: "Urban + Food Tour",
+    title: "New York Highlights: Food, Museums & Broadway Shows",
+    rating: 3.5,
+    cancelNote: "(Cancel within 12h)",
+    duration: "2 days",
+    groupSize: "18 people",
+    price: "$999",
+  },
+];
