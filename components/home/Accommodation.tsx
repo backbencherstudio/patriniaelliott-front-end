@@ -42,13 +42,13 @@ function Accommodation() {
           {/* Swiper Navigation Buttons */}
           <button
             onClick={goPrev}
-            className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 left-0 lg:-left-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
+            className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 left-0 xl:-left-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
           >
             <FaChevronLeft className="text-black text-sm" />
           </button>
           <button
             onClick={goNext}
-            className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 right-0 lg:-right-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
+            className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 right-0 xl:-right-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
           >
             <FaChevronRight className="text-black text-sm" />
           </button>
@@ -64,7 +64,10 @@ function Accommodation() {
             breakpoints={{
               640: { slidesPerView: 1 },
               768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
+              1024: { slidesPerView: 2 },
+              1200:{
+                slidesPerView: 3,
+              },
               1500: { slidesPerView: 3 },
             }}
             modules={[Autoplay, Navigation, Pagination]}
@@ -73,7 +76,7 @@ function Accommodation() {
             className="w-full"
           >
             {filteredList.map((tour: any, index) => (
-              <SwiperSlide key={index} className=" px-4 py-10">
+              <SwiperSlide key={index} className=" px-1 md:px-4 py-10">
                 <AccommodationCard {...tour} />
               </SwiperSlide>
             ))}
