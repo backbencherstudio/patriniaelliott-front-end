@@ -14,7 +14,7 @@ export default function FilterSidebar() {
 
 
   return (
-    <div className="w-full  mt-12 space-y-6  bg-white mb-30 rounded-xl">
+    <div className="w-full   space-y-6  bg-white mb-30 rounded-xl">
       <div className="overflow-hidden rounded-lg shadow-md">
         <iframe
           className="w-full h-40"
