@@ -18,7 +18,10 @@
   --color-grayColor1: var(--grayColor1);
   --color-redColor: #e12626;
   --color-greenColor: #83bf6e;
+  --color-checkBoxColor: #17c13c;
   --color-orengeColor: #ff6a55;
+  --color-blueColor: #0068ef;
+  --color-ratingColor: #ffc52e;
   --color-bgColor: var(--bgColor);
   --color-descriptionColor: var(--descriptionColor);
   /* ======== */
@@ -151,4 +154,7 @@
   pointer-events: none;
   display: none;
   opacity: 0 !important;
+}
+input:checked ~ .checkmark {
+  background-color: var(--color-green-600);
 }
