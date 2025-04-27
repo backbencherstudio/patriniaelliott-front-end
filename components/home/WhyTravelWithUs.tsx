@@ -30,11 +30,11 @@ export default function WhyTravelWithUs() {
   return (
     <section className="bg-bgColor  py-20 px-4 md:px-16">
         <div className=' container'>
-  <h2 className="text-3xl font-semibold text-center mb-12">
+  <h2 className="text-3xl lg:text-5xl leading-[150%] font-semibold text-center mb-12">
         Why Travel with Us
       </h2>
 
-      <div className="md:grid flex flex-col grid-cols-11  items-center justify-between gap-10">
+      <div className="md:grid flex flex-col-reverse grid-cols-11  items-center justify-between gap-10">
         {/* Left side */}
         <div className="col-span-5 flex flex-col gap-8 w-full ">
           {travelFeatures.map((feature, index) => (
@@ -49,7 +49,7 @@ export default function WhyTravelWithUs() {
         </div>
 
         {/* Right side */}
-        <div className="col-span-6 w-full pl-10">
+        <div className="col-span-6 w-full lg:pl-10">
           <Image
             src="/destination/travelimage.jpg" // Replace with your image path or external link
             alt="Travel"

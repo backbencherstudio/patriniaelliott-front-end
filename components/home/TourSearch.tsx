@@ -2,23 +2,23 @@
 
 import { Button } from '@/components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from '@/components/ui/popover';
 import usericon from "@/public/icon/user.svg";
 import {
-    CalendarIcon,
-    ChevronDown,
-    MapPin,
-    Plus
+  CalendarIcon,
+  ChevronDown,
+  MapPin,
+  Plus
 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -43,9 +43,10 @@ export default function TourSearch() {
   const totalChildren = roomList.reduce((acc, r) => acc + r.children, 0);
 
   return (
-    <div className="bg-white rounded-[12px] px-4 py-[14px] flex items-center justify-between space-x-2 shadow-md w-full">
+    <div className="bg-white rounded-[12px] px-4 py-[14px] lg:flex items-center justify-between space-x-2 shadow-md w-full">
       {/* Location */}
-      <Popover>
+      <div>
+     <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
@@ -82,12 +83,13 @@ export default function TourSearch() {
           </ul>
         </PopoverContent>
       </Popover>
+      </div>
+ 
       {/* Divider */}
-      <div className="w-px h-10 bg-gray-200" />
+      <div className="w-px hidden lg:block h-10 bg-gray-200" />
       {/* Date Picker */}
       <div>
-      </div>
-      <Popover>
+ <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
@@ -125,11 +127,14 @@ export default function TourSearch() {
           />
         </PopoverContent>
       </Popover>
+      </div>
+     
 
       {/* Divider */}
-      
-
+    
       {/* Guest Type Dropdown */}
+      <div>
+
       <div className="flex flex-col items-start px-2">
         <div className="flex items-center gap-3  text-sm">
           <Image src={usericon} alt="user" width={32} height={24} className=''/>
@@ -162,11 +167,14 @@ export default function TourSearch() {
         </div>
         
       </div>
+      </div>
 
       {/* Divider */}
-      <div className="w-px h-10 bg-gray-200" />
+      <div className="w-px hidden lg:block h-10 bg-gray-200" />
 
       {/* Plus Popover (based on guestType) */}
+      <div className=' flex justify-between gap-3'>
+
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -204,9 +212,7 @@ export default function TourSearch() {
           )}
         </PopoverContent>
       </Popover>
-
-      {/* Search button */}
-      <Button className="bg-yellow-400 hover:bg-yellow-500 text-black w-10 h-10 p-2 rounded-md">
+<Button className="bg-yellow-400 hover:bg-yellow-500 text-black w-10 h-10 p-2 rounded-md">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-5 h-5"
@@ -222,6 +228,11 @@ export default function TourSearch() {
           />
         </svg>
       </Button>
+
+      </div>
+
+      {/* Search button */}
+      
     </div>
   );
 }
