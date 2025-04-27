@@ -1,8 +1,8 @@
 "use client"
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -10,7 +10,7 @@ import DatePicker from 'react-datepicker';
 import { Button } from '../ui/button';
 'use client';
 
-function DatePicker() {
+function CustomDatePicker() {
     const [startDate, setStartDate] = useState<Date | null>(null);
       const [endDate, setEndDate] = useState<Date | null>(null);
   return (
@@ -57,4 +57,4 @@ function DatePicker() {
   )
 }
 
-export default DatePicker
+export default CustomDatePicker
