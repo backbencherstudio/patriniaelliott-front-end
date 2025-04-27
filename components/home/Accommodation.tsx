@@ -5,27 +5,39 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import { toursData } from "@/DemoAPI/toureData";
-import TourCard from "../card/TourCard";
-
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import { accommodationsData } from "@/DemoAPI/accommodationsData";
+import AccommodationCard from "../card/AccommodationCard";
 import CustomButton from "../reusable/CustomButton";
 
-export default function TourList() {
-  const [currentIndex, setCurrentIndex] = useState(1);
-  const swiperRef = useRef<any>(null);
 
-  const goNext = () => swiperRef.current?.slideNext();
-  const goPrev = () => swiperRef.current?.slidePrev();
+function Accommodation() {
+      const [currentIndex, setCurrentIndex] = useState(1);
+      const swiperRef = useRef<any>(null);
+      const [activeTab, setActiveTab] = useState<'Apartments' | 'Hotels'>('Apartments');
 
+  const filteredList = accommodationsData.filter(item => item.category === activeTab);
+      const goNext = () => swiperRef.current?.slideNext();
+      const goPrev = () => swiperRef.current?.slidePrev();
   return (
-    <section className="container px-4 md:px-16  relative">
-      <div className="my-20">
-        <h2 className="text-3xl lg:text-5xl font-medium text-blackColor text-center mb-2 lg:mb-5">
-          Top Travel Packages
+    <section className=" bg-bgColor py-12">
+ <div className="container px-4 md:px-16  relative">
+      <div className="lg:my-20">
+        <h2 className="text-3xl lg:text-5xl font-medium text-blackColor text-center mb-8">
+          Our Popular Accommodation 
         </h2>
+        <div className="flex justify-center text-center mx-auto  ">
+        {['Apartments', 'Hotels'].map(tab => (
+          <button
+            key={tab}
+            className={`text-2xl cursor-pointer font-medium px-4 pb-2 transition border-b-[2px] border-[#A5A5AB] ${
+              activeTab === tab ? ' border-b-2 border-secondaryColor text-secondaryColor ' : 'text-[#A5A5AB]'
+            }`}
+            onClick={() => setActiveTab(tab as 'Apartments' | 'Hotels')}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
         <div className="relative">
           {/* Swiper Navigation Buttons */}
           <button
@@ -60,18 +72,21 @@ export default function TourList() {
             onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex + 1)}
             className="w-full"
           >
-            {toursData.map((tour: any, index) => (
-              <SwiperSlide key={index} className=" lg:px-4 py-10">
-                <TourCard {...tour} />
+            {filteredList.map((tour: any, index) => (
+              <SwiperSlide key={index} className=" px-4 py-10">
+                <AccommodationCard {...tour} />
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
-
         <div>
-          <CustomButton>View All Packages</CustomButton>
+          <CustomButton>View All Apartments</CustomButton>
         </div>
       </div>
+    </div>
     </section>
-  );
+   
+  )
 }
+
+export default Accommodation

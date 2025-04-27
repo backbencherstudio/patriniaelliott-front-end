@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { FaMapMarkerAlt, FaStar } from 'react-icons/fa';
+import { FaArrowRight } from 'react-icons/fa6';
 
 type TourCardProps = {
     image: string;
@@ -102,8 +103,9 @@ export default function TourCard({
                         </p>
                         <p className="text-xl text-primaryColor capitalize font-medium">{price}/person</p>
                     </div>
-                    <button className="text-[22px] font-medium border border-secondaryColor text-secondaryColor px-4 py-2 rounded-full hover:text-blackColor cursor-pointer hover:bg-yellow-500 transition">
-                        Check Details
+                    <button className="lg:text-[22px] text-base gap-1 flex lg:gap-3 items-center font-medium border border-secondaryColor text-secondaryColor px-3 lg:px-4 py-2 rounded-full hover:text-blackColor cursor-pointer hover:bg-secondaryColor transition">
+                        Check Details <FaArrowRight/>
+                        
                     </button>
                 </div>
             </div>

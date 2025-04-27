@@ -17,17 +17,17 @@ function TopDestination() {
     <section className=' container '>
         <div className="mt-24 mb-20">
         
-        <h2 className=' text-5xl font-medium text-blackColor text-center'>Top Destinations</h2>
+        <h2 className=' text-3xl lg:text-5xl font-medium text-blackColor text-center'>Top Destinations</h2>
         <div className=" relative">
            <div >
-          <div className="container  flex justify-between">
+          <div className="container justify-center  flex gap-15">
             <button onClick={goPrev}>
-              <div className="absolute top-[50%] -translate-1/2 z-10 -left-10 flex items-center cursor-pointer justify-center w-10 h-10 rounded-full bg-white/20 border border-secondaryColor backdrop-blur-[5px] hover:bg-secondaryColor  shadow shadow-stone-300 transition-all">
+              <div className="absolute -bottom-20 lg:top-[50%] -translate-1/2 z-10 lg:-left-10 flex items-center cursor-pointer justify-center w-10 h-10 rounded-full bg-white/20 border border-secondaryColor backdrop-blur-[5px] hover:bg-secondaryColor  shadow shadow-stone-300 transition-all">
                 <FaChevronLeft className="text-blackColor" />
               </div>
             </button>
             <button onClick={goNext}>
-              <div className="absolute top-[50%] -translate-1/2 -right-20 z-10 flex items-center justify-center cursor-pointer w-10 h-10 rounded-full bg-white/20 border border-secondaryColor hover:bg-secondaryColor  shadow shadow-stone-300 transition-all backdrop-blur-[5px]">
+              <div className="absolute lg:top-[50%] -bottom-20 -translate-1/2 lg:-right-20 z-10 flex items-center justify-center cursor-pointer w-10 h-10 rounded-full bg-white/20 border border-secondaryColor hover:bg-secondaryColor  shadow shadow-stone-300 transition-all backdrop-blur-[5px]">
                 <FaChevronRight className="text-blackColor " />
               </div>
             </button>
@@ -44,8 +44,11 @@ function TopDestination() {
             disableOnInteraction: false,
           }}
          breakpoints={{
+          0:{
+             slidesPerView: 2,
+          },
               640: {
-                slidesPerView: 1,
+                slidesPerView: 2,
               },
               768: {
                 slidesPerView: 2,
@@ -81,6 +84,7 @@ function TopDestination() {
           ))}
         </Swiper>
         </div>
+        
         </div>
 
 
