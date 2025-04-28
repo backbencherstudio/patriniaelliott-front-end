@@ -5,7 +5,7 @@ import { FaStar } from "react-icons/fa";
 import { FaArrowRight, FaWifi } from "react-icons/fa6";
 import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 
-interface HotelCardProps {
+interface ApartmentCardProps {
   hotel: {
     image: string;
     location: string;
@@ -20,7 +20,8 @@ interface HotelCardProps {
     breakfast: boolean;
   };
 }
-const HotelCard = ({ hotel }: HotelCardProps) => {
+
+const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
   const {
     image,
     location,
@@ -54,10 +55,10 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
       </div>
 
       {/* Right - Hotel Info */}
-      <div className=" py-6 col-span-3 flex flex-col justify-between">
+      <div className=" py-4 col-span-3 flex flex-col justify-between">
         {/* Hotel Details */}
         <div className=" mb-3">
-          <div className="flex items-center gap-2 text-sm text-grayColor1 pb-[2px]">
+          <div className="flex items-center gap-2 text-sm text-grayColor1">
             <IoLocationSharp size={18} className=" text-grayColor1" />
             <span>{location}</span>
           </div>
@@ -65,15 +66,14 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
           <div className="flex gap-2 items-center">
             <span className="text-headerColor text-sm">{rating}</span>
             <div className="flex gap-1">
-              {Array.from({ length: 5 }, (_, i) => (
-                <FaStar
-                  key={i}
-                  className={
-                    i < Math.round(rating) ? "text-yellow-400" : "text-gray-300"
-                  }
-                />
-              ))}
+  {Array.from({ length: 5 }, (_, i) => (
+              <FaStar
+                key={i}
+                className={i < Math.round(rating) ? "text-yellow-400" : "text-gray-300"}
+              />
+            ))}
             </div>
+          
           </div>
         </div>
         {/* Free Cancellation */}
@@ -155,7 +155,7 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
           </h5>
           <p className="text-sm text-gray-500">per night</p>
         </div>
-        <button className="bg-secondaryColor font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-sm cursor-pointer text-blackColor transition-colors">
+        <button className="bg-secondaryColor font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-full cursor-pointer text-blackColor transition-colors">
           Check Availability <FaArrowRight />
         </button>
       </div>
@@ -163,4 +163,4 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
   );
 };
 
-export default HotelCard;
+export default ApartmentCard;
