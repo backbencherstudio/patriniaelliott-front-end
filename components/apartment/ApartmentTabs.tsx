@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"; // Adjust the import if needed
 import HighLight from './HighLight';
+import LocationOnMap from './LocationOnMap ';
 import Overview from './Overview';
 
 const ApatmentTabs = () => {
@@ -58,7 +59,7 @@ const ApatmentTabs = () => {
           <HighLight/>
         </TabsContent>
         <TabsContent value="map" className="pt-10 pb-8">
-          <p>Map content goes here...</p>
+          <LocationOnMap/>
         </TabsContent>
         <TabsContent value="policies" className="pt-10 pb-8">
           <p>Policies content goes here...</p>

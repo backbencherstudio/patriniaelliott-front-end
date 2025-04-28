@@ -1,5 +1,6 @@
 import ApartmentHeader from "@/components/apartment/ApartmentHeader";
 import ApatmentTabs from "@/components/apartment/ApartmentTabs";
+import BookingForm from "@/components/apartment/BookingForm";
 import Pathname from "@/components/reusable/Pathname";
 import { accommodationsData } from "@/DemoAPI/accommodationsData";
 import Image from "next/image";
@@ -90,7 +91,7 @@ function ApartmnetDetailsPage({ apartmentSlug }: any) {
          <ApatmentTabs/>
         </div>
         <div className=" col-span-2">
-
+            <BookingForm/>
         </div>
       </div>
     </div>

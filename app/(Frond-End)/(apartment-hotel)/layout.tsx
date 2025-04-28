@@ -13,8 +13,7 @@ export default function ApartmentHotelLayout({
   
 
   return (
-    <div>
-      <div className=" container grid grid-cols-12 gap-8">
+     <div className=" container grid grid-cols-12 gap-8">
         <div className="col-span-12">
           <Pathname/>
         </div>
@@ -24,6 +23,5 @@ export default function ApartmentHotelLayout({
 
         <div className=" col-span-9">{children}</div>
       </div>
-    </div>
   );
 }
