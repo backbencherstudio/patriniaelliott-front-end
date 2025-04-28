@@ -12,7 +12,6 @@ import ResidenceFilter from './ResidenceFilter';
 
 export default function FilterSidebar() {
 
-
   return (
     <div className="w-full   space-y-6  bg-white mb-30 rounded-xl">
       <div className="overflow-hidden rounded-lg shadow-md">
@@ -23,9 +22,7 @@ export default function FilterSidebar() {
           loading="lazy"
         ></iframe>
       </div>
-      <div className="w-full p-4  space-y-6 shadow-xl bg-white  rounded-xl">
-
-      
+      <div className="w-full p-4  space-y-3 shadow-xl bg-white  rounded-xl">
       <div className=' '>
         <DestinationSearch/>
       </div>

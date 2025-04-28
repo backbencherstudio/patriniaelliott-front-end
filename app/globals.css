@@ -150,11 +150,6 @@
   }
 }
 
-.pointer-events-none {
-  pointer-events: none;
-  display: none;
-  opacity: 0 !important;
-}
 input:checked ~ .checkmark {
   background-color: var(--color-green-600);
 }

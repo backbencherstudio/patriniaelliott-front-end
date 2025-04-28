@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { FaStar } from "react-icons/fa";
 import { FaArrowRight, FaWifi } from "react-icons/fa6";
 import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
@@ -18,6 +19,7 @@ interface HotelCardProps {
     wifi: boolean;
     cancellation: string;
     breakfast: boolean;
+    hotelSlug:string;
   };
 }
 const HotelCard = ({ hotel }: HotelCardProps) => {
@@ -31,6 +33,7 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
     bed,
     bath,
     wifi,
+    hotelSlug,
     cancellation,
     breakfast,
   } = hotel;
@@ -46,11 +49,6 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
           height={250}
           className="w-full h-full object-cover rounded-xl"
         />
-        {breakfast && (
-          <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1  rounded-full">
-            Breakfast Included
-          </span>
-        )}
       </div>
 
       {/* Right - Hotel Info */}
@@ -61,7 +59,10 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
             <IoLocationSharp size={18} className=" text-grayColor1" />
             <span>{location}</span>
           </div>
-          <h3 className="text-xl font-semibold text-black mb-2">{title}</h3>
+          <div className="py-1">
+
+          <Link href={`/hotel/${hotelSlug}`} className="text-xl font-semibold text-black ">{title}</Link>
+          </div>
           <div className="flex gap-2 items-center">
             <span className="text-headerColor text-sm">{rating}</span>
             <div className="flex gap-1">

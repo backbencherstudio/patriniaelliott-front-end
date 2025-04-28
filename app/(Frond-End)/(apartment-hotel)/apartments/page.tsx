@@ -1,6 +1,7 @@
 'use client';
 
 import ApartmentCard from "@/components/card/ApartmentCard";
+import PaginationPage from "@/components/reusable/PaginationPage";
 import { accommodationsData } from "@/DemoAPI/accommodationsData";
 import { useState } from 'react';
 
@@ -54,40 +55,7 @@ function HotelPage() {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-between w-[65%] ms-auto items-center mt-6">
-        <button
-          onClick={handlePrev}
-          className="border  border-descriptionColor/20 text-descriptionColor px-4 py-2 rounded-md flex items-center gap-2"
-          disabled={currentPage === 1}
-        >
-          &lt;&lt; Previous
-        </button>
-
-       
-        <div className="flex gap-2">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => handlePageChange(i + 1)}
-              className={`px-4  py-2 cursor-pointer  rounded-md ${
-                currentPage === i + 1
-                  ? 'bg-yellow-500 text-white'
-                  : 'border border-descriptionColor/20 text-descriptionColor'
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-
-        <button
-          onClick={handleNext}
-          className="border border-descriptionColor/20 text-descriptionColor px-4 py-2 rounded-md flex items-center gap-2"
-          disabled={currentPage === totalPages}
-        >
-          Next &gt;&gt;
-        </button>
-      </div>
+    <PaginationPage totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
     </div>
   );
 }

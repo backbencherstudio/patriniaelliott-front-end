@@ -1,9 +1,8 @@
-import { IoIosArrowUp } from "react-icons/io"
 
 function FilterHeading({onReset , title}:any) {
   return (
     <div>
-       <div className="flex justify-between items-center border-b pb-3 border-grayColor1/20">
+       <div className="flex justify-between items-center">
         <h3 className="text-base  font-medium text-headerColor">{title}</h3>
         <div className=" flex gap-3 items-center">
 
@@ -13,9 +12,9 @@ function FilterHeading({onReset , title}:any) {
         >
           Reset 
         </button>
-        <div>
+        {/* <div>
             <IoIosArrowUp size={25}/>
-        </div>
+        </div> */}
         </div>
       </div>
     </div>

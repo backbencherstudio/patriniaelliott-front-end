@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 import { MdDone } from "react-icons/md";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion'; // Correct import for 
 import FilterHeading from './FilterHeading';
 const RatingFilter = () => {
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
+  
 
   const handleRatingChange = (rating: number) => {
     setSelectedRatings((prev) =>
@@ -27,9 +29,16 @@ const RatingFilter = () => {
   };
 
   return (
-    <div className="bg-white">
-      <FilterHeading onReset={handleReset} title="Ratings" />
-      <div className="mt-4 space-y-4">
+     <Accordion type="single" collapsible className="">
+      <AccordionItem value="item-1" className=' border-b-0'>
+        <AccordionTrigger className='border-b pb-3 rounded-none border-grayColor1/20'>
+        <div className=' w-[95%]'>
+
+       <FilterHeading onReset={handleReset} title="Ratings" />
+        </div>
+        </AccordionTrigger>
+        <AccordionContent className="mt-4 border-b-0 space-y-4">
+              <div className="mt-4 space-y-4">
         {[5, 4, 3, 2, 1].map((rating) => (
           <label key={rating} className="flex justify-between items-center cursor-pointer">
             <div className="flex items-center gap-3">
@@ -53,7 +62,10 @@ const RatingFilter = () => {
           </label>
         ))}
       </div>
-    </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+   
   );
 };
 
