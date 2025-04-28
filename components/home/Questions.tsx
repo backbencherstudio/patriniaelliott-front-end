@@ -1,14 +1,15 @@
 "use client";
 
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { questionData } from "@/DemoAPI/question";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
+import "../css/question.css";
 
 export default function Questions() {
   const [openItem, setOpenItem] = useState<string | null>("faq-0");

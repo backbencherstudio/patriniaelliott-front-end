@@ -1,6 +1,7 @@
 import t2 from "@/public//Accommodation/a2.png";
 import t3 from "@/public//Accommodation/a3.png";
 import t1 from "@/public/Accommodation/a1.png";
+
 export const accommodationsData = [
   // Apartments (5)
   {
@@ -9,6 +10,7 @@ export const accommodationsData = [
     location: "Beijing, China",
     flag: "/images/flags/cn.png",
     title: "Eclipse Haven Apartment",
+    apartmentSlug: "eclipse-haven-apartment", // Added slug
     rating: 4.5,
     reviews: 120,
     cancellation: "Cancel within 24H",
@@ -25,6 +27,7 @@ export const accommodationsData = [
     location: "Abu Dhabi, UAE",
     flag: "/images/flags/ae.png",
     title: "Emirates Pearl Towers",
+    apartmentSlug: "emirates-pearl-towers", // Added slug
     rating: 4.8,
     reviews: 85,
     cancellation: "Cancel within 24H",
@@ -41,6 +44,7 @@ export const accommodationsData = [
     location: "Washington, D.C., USA",
     flag: "/images/flags/us.png",
     title: "Capitol Heights Residences",
+    apartmentSlug: "capitol-heights-residences", // Added slug
     rating: 4.5,
     reviews: 98,
     cancellation: "Cancel within 24H",
@@ -57,6 +61,7 @@ export const accommodationsData = [
     location: "Lisbon, Portugal",
     flag: "/images/flags/pt.png",
     title: "Lisbon Central Loft",
+    apartmentSlug: "lisbon-central-loft", // Added slug
     rating: 4.6,
     reviews: 77,
     cancellation: "Cancel within 48H",
@@ -73,6 +78,7 @@ export const accommodationsData = [
     location: "Osaka, Japan",
     flag: "/images/flags/jp.png",
     title: "Osaka Urban Nest",
+    apartmentSlug: "osaka-urban-nest", // Added slug
     rating: 4.7,
     reviews: 63,
     cancellation: "Cancel within 12H",

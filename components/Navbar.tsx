@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 const menuItems = [
   { en: "Home", bn: "হোম", slug: "/" },
-  { en: "Apartment", bn: "অ্যাপার্টমেন্ট", slug: "/apartment" },
+  { en: "Apartment", bn: "অ্যাপার্টমেন্ট", slug: "/apartments" },
   { en: "Hotel", bn: "হোটেল", slug: "/hotel" },
   { en: "Tours", bn: "ট্যুর", slug: "/tours" },
   { en: "Contact Us", bn: "যোগাযোগ", slug: "/contact" },

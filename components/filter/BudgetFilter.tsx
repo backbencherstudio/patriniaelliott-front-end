@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion'; // Correct import for 
 import FilterHeading from './FilterHeading';
-
 const BudgetFilter = () => {
   const [minValue, setMinValue] = useState(0);
   const [maxValue, setMaxValue] = useState(5000);
@@ -26,10 +26,16 @@ const BudgetFilter = () => {
   };
 
   return (
-    <div className="bg-white ">
-      <FilterHeading onReset={handleReset} title="Budget" />
+    <Accordion type="single" collapsible className="">
+      <AccordionItem value="item-1" className=' border-b-0'>
+        <AccordionTrigger className='border-b pb-3 rounded-none border-grayColor1/20'>
+        <div className=' w-[95%]'>
 
-      <div className="mt-4">
+         <FilterHeading onReset={handleReset} title="Budget" />
+        </div>
+        </AccordionTrigger>
+        <AccordionContent className="mt-4 border-b-0 space-y-4">
+         <div className="mt-4">
         <div className="flex justify-between mb-2 text-sm text-gray-600 font-medium">
           <span>${minValue}</span>
           <span>${maxValue}</span>
@@ -67,7 +73,7 @@ const BudgetFilter = () => {
             max={MAX}
             value={maxValue}
             onChange={handleMaxChange}
-            className="absolute w-full top-1/2  -right-1 h-1 bg-transparent appearance-none pointer-events-auto"
+            className="absolute w-full top-1/2  right-0 h-1 bg-transparent appearance-none pointer-events-auto"
           />
         </div>
 
@@ -94,7 +100,13 @@ const BudgetFilter = () => {
           }
         `}</style>
       </div>
-    </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  
+
+      
+    
   );
 };
 
