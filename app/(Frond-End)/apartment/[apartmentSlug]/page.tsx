@@ -1,6 +1,11 @@
 import ApartmentHeader from "@/components/apartment/ApartmentHeader";
 import ApatmentTabs from "@/components/apartment/ApartmentTabs";
 import BookingForm from "@/components/apartment/BookingForm";
+import PolicyDetails from "@/components/apartment/PolicyDetails";
+import ProfileCard from "@/components/apartment/ProfileCard";
+import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
+import ApartmentDettailsPageCard from "@/components/card/ApartmentDettailsPageCard";
+import AvailabilitySearchBox from "@/components/filter/AvailabilitySearchBox";
 import Pathname from "@/components/reusable/Pathname";
 import { accommodationsData } from "@/DemoAPI/accommodationsData";
 import Image from "next/image";
@@ -16,6 +21,8 @@ import Image from "next/image";
 
   const { title, reviews, price, rating, image, location } = singleApartment;
   return (
+    <div>
+
     <div className=" container">
       <div className="pb-10">
         <Pathname />
@@ -98,6 +105,34 @@ import Image from "next/image";
             <BookingForm singleApartment={singleApartment}/>
         </div>
       </div>
+
+        <div>
+          <AvailabilitySearchBox/>
+        </div>
+        
+    </div>
+    <div className=" bg-bgColor py-20">
+    <div className=" grid grid-cols-3 gap-6  container">
+          {accommodationsData.map((tour: any, index) => (
+              <div key={tour.title}>
+                <ApartmentDettailsPageCard data={tour}/>
+              </div>
+              
+            ))}
+        </div>
+    </div>
+
+    <div className="py-20 "> 
+      <div className="grid grid-cols-6 gap-8 container">
+        <div className=" col-span-4 ">
+           <PolicyDetails/>
+        </div>
+        <div className=" col-span-2">
+           <ProfileCard/>
+           <VerifiedVendorCard/>
+        </div>
+      </div>
+    </div>
     </div>
   );
 }
