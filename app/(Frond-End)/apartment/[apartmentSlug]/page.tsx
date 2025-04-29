@@ -3,11 +3,13 @@ import ApatmentTabs from "@/components/apartment/ApartmentTabs";
 import BookingForm from "@/components/apartment/BookingForm";
 import PolicyDetails from "@/components/apartment/PolicyDetails";
 import ProfileCard from "@/components/apartment/ProfileCard";
+import ReviewList from "@/components/apartment/ReviewList";
+import ReviewSection from "@/components/apartment/ReviewSection";
 import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
 import ApartmentDettailsPageCard from "@/components/card/ApartmentDettailsPageCard";
 import AvailabilitySearchBox from "@/components/filter/AvailabilitySearchBox";
-import Pathname from "@/components/reusable/Pathname";
 import { accommodationsData } from "@/DemoAPI/accommodationsData";
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 
  async function ApartmnetDetailsPage(props: {
@@ -24,14 +26,17 @@ import Image from "next/image";
     <div>
 
     <div className=" container">
-      <div className="pb-10">
-        <Pathname />
+      <div className="py-10">
+        <span className="flex items-center gap-2 ">
+              {" "}
+              Home <ChevronRight className="w-4 h-4 text-[#737373]" /> Apartment <ChevronRight className="w-4 h-4 text-[#737373]" /> Apartment details
+            </span>
       </div>
       <div>
         <ApartmentHeader singleApartment={singleApartment} />
       </div>
-      <div className="grid grid-cols-6 gap-6">
-        <div className=" col-span-4 h-[536px] rounded-2xl overflow-hidden">
+      <div className="lg:grid grid-cols-6 gap-6">
+        <div className=" col-span-4 h-auto lg:h-[536px] rounded-2xl overflow-hidden">
           <Image
             src={image}
             alt={title}
@@ -40,8 +45,8 @@ import Image from "next/image";
             className=" w-full h-full object-cover"
           />
         </div>
-        <div className="  col-span-2 flex flex-col gap-6 mb-20">
-          <div className=" h-[255px] rounded-2xl overflow-hidden">
+        <div className="  col-span-2 flex  lg:flex-col gap-3 mt-3 lg:mt-0 lg:gap-6 mb-20">
+          <div className=" lg:h-[255px] rounded-2xl overflow-hidden">
             <Image
               src={image}
               alt={title}
@@ -50,7 +55,7 @@ import Image from "next/image";
               className=" w-full h-full object-cover"
             />
           </div>
-          <div className=" relative h-[255px] rounded-2xl overflow-hidden">
+          <div className=" relative lg:h-[255px] rounded-2xl overflow-hidden">
             <Image
               src={image}
               alt={title}
@@ -97,7 +102,7 @@ import Image from "next/image";
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-6 gap-8 py-20">
+      <div className="lg:grid grid-cols-6 gap-8 pb-20">
         <div className=" col-span-4 ">
          <ApatmentTabs/>
         </div>
@@ -112,7 +117,7 @@ import Image from "next/image";
         
     </div>
     <div className=" bg-bgColor py-20">
-    <div className=" grid grid-cols-3 gap-6  container">
+    <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
           {accommodationsData.map((tour: any, index) => (
               <div key={tour.title}>
                 <ApartmentDettailsPageCard data={tour}/>
@@ -122,10 +127,12 @@ import Image from "next/image";
         </div>
     </div>
 
-    <div className="py-20 "> 
-      <div className="grid grid-cols-6 gap-8 container">
+    <div className=" py-14 lg:py-20 "> 
+      <div className="lg:grid flex flex-col-reverse grid-cols-6 gap-8 container">
         <div className=" col-span-4 ">
            <PolicyDetails/>
+           <ReviewSection/>
+           <ReviewList/>
         </div>
         <div className=" col-span-2">
            <ProfileCard/>

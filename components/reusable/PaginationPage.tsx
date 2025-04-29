@@ -9,7 +9,7 @@ function PaginationPage({totalPages, setCurrentPage, currentPage} :any) {
             
               <button
           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-           className={`justify-start ${currentPage === 1 ? 'text-grayColor1 bg-grayColor1/20' : 'text-[#1d1f2c]'} border  border-descriptionColor/20 text-descriptionColor cursor-pointer disabled:cursor-not-allowed px-4 py-2 rounded-md flex items-center gap-2`}
+           className={`justify-start ${currentPage === 1 ? 'text-grayColor1 bg-grayColor1/20' : 'text-[#1d1f2c]'} border  border-descriptionColor/20 text-descriptionColor cursor-pointer disabled:cursor-not-allowed  px-[4px] lg:px-4 py-1 lg:py-2 rounded-md flex items-center gap-2`}
           disabled={currentPage === 1}
         >
           &lt;&lt; Previous
@@ -131,10 +131,10 @@ function PaginationPage({totalPages, setCurrentPage, currentPage} :any) {
               }
             })}
             
-            <div className="h-8 px-1 py-2.5 bg-white rounded-xs inline-flex flex-col justify-center items-center gap-2.5">
+            <div className="h-8  py-2.5 bg-white rounded-xs inline-flex flex-col justify-center items-center gap-2.5">
               <button 
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-               className={`justify-start ${currentPage === totalPages ? 'text-grayColor1 bg-grayColor1/20' : 'text-[#1d1f2c]'} border  border-descriptionColor/20 cursor-pointer text-descriptionColor disabled:cursor-not-allowed px-4 py-2 rounded-md flex items-center gap-2`}
+               className={`justify-start ${currentPage === totalPages ? 'text-grayColor1 bg-grayColor1/20' : 'text-[#1d1f2c]'} border  border-descriptionColor/20 cursor-pointer text-descriptionColor disabled:cursor-not-allowed px-[4px] lg:px-4 py-1 lg:py-2 rounded-md flex items-center gap-2`}
                 disabled={currentPage === totalPages}
               >
                Next &gt;&gt;

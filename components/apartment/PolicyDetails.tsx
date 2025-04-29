@@ -5,7 +5,7 @@ function PolicyDetails() {
   return (
     <div>
       <h1 className=' text-2xl lg:text-[32px] font-medium text-blackColor'>Policies</h1>
-      <p className=" lg:text-lg leading-[150%] text-grayColor1 text-base">We aim to ensure a smooth stay with flexible check-in options, clear guidelines, and respectful use of property amenities. Review booking terms for cancellations, refunds, and pet policies. Our support team is always available for assistance.</p>
+      <p className=" lg:text-lg leading-[150%] text-grayColor1 text-base py-4">We aim to ensure a smooth stay with flexible check-in options, clear guidelines, and respectful use of property amenities. Review booking terms for cancellations, refunds, and pet policies. Our support team is always available for assistance.</p>
 
       <div>
           <Accordion
@@ -21,7 +21,7 @@ function PolicyDetails() {
                 className={`px-3  rounded-xl bg-bgColor  border border-[#DADDE3] `}
               >
                 <AccordionTrigger
-                  className={`py-2  cursor-pointer text-left text-base text-grayColor1 font-medium hover:no-underline `}
+                  className={`py-3  cursor-pointer text-left text-base text-grayColor1 font-medium hover:no-underline `}
                 >
                   <h4 className={` text-base lg:text-lg font-medium  text-headerColor`}>
                     {item.title}
