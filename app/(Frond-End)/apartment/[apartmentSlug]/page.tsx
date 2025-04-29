@@ -5,7 +5,11 @@ import Pathname from "@/components/reusable/Pathname";
 import { accommodationsData } from "@/DemoAPI/accommodationsData";
 import Image from "next/image";
 
-function ApartmnetDetailsPage({ apartmentSlug }: any) {
+ async function ApartmnetDetailsPage(props: {
+  params: Promise<{ apartmentSlug: string }>
+}) {
+   const params = await props.params
+  const { apartmentSlug } = params
   const singleApartment: any = accommodationsData.find(
     (item: any) => item?.apartmentSlug == apartmentSlug
   );
@@ -86,12 +90,12 @@ function ApartmnetDetailsPage({ apartmentSlug }: any) {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-6 gap-6">
+      <div className="grid grid-cols-6 gap-8 py-20">
         <div className=" col-span-4 ">
          <ApatmentTabs/>
         </div>
         <div className=" col-span-2">
-            <BookingForm/>
+            <BookingForm singleApartment={singleApartment}/>
         </div>
       </div>
     </div>

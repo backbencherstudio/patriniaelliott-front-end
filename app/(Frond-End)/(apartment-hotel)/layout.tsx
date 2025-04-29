@@ -1,6 +1,7 @@
 
 import FilterSidebar from "@/components/filter/Sidebar";
 import Pathname from "@/components/reusable/Pathname";
+import { Suspense } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "swiper/css";
@@ -17,11 +18,12 @@ export default function ApartmentHotelLayout({
         <div className="col-span-12">
           <Pathname/>
         </div>
+        <Suspense>
         <div className=" col-span-3">
           <FilterSidebar />
         </div>
-
         <div className=" col-span-9">{children}</div>
+        </Suspense>
       </div>
   );
 }

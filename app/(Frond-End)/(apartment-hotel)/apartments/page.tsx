@@ -19,21 +19,6 @@ function HotelPage() {
     currentPage * HotelsPerPage
   );
 
-  // Handle Previous button click
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  // Handle Next button click
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  // Handle page number click
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
   return (
     <div>
       <div className=" items-center mb-4">

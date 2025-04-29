@@ -1,4 +1,3 @@
-
 function PaginationPage({totalPages, setCurrentPage, currentPage} :any) {
   return (
     <div className="mt-10 mb-20 ">
