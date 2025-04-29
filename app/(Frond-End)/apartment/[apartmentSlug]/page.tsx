@@ -111,13 +111,15 @@ import Image from "next/image";
         </div>
       </div>
 
-        <div>
-          <AvailabilitySearchBox/>
-        </div>
+       
         
     </div>
-    <div className=" bg-bgColor py-20">
+    <div className=" bg-bgColor relative mt-15 py-20">
+       <div className="hidden md:block container absolute left-1/2 -translate-1/2 -top-2">
+          <AvailabilitySearchBox/>
+        </div>
     <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
+      
           {accommodationsData.map((tour: any, index) => (
               <div key={tour.title}>
                 <ApartmentDettailsPageCard data={tour}/>

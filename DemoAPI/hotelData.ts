@@ -22,6 +22,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$378",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -39,6 +41,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$488",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -56,6 +60,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$299",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -73,6 +79,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$310",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -90,6 +98,8 @@ export const hotelData = [
     bed: 1,
     bath: 1,
     price: "$270",
+    capacity: 6,
+    size: "1200 ",
   },
 
   // Hotels (5)
@@ -109,6 +119,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$520",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -126,6 +138,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$489",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -143,6 +157,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$440",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -160,6 +176,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$390",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -177,6 +195,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$280",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -194,6 +214,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$488",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -211,6 +233,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$299",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -228,6 +252,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$310",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -245,6 +271,8 @@ export const hotelData = [
     bed: 1,
     bath: 1,
     price: "$270",
+    capacity: 6,
+    size: "1200 ",
   },
 
   // Hotels (5)
@@ -264,6 +292,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$520",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -281,6 +311,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$489",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -298,6 +330,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$440",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -315,6 +349,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$390",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -332,6 +368,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$280",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -349,6 +387,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$488",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -366,6 +406,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$299",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -383,6 +425,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$310",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -400,6 +444,8 @@ export const hotelData = [
     bed: 1,
     bath: 1,
     price: "$270",
+    capacity: 6,
+    size: "1200 ",
   },
 
   // Hotels (5)
@@ -419,6 +465,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$520",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -436,6 +484,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$489",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -453,6 +503,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$440",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -470,6 +522,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$390",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -487,6 +541,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$280",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -504,6 +560,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$440",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -521,6 +579,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$390",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -538,6 +598,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$280",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -555,6 +617,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$488",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -572,6 +636,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$299",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -589,6 +655,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$310",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -606,6 +674,8 @@ export const hotelData = [
     bed: 1,
     bath: 1,
     price: "$270",
+    capacity: 6,
+    size: "1200 ",
   },
 
   // Hotels (5)
@@ -625,6 +695,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$520",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -642,6 +714,8 @@ export const hotelData = [
     bed: 2,
     bath: 2,
     price: "$489",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -659,6 +733,8 @@ export const hotelData = [
     bed: 3,
     bath: 2,
     price: "$440",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -676,6 +752,8 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$390",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Hotels",
@@ -693,5 +771,7 @@ export const hotelData = [
     bed: 2,
     bath: 1,
     price: "$280",
+    capacity: 6,
+    size: "1200 ",
   },
 ];
