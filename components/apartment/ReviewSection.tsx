@@ -140,7 +140,7 @@ const ReviewSection = () => {
                     <FaStar
                       key={i}
                       className={
-                        i < Math.round(averageRating)
+                        i < Math.round(Number(averageRating))
                           ? "text-[#FAAD14]"
                           : "text-gray-300"
                       }
