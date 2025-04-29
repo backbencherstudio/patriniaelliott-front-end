@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { FaStar } from "react-icons/fa";
 import { FaArrowRight, FaWifi } from "react-icons/fa6";
 import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
@@ -17,6 +18,7 @@ type AccommodationCardProps = {
   bath: number;
   breakfast: boolean;
   tv: boolean;
+  apartmentSlug:string,
   price: string;
 };
 
@@ -32,6 +34,7 @@ export default function AccommodationCard({
   bed,
   breakfast,
   tv,
+  apartmentSlug,
   bath,
   price,
 }: AccommodationCardProps) {
@@ -56,7 +59,7 @@ export default function AccommodationCard({
           <IoLocationSharp size={18} className=" text-grayColor1" />
           <span>{location}</span>
         </div>
-        <h3 className="font-medium text-[22px] text-blackColor">{title}</h3>
+        <Link href={`/apartment/${apartmentSlug}`} className="font-medium text-[22px] text-blackColor">{title}</Link>
 
         <div className="flex items-center gap-2 text-sm text-seborder-secondaryColor">
           <span className="text-gray-800">{rating}</span>
