@@ -8,7 +8,7 @@ export default function NotFound() {
       <p className=' '>Could not find requested resource</p>
       <div>
 
-      <Link href="/" className=' text-whiteColor underline text-lg '>Return your Home</Link>
+      <Link href="/" className=' text-primaryColor underline text-lg '>Return your Home</Link>
       </div>
       </div>
      

@@ -12,17 +12,17 @@ const ApatmentTabs = () => {
     <div className="w-full">
       {/* Tab List */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="flex space-x-8 border border-gray-200 bg-whiteColor shadow-none py-6 w-full px-40">
+        <TabsList className="flex lg:space-x-8 border border-gray-200 bg-whiteColor shadow-none py-6 w-full lg:px-40">
           <TabsTrigger
             value="overview"
-            className={`text-lg cursor-pointer  relative font-medium ${activeTab === 'overview' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
+            className={` text-sm lg:text-lg cursor-pointer  relative font-medium ${activeTab === 'overview' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
           >
             Overview
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'overview' ? 'bg-secondaryColor' : 'hidden'}`} />
           </TabsTrigger>
           <TabsTrigger
             value="highlights"
-            className={`text-lg cursor-pointer relative font-medium ${activeTab === 'highlights' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
+            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'highlights' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
             
           >
             Highlights
@@ -30,21 +30,21 @@ const ApatmentTabs = () => {
           </TabsTrigger>
           <TabsTrigger
             value="map"
-            className={`text-lg cursor-pointer relative font-medium ${activeTab === 'map' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
+            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'map' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
           >
             Map
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'map' ? 'bg-secondaryColor' : 'hidden'}`} />
           </TabsTrigger>
           <TabsTrigger
             value="policies"
-           className={`text-lg cursor-pointer relative font-medium ${activeTab === 'policies' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
+           className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'policies' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
           >
             Policies
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'policies' ? 'bg-secondaryColor' : 'hidden'}`} />
           </TabsTrigger>
           <TabsTrigger
             value="reviews"
-            className={`text-lg cursor-pointer relative font-medium ${activeTab === 'reviews' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
+            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'reviews' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
           >
             Reviews
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'reviews' ? 'bg-secondaryColor' : 'hidden'}`} />

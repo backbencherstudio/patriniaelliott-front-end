@@ -19,7 +19,7 @@ interface ApartmentCardProps {
     wifi: boolean;
     cancellation: string;
     breakfast: boolean;
-    apartmentSlug:string;
+    apartmentSlug: string;
   };
 }
 
@@ -40,7 +40,7 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
   } = hotel;
 
   return (
-    <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
+    <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
         <Image
@@ -65,22 +65,27 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
             <IoLocationSharp size={18} className=" text-grayColor1" />
             <span>{location}</span>
           </div>
-           <div className="py-1">
-
-         <Link href={`/apartment/${apartmentSlug}`} className="text-xl font-semibold text-black mb-2">{title}</Link>
+          <div className="py-1">
+            <Link
+              href={`/apartment/${apartmentSlug}`}
+              className="text-xl font-semibold text-black mb-2"
+            >
+              {title}
+            </Link>
           </div>
-          
+
           <div className="flex gap-2 items-center">
             <span className="text-headerColor text-sm">{rating}</span>
             <div className="flex gap-1">
-  {Array.from({ length: 5 }, (_, i) => (
-              <FaStar
-                key={i}
-                className={i < Math.round(rating) ? "text-yellow-400" : "text-gray-300"}
-              />
-            ))}
+              {Array.from({ length: 5 }, (_, i) => (
+                <FaStar
+                  key={i}
+                  className={
+                    i < Math.round(rating) ? "text-yellow-400" : "text-gray-300"
+                  }
+                />
+              ))}
             </div>
-          
           </div>
         </div>
         {/* Free Cancellation */}
@@ -154,7 +159,7 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
         </div>
       </div>
       {/* Price and Check Availability */}
-      <div className=" flex flex-col justify-between items-end text-end  px-4 py-7 rounded-[12px] h-full col-span-2 bg-[#D6AE29]/20">
+      <div className=" flex flex-col justify-between items-center lg:items-end text-end  px-4 py-7 rounded-[12px] h-full col-span-2 bg-[#D6AE29]/20">
         <div>
           <p className="text-sm  text-descriptionColor mb-1">Starting from</p>
           <h5 className="text-[32px] font-semibold text-primaryColor">
@@ -162,7 +167,7 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
           </h5>
           <p className="text-sm text-gray-500">per night</p>
         </div>
-        <button className="bg-secondaryColor font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-full cursor-pointer text-blackColor transition-colors">
+        <button className="bg-secondaryColor mt-4 lg:mt-0 font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-full cursor-pointer text-blackColor transition-colors">
           Check Availability <FaArrowRight />
         </button>
       </div>

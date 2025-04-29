@@ -12,13 +12,13 @@ import { accommodationsData } from "@/DemoAPI/accommodationsData";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 
- async function ApartmnetDetailsPage(props: {
-  params: Promise<{ apartmentSlug: string }>
+ async function HotelDetailsPage(props: {
+  params: Promise<{ hotelSlug: string }>
 }) {
    const params = await props.params
-  const { apartmentSlug } = params
+  const { hotelSlug } = params
   const singleApartment: any = accommodationsData.find(
-    (item: any) => item?.apartmentSlug == apartmentSlug
+    (item: any) => item?.hotelSlug == hotelSlug
   );
 
   const { title, reviews, price, rating, image, location } = singleApartment;
@@ -144,4 +144,4 @@ import Image from "next/image";
   );
 }
 
-export default ApartmnetDetailsPage;
+export default HotelDetailsPage;

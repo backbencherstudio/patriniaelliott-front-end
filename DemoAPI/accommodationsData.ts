@@ -10,7 +10,7 @@ export const accommodationsData = [
     location: "Beijing, China",
     flag: "/images/flags/cn.png",
     title: "Eclipse Haven Apartment",
-    apartmentSlug: "eclipse-haven-apartment", // Added slug
+    apartmentSlug: "eclipse-haven-apartment",
     rating: 4.5,
     reviews: 120,
     cancellation: "Cancel within 24H",
@@ -20,6 +20,8 @@ export const accommodationsData = [
     bed: 3,
     bath: 2,
     price: "$378",
+    capacity: 6,
+    size: "1200 ",
   },
   {
     category: "Apartments",
@@ -27,7 +29,7 @@ export const accommodationsData = [
     location: "Abu Dhabi, UAE",
     flag: "/images/flags/ae.png",
     title: "Emirates Pearl Towers",
-    apartmentSlug: "emirates-pearl-towers", // Added slug
+    apartmentSlug: "emirates-pearl-towers",
     rating: 4.8,
     reviews: 85,
     cancellation: "Cancel within 24H",
@@ -37,6 +39,8 @@ export const accommodationsData = [
     bed: 2,
     bath: 2,
     price: "$488",
+    capacity: 4,
+    size: "950 ",
   },
   {
     category: "Apartments",
@@ -44,7 +48,7 @@ export const accommodationsData = [
     location: "Washington, D.C., USA",
     flag: "/images/flags/us.png",
     title: "Capitol Heights Residences",
-    apartmentSlug: "capitol-heights-residences", // Added slug
+    apartmentSlug: "capitol-heights-residences",
     rating: 4.5,
     reviews: 98,
     cancellation: "Cancel within 24H",
@@ -54,6 +58,8 @@ export const accommodationsData = [
     bed: 3,
     bath: 2,
     price: "$299",
+    capacity: 5,
+    size: "1100 ",
   },
   {
     category: "Apartments",
@@ -61,7 +67,7 @@ export const accommodationsData = [
     location: "Lisbon, Portugal",
     flag: "/images/flags/pt.png",
     title: "Lisbon Central Loft",
-    apartmentSlug: "lisbon-central-loft", // Added slug
+    apartmentSlug: "lisbon-central-loft",
     rating: 4.6,
     reviews: 77,
     cancellation: "Cancel within 48H",
@@ -71,6 +77,8 @@ export const accommodationsData = [
     bed: 2,
     bath: 1,
     price: "$310",
+    capacity: 3,
+    size: "850 ",
   },
   {
     category: "Apartments",
@@ -78,7 +86,7 @@ export const accommodationsData = [
     location: "Osaka, Japan",
     flag: "/images/flags/jp.png",
     title: "Osaka Urban Nest",
-    apartmentSlug: "osaka-urban-nest", // Added slug
+    apartmentSlug: "osaka-urban-nest",
     rating: 4.7,
     reviews: 63,
     cancellation: "Cancel within 12H",
@@ -88,6 +96,8 @@ export const accommodationsData = [
     bed: 1,
     bath: 1,
     price: "$270",
+    capacity: 2,
+    size: "600 ",
   },
 
   // Hotels (5)
@@ -106,6 +116,8 @@ export const accommodationsData = [
     bed: 2,
     bath: 2,
     price: "$520",
+    capacity: 4,
+    size: "500 ",
   },
   {
     category: "Hotels",
@@ -122,6 +134,8 @@ export const accommodationsData = [
     bed: 2,
     bath: 2,
     price: "$489",
+    capacity: 4,
+    size: "520 ",
   },
   {
     category: "Hotels",
@@ -138,6 +152,8 @@ export const accommodationsData = [
     bed: 3,
     bath: 2,
     price: "$440",
+    capacity: 6,
+    size: "700 ",
   },
   {
     category: "Hotels",
@@ -154,6 +170,8 @@ export const accommodationsData = [
     bed: 2,
     bath: 1,
     price: "$390",
+    capacity: 3,
+    size: "450 ",
   },
   {
     category: "Hotels",
@@ -170,5 +188,7 @@ export const accommodationsData = [
     bed: 2,
     bath: 1,
     price: "$280",
+    capacity: 3,
+    size: "430 ",
   },
 ];
