@@ -163,13 +163,16 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
         <div>
           <p className="text-sm  text-descriptionColor mb-1">Starting from</p>
           <h5 className="text-[32px] font-semibold text-primaryColor">
-            {price}
+            ${price}
           </h5>
           <p className="text-sm text-gray-500">per night</p>
         </div>
-        <button className="bg-secondaryColor mt-4 lg:mt-0 font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-full cursor-pointer text-blackColor transition-colors">
+        <Link
+          href={`/apartment/${apartmentSlug}`}
+          className="bg-secondaryColor mt-4 lg:mt-0 font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-full cursor-pointer text-blackColor transition-colors"
+        >
           Check Availability <FaArrowRight />
-        </button>
+        </Link>
       </div>
     </div>
   );

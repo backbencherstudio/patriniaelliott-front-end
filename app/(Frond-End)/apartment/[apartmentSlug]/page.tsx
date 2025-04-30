@@ -107,7 +107,7 @@ import Image from "next/image";
          <ApatmentTabs/>
         </div>
         <div className=" col-span-2">
-            <BookingForm singleApartment={singleApartment}/>
+            <BookingForm singleApartments={singleApartment}/>
         </div>
       </div>
 

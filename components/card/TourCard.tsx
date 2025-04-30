@@ -101,7 +101,7 @@ export default function TourCard({
                         <p className="text-grayColor1 text-sm font-semibold">
                             Starting From<br />
                         </p>
-                        <p className="text-xl text-primaryColor capitalize font-medium">{price}/person</p>
+                        <p className="text-xl text-primaryColor capitalize font-medium">${price}/person</p>
                     </div>
                     <button className="lg:text-[22px] text-base gap-1 flex lg:gap-3 items-center font-medium border border-secondaryColor text-secondaryColor px-3 lg:px-4 py-2 rounded-full hover:text-blackColor cursor-pointer hover:bg-secondaryColor transition">
                         Check Details <FaArrowRight/>
