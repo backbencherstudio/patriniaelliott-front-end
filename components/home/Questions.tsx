@@ -9,7 +9,7 @@ import {
 import { questionData } from "@/DemoAPI/question";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
-import "../css/question.css";
+import "../css/questions.css";
 
 export default function Questions() {
   const [openItem, setOpenItem] = useState<string | null>("faq-0");
@@ -44,7 +44,7 @@ export default function Questions() {
                 }`}
               >
                 <AccordionTrigger
-                  className={`  cursor-pointer text-left text-base text-[#0B0F2F] font-medium hover:no-underline after:hidden !pr-0`}
+                  className={` arrow cursor-pointer text-left text-base text-[#0B0F2F] font-medium hover:no-underline after:hidden !pr-0`}
                 >
                   <h4 className={` text-base lg:text-2xl font-medium  text-headerColor`}>
                     {item.question}

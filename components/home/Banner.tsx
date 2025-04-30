@@ -38,7 +38,7 @@ export default function Banner() {
         <Swiper
           slidesPerView={1}
           loop={true}
-          speed={1000}
+          speed={1500}
           autoplay={{
             delay: 3000,
             disableOnInteraction: false,

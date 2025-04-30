@@ -149,6 +149,11 @@
     @apply bg-background text-foreground;
   }
 }
+.pointer-events-none {
+  pointer-events: none;
+  display: block !important;
+  opacity: 1 !important;
+}
 
 input:checked ~ .checkmark {
   background-color: var(--color-green-600);
