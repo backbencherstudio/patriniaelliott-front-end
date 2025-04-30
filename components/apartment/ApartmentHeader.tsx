@@ -28,7 +28,7 @@ const ApartmentHeader = ({ singleApartment }: any) => {
         </p>
         <div className=" flex items-end">
           <p className="text-[32px] font-semibold text-secondaryColor">
-            {price}
+            ${price}
           </p>
           <p className="text-sm text-grayColor1 mb-2">/per night</p>
         </div>
