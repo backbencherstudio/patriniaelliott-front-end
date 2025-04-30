@@ -1,0 +1,5 @@
+.arrow .pointer-events-none {
+  pointer-events: none;
+  display: none !important;
+  opacity: 0 !important;
+}
