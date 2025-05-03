@@ -1,73 +1,81 @@
-'use client';
 
-import Image from 'next/image';
-import { FaMapMarkerAlt, FaStar } from 'react-icons/fa';
-import { FaArrowRight } from 'react-icons/fa6';
 
-type TourCardProps = {
-    image: string;
-    location: string;
-    tag: string;
-    type: string;
-    title: string;
-    rating: number;
-    cancellation: string;
-    duration: string;
-    groupSize: string;
-    price: string;
-};
-
-export default function TourCard({
+import Image from "next/image";
+import Link from "next/link";
+import { FaStar } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa6";
+function TourCardTwo({tour}:any) {
+      const {
     image,
     location,
-    tag,
-    type,
     title,
     rating,
-    cancellation,
+    price,
+    tv,
+    bed,
+    bath,
     duration,
     groupSize,
-    price,
-}: TourCardProps) {
-    return (
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full ">
-            <div className="relative">
-                <div className=' p-3'>
-                    <Image
-                        src={image}
-                        alt={title}
-                        width={500}
-                        height={250}
-                        className="w-full h-full object-cover"
-                    />
-                </div>
+    wifi,
+    tourSlug,
+    cancellation,
+    apartmentSlug,
+    breakfast,
+  } = tour;
+  return (
+        <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
+      {/* Left - Hotel Image */}
+      <div className=" col-span-3 relative">
+        <Image
+          src={image}
+          alt={title}
+          width={400}
+          height={250}
+          className="w-full h-full object-cover rounded-xl"
+        />
+        {breakfast && (
+          <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1  rounded-full">
+            Breakfast Included
+          </span>
+        )}
+      </div>
 
-                <span className="absolute top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                    {tag}
-                </span>
-                <span className="absolute bottom-6 left-6 flex items-center bg-white text-gray-700 text-xs px-2 py-1 rounded-full shadow">
-                    <FaMapMarkerAlt className="mr-1" /> {location}
-                </span>
-            </div>
-
-            <div className="p-4 space-y-2 mt-2">
-                <span className="text-xs text-primaryColor bg-[#90A9C3]/20 px-3 py-1 rounded-full  font-medium">
+      {/* Right - Hotel Info */}
+      <div className=" py-4 col-span-3 flex flex-col justify-between">
+        {/* Hotel Details */}
+        <div className=" mb-3">
+            <span className="text-xs text-primaryColor bg-[#90A9C3]/20 px-3 py-1 rounded-full  font-medium">
                    Hotel + All inclusive
                 </span>
-                <h3 className="font-medium mt-3 text-[22px] text-blackColor leading-[130%]">
-                    {title}
-                </h3>
+          <div className="py-1">
+            <Link
+              href={`/tour/${tourSlug}`}
+              className="text-xl font-semibold text-black mb-2"
+            >
+              {title}
+            </Link>
+          </div>
 
-                <div className="flex items-center gap-1 text-yellow-500 text-sm">
-                    <span className="text-headerColor  text-sm">{rating}</span>
-                    {Array.from({ length: 5 }, (_, i) => (
-                        <FaStar key={i} className={i < rating ? 'text-yellow-400' : 'text-[#A7B6CC]'} />
-                    ))}
-
-                </div>
-                <p className="text-sm text-[#0068EF]">Free cancellation <span className='text-grayColor1 text-xs'>({cancellation})</span></p>
-
-                <div className="flex  text-xs text-gray-600 mt-2 mb-4">
+          <div className="flex gap-2 items-center">
+            <span className="text-headerColor text-sm">{rating}</span>
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }, (_, i) => (
+                <FaStar
+                  key={i}
+                  className={
+                    i < Math.round(rating) ? "text-yellow-400" : "text-gray-300"
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* Free Cancellation */}
+        <div className="flex items-center gap-2 text-sm text-[#0068EF] border-b pb-2 border-secondaryColor/20">
+          Free cancellation{" "}
+          <span className="text-xs text-gray-400">({cancellation})</span>
+        </div>
+  <div className="flex  text-xs text-gray-600 mt-2 mb-4">
                     <div className="flex items-center gap-2 border-r border-grayColor1/30 pr-8">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <g clip-path="url(#clip0_5500_3505)">
@@ -96,19 +104,27 @@ export default function TourCard({
 
                     </div>
                 </div>
-                <div className="flex justify-between items-center pt-4 border-t ">
-                    <div>
-                        <p className="text-grayColor1 text-sm font-semibold">
-                            Starting From<br />
-                        </p>
-                        <p className="text-xl text-primaryColor capitalize font-medium">${price}/person</p>
-                    </div>
-                    <button className="lg:text-[22px] text-base gap-1 flex lg:gap-3 items-center font-medium border border-secondaryColor text-secondaryColor px-3 lg:px-4 py-2 rounded-full hover:text-blackColor cursor-pointer hover:bg-secondaryColor transition">
-                        Check Details <FaArrowRight/>
-                        
-                    </button>
-                </div>
-            </div>
+       
+      </div>
+      {/* Price and Check Availability */}
+      <div className=" flex flex-col justify-between items-center lg:items-end text-end  px-4 py-7 rounded-[12px] h-full col-span-2 bg-[#D6AE29]/20">
+        <div>
+          <p className="text-sm  text-descriptionColor mb-1">Starting from</p>
+          <h5 className="text-[32px] font-semibold text-primaryColor">
+            ${price}
+          </h5>
+          <p className="text-sm text-gray-500">per night</p>
         </div>
-    );
+        <Link
+          href={`/toure/${tourSlug}`}
+          className="bg-secondaryColor mt-4 lg:mt-0 font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-full cursor-pointer text-blackColor transition-colors"
+        >
+          Check Details <FaArrowRight />
+        </Link>
+      </div>
+    </div>
+
+  )
 }
+
+export default TourCardTwo

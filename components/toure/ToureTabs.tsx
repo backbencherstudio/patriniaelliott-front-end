@@ -5,7 +5,7 @@ import HighLight from './HighLight';
 import LocationOnMap from './LocationOnMap ';
 import Overview from './Overview';
 
-const ApatmentTabs = () => {
+const ToureTabs = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
@@ -72,4 +72,4 @@ const ApatmentTabs = () => {
   );
 };
 
-export default ApatmentTabs;
+export default ToureTabs;

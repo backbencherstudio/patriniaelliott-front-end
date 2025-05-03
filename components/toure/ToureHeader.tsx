@@ -1,6 +1,6 @@
 import Rating from "../reusable/Rating";
 
-const ApartmentHeader = ({ singleApartment }: any) => {
+const ToureHeader = ({ singleApartment }: any) => {
   const { title, reviews, price, rating, location } = singleApartment;
   return (
     <div className="lg:flex justify-between items-center pb-8">
@@ -37,4 +37,4 @@ const ApartmentHeader = ({ singleApartment }: any) => {
   );
 };
 
-export default ApartmentHeader;
+export default ToureHeader;

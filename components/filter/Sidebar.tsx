@@ -10,7 +10,7 @@ import PopularDestinationFilter from './PopularDestinationFilter';
 import RatingFilter from './RatingFilter';
 import ResidenceFilter from './ResidenceFilter';
 
-export default function FilterSidebar() {
+export default function FilterSidebar({toure}:any) {
 
   return (
     <div className="w-full   space-y-6  bg-white mb-30 rounded-xl">
@@ -44,19 +44,19 @@ export default function FilterSidebar() {
       </div>
 
       <div>
-        <PopularDestinationFilter/>
+     { !toure &&  <PopularDestinationFilter/>} 
       </div>
 
       <div>
-       <ResidenceFilter/>
+      { !toure &&   <ResidenceFilter/>}
       </div>
 
       <div>
-       <MealPlanFilter/>
+         <MealPlanFilter/>
       </div>
 
       <div>
-        <PopularAreaFilter/>
+        { !toure &&  <PopularAreaFilter/>}
       </div>
 </div>
       
