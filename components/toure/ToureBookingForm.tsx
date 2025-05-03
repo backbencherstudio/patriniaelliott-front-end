@@ -2,7 +2,7 @@
 import { useToureBookingContext } from "@/provider/TourBookingProvider";
 import { LucideCalendarDays, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FiMinus, FiPlus } from "react-icons/fi";
@@ -25,10 +25,11 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
         discountNumber,
         travelprice,
         setTravelPrice,
-        discount 
+        discount ,
+        travelCount, setTravelCount
     
   } = useToureBookingContext();
-const [travelCount, setTravelCount] =useState(1)
+
 
   // Set initial dates when component mounts
   useEffect(() => {

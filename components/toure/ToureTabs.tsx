@@ -20,13 +20,13 @@ const ToureTabs = () => {
           >
             Overview
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'overview' ? 'bg-secondaryColor' : 'hidden'}`} />
+          </TabsTrigger>
           <TabsTrigger
             value="policies"
            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'policies' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
           >
             Policies
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'policies' ? 'bg-secondaryColor' : 'hidden'}`} />
-          </TabsTrigger>
           </TabsTrigger>
           <TabsTrigger
             value="Itinerary"

@@ -11,7 +11,7 @@ export const ToureBookingProvider = ({ children }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [bookingData, setBookingData] = useState(null);
-  
+  const [travelCount, setTravelCount] =useState(1)
   const totalDay = startDate && endDate ? (endDate - startDate) / (1000 * 3600 * 24) : 0;
   const servicefee = 40;
 
@@ -63,7 +63,8 @@ export const ToureBookingProvider = ({ children }) => {
         handleBookNow,
         bookingData,
         discountNumber,
-        discount
+        discount,
+        travelCount, setTravelCount
       }}
     >
       {children}
