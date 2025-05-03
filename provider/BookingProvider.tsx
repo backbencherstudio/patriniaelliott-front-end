@@ -57,6 +57,10 @@ export const BookingProvider = ({ children }) => {
   };
 
   let totalPrice = calculateTotal();
+   let discountNumber = 10
+  let persentage = discountNumber/100
+
+const discount =(totalPrice * persentage).toFixed(2)
   // Handle "Book Now" click
   const handleBookNow = () => {
     const bookingDetails = {
@@ -67,6 +71,7 @@ export const BookingProvider = ({ children }) => {
       carRent,
       dinnerPrice,
       totalPrice,
+      discount
     };
     setBookingData(bookingDetails); // Store booking data in context
     // Optionally, you can perform other actions such as API calls here
@@ -93,7 +98,9 @@ export const BookingProvider = ({ children }) => {
         setDinnerPrice,
         calculateTotal,
         handleBookNow,
-        bookingData, // Share the booking data
+        bookingData,
+        discountNumber,
+        discount // Share the booking data
       }}
     >
       {children}

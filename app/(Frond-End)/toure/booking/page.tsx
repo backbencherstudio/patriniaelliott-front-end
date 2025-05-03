@@ -1,8 +1,8 @@
 "use client";
 
-import BookingSummary from "@/components/payment/BookingSummary";
 import StepOne from "@/components/payment/StepOne";
 import StepTwo from "@/components/payment/StepTwo";
+import ToureBookingSummary from "@/components/toure/ToureBookingSummary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
@@ -50,7 +50,7 @@ function Page() {
         </div>
 
         <div className="col-span-5">
-          <BookingSummary activeTab={activeTab} setActiveTab={setActiveTab}/>
+          <ToureBookingSummary activeTab={activeTab} setActiveTab={setActiveTab}/>
         </div>
       </div>
     </div>

@@ -1,24 +1,18 @@
-import ApartmentHeader from "@/components/apartment/ApartmentHeader";
-import ApatmentTabs from "@/components/apartment/ApartmentTabs";
-import BookingForm from "@/components/apartment/BookingForm";
-import PolicyDetails from "@/components/apartment/PolicyDetails";
-import ProfileCard from "@/components/apartment/ProfileCard";
-import ReviewList from "@/components/apartment/ReviewList";
-import ReviewSection from "@/components/apartment/ReviewSection";
-import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
-import ApartmentDettailsPageCard from "@/components/card/ApartmentDettailsPageCard";
-import AvailabilitySearchBox from "@/components/filter/AvailabilitySearchBox";
-import { hotelData } from "@/DemoAPI/hotelData";
+import ToureBookingForm from "@/components/toure/ToureBookingForm";
+import ToureHeader from "@/components/toure/ToureHeader";
+import ToureTabs from "@/components/toure/ToureTabs";
+import { toursData } from "@/DemoAPI/toureData";
+
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 
 async function HotelDetailsPage(props: {
-  params: Promise<{ hotelSlug: string }>;
+  params: Promise<{ tourSlug: string }>;
 }) {
   const params = await props.params;
-  const { hotelSlug } = params;
-  const singleHotel: any = hotelData.find(
-    (item: any) => item?.hotelSlug == hotelSlug
+  const { tourSlug } = params;
+  const singleHotel: any = toursData.find(
+    (item: any) => item?.tourSlug == tourSlug
   );
 
   const { title, reviews, price, rating, image, location } = singleHotel;
@@ -34,7 +28,7 @@ async function HotelDetailsPage(props: {
           </span>
         </div>
         <div>
-          <ApartmentHeader singleApartment={singleHotel} />
+          <ToureHeader singleApartment={singleHotel} />
         </div>
         <div className="lg:grid grid-cols-6 gap-6">
           <div className=" col-span-4 h-auto lg:h-[536px] rounded-2xl overflow-hidden">
@@ -105,39 +99,14 @@ async function HotelDetailsPage(props: {
         </div>
         <div className="lg:grid grid-cols-6 gap-8 pb-20">
           <div className=" col-span-4 ">
-            <ApatmentTabs />
+            <ToureTabs />
           </div>
           <div className=" col-span-2">
-            <BookingForm singleApartments={singleHotel} />
+            <ToureBookingForm singlToureDetails={singleHotel} />
           </div>
         </div>
       </div>
-      <div className=" bg-bgColor relative mt-15 py-20">
-        <div className="hidden md:block container absolute left-1/2 -translate-1/2 -top-2">
-          <AvailabilitySearchBox />
-        </div>
-        <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
-          {hotelData.map((tour: any, index) => (
-            <div key={tour.title}>
-              <ApartmentDettailsPageCard data={tour} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className=" py-14 lg:py-20 ">
-        <div className="lg:grid flex flex-col-reverse grid-cols-6 gap-8 container">
-          <div className=" col-span-4 ">
-            <PolicyDetails />
-            <ReviewSection />
-            <ReviewList />
-          </div>
-          <div className=" col-span-2">
-            <ProfileCard />
-            <VerifiedVendorCard />
-          </div>
-        </div>
-      </div>
+    
     </div>
   );
 }
