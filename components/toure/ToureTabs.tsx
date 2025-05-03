@@ -1,9 +1,10 @@
 'use client';
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"; // Adjust the import if needed
-import HighLight from './HighLight';
-import LocationOnMap from './LocationOnMap ';
-import Overview from './Overview';
+import ToureItinerary from './ToureItinerary';
+import TourLocationOnMap from './ToureLocationOnMap ';
+import ToureOverview from './ToureOverview';
+import TourPolices from './TourPolices';
 
 const ToureTabs = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -19,14 +20,21 @@ const ToureTabs = () => {
           >
             Overview
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'overview' ? 'bg-secondaryColor' : 'hidden'}`} />
+          <TabsTrigger
+            value="policies"
+           className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'policies' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
+          >
+            Policies
+            <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'policies' ? 'bg-secondaryColor' : 'hidden'}`} />
+          </TabsTrigger>
           </TabsTrigger>
           <TabsTrigger
-            value="highlights"
-            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'highlights' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
+            value="Itinerary"
+            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'Itinerary' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
             
           >
-            Highlights
-            <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'highlights' ? 'bg-secondaryColor' : 'hidden'}`} />
+            Itinerary
+            <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'Itinerary' ? 'bg-secondaryColor' : 'hidden'}`} />
           </TabsTrigger>
           <TabsTrigger
             value="map"
@@ -34,13 +42,6 @@ const ToureTabs = () => {
           >
             Map
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'map' ? 'bg-secondaryColor' : 'hidden'}`} />
-          </TabsTrigger>
-          <TabsTrigger
-            value="policies"
-           className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'policies' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
-          >
-            Policies
-            <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'policies' ? 'bg-secondaryColor' : 'hidden'}`} />
           </TabsTrigger>
           <TabsTrigger
             value="reviews"
@@ -53,16 +54,16 @@ const ToureTabs = () => {
 
         {/* Tab Contents */}
         <TabsContent value="overview" className="pt-10 pb-8">
-         <Overview/>
-        </TabsContent>
-        <TabsContent value="highlights" className="pt-10 pb-8">
-          <HighLight/>
-        </TabsContent>
-        <TabsContent value="map" className="pt-10 pb-8">
-          <LocationOnMap/>
+         <ToureOverview/>
         </TabsContent>
         <TabsContent value="policies" className="pt-10 pb-8">
-          <p>Policies content goes here...</p>
+         <TourPolices/>
+        </TabsContent>
+        <TabsContent value="Itinerary" className="pt-10 pb-8">
+          <ToureItinerary/>
+        </TabsContent>
+        <TabsContent value="map" className="pt-10 pb-8">
+          <TourLocationOnMap/>
         </TabsContent>
         <TabsContent value="reviews" className="pt-10 pb-8">
           <p>Reviews content goes here...</p>

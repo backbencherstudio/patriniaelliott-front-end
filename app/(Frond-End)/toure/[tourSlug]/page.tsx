@@ -1,3 +1,4 @@
+import ToureBookingForm from "@/components/toure/ToureBookingForm";
 import ToureHeader from "@/components/toure/ToureHeader";
 import ToureTabs from "@/components/toure/ToureTabs";
 import { toursData } from "@/DemoAPI/toureData";
@@ -101,7 +102,7 @@ async function HotelDetailsPage(props: {
             <ToureTabs />
           </div>
           <div className=" col-span-2">
-            {/* <ToureBookingForm singleApartments={singleHotel} /> */}
+            <ToureBookingForm singlToureDetails={singleHotel} />
           </div>
         </div>
       </div>

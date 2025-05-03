@@ -1,49 +1,67 @@
 "use client";
-import { useBookingContext } from "@/provider/BookingProvider";
-import { LucideCalendarDays } from "lucide-react";
+import { useToureBookingContext } from "@/provider/TourBookingProvider";
+import { LucideCalendarDays, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { MdDone } from "react-icons/md";
+import { FiMinus, FiPlus } from "react-icons/fi";
 import Rating from "../reusable/Rating";
 
-const ToureBookingForm = ({ singleApartments }: any) => {
+const ToureBookingForm = ({ singlToureDetails }: any) => {
   const {
-    setSingleApartment,
-    selectedServices,
-    handleServiceChange,
-    startDate,
-    setStartDate,
-    servicePrices,
-    endDate,
-    setEndDate,
-    carRent,
-    dinnerPrice,
-    calculateTotal,
-    handleBookNow
+   
+        setSingleToure,
+        startDate,
+        setStartDate,
+        endDate,
+        setEndDate,
+        servicefee,
+        totalDay,
+        totalPrice,
+        calculateTotal,
+        handleBookNow,
+        bookingData,
+        discountNumber,
+        travelprice,
+        setTravelPrice,
+        discount 
     
-  } = useBookingContext();
-  setSingleApartment(singleApartments);
+  } = useToureBookingContext();
+const [travelCount, setTravelCount] =useState(1)
+
+  // Set initial dates when component mounts
+  useEffect(() => {
+    const today = new Date();
+    setStartDate(today);
+    
+    // Calculate end date based on duration
+    const durationDays = parseInt(duration) || 4; // Default to 4 if duration is not provided
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() + durationDays);
+    setEndDate(endDate);
+  }, [ setStartDate, setEndDate]);
+
+  setSingleToure(singlToureDetails);
 
 const router = useRouter()
-  const { title, cancellation, reviews, price, rating, image, location } =
-    singleApartments;
-
+  const { title, cancellation, duration, reviews, price, rating, image, location } =
+    singlToureDetails;
+  setTravelPrice(price* travelCount) 
     const handleBook = () => {
 
      handleBookNow()
-     router.push("/apartment/booking")
+     router.push("/toure/booking")
    
   };
   return (
     <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
       <div className="text-center border-b border-grayColor1/20 pb-3">
         <h2 className="text-2xl lg:text-[32px] font-bold text-headerColor leading-[150%]">
-          Book Your Flat
+          Book Your Package
         </h2>
         <p className="text-sm text-grayColor1 mt-2">
-          Reserve your ideal room early for a hassle-free trip; secure comfort
-          and convenience!
+          Enhance your travel experience by customizing your tour package with exclusive add-ons.
         </p>
       </div>
 
@@ -54,10 +72,26 @@ const router = useRouter()
           <h5 className="text-2xl lg:text-[32px] font-semibold text-headerColor">
             ${price}
           </h5>
-          <span className="text-sm text-headerColor">/per night</span>
+          <span className="text-sm text-headerColor">/per person</span>
         </div>
       </div>
-
+      <div>
+        <div className="flex gap-2 items-center">
+          <span className="text-headerColor text-sm">{rating}</span>
+          <div className="flex gap-1">
+            <Rating rating={rating} />
+          </div>
+        </div>
+        
+      </div>
+        <div>
+          <p className="text-grayColor1 text-base"><span className="text-headerColor font-medium">{totalDay} Nights</span> in {location} Tour Package</p>
+            <div className="flex mt-1 items-center gap-2 text-base text-[#0068EF] ">
+          Cancellation Policy{" "}
+          <span className="text-sm text-gray-400">({cancellation})</span>
+        </div>
+        </div>
+        
       {/* Start Date */}
       <div
         className="flex cursor-pointer items-center justify-between border border-secondaryColor rounded-md p-2"
@@ -107,44 +141,19 @@ const router = useRouter()
         />
         <LucideCalendarDays className="text-secondaryColor" />
       </div>
-      <div>
-        <div className="flex gap-2 items-center">
-          <span className="text-headerColor text-sm">{rating}</span>
-          <div className="flex gap-1">
-            <Rating rating={rating} />
-          </div>
-        </div>
-        <div className="flex mt-1 items-center gap-2 text-sm text-[#0068EF] ">
-          Cancellation Policy{" "}
-          <span className="text-xs text-gray-400">({cancellation})</span>
-        </div>
-      </div>
 
-      {/* Extra Services */}
-      <div className="mt-3">
-        <h3 className="text-lg font-semibold text-gray-700">Extra Services</h3>
-        <div className="space-y-[10px] mt-3">
-          {Object.keys(selectedServices).map((service) => (
-            <label
-              key={service}
-              className="flex items-center gap-3 cursor-pointer rounded-md transition"
-            >
-              <input
-                type="checkbox"
-                checked={selectedServices[service]}
-                onChange={() => handleServiceChange(service)}
-                className="peer hidden"
-              />
-              <div className="h-4 w-4 flex items-center justify-center border-1 border-gray-300 rounded-xs peer-checked:bg-green-600 peer-checked:border-green-600 transition-all">
-                {selectedServices[service] && (
-                  <MdDone className="text-white text-sm" />
-                )}
-              </div>
-              <span className="text-base text-gray-700">{service}</span>
-            </label>
-          ))}
-        </div>
+      <div className=" flex justify-between text-sm py-2 px-4 rounded-md border border-secondaryColor">
+            <span className=" text-grayColor1">Add your traveler</span>
+            <div className=" flex items-center  gap-3">
+            <button onClick={()=>setTravelCount((prev)=>prev ==0 ? 0 :prev - 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiMinus /></button> 
+            <p>{travelCount}</p>
+<button onClick={()=>setTravelCount((prev)=>prev + 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiPlus /></button> 
+            </div>
+            
       </div>
+      
+
+    
 
       {/* Pricing Summary */}
       <div className="mt-6 bg-secondaryColor/10 rounded-lg p-4">
@@ -153,58 +162,27 @@ const router = useRouter()
         </h3>
         <div className="mt-5 text-base space-y-2">
           <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
-            <span>
-              {startDate && endDate
-                ? (endDate - startDate) / (1000 * 3600 * 24)
-                : 0}{" "}
-              Days Stay
+            <span className=" items-center gap-1 flex">
+              Package 1 <X size={16}/> {travelCount}
             </span>
             <span>
-              ${Number(price) * ((endDate - startDate) / (1000 * 3600 * 24))}
+              ${travelprice}
             </span>
           </div>
-          <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
-            <span>Car Rental</span>
-            <span>${carRent}</span>
+          <div className="flex justify-between text-base text-descriptionColor border-b border-grayColor1/20 py-2">
+            <span className=" text-descriptionColor">{discountNumber}% campaign discount</span>
+            <span>- ${discount}</span>
           </div>
-          <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
-            <span>Buffet Dinner</span>
-            <span>${dinnerPrice}</span>
+          
+          <div className="flex text-descriptionColor justify-between text-base border-b border-grayColor1/20 py-2">
+            <span className=" ">Service fee</span>
+            <span> ${servicefee}</span>
           </div>
-          {selectedServices.dailyHousekeeping && (
-            <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
-              <span>Daily housekeeping</span>
-              <span>${servicePrices.dailyHousekeeping}</span>
-            </div>
-          )}
-          {selectedServices.breakfast && (
-            <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
-              <span>Breakfast included</span>
-              <span>${servicePrices.breakfast}</span>
-            </div>
-          )}
-          {selectedServices.groceryDelivery && (
-            <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
-              <span>Grocery delivery</span>
-              <span>${servicePrices.groceryDelivery}</span>
-            </div>
-          )}
-          {selectedServices.chauffeur && (
-            <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
-              <span>Chauffeur-driven car</span>
-              <span>${servicePrices.chauffeur}</span>
-            </div>
-          )}
-          {selectedServices.groceryDelivery && (
-            <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
-              <span>Full apartment cleaning</span>
-              <span>${servicePrices.fullCleaning}</span>
-            </div>
-          )}
+          
         </div>
-        <div className="flex justify-between mt-4 text-base">
+        <div className="flex justify-between mt-4 font-medium text-base">
           <span>Total</span>
-          <span>${calculateTotal()}</span>
+          <span>${calculateTotal() -discount}</span>
         </div>
       </div>
 

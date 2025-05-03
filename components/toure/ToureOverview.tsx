@@ -1,5 +1,5 @@
 
-function Overview() {
+function ToureOverview() {
   return (
     <div className="mb-8">
       <h3 className="text-2xl lg:text-[32px] font-medium text-blackColor leading-[126%]">
@@ -23,4 +23,4 @@ function Overview() {
   );
 }
 
-export default Overview;
+export default ToureOverview;

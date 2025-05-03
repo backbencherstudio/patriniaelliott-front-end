@@ -1,7 +1,7 @@
-import { PoliciesData } from "@/DemoAPI/Policies"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 
-function PolicyDetails() {
+import { TourPolicyData } from "@/DemoAPI/TourPolicyData"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
+function TourPolices() {
   return (
     <div>
       <h1 className=' text-2xl lg:text-[32px] font-medium text-blackColor'>Policies</h1>
@@ -14,7 +14,7 @@ function PolicyDetails() {
           
             className=" space-y-2 "
           >
-            {PoliciesData.map((item) => (
+            {TourPolicyData.map((item) => (
               <AccordionItem
                 key={item.id}
                value={item.id}
@@ -43,4 +43,4 @@ function PolicyDetails() {
   )
 }
 
-export default PolicyDetails
+export default TourPolices
