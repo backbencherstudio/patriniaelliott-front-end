@@ -158,3 +158,19 @@
 input:checked ~ .checkmark {
   background-color: var(--color-green-600);
 }
+
+.close .\[\&_svg\]\:pointer-events-none {
+  opacity: 1;
+  cursor: pointer;
+}
+.close .\[\&_svg\]\:pointer-events-none svg {
+  pointer-events: none;
+  background-color: var(--secondaryColor);
+  width: 25px;
+  height: 25px;
+  padding: 4px;
+  stroke: #000 !important;
+  cursor: pointer;
+
+  border-radius: 50%;
+}

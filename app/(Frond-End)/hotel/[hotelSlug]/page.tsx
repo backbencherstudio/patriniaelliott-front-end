@@ -8,7 +8,6 @@ import ReviewSection from "@/components/apartment/ReviewSection";
 import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
 import ApartmentDettailsPageCard from "@/components/card/ApartmentDettailsPageCard";
 import AvailabilitySearchBox from "@/components/filter/AvailabilitySearchBox";
-import { accommodationsData } from "@/DemoAPI/accommodationsData";
 import { hotelData } from "@/DemoAPI/hotelData";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
@@ -18,24 +17,24 @@ async function HotelDetailsPage(props: {
 }) {
   const params = await props.params;
   const { hotelSlug } = params;
-  const singleApartment: any = hotelData.find(
+  const singleHotel: any = hotelData.find(
     (item: any) => item?.hotelSlug == hotelSlug
   );
 
-  const { title, reviews, price, rating, image, location } = singleApartment;
+  const { title, reviews, price, rating, image, location } = singleHotel;
   return (
     <div>
       <div className=" container">
         <div className="py-10">
           <span className="flex items-center gap-2 ">
             {" "}
-            Home <ChevronRight className="w-4 h-4 text-[#737373]" /> Apartment{" "}
-            <ChevronRight className="w-4 h-4 text-[#737373]" /> Apartment
+            Home <ChevronRight className="w-4 h-4 text-[#737373]" /> Hotel{" "}
+            <ChevronRight className="w-4 h-4 text-[#737373]" /> Hotel
             details
           </span>
         </div>
         <div>
-          <ApartmentHeader singleApartment={singleApartment} />
+          <ApartmentHeader singleApartment={singleHotel} />
         </div>
         <div className="lg:grid grid-cols-6 gap-6">
           <div className=" col-span-4 h-auto lg:h-[536px] rounded-2xl overflow-hidden">
@@ -109,7 +108,7 @@ async function HotelDetailsPage(props: {
             <ApatmentTabs />
           </div>
           <div className=" col-span-2">
-            <BookingForm singleApartment={singleApartment} />
+            <BookingForm singleApartments={singleHotel} />
           </div>
         </div>
       </div>
@@ -118,7 +117,7 @@ async function HotelDetailsPage(props: {
           <AvailabilitySearchBox />
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
-          {accommodationsData.map((tour: any, index) => (
+          {hotelData.map((tour: any, index) => (
             <div key={tour.title}>
               <ApartmentDettailsPageCard data={tour} />
             </div>

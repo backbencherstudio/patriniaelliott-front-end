@@ -41,7 +41,7 @@ function Page() {
             </TabsList>
 
             <TabsContent value="step1">
-              <StepOne />
+              <StepOne  />
             </TabsContent>
             <TabsContent value="step2">
               <StepTwo />
@@ -50,7 +50,7 @@ function Page() {
         </div>
 
         <div className="col-span-5">
-          <BookingSummary />
+          <BookingSummary activeTab={activeTab} setActiveTab={setActiveTab}/>
         </div>
       </div>
     </div>

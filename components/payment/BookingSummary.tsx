@@ -4,7 +4,7 @@ import { LucideCalendarDays } from "lucide-react";
 import Image from "next/image";
 import { FaArrowRightLong, FaStar } from "react-icons/fa6";
 
-const BookingSummary = () => {
+const BookingSummary = ({activeTab,setActiveTab}:any) => {
   const {
     singleApartment,
     selectedServices,
@@ -16,14 +16,15 @@ const BookingSummary = () => {
     totalPrice,
     totalDay,
     calculateTotal,
+    discount,
+    discountNumber
   } = useBookingContext();
   console.log(singleApartment);
-console.log(totalPrice);
+
  if (!singleApartment) return null;
-  let discountNumber = 10
-  let persentage = discountNumber/100
+
   const { title, reviews, price, rating, image } = singleApartment;
-const discount =(totalPrice * persentage).toFixed(2)
+
   return (
    
     <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
@@ -217,9 +218,12 @@ const discount =(totalPrice * persentage).toFixed(2)
         </div>
       </div>
       {/* Proceed Button */}
-      <button className="w-full mt-4 bg-secondaryColor cursor-pointer text-headerColor font-medium  py-4 px-4 rounded-full text-base">
+      {
+        activeTab !=="step2" &&<button onClick={()=>setActiveTab("step2")} className="w-full mt-4 bg-secondaryColor cursor-pointer text-headerColor font-medium  py-4 px-4 rounded-full text-base">
         Proceed To Payments
       </button>
+      }
+      
         </div>
     }
      

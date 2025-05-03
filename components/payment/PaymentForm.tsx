@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import BookingConfirm from "./BookingConfirm";
 // Zod schema
 const paymentFormSchema = z.object({
   paymentMethod: z.enum(["card", "other"]),
@@ -49,7 +50,9 @@ export default function PaymentForm() {
     "card"
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+ const [isOpen , setIsOpen]=useState(false)
 
+ 
   const form = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentFormSchema),
     defaultValues: {
@@ -67,6 +70,7 @@ export default function PaymentForm() {
     console.log("Form submitted:", data);
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsSubmitting(false);
+    setIsOpen(true)
   };
 
   const handlePaymentMethodChange = (value: "card" | "other") => {
@@ -269,11 +273,13 @@ export default function PaymentForm() {
 
         <button
           type="submit"
+     
           className="w-full h-12 text-base bg-secondaryColor cursor-pointer text-headerColor font-semibold rounded-full"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Processing..." : "Pay Now"}
         </button>
+
       </form>
 
       {/* Note */}
@@ -285,6 +291,8 @@ export default function PaymentForm() {
         </div>
       Cancellations must be made at least 24 hours before check-in to be eligible for a refund; cancellations after this deadline may result in a partial refund or no refund, depending on the provider’s policy.
       </div>
+
+      {isOpen && <BookingConfirm isOpen={isOpen} setIsOpen={setIsOpen}/>}
     </div>
   );
 }
