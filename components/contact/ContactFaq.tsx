@@ -3,7 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '..
 
 function ContactFaq() {
   return (
-    <div className=' py-14 lg:py-20 '>
+    <div className=' py-12 lg:py-20 '>
        <div className='max-w-5xl mx-auto'>
         <div>
            <h2 className=' text-3xl lg:text-5xl font-medium text-headerColor text-center mb-10'>Frequently Asked Questions</h2>
@@ -28,7 +28,7 @@ function ContactFaq() {
                   </h4>
                  
                 </AccordionTrigger>
-                <AccordionContent className="text-base pr-8 text-grayColor1  bg-whiteColor ">
+                <AccordionContent className="md:text-base text-sm md:pr-8 text-grayColor1  ">
                  <p>{item.answer}</p>
                 </AccordionContent>
               </AccordionItem>

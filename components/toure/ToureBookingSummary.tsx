@@ -50,13 +50,13 @@ const ToureBookingSummary = ({activeTab,setActiveTab}:any) => {
         </div>
 
         <div className=" w-[60%]">
-          <p className="text-[40px] font-bold text-black">
+          <p className="text-4xl xl:text-[40px] font-bold text-black">
             ${price || 0}
             <span className="text-lg font-medium text-descriptionColor">
               /per night
             </span>
           </p>
-          <h3 className="font-medium text-lg mt-1 text-black">{ title ? title : ""}</h3>
+          <h3 className="font-medium text-base xl:text-lg mt-1 text-black">{ title ? title : ""}</h3>
           <div className="flex gap-2 mt-2">
             <p className="text-grayColor1 text-sm"><span className="text-headerColor font-medium">{totalDay} Nights</span> in {location} Tour Package</p>
           </div>

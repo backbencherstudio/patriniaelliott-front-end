@@ -46,7 +46,7 @@ async function HotelDetailsPage(props: {
               className=" w-full h-full object-cover"
             />
           </div>
-          <div className="  col-span-2 flex  lg:flex-col gap-3 mt-3 lg:mt-0 lg:gap-6 mb-20">
+          <div className="  col-span-2 flex  lg:flex-col gap-3 mt-3 lg:mt-0 lg:gap-6 mb-12 md:mb-14 lg:mb-20">
             <div className=" lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
                 src={image}
@@ -103,7 +103,7 @@ async function HotelDetailsPage(props: {
             </div>
           </div>
         </div>
-        <div className="lg:grid grid-cols-6 gap-8 pb-20">
+        <div className="lg:grid grid-cols-6 gap-8 pb-12 md:pb-14 lg:pb-20">
           <div className=" col-span-4 ">
             <ApatmentTabs />
           </div>
@@ -112,7 +112,7 @@ async function HotelDetailsPage(props: {
           </div>
         </div>
       </div>
-      <div className=" bg-bgColor relative mt-15 py-20">
+      <div className=" bg-bgColor relative lg:mt-15 py-12 lg:py-20">
         <div className="hidden md:block container absolute left-1/2 -translate-1/2 -top-2">
           <AvailabilitySearchBox />
         </div>

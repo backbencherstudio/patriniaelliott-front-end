@@ -55,7 +55,7 @@ export default function ContactForm() {
     setValue("topic", value)
   }
   return (
-     <div className="w-full bg-whiteColor p-8">
+     <div className="w-full bg-whiteColor p-4 py-6 rounded-sm lg:p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
               <label htmlFor="fullName" className="block text-base font-medium mb-1">
