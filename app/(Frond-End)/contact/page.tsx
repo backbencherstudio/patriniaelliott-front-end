@@ -22,7 +22,7 @@ function ContactPage() {
         </div>
       </div>
 
-      <div className=" bg-bgColor py-14 lg:py-20">
+      <div className=" bg-bgColor py-10 lg:py-20">
         <div className="  md:grid grid-cols-12 container ">
           <div className=" col-span-1"></div>
           <div className=" col-span-4">
@@ -35,7 +35,7 @@ function ContactPage() {
         </div>
       </div>
 
-      <div>
+      <div className="px-4 xl:px-0">
         <ContactFaq/>
       </div>
     </div>

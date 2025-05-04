@@ -21,7 +21,7 @@ function TourePage() {
   );
 
   return (
-    <div>
+    <div className="pb-10 lg:pb-20">
       <div className=" items-center mb-4">
         <h4 className="text-2xl font-semibold text-headerColor">
            Tour packages found: {toursData.length} available packages

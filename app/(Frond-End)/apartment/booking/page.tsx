@@ -12,16 +12,16 @@ function Page() {
       console.log(activeTab);
       
   return (
-    <div className="py-20">
+    <div className="py-12 lg:py-20">
       <div className="container grid grid-cols-12 gap-7">
         <div className="col-span-12">
-          <span className="flex items-center text-grayColor1 gap-2">
+          <span className="flex flex-wrap items-center text-grayColor1 gap-2">
             Home <ChevronRight className="w-4 h-4 text-[#737373]" /> Apartment{" "}
             <ChevronRight className="w-4 h-4 text-[#737373]" /> Apartment
             details <ChevronRight className="w-4 h-4 text-[#737373]" /> <span className=" text-headerColor">Booking</span> 
           </span>
         </div>
-        <div className="col-span-7">
+        <div className="col-span-12 lg:col-span-7">
           <Tabs value={activeTab} onValueChange={setActiveTab} className=" ">
             <TabsList className="flex gap-3 lg:space-x-2 border-b border-grayColor1/20 rounded-none   bg-whiteColor shadow-none pb-3 max-w-[250px] ">
               <TabsTrigger
@@ -49,7 +49,7 @@ function Page() {
           </Tabs>
         </div>
 
-        <div className="col-span-5">
+        <div className="col-span-12 lg:col-span-5">
           <BookingSummary activeTab={activeTab} setActiveTab={setActiveTab}/>
         </div>
       </div>

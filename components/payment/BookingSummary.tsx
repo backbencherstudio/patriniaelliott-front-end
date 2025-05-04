@@ -32,7 +32,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
         !singleApartment ? "Apartment data not available."  :
         <div>
              {/* Apartment Header */}
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col  md:flex-row items-center md:items-start gap-4">
         <div className=" w-[180px] h-[163px]">
           <img
             src={image.src || "/apartment.jpg"}
@@ -44,13 +44,13 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
         </div>
 
         <div>
-          <p className="text-[40px] font-bold text-black">
+          <p className="text-[40px] lg:text-3xl xl:text-[40px] font-bold text-black">
             ${price || 0}
             <span className="text-lg font-medium text-descriptionColor">
               /per night
             </span>
           </p>
-          <h3 className="font-medium text-xl mt-1 text-black">{ title ? title : ""}</h3>
+          <h3 className="font-medium text-xl lg:text-lg xl:text-xl mt-1 text-black">{ title ? title : ""}</h3>
           <div className="flex gap-2 mt-2">
             <Image
               src="/profile.png"
@@ -78,7 +78,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
       <div className=" mt-6  border-b py-4 ">
         <div className="flex w-[80%]  text-xs text-black">
           <div>
-            <div className="flex gap-2 text-sm font-semibold pr-10 border-r border-grayColor1/20">
+            <div className="flex gap-2 text-sm font-semibold pr-5 lg:pr-10 border-r border-grayColor1/20">
               <LucideCalendarDays className="w-6 h-6 text-secondaryColor mt-2" />
               <div>
                 <p className="text-sm text-descriptionColor"> Check-in</p>

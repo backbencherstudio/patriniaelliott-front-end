@@ -5,7 +5,7 @@ import { FaStar } from "react-icons/fa6";
 
 const ProfileCard = () => {
   return (
-    <div className="bg-[#D6AE29]/8 border border-secondaryColor rounded-lg p-6 ">
+    <div className="bg-[#D6AE29]/8 border border-secondaryColor rounded-lg p-6 lg:p-4 lg:py-6 xl:p-6 ">
       <div className="flex items-center space-x-4">
         <img
           src="/profile.png"
@@ -45,19 +45,19 @@ const ProfileCard = () => {
           NID, Phone & Email Verified
         </h1>
       </div>
-      <div className=" py-3 bg-[#F7EFD4] px-8 flex justify-between text-sm text-descriptionColor rounded-2xl">
-        <div className=" flex gap-2">
+      <div className=" py-3 bg-[#F7EFD4] lg:px-2 xl:px-8 flex justify-between text-sm text-descriptionColor rounded-2xl">
+        <div className=" items-center flex gap-2">
           <Image
             src="/icon/proparty.svg"
             alt="checkicon"
             width={20}
             height={20}
           />
-          <h5 className="">3 Properties</h5>
+          <h5 className="text-base lg:text-xs xl:text-base">3 Properties</h5>
         </div>
-        <div className=" flex gap-2">
+        <div className="items-center flex gap-2">
           <Image src="/icon/house.svg" alt="checkicon" width={22} height={20} />
-          <h5 className="">Served Guests: 248</h5>
+          <h5 className="text-base lg:text-xs xl:text-base">Served Guests: 248</h5>
         </div>
       </div>
       <button className="w-full cursor-pointer bg-secondaryColor text-headerColor my-6 py-3 font-medium rounded-lg">

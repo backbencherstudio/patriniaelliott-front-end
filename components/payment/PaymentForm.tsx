@@ -105,9 +105,9 @@ export default function PaymentForm() {
   return (
     <div className="w-full   space-y-8">
       {/* Header */}
-      <div className="space-y-8">
+      <div className="space-y-4 lg:space-y-8">
         <h2 className="text-2xl lg:text-5xl font-medium text-headerColor">Payment Method</h2>
-        <p className="text-2xl text-headerColor font-medium leading-[150%]">Select a payment method</p>
+        <p className="lg:text-2xl text-xl text-headerColor font-medium leading-[150%]">Select a payment method</p>
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -121,12 +121,12 @@ export default function PaymentForm() {
         >
           {/* Card Method */}
           <div className="">
-            <div className=" flex justify-between items-center">
+            <div className=" flex flex-col lg:flex-row justify-between gap-3 lg:gap-0 lg:items-center">
               <div className="flex items-center gap-2">
                 <RadioGroupItem value="card" id="card" className="" />
                 <Label
                   htmlFor="card"
-                  className="flex text-xl items-center gap-2 font-medium text-headerColor"
+                  className="flex text-lg lg:text-xl items-center gap-2 font-medium text-headerColor"
                 >
                   Debit/Credit Card
                 </Label>
@@ -234,7 +234,7 @@ export default function PaymentForm() {
  <div className=" flex items-start gap-2">
             <RadioGroupItem value="other" id="other" className="  mt-1.5" />
             <div className="flex-1">
-              <Label htmlFor="other" className="font-medium text-headerColor text-xl">
+              <Label htmlFor="other" className="font-medium text-headerColor text-lg lg:text-xl">
                 Other Payment Methods
               </Label>
              
