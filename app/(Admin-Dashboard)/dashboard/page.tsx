@@ -1,10 +1,9 @@
+import DashboardPage from '../component/dashboard/dashboard';
 
-function DashBoardPage() {
+export default function Page() {
   return (
     <div>
-      <h1>DashBoard</h1>
+      <DashboardPage />
     </div>
-  )
+  );
 }
-
-export default DashBoardPage
