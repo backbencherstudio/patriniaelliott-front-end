@@ -79,7 +79,7 @@ export default function MyProfile() {
             <label className="text-base">Gender</label>
             <div className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex justify-between items-center">
               <span className="text-gray-500">Female</span>
-              <Image src="/usericon/downarrow.svg" alt="Down Arrow" width={16} height={16} className="rotate-90" />
+              <Image src="/usericon/downarrow.svg" alt="Down Arrow" width={16} height={16} className="rotate-0" />
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -101,7 +101,7 @@ export default function MyProfile() {
             <label className="text-base">Country</label>
             <div className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex justify-between items-center">
               <span className="text-gray-500">United states</span>
-              <Image src="/usericon/downarrow.svg" alt="Down Arrow" width={16} height={16} className="rotate-90" />
+              <Image src="/usericon/downarrow.svg" alt="Down Arrow" width={16} height={16} className="rotate-0" />
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -174,7 +174,7 @@ export default function MyProfile() {
               <label className="text-base">Issuing country <span className="text-red-500">*</span></label>
               <div className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex justify-between items-center">
                 <span className="text-gray-500">Select issuing country</span>
-                <Image src="/usericon/downarrow.svg" alt="Down Arrow" width={16} height={16} className="rotate-90" />
+                <Image src="/usericon/downarrow.svg" alt="Down Arrow" width={16} height={16} className="rotate-0" />
               </div>
             </div>
             <div className="flex flex-col gap-2">
