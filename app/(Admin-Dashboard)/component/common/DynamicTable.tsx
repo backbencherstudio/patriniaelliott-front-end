@@ -6,7 +6,8 @@ import React from "react";
 
 
 interface ColumnConfig {
-  label: string;
+  label: React.ReactNode;
+ 
   accessor: string;
   formatter?: (value: any, row: any) => React.ReactNode;
 }
@@ -20,6 +21,7 @@ interface DynamicTableProps {
   onView?: (row: any) => void;
   onDelete?: (id: any) => void;
   noDataMessage?: string;
+  
 }
 
 export default function DynamicTableWithPagination({
