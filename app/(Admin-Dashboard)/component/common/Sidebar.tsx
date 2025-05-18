@@ -191,7 +191,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Log out section */}
         <div className="mt-auto pt-4">
           <Link
-            href="/logout"
+            href="/login"
             onClick={onClose}
             className="flex items-center gap-3 px-3 py-3 border border-grayColor1/20 rounded-lg transition-colors duration-200 hover:bg-gray-50"
           >
