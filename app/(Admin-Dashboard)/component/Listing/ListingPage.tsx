@@ -8,6 +8,7 @@ import { listingData } from "@/DemoAPI/ListingData";
 import BokingStatuse from "../booking/BokingStatuse";
 import BookingAction from "../booking/BookingAction";
 import ListingStatuse from "./ListingStatuse";
+import ListingAction from "./ListingAction";
 
 
 export default function ListingPage() {
@@ -47,7 +48,7 @@ export default function ListingPage() {
     {
       label: "Action",
       accessor: "status",
-      formatter: (_, row) => <BookingAction onView={handleViewDetails} status={row} />,
+      formatter: (_, row) => <ListingAction onView={handleViewDetails} data={row} />,
     },
   ];
   
