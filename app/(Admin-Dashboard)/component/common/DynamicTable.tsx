@@ -57,7 +57,7 @@ export default function DynamicTableWithPagination({
   return (
     <div>
     
-      <div className="overflow-x-auto xl:overflow-x-hidden">
+      <div className="overflow-x-auto  xl:overflow-x-hidden">
         <table className="min-w-[1000px] w-full text-left">
           <thead className="bg-neutral-50">
             <tr>
@@ -87,7 +87,7 @@ export default function DynamicTableWithPagination({
                           className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
                           onClick={() => onView(row)}
                         >
-                          View
+                          View details
                         </span>
                       )}
                       {onDelete && (
