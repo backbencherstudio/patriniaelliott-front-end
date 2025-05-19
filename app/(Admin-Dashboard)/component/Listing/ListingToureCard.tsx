@@ -21,7 +21,7 @@ const ListingToureCard = ({
   return (
     <Dialog open={open} onOpenChange={setIsModalOpen}>
      
-      <DialogContent className="w-full overflow-y-auto max-h-[90vh] max-w-[320px] lg:max-w-[936px] xl:max-w-[1070px] p-4 md:p-6  rounded-xl bg-white"
+      <DialogContent className="w-full overflow-y-auto  max-h-[90vh] max-w-[320px] lg:max-w-[936px] xl:max-w-[1070px] p-4 md:p-6  rounded-xl bg-white"
  >
      <div>
       <h2 className="text-[20px] md:text-[24px] lg:text-[28px] text-[#070707] font-medium leading-[126%] tracking-[-0.84px] font-inter">{data?.type} details</h2>
