@@ -19,11 +19,11 @@ interface SidebarProps {
 }
 
 const navItems: NavItem[] = [
-  { icon: '/usericon/profile.svg', label: 'My Profile', href: '/my-account', isActive: true },
-  { icon: '/usericon/changepass.svg', label: 'Change Password', href: '/change-password' },
-  { icon: '/usericon/payment.svg', label: 'Add Payment Card', href: '/payment' },
-  { icon: '/usericon/delete.svg', label: 'Delete Account', href: '/delete-account' },
-  { icon: '/usericon/setting.svg', label: 'Settings', href: '/settings' },
+  { icon: '/usericon/profile.svg', label: 'Add Profile Information', href: '/profile-info', isActive: true },
+  { icon: '/usericon/changepass.svg', label: 'Vendor Verification', href: '/vendor-verification' },
+  { icon: '/usericon/payment.svg', label: 'Payment Method', href: '/payment-method' },
+  { icon: '/usericon/delete.svg', label: 'Transection History', href: '/transection-history' },
+  { icon: '/usericon/delete.svg', label: 'Withdraw Balance', href: '/withdraw-balance' },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
