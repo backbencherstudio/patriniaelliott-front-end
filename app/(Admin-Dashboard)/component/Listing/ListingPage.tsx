@@ -5,19 +5,19 @@ import DynamicTableWithPagination from "../common/DynamicTable";
 
 
 import { listingData } from "@/DemoAPI/ListingData";
-import BokingStatuse from "../booking/BokingStatuse";
-import BookingAction from "../booking/BookingAction";
-import ListingStatuse from "./ListingStatuse";
 import ListingAction from "./ListingAction";
+import ListingPropartyCard from "./ListingPropartyCard";
+import ListingStatuse from "./ListingStatuse";
+import ListingToureCard from "./ListingToureCard";
 
 
 export default function ListingPage() {
  
 
   const [isModalOpen, setIsModalOpen] = React.useState<any>(false);
-  const [selectedUser, setSelectedUser] = React.useState<any | null>(null);
+  const [selectedData, setSelectedData] = React.useState<any | null>(null);
   const [selectedRole, setSelectedRole] = React.useState<
-   "All" | "Hotel" | "Appartment" | "Tour"
+   "All" | "Hotel" | "Apartment" | "Tour"
   >("All");
   const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
     "all"
@@ -25,7 +25,7 @@ export default function ListingPage() {
   const [currentPage, setCurrentPage] = useState(1);
   
   const handleViewDetails = (user: any) => {
-    setSelectedUser(user);
+    setSelectedData(user);
     setIsModalOpen(true);
   };
 
@@ -52,6 +52,7 @@ export default function ListingPage() {
     },
   ];
   
+  console.log(selectedData);
   
 
   const filteredUsers = listingData.filter((user) => {
@@ -83,11 +84,11 @@ export default function ListingPage() {
         <div className="md:flex justify-between items-center gap-2 md:gap-4 mb-4">
           {/* Role Filters */}
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">
-            {["All", "Hotel", "Appartment", "Tour"].map((role) => (
+            {["All", "Hotel", "Apartment", "Tour"].map((role) => (
               <button
                 key={role}
                 onClick={() =>
-                  setSelectedRole(role as "All" | "Hotel" | "Appartment" | "Tour")
+                  setSelectedRole(role as "All" | "Hotel" | "Apartment" | "Tour")
                 }
                 className={`md:px-4 px-1 cursor-pointer text-sm md:text-base py-2 ${
                   selectedRole === role
@@ -95,7 +96,8 @@ export default function ListingPage() {
                     : "border-b text-[#777980]"
                 }`}
               >
-                {role === "All" ? "All users" : role}
+                {role === "All" ? "All property"  : role }
+               
               </button>
             ))}
           </div>
@@ -141,7 +143,22 @@ export default function ListingPage() {
         </div>
       </div>
       <div>
-    {/* {isModalOpen && <BookingCard  open={isModalOpen} data={selectedUser} setIsModalOpen={setIsModalOpen}/>} */}
+      {isModalOpen && selectedData && 
+  (selectedData.type === "Apartment" || selectedData.type === "Hotel") && (
+    <ListingPropartyCard
+      open={isModalOpen}
+      data={selectedData}
+      setIsModalOpen={setIsModalOpen}
+    />
+)}
+      {isModalOpen && selectedData && 
+  (selectedData.type === "Tour") && (
+    <ListingToureCard
+      open={isModalOpen}
+      data={selectedData}
+      setIsModalOpen={setIsModalOpen}
+    />
+)}
   </div>
     </div>
   );
