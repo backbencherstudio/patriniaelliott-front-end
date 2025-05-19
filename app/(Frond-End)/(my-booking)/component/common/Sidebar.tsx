@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import React from 'react';
-import { IoIosArrowForward } from 'react-icons/io';
+import Image from 'next/image'; 
+import Link from 'next/link'; 
+import { usePathname } from 'next/navigation'; 
+import React from 'react'; 
+import { IoIosArrowForward } from 'react-icons/io'; 
 
 interface NavItem {
   icon: string;
@@ -19,10 +19,10 @@ interface SidebarProps {
 }
 
 const navItems: NavItem[] = [
-  { icon: '/usericon/profile.svg', label: 'Apartment history', href: '/apartment-history', isActive: true },
-  { icon: '/usericon/changepass.svg', label: 'Hotel history', href: '/hotel-history' },
-  { icon: '/usericon/payment.svg', label: 'Tour history', href: '/tour-history' },
-  { icon: '/usericon/delete.svg', label: 'Refund history', href: '/refund-history' },
+  { icon: '/booking/apartment.svg', label: 'Apartment History', href: '/apartment-history', isActive: true },
+  { icon: '/booking/hotel.svg', label: 'Hotel History', href: '/hotel-history' },
+  { icon: '/booking/tour.svg', label: 'Tour History', href: '/tour-history' },
+  { icon: '/booking/refund.svg', label: 'Refund History', href: '/refund-history' },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
@@ -44,24 +44,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         flex flex-col
         min-h-[calc(100vh-100px)] 
         bg-white 
-        border border-[#E2E8F0] shadow-[0px_-0.3px_5.5px_0px_rgba(0,0,0,0.02)]
+        border border-[#E2E8F0] shadow-[0px_-0.3px_5.5px_0px_rgba(0,0,0,0.02)] 
         lg:rounded-[12px] p-5 w-full 
-      `}>
-        {/* Account Section */}
-        <div className="mb-4">
-          <h2 className="text-sm font-normal text-gray-500 mb-2">Account</h2>
-          <nav className="flex flex-col gap-1">
-            {navItems.slice(0, 5).map((item, idx) => (
-              <Link
-                key={idx}
-                href={item.href}
-                onClick={onClose}
-                className={`
+      `}> 
+        {/* Account Section */} 
+        <div className="mb-4"> 
+          <h2 className="text-sm font-normal text-gray-500 mb-2">Account</h2> 
+          <nav className="flex flex-col gap-1"> 
+            {navItems.slice(0, 5).map((item, idx) => ( 
+              <Link 
+                key={idx} 
+                href={item.href} 
+                onClick={onClose} 
+                className={` 
                   flex items-center justify-between gap-3 px-3 py-2.5  rounded-lg 
                   transition-colors duration-200 
-                  ${item.href === pathname ? 'bg-[#FFF7E7]' : 'hover:bg-[#FFF7E7]'}
-                `}
-              >
+                  ${item.href === pathname ? 'bg-[#FFF7E7]' : 'hover:bg-[#FFF7E7]'} 
+                `} 
+              > 
                 <div className='flex gap-3 items-center'>
  <div className={`w-[30px] flex justify-center items-center   h-[30px] flex-shrink-0 rounded-full ${item.href === pathname ? 'bg-whiteColor' : 'bg-[#FFFBEE]'}  shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]`}>
                   <Image src={item.icon} alt={item.label} width={20} height={20} />
