@@ -5,6 +5,7 @@ import DynamicTableWithPagination from "../common/DynamicTable";
 
 
 import { listingData } from "@/DemoAPI/ListingData";
+import EditPropertyDialog from "./EditPropertyDialog";
 import ListingAction from "./ListingAction";
 import ListingPropartyCard from "./ListingPropartyCard";
 import ListingStatuse from "./ListingStatuse";
@@ -15,6 +16,7 @@ export default function ListingPage() {
  
 
   const [isModalOpen, setIsModalOpen] = React.useState<any>(false);
+  const [isEdit, setIsEdit] = React.useState<any>(false);
   const [selectedData, setSelectedData] = React.useState<any | null>(null);
   const [selectedRole, setSelectedRole] = React.useState<
    "All" | "Hotel" | "Apartment" | "Tour"
@@ -27,6 +29,10 @@ export default function ListingPage() {
   const handleViewDetails = (user: any) => {
     setSelectedData(user);
     setIsModalOpen(true);
+  };
+  const handleEdite = (user: any) => {
+    setSelectedData(user);
+    setIsEdit(true);
   };
 
   const columns = [
@@ -48,7 +54,7 @@ export default function ListingPage() {
     {
       label: "Action",
       accessor: "status",
-      formatter: (_, row) => <ListingAction onView={handleViewDetails} data={row} />,
+      formatter: (_, row) => <ListingAction onEdit={handleEdite} onView={handleViewDetails} data={row} />,
     },
   ];
   
@@ -149,6 +155,14 @@ export default function ListingPage() {
       open={isModalOpen}
       data={selectedData}
       setIsModalOpen={setIsModalOpen}
+    />
+)}
+      {isEdit && selectedData && 
+  (selectedData.type === "Apartment" || selectedData.type === "Hotel") && (
+    <EditPropertyDialog
+      open={isEdit}
+      data={selectedData}
+      onOpenChange={setIsEdit}
     />
 )}
       {isModalOpen && selectedData && 
