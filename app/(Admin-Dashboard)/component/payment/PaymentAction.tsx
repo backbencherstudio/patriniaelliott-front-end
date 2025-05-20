@@ -1,7 +1,5 @@
 
-function PaymentAction({ status, onView }: any) {
-  
-
+function PaymentAction({ status, onView,onDelete }: any) {
 
   
     return (
@@ -37,7 +35,7 @@ function PaymentAction({ status, onView }: any) {
                 />
               </svg>
             </button>
-            <button className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]">
+            <button onClick={()=>onDelete(status)} className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="17"
