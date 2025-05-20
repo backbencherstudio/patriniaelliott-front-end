@@ -91,7 +91,6 @@ export default function ConfirmRefundDetails({
               </li>
             ))}
           </ol>
-
           <div className="pb-4  ">
           <h4 className="text-lg lg:text-xl pt-3 border-t border-black/10 font-semibold mb-2 text-headerColor">
            {data.type} Package Details

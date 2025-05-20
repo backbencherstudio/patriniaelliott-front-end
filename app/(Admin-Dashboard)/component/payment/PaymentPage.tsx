@@ -16,6 +16,7 @@ import ConfirmRefundDetails from "./ConfirmRefundDetails";
 import PaymentAction from "./PaymentAction";
 import PaymentStatCard from "./PaymentStateCard";
 import PaymentStatuse from "./PaymentStatus";
+import RefundConfirmation from "./RefundConfirmation";
 
 export default function PaymentPage() {
   const [isModalOpen, setIsModalOpen] = useState<any>(false);
@@ -155,6 +156,8 @@ export default function PaymentPage() {
     return roleMatch && dateMatch && paymentMatch;
   });
 
+  console.log("==========cancel",cancel ,selectedData);
+  
   return (
     <div className="flex flex-col gap-5">
       {/* Overview */}
@@ -264,7 +267,7 @@ export default function PaymentPage() {
               columns={Bookcolumns}
               data={filteredUsers}
               currentPage={currentPage}
-              itemsPerPage={10}
+              itemsPerPage={8}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
@@ -273,7 +276,7 @@ export default function PaymentPage() {
               columns={Refundcolumns}
               data={filteredUsers}
               currentPage={currentPage}
-              itemsPerPage={10}
+              itemsPerPage={8}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
@@ -301,6 +304,13 @@ export default function PaymentPage() {
               onOpenChange={setIsModalOpen}
             />
           )}
+      {cancel && selectedData &&
+            <RefundConfirmation
+              open={cancel}
+              data={selectedData}
+              onOpenChange={setCancel}
+            />
+        }
       </div>
     </div>
   );

@@ -117,7 +117,6 @@ export default function DynamicTableWithPagination({
           </tbody>
         </table>
       </div>
-
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-end mt-6 gap-2">
@@ -128,7 +127,6 @@ export default function DynamicTableWithPagination({
           >
             ❮
           </button>
-
           {getPagination().map((page, i) => (
             <button
               key={i}
@@ -141,7 +139,6 @@ export default function DynamicTableWithPagination({
               {page}
             </button>
           ))}
-
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
