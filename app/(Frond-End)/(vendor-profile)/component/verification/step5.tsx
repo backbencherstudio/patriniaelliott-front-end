@@ -1,7 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
 
-export default function Step5() {
+interface Step5Props {
+  onEdit: () => void;
+}
+
+export default function Step5({ onEdit }: Step5Props) {
   return (
     <div className="w-[960px] px-7 py-6 bg-white rounded-2xl outline-1 outline-offset-[-1px] outline-[#e9e9ea] flex flex-col gap-6">
       <div className="flex flex-col gap-4">
@@ -27,7 +31,10 @@ export default function Step5() {
             Need to update your verification details? You can edit and resubmit any section for review.
           </p>
         </div>
-        <button className="px-8 py-3 rounded-lg outline-1 outline-[#0068ef] text-[#0068ef] text-base font-medium">
+        <button 
+          onClick={onEdit}
+          className="px-8 py-3 rounded-lg border border-[#0068ef] flex items-center gap-1.5 text-[#0068ef] text-base font-medium cursor-pointer hover:bg-[#f5f8ff] transition-colors"
+        >
           Edit
         </button>
       </div>

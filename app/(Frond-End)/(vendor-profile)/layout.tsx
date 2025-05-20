@@ -15,12 +15,12 @@ const UserProfileLayout: React.FC<UserProfileLayoutProps> = ({ children }) => {
     const closeSidebar = () => setSidebarOpen(false);
 
     return (
-        <div className="bg-bgColor min-h-screen flex flex-col">
+        <div className="bg-bgColor min-h-screen flex flex-col py-12">
             {/* <div className="w-full sticky top-0 left-0">
                 <Header onMenuClick={openSidebar} sidebarOpen={sidebarOpen} />
             </div> */}
 
-            <div className="container flex-1 flex flex-col lg:flex-row">
+            <div className="container flex-1 flex flex-col lg:flex-row ">
                 <div
                     className={`
                         w-[312px]

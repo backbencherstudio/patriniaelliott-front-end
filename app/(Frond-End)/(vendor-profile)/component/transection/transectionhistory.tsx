@@ -1,54 +1,127 @@
-import React from 'react'
+'use client'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 
 const transactionData = [
   {
-    date: '30-06-24',
-    transactionId: 'TXN123456',
+    date: '15-05-25',
+    transactionId: 'TXN789001',
     type: 'Bookings',
-    amount: '$250',
+    amount: '$350',
     paymentMethod: 'Credit Card',
     status: 'Completed'
   },
   {
-    date: '16-08-24',
-    transactionId: 'TXN143129',
+    date: '14-05-25',
+    transactionId: 'TXN789002',
     type: 'Withdrawal',
-    amount: '-$900',
+    amount: '-$800',
     paymentMethod: 'PayPal',
+    status: 'Pending'
+  },
+  {
+    date: '12-05-25',
+    transactionId: 'TXN789003',
+    type: 'Bookings',
+    amount: '$275',
+    paymentMethod: 'Bank Transfer',
     status: 'Completed'
   },
   {
-    date: '20-09-24',
-    transactionId: 'TXN123116',
+    date: '10-05-25',
+    transactionId: 'TXN789004',
     type: 'Refund',
-    amount: '-$100',
+    amount: '-$150',
+    paymentMethod: 'Credit Card',
+    status: 'Failed'
+  },
+  {
+    date: '08-05-25',
+    transactionId: 'TXN789005',
+    type: 'Bookings',
+    amount: '$420',
     paymentMethod: 'Stripe',
     status: 'Completed'
   },
   {
-    date: '29-09-24',
-    transactionId: 'TXN123330',
-    type: 'Bookings',
-    amount: '$400',
+    date: '07-05-25',
+    transactionId: 'TXN789006',
+    type: 'Withdrawal',
+    amount: '-$600',
     paymentMethod: 'Bank Transfer',
     status: 'Completed'
   },
   {
-    date: '18-01-25',
-    transactionId: 'TXN123452',
+    date: '06-05-25',
+    transactionId: 'TXN789007',
     type: 'Bookings',
-    amount: '$700',
-    paymentMethod: 'Bank Transfer',
+    amount: '$550',
+    paymentMethod: 'Credit Card',
+    status: 'Completed'
+  },
+  {
+    date: '05-05-25',
+    transactionId: 'TXN789008',
+    type: 'Refund',
+    amount: '-$200',
+    paymentMethod: 'PayPal',
+    status: 'Completed'
+  },
+  {
+    date: '04-05-25',
+    transactionId: 'TXN789009',
+    type: 'Bookings',
+    amount: '$380',
+    paymentMethod: 'Stripe',
     status: 'Pending'
   },
   {
-    date: '29-01-25',
-    transactionId: 'TXN123154',
+    date: '03-05-25',
+    transactionId: 'TXN789010',
+    type: 'Bookings',
+    amount: '$290',
+    paymentMethod: 'Credit Card',
+    status: 'Completed'
+  },
+  {
+    date: '02-05-25',
+    transactionId: 'TXN789011',
     type: 'Withdrawal',
-    amount: '-$1,200',
+    amount: '-$750',
+    paymentMethod: 'Bank Transfer',
+    status: 'Completed'
+  },
+  {
+    date: '02-05-25',
+    transactionId: 'TXN789012',
+    type: 'Bookings',
+    amount: '$480',
     paymentMethod: 'PayPal',
+    status: 'Completed'
+  },
+  {
+    date: '01-05-25',
+    transactionId: 'TXN789013',
+    type: 'Refund',
+    amount: '-$175',
+    paymentMethod: 'Credit Card',
     status: 'Failed'
+  },
+  {
+    date: '01-05-25',
+    transactionId: 'TXN789014',
+    type: 'Bookings',
+    amount: '$320',
+    paymentMethod: 'Stripe',
+    status: 'Completed'
+  },
+  {
+    date: '01-05-25',
+    transactionId: 'TXN789015',
+    type: 'Bookings',
+    amount: '$395',
+    paymentMethod: 'Bank Transfer',
+    status: 'Completed'
   }
 ]
 
@@ -89,6 +162,67 @@ const StatusBadge = ({ status }: { status: string }) => {
 }
 
 export default function TransectionHistory() {
+  const [activeTab, setActiveTab] = useState('All transactions')
+  const [selectedDateRange, setSelectedDateRange] = useState('Last 30 days')
+  const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false)
+  
+  const tabs = ['All transactions', 'Bookings', 'Refunds']
+  const dateRanges = ['Last 30 days', 'Last 15 days', 'Last 7 days']
+
+  const getFilteredByDate = (transactions: typeof transactionData) => {
+    const today = new Date()
+    const days = selectedDateRange === 'Last 30 days' 
+      ? 30 
+      : selectedDateRange === 'Last 15 days' 
+      ? 15 
+      : 7
+
+    // Calculate the cutoff date
+    const cutoffDate = new Date(today)
+    cutoffDate.setDate(today.getDate() - days)
+
+    return transactions.filter(transaction => {
+      // Parse the date string (DD-MM-YY format)
+      const [day, month, year] = transaction.date.split('-').map(num => parseInt(num))
+      const transactionDate = new Date(2000 + year, month - 1, day)
+
+      // Compare if transaction date is after or equal to cutoff date
+      return transactionDate >= cutoffDate
+    })
+  }
+  
+  const filteredTransactions = getFilteredByDate(
+    transactionData.filter(transaction => {
+      switch (activeTab) {
+        case 'All transactions':
+          return true;
+        case 'Bookings':
+          return transaction.status === 'Completed';
+        case 'Refunds':
+          return transaction.status === 'Failed';
+        default:
+          return true;
+      }
+    })
+  )
+
+  // For debugging purposes, let's add a console log
+  useEffect(() => {
+    console.log('Selected Date Range:', selectedDateRange)
+    console.log('Filtered Transactions:', filteredTransactions)
+  }, [selectedDateRange, filteredTransactions])
+
+  const getTabStats = () => {
+    const stats = {
+      'All transactions': transactionData.length,
+      'Bookings': transactionData.filter(t => t.status === 'Completed').length,
+      'Refunds': transactionData.filter(t => t.status === 'Failed').length
+    }
+    return stats
+  }
+
+  const tabStats = getTabStats()
+
   return (
     <div className="flex flex-col gap-4">
       {/* Stats Section */}
@@ -101,8 +235,8 @@ export default function TransectionHistory() {
         </div>
 
         <div className="flex justify-between items-center">
-          <div className="w-[228px] p-6 bg-neutral-50 rounded-lg outline outline-1 outline-offset-[-1px] flex items-center gap-2.5">
-            <div className="w-9 h-9 p-[3px] bg-[#d6ae29] rounded-md outline outline-[1.12px] outline-offset-[-1.12px] flex items-center justify-center">
+          <div className="w-[228px] p-6 bg-neutral-50 rounded-lg outline-1 outline-offset-[-1px] flex items-center gap-2.5">
+            <div className="w-9 h-9 p-[3px] bg-[#d6ae29] rounded-md outline-[1.12px] outline-offset-[-1.12px] flex items-center justify-center">
               <Image src="/vendor/tik.svg" alt="Total Bookings" width={24} height={24} />
             </div>
             <div className="flex flex-col gap-2">
@@ -111,8 +245,8 @@ export default function TransectionHistory() {
             </div>
           </div>
 
-          <div className="w-[228px] p-6 bg-neutral-50 rounded-lg outline outline-1 outline-offset-[-1px] flex items-center gap-2.5">
-            <div className="w-9 h-9 p-[3px] bg-[#d6ae29] rounded-md outline outline-[1.12px] outline-offset-[-1.12px] flex items-center justify-center">
+          <div className="w-[228px] p-6 bg-neutral-50 rounded-lg outline-1 outline-offset-[-1px] flex items-center gap-2.5">
+            <div className="w-9 h-9 p-[3px] bg-[#d6ae29] rounded-md outline-[1.12px] outline-offset-[-1.12px] flex items-center justify-center">
               <Image src="/vendor/totalearn.svg" alt="Total Earnings" width={24} height={24} />
             </div>
             <div className="flex flex-col gap-2">
@@ -121,8 +255,8 @@ export default function TransectionHistory() {
             </div>
           </div>
 
-          <div className="w-[228px] p-6 bg-neutral-50 rounded-lg outline outline-1 outline-offset-[-1px] flex items-center gap-2.5">
-            <div className="w-9 h-9 p-[3px] bg-[#d6ae29] rounded-md outline outline-[1.12px] outline-offset-[-1.12px] flex items-center justify-center">
+          <div className="w-[228px] p-6 bg-neutral-50 rounded-lg outline-1 outline-offset-[-1px] flex items-center gap-2.5">
+            <div className="w-9 h-9 p-[3px] bg-[#d6ae29] rounded-md outline-[1.12px] outline-offset-[-1.12px] flex items-center justify-center">
               <Image src="/vendor/withdrawn.svg" alt="Withdrawn" width={24} height={24} />
             </div>
             <div className="flex flex-col gap-2">
@@ -131,8 +265,8 @@ export default function TransectionHistory() {
             </div>
           </div>
 
-          <div className="w-[228px] p-6 bg-neutral-50 rounded-lg outline outline-1 outline-offset-[-1px] flex items-center gap-2.5">
-            <div className="w-9 h-9 p-[3px] bg-[#d6ae29] rounded-md outline outline-[1.12px] outline-offset-[-1.12px] flex items-center justify-center">
+          <div className="w-[228px] p-6 bg-neutral-50 rounded-lg outline-1 outline-offset-[-1px] flex items-center gap-2.5">
+            <div className="w-9 h-9 p-[3px] bg-[#d6ae29] rounded-md outline-[1.12px] outline-offset-[-1.12px] flex items-center justify-center">
               <Image src="/vendor/refunds.svg" alt="Refunds" width={24} height={24} />
             </div>
             <div className="flex flex-col gap-2">
@@ -147,21 +281,53 @@ export default function TransectionHistory() {
       <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
         <div className="flex items-center gap-4">
           <div className="flex-1 flex">
-            <div className="px-4 py-2 border-b-2 border-[#d6ae29]">
-              <div className="text-[#070707] text-base">All transactions</div>
-            </div>
-            <div className="px-4 py-2 border-b border-[#f3f3f4]">
-              <div className="text-[#777980] text-base">Bookings</div>
-            </div>
-            <div className="px-4 py-2 border-b border-[#f3f3f4]">
-              <div className="text-[#777980] text-base">Refunds</div>
-            </div>
+            {tabs.map((tab) => (
+              <div
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 border-b ${
+                  activeTab === tab
+                    ? 'border-b-2 border-[#d6ae29]'
+                    : 'border-[#f3f3f4]'
+                } cursor-pointer`}
+              >
+                <div
+                  className={`text-base ${
+                    activeTab === tab ? 'text-[#070707]' : 'text-[#777980]'
+                  }`}
+                >
+                  {tab} ({tabStats[tab as keyof typeof tabStats]})
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="px-3 py-1.5 rounded outline outline-1 outline-[#0068ef] flex items-center gap-3">
-            <div className="text-[#0068ef] text-sm">Last 30 days</div>
-            <div className="w-3.5 h-3.5">
-              <Image src="/vendor/down.svg" alt="Dropdown" width={14} height={14} />
+          <div className="relative">
+            <div 
+              onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
+              className="px-3 py-1.5 rounded outline-1 outline-[#0068ef] flex items-center gap-3 cursor-pointer hover:bg-[#f5f5f5]"
+            >
+              <div className="text-[#0068ef] text-sm">{selectedDateRange}</div>
+              <div className="w-3.5 h-3.5">
+                <Image src="/vendor/down.svg" alt="Dropdown" width={14} height={14} />
+              </div>
             </div>
+            
+            {isDateDropdownOpen && (
+              <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
+                {dateRanges.map((range) => (
+                  <div
+                    key={range}
+                    onClick={() => {
+                      setSelectedDateRange(range)
+                      setIsDateDropdownOpen(false)
+                    }}
+                    className="px-4 py-2 hover:bg-[#f5f5f5] cursor-pointer text-sm text-[#4a4c56]"
+                  >
+                    {range}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -171,7 +337,7 @@ export default function TransectionHistory() {
             <div className="h-14 px-2 py-4 bg-neutral-50 rounded-tl-xl">
               <div className="text-[#4a4c56] text-sm">Date</div>
             </div>
-            {transactionData.map((item, i) => (
+            {filteredTransactions.map((item, i) => (
               <div key={`date-${i}`} className="px-2 py-[22px] border-b border-[#eaecf0]">
                 <div className="text-[#777980] text-xs">{item.date}</div>
               </div>
@@ -183,7 +349,7 @@ export default function TransectionHistory() {
             <div className="h-14 px-2 py-4 bg-neutral-50">
               <div className="text-[#4a4c56] text-sm">Transaction ID</div>
             </div>
-            {transactionData.map((item, i) => (
+            {filteredTransactions.map((item, i) => (
               <div key={`id-${i}`} className="px-2 py-[22px] border-b border-[#eaecf0]">
                 <div className="text-[#777980] text-xs">{item.transactionId}</div>
               </div>
@@ -195,7 +361,7 @@ export default function TransectionHistory() {
             <div className="h-14 px-2 py-4 bg-neutral-50">
               <div className="text-[#4a4c56] text-sm">Type</div>
             </div>
-            {transactionData.map((item, i) => (
+            {filteredTransactions.map((item, i) => (
               <div key={`type-${i}`} className="px-2 py-[22px] border-b border-[#eaecf0]">
                 <div className="text-[#777980] text-xs">{item.type}</div>
               </div>
@@ -207,7 +373,7 @@ export default function TransectionHistory() {
             <div className="h-14 px-2 py-4 bg-neutral-50">
               <div className="text-[#4a4c56] text-sm">Amount</div>
             </div>
-            {transactionData.map((item, i) => (
+            {filteredTransactions.map((item, i) => (
               <div key={`amount-${i}`} className="px-2 py-[22px] border-b border-[#eaecf0]">
                 <div className="text-[#777980] text-xs">{item.amount}</div>
               </div>
@@ -217,9 +383,9 @@ export default function TransectionHistory() {
           {/* Payment Method Column */}
           <div className="flex-1 flex flex-col">
             <div className="h-14 px-2 py-4 bg-neutral-50">
-              <div className="w-[121px] text-[#4a4c56] text-sm">Payment Method</div>
+              <div className="text-[#4a4c56] text-sm">Payment Method</div>
             </div>
-            {transactionData.map((item, i) => (
+            {filteredTransactions.map((item, i) => (
               <div key={`payment-${i}`} className="px-2 py-[22px] border-b border-[#eaecf0]">
                 <div className="text-[#777980] text-xs">{item.paymentMethod}</div>
               </div>
@@ -231,7 +397,7 @@ export default function TransectionHistory() {
             <div className="h-14 px-2 py-4 bg-neutral-50">
               <div className="text-[#4a4c56] text-sm">Status</div>
             </div>
-            {transactionData.map((item, i) => (
+            {filteredTransactions.map((item, i) => (
               <div key={`status-${i}`} className="px-2 py-4 border-b border-[#eaecf0]">
                 <StatusBadge status={item.status} />
               </div>
@@ -243,9 +409,9 @@ export default function TransectionHistory() {
             <div className="h-14 px-2 py-4 bg-neutral-50 rounded-tr-xl">
               <div className="text-[#4a4c56] text-sm">Action</div>
             </div>
-            {transactionData.map((_, i) => (
+            {filteredTransactions.map((_, i) => (
               <div key={`action-${i}`} className="px-2 py-[22px] border-b border-[#eaecf0]">
-                <div className={`${i === 0 ? 'text-[#0068ef]' : 'text-[#777980]'} text-xs underline`}>
+                <div className="text-[#777980] text-xs underline cursor-pointer hover:text-[#0068ef]">
                   View details
                 </div>
               </div>
