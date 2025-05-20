@@ -4,14 +4,15 @@ import { useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { listingData } from "@/DemoAPI/ListingData";
 import CancelRefundDetails from "./CancelRefundDetails";
+import ConfirmRefundDetails from "./ConfirmRefundDetails";
 import PaymentAction from "./PaymentAction";
 import PaymentStatCard from "./PaymentStateCard";
 import PaymentStatuse from "./PaymentStatus";
@@ -254,7 +255,7 @@ export default function PaymentPage() {
               columns={columns}
               data={filteredUsers}
               currentPage={currentPage}
-              itemsPerPage={10}
+              itemsPerPage={8}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
@@ -286,6 +287,15 @@ export default function PaymentPage() {
           selectedData &&
           (selectedData.status === "Cancel") && (
             <CancelRefundDetails
+              open={isModalOpen}
+              data={selectedData}
+              onOpenChange={setIsModalOpen}
+            />
+          )}
+      {isModalOpen &&
+          selectedData &&
+          (selectedData.status === "Available") && (
+            <ConfirmRefundDetails
               open={isModalOpen}
               data={selectedData}
               onOpenChange={setIsModalOpen}
