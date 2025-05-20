@@ -6,6 +6,7 @@ import DynamicTableWithPagination from "../common/DynamicTable";
 
 import { listingData } from "@/DemoAPI/ListingData";
 import EditPropertyDialog from "./EditPropertyDialog";
+import EditTourDialog from "./EditTourDialog";
 import ListingAction from "./ListingAction";
 import ListingPropartyCard from "./ListingPropartyCard";
 import ListingStatuse from "./ListingStatuse";
@@ -160,6 +161,14 @@ export default function ListingPage() {
       {isEdit && selectedData && 
   (selectedData.type === "Apartment" || selectedData.type === "Hotel") && (
     <EditPropertyDialog
+      open={isEdit}
+      data={selectedData}
+      onOpenChange={setIsEdit}
+    />
+)}
+      {isEdit && selectedData && 
+  (selectedData.type === "Tour") && (
+    <EditTourDialog
       open={isEdit}
       data={selectedData}
       onOpenChange={setIsEdit}
