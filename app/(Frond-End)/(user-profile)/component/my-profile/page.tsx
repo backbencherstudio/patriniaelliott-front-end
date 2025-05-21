@@ -1,9 +1,163 @@
-import React from 'react';
+'use client'
+import React, { useState } from 'react';
 import Image from 'next/image';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { useForm, Controller } from 'react-hook-form';
+
+interface CustomDateInputProps {
+  value?: string;
+  onClick?: () => void;
+  placeholder: string;
+  icon: string;
+}
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  nationality: string;
+  email: string;
+  phone: string;
+  gender: string;
+  dateOfBirth: Date | null;
+  country: string;
+  streetAddress: string;
+  aptSuite: string;
+  city: string;
+  stateProvince: string;
+  zipCode: string;
+  passportFirstName: string;
+  passportLastName: string;
+  issuingCountry: string;
+  passportNumber: string;
+  passportExpiryDate: Date | null;
+  consent: boolean;
+}
 
 export default function MyProfile() {
+  const { register, control, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      displayName: '',
+      nationality: '',
+      email: '',
+      phone: '',
+      gender: '',
+      dateOfBirth: null,
+      country: '',
+      streetAddress: '',
+      aptSuite: '',
+      city: '',
+      stateProvince: '',
+      zipCode: '',
+      passportFirstName: '',
+      passportLastName: '',
+      issuingCountry: '',
+      passportNumber: '',
+      passportExpiryDate: null,
+      consent: false,
+    }
+  });
+
+  const consentValue = watch('consent');
+
+  // Add state for dropdown selections
+  const [selectedGender, setSelectedGender] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedIssuingCountry, setSelectedIssuingCountry] = useState('');
+  const [isGenderOpen, setIsGenderOpen] = useState(false);
+  const [isCountryOpen, setIsCountryOpen] = useState(false);
+  const [isIssuingCountryOpen, setIsIssuingCountryOpen] = useState(false);
+
+  // Options for dropdowns
+  const genderOptions = ['Female', 'Male', 'Non-binary', 'Prefer not to say'];
+  const countryOptions = [
+    'United States', 'United Kingdom', 'Canada', 'Australia', 
+    'Germany', 'France', 'Japan', 'China', 'India', 'Brazil',
+    'Mexico', 'Spain', 'Italy', 'Netherlands', 'Singapore'
+  ];
+
+  // Custom dropdown component
+  const CustomDropdown = ({ 
+    options, 
+    value, 
+    onChange, 
+    isOpen, 
+    setIsOpen, 
+    placeholder 
+  }) => {
+    return (
+      <div className="relative">
+        <div 
+          className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex justify-between items-center cursor-pointer"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span className="text-gray-500">{value || placeholder}</span>
+          <Image 
+            src="/usericon/downarrow.svg" 
+            alt="Down Arrow" 
+            width={16} 
+            height={16} 
+            className={`transform transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`}
+          />
+        </div>
+        {isOpen && (
+          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            {options.map((option, index) => (
+              <div
+                key={index}
+                className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
+                onClick={() => {
+                  onChange(option);
+                  setIsOpen(false);
+                }}
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Custom input component for the date picker
+  const CustomDateInput = React.forwardRef<HTMLDivElement, CustomDateInputProps>(
+    ({ value, onClick, placeholder, icon }, ref) => (
+      <div
+        className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex items-center gap-3 cursor-pointer"
+        onClick={onClick}
+        ref={ref}
+      >
+        <Image src={icon} alt="Calendar" width={20} height={20} />
+        <span className="text-gray-500">{value || placeholder}</span>
+      </div>
+    )
+  );
+
+  CustomDateInput.displayName = 'CustomDateInput';
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      console.group('Form Submission Data');
+      console.log('Complete Form Data:', data);
+      console.groupEnd();
+      
+      alert('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Failed to update profile. Please try again.');
+    }
+  };
+
+  // For debugging - log form values on any change
+  const formValues = watch();
+  console.log('Current form values:', formValues);
+
   return (
-    <div className="w-full flex flex-col gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col gap-6">
       {/* Profile Header */}
       <div className="p-7 bg-white rounded-2xl flex justify-between items-center">
         <div className="flex flex-col gap-4">
@@ -24,7 +178,7 @@ export default function MyProfile() {
       <div className="p-6 bg-white rounded-xl">
         <div className="flex justify-between mb-8">
           <h2 className="text-2xl font-medium">Personal Information</h2>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-2 py-1.5 rounded">
+          <button type="button" className="flex items-center gap-2 bg-blue-600 text-white px-2 py-1.5 rounded">
             <Image src="/usericon/edit.svg" alt="Edit" width={20} height={20} />
             <span>Edit</span>
           </button>
@@ -36,13 +190,23 @@ export default function MyProfile() {
           <div className="flex flex-col gap-2">
             <label className="text-base">First name</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="text" placeholder="Elisabeth" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="text" 
+                placeholder="Elisabeth" 
+                {...register('firstName')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Last name</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="text" placeholder="Sarah" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="text" 
+                placeholder="Sarah" 
+                {...register('lastName')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
 
@@ -50,13 +214,23 @@ export default function MyProfile() {
           <div className="flex flex-col gap-2">
             <label className="text-base">Display name</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="text" placeholder="Choose display name" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="text" 
+                placeholder="Choose display name" 
+                {...register('displayName')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Nationality</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="text" placeholder="American" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="text" 
+                placeholder="American" 
+                {...register('nationality')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
 
@@ -64,30 +238,67 @@ export default function MyProfile() {
           <div className="flex flex-col gap-2">
             <label className="text-base">Email address</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="email" placeholder="elisabeth_sarah@gmail.com" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="email" 
+                placeholder="elisabeth_sarah@gmail.com" 
+                {...register('email')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Phone number</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="tel" placeholder="+6726 664 074" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="tel" 
+                placeholder="+6726 664 074" 
+                {...register('phone')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
 
           {/* Gender & Date */}
           <div className="flex flex-col gap-2">
             <label className="text-base">Gender</label>
-            <div className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex justify-between items-center">
-              <span className="text-gray-500">Female</span>
-              <Image src="/usericon/downarrow.svg" alt="Down Arrow" width={16} height={16} className="rotate-0" />
-            </div>
+            <Controller
+              name="gender"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <CustomDropdown
+                  options={genderOptions}
+                  value={value}
+                  onChange={onChange}
+                  isOpen={isGenderOpen}
+                  setIsOpen={setIsGenderOpen}
+                  placeholder="Select gender"
+                />
+              )}
+            />
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Date of birth</label>
-            <div className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex items-center gap-3">
-              <Image src="/usericon/calendar.svg" alt="Calendar" width={20} height={20} />
-              <span className="text-gray-500">DD/MM/YYYY</span>
-            </div>
+            <Controller
+              name="dateOfBirth"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <DatePicker
+                  selected={value}
+                  onChange={onChange}
+                  dateFormat="dd/MM/yyyy"
+                  showYearDropdown
+                  scrollableYearDropdown
+                  yearDropdownItemNumber={100}
+                  placeholderText="DD/MM/YYYY"
+                  customInput={
+                    <CustomDateInput
+                      icon="/usericon/calendar.svg"
+                      placeholder="DD/MM/YYYY"
+                    />
+                  }
+                />
+              )}
+            />
           </div>
         </div>
       </div>
@@ -99,15 +310,30 @@ export default function MyProfile() {
           {/* Country & Street */}
           <div className="flex flex-col gap-2">
             <label className="text-base">Country</label>
-            <div className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex justify-between items-center">
-              <span className="text-gray-500">United states</span>
-              <Image src="/usericon/downarrow.svg" alt="Down Arrow" width={16} height={16} className="rotate-0" />
-            </div>
+            <Controller
+              name="country"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <CustomDropdown
+                  options={countryOptions}
+                  value={value}
+                  onChange={onChange}
+                  isOpen={isCountryOpen}
+                  setIsOpen={setIsCountryOpen}
+                  placeholder="Select country"
+                />
+              )}
+            />
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Street address</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="text" placeholder="e.g. 123 Main St." className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="text" 
+                placeholder="e.g. 123 Main St." 
+                {...register('streetAddress')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
 
@@ -115,13 +341,23 @@ export default function MyProfile() {
           <div className="flex flex-col gap-2">
             <label className="text-base">Apt, suite. (optional)</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="text" placeholder="e.g. Apt #123" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="text" 
+                placeholder="e.g. Apt #123" 
+                {...register('aptSuite')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">City</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="text" placeholder="e.g. America #123" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="text" 
+                placeholder="e.g. America #123" 
+                {...register('city')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
 
@@ -129,13 +365,23 @@ export default function MyProfile() {
           <div className="flex flex-col gap-2">
             <label className="text-base">State / Province / Region</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="text" placeholder="e.g. State #123" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="text" 
+                placeholder="e.g. State #123" 
+                {...register('stateProvince')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Zip code</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input type="text" placeholder="726 664 074" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+              <input 
+                type="text" 
+                placeholder="726 664 074" 
+                {...register('zipCode')}
+                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+              />
             </div>
           </div>
         </div>
@@ -155,13 +401,23 @@ export default function MyProfile() {
               <div className="flex flex-col gap-2">
                 <label className="text-base">First name(s) <span className="text-red-500">*</span></label>
                 <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-                  <input type="text" placeholder="Elisabeth" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+                  <input 
+                    type="text" 
+                    placeholder="Elisabeth" 
+                    {...register('passportFirstName', { required: true })}
+                    className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-base">Last name(s) <span className="text-red-500">*</span></label>
                 <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-                  <input type="text" placeholder="Sarah" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+                  <input 
+                    type="text" 
+                    placeholder="Sarah" 
+                    {...register('passportLastName', { required: true })}
+                    className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                  />
                 </div>
               </div>
             </div>
@@ -172,15 +428,31 @@ export default function MyProfile() {
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-base">Issuing country <span className="text-red-500">*</span></label>
-              <div className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex justify-between items-center">
-                <span className="text-gray-500">Select issuing country</span>
-                <Image src="/usericon/downarrow.svg" alt="Down Arrow" width={16} height={16} className="rotate-0" />
-              </div>
+              <Controller
+                name="issuingCountry"
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <CustomDropdown
+                    options={countryOptions}
+                    value={value}
+                    onChange={onChange}
+                    isOpen={isIssuingCountryOpen}
+                    setIsOpen={setIsIssuingCountryOpen}
+                    placeholder="Select issuing country"
+                  />
+                )}
+              />
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-base">Passport number <span className="text-red-500">*</span></label>
               <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-                <input type="text" placeholder="Enter document number" className="w-full text-gray-500 outline-none h-full leading-[56px]" />
+                <input 
+                  type="text" 
+                  placeholder="Enter document number" 
+                  {...register('passportNumber', { required: true })}
+                  className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                />
               </div>
             </div>
           </div>
@@ -189,17 +461,61 @@ export default function MyProfile() {
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <label className="text-base">Expiration date <span className="text-red-500">*</span></label>
-              <div className="h-14 px-5 py-3 rounded-lg border border-gray-200 focus-within:border-blue-600 flex items-center gap-3">
-                <Image src="/usericon/calendar.svg" alt="Calendar" width={20} height={20} />
-                <span className="text-gray-500">DD/MM/YYYY</span>
-              </div>
+              <Controller
+                name="passportExpiryDate"
+                control={control}
+                rules={{ required: "Expiration date is required" }}
+                render={({ field: { value, onChange } }) => (
+                  <DatePicker
+                    selected={value}
+                    onChange={onChange}
+                    dateFormat="dd/MM/yyyy"
+                    showYearDropdown
+                    scrollableYearDropdown
+                    yearDropdownItemNumber={15}
+                    placeholderText="DD/MM/YYYY"
+                    minDate={new Date()}
+                    customInput={
+                      <CustomDateInput
+                        icon="/usericon/calendar.svg"
+                        placeholder="DD/MM/YYYY"
+                      />
+                    }
+                  />
+                )}
+              />
+              {errors.passportExpiryDate && (
+                <span className="text-red-500 text-sm">{errors.passportExpiryDate.message}</span>
+              )}
             </div>
             <p className="text-sm text-gray-500">We'll store this data safely and remove It after two years of inactivity.</p>
           </div>
 
           {/* Consent */}
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded border border-gray-400"></div>
+            <div className="relative">
+              <input
+                type="checkbox"
+                {...register('consent')}
+                className="w-5 h-5 rounded border border-gray-400 cursor-pointer"
+              />
+              <div className="absolute top-0 left-0 w-5 h-5 flex items-center justify-center pointer-events-none">
+                {/* Custom checkmark */}
+                <svg
+                  className={`w-3 h-3 text-blue-600 ${consentValue ? 'opacity-100' : 'opacity-0'}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+            </div>
             <p className="text-gray-700">
               I consent to "TravelBooking" storing my passport information in accordance with the 
               <span className="text-blue-600 ml-1">privacy statement</span>.
@@ -207,11 +523,14 @@ export default function MyProfile() {
           </div>
 
           {/* Save Button */}
-          <button className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium">
+          <button 
+            type="submit"
+            className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors"
+          >
             Save
           </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
