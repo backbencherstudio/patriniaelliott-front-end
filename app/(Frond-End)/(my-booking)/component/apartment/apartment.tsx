@@ -1,7 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
 
-export default function Apartment() {
+interface ApartmentProps {
+  onViewDetails: (apartment: any) => void;
+}
+
+export default function Apartment({ onViewDetails }: ApartmentProps) {
   const apartmentData = [
     {
       id: 1,
@@ -55,7 +59,7 @@ export default function Apartment() {
 
   return (
 <>
-    <div className="p-4 bg-white rounded-xl my-10">
+    <div className="p-4 bg-white rounded-xl mb-10">
       <div className="mb-6">
         <h1 className="text-3xl font-medium text-[#070707]">Welcome, Elisabeth!</h1>
         <p className="text-base text-[#777980]">Check up on your latest reservations and history.</p>
@@ -112,7 +116,7 @@ export default function Apartment() {
       <div className="text-2xl font-medium text-[#070707]">Apartment reservation list</div>
       <div className="text-base text-[#777980]">Check up on your latest reservations.</div>
     </div>
-    <div className="pl-1.5 pr-2 py-1.5 rounded outline outline-1 outline-offset-[-1px] outline-[#0068ef] flex items-center gap-2">
+    <div className="pl-1.5 pr-2 py-1.5 rounded outline-1 outline-offset-[-1px] outline-[#0068ef] flex items-center gap-2">
       <div className="flex items-center gap-2">
         <div className="w-5 h-5 relative overflow-hidden">
           <Image src="/booking/calender.svg" alt="Calendar" width={18} height={18} className='object-cover'/>
@@ -161,7 +165,7 @@ export default function Apartment() {
       </div>
       {apartmentData.map((apartment) => (
         <div key={apartment.id} className="h-[72px] p-4 border-b border-[#eaecf0] flex items-center">
-          <div className={`pl-1.5 pr-2 py-1.5 ${apartment.status === "Completed" ? "bg-[#38c976]/10 outline-[#abefc6]" : "bg-[#fe5050]/10 outline-[#fe5050]"} rounded-2xl outline outline-1 outline-offset-[-1px] flex items-center gap-1`}>
+          <div className={`pl-1.5 pr-2 py-1.5 ${apartment.status === "Completed" ? "bg-[#38c976]/10 outline-[#abefc6]" : "bg-[#fe5050]/10 outline-[#fe5050]"} rounded-2xl outline-1 outline-offset-[-1px] flex items-center gap-1`}>
             <div className="w-3 h-3 relative overflow-hidden">
               <Image 
                 src={apartment.status === 'Completed' ? "/booking/check.svg" : "/booking/redx.svg"} 
@@ -182,9 +186,20 @@ export default function Apartment() {
       </div>
       {apartmentData.map((apartment) => (
         <div key={apartment.id} className="h-[72px] px-4 border-b border-[#eaecf0] flex items-center gap-8">
-          <div className="text-xs text-[#777980] underline">View details</div>
-          <div className="w-4 h-4 relative overflow-hidden">
-            <Image src="/booking/delete.svg" alt="Delete" width={16} height={16} />
+          <div 
+            className="text-xs text-[#777980] underline cursor-pointer hover:text-[#0068ef]" 
+            onClick={() => onViewDetails(apartment)}
+          >
+            View details
+          </div>
+          <div className="w-4 h-4 relative overflow-hidden cursor-pointer group">
+            <Image 
+              src="/booking/delete.svg" 
+              alt="Delete" 
+              width={16} 
+              height={16}
+              className="transition-all duration-200 group-hover:[filter:invert(36%)_sepia(71%)_saturate(2338%)_hue-rotate(334deg)_brightness(99%)_contrast(108%)]"
+            />
           </div>
         </div>
       ))}

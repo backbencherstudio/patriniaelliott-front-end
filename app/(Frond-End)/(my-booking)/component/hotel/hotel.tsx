@@ -60,7 +60,7 @@ export default function Hotel() {
           <div className="self-stretch justify-center text-[#070707] text-2xl font-medium font-['Inter'] leading-normal">Hotel reservation list</div>
           <div className="self-stretch justify-center text-[#777980] text-base font-normal font-['Inter'] leading-none tracking-tight">Check up on your latest reservations.</div>
         </div>
-        <div data-property-1="default" className="pl-1.5 pr-2 py-1.5 rounded outline outline-1 outline-offset-[-1px] outline-[#0068ef] flex justify-start items-center gap-2">
+        <div data-property-1="default" className="pl-1.5 pr-2 py-1.5 rounded outline-1 outline-offset-[-1px] outline-[#0068ef] flex justify-start items-center gap-2">
           <div className="flex justify-start items-center gap-2">
             <div className="w-5 h-5 relative overflow-hidden">
               <Image src="/booking/calender.svg" alt="Calendar" width={18} height={18} className='object-cover'/>
@@ -109,7 +109,7 @@ export default function Hotel() {
           </div>
           {hotelData.map((hotel) => (
             <div key={hotel.id} className="self-stretch p-4 border-b border-[#eaecf0] inline-flex justify-start items-center gap-3 overflow-hidden">
-              <div className={`pl-1.5 pr-2 py-1.5 ${hotel.status === "Completed" ? "bg-[#38c976]/10 outline-[#abefc6]" : "bg-[#fe5050]/10 outline-[#fe5050]"} rounded-2xl outline outline-1 outline-offset-[-1px] flex justify-start items-center gap-1`}>
+              <div className={`pl-1.5 pr-2 py-1.5 ${hotel.status === "Completed" ? "bg-[#38c976]/10 outline-[#abefc6]" : "bg-[#fe5050]/10 outline-[#fe5050]"} rounded-2xl outline-1 outline-offset-[-1px] flex justify-start items-center gap-1`}>
                 <div className="w-3 h-3 relative overflow-hidden">
                   <Image 
                     src={hotel.status === 'Completed' ? "/booking/check.svg" : "/booking/redx.svg"} 
@@ -130,9 +130,15 @@ export default function Hotel() {
           </div>
           {hotelData.map((hotel) => (
             <div key={hotel.id} className="self-stretch px-4 py-5 border-b border-[#eaecf0] inline-flex justify-start items-center gap-8">
-              <div className="justify-center text-[#777980] text-xs font-normal font-['Inter'] underline leading-3">View details</div>
-              <div className="w-4 h-4 relative overflow-hidden">
-                <Image src="/booking/delete.svg" alt="Delete" width={16} height={16} />
+              <div className="justify-center text-[#777980] hover:text-[#0068ef] transition-colors duration-200 cursor-pointer text-xs font-normal font-['Inter'] underline leading-3">View details</div>
+              <div className="w-4 h-4 relative overflow-hidden cursor-pointer group">
+                <Image 
+                  src="/booking/delete.svg" 
+                  alt="Delete" 
+                  width={16} 
+                  height={16} 
+                  className="transition-all duration-200 group-hover:[filter:invert(36%)_sepia(71%)_saturate(2330%)_hue-rotate(334deg)_brightness(99%)_contrast(108%)]" 
+                />
               </div>
             </div>
           ))}
