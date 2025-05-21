@@ -16,10 +16,9 @@ function TotalReview() {
             <p className="mt-3 text-sm text-descriptionColor">Average Review</p>
           </div>
 
-          <div className="flex items-center w-22 h-22 space-x-4">
+          <div className="flex items-center w-21 h-21 space-x-4">
             <CircularProgressbar
               value={percentage}
-              
               styles={{
                 path: {
                   stroke: '#0068EF',

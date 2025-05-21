@@ -17,28 +17,28 @@ export default function SatisfactionCard() {
         {/* Progress Bar */}
         <div className="flex h-4 w-full rounded-xs overflow-hidden mb-4 relative">
           {/* Poor - Red section */}
-          <div className="bg-red-500" style={{ width: `${data.poor}%` }} />
+          <div className="bg-[#FE5050]" style={{ width: `${data.poor}%` }} />
 
           {/* Average - Gray section */}
           <div className="bg-gray-300" style={{ width: `${data.average}%` }} />
 
           {/* Good - Green section */}
-          <div className="bg-green-400" style={{ width: `${data.good}%` }} />
+          <div className="bg-[#6DD287]" style={{ width: `${data.good}%` }} />
 
         
         </div>
 
         {/* Labels and Icons */}
         <div className="flex justify-between text-xs text-gray-600">
-          <div className="flex items-center gap-1 text-red-500">
+          <div className="flex items-center gap-1 text-[#FE5050]">
             <span>{data.poor}%</span>
             <Frown className="w-5 h-5" />
           </div>
-          <div className="flex items-center gap-1 text-gray-500">
+          <div className="flex items-center gap-1 text-gray-400">
             <span>{data.average}%</span>
             <Meh className="w-5 h-5" />
           </div>
-          <div className="flex items-center gap-1 text-green-600">
+          <div className="flex items-center gap-1 text-[#6DD287]">
             <span>{data.good}%</span>
             <Smile className="w-5 h-5" />
           </div>

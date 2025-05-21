@@ -36,7 +36,7 @@ export default function PaymentPage() {
     setSelectedData(user);
     setIsModalOpen(true);
   };
-  const handleDelete = (user: any) => {
+  const handleAccept = (user: any) => {
     setSelectedData(user);
     setCancel(true);
   };
@@ -60,7 +60,7 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails} onDelete={handleDelete} status={row} />
+        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} status={row} />
       ),
     },
   ];
@@ -83,12 +83,12 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails} onDelete={handleDelete} status={row} />
+        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} status={row} />
       ),
     },
   ];
   const Refundcolumns = [
-    { label: "Booking ID", accessor: "userId" },
+    { label: "Booking ID", accessor: "userId" ,width:"100px" },
     { label: "Reason", accessor: "reason" },
     { label: "Guest Name", accessor: "name" },
     { label: "Request date", accessor: "joinDate" },
@@ -107,7 +107,7 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails} onDelete={handleDelete} status={row} />
+        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} status={row} />
       ),
     },
   ];

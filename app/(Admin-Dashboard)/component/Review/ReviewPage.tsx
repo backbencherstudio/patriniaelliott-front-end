@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import DynamicTableWithPagination from "../common/DynamicTable";
 
 import {
   Select,
@@ -10,10 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { listingData } from "@/DemoAPI/ListingData";
-import PaymentAction from "../payment/PaymentAction";
-import PaymentStatuse from "../payment/PaymentStatus";
+import { reviewData } from "@/DemoAPI/reviewData";
+import { FaRegStar } from "react-icons/fa";
+import DynamicTableTwo from "../common/DynamicTableTwo";
 import FeedbackChart from "./FeedbackChart";
+import ReviewAction from "./ReviewAction";
+import ReviewStatuse from "./ReviewStatuse";
 import SatisfactionCard from "./SatisfactionCard";
 import TotalReview from "./TotalReview";
 
@@ -23,7 +24,7 @@ export default function ReviewPage() {
 
   const [selectedData, setSelectedData] = useState<any | null>(null);
   const [selectedRole, setSelectedRole] = useState<
-    "All" | "Booking" | "Refunds"
+    "All" | "Approved" | "Pending" | "Rejected"
   >("All");
   const [dateRange, setDateRange] = useState<"all" | "7" | "15" | "30">("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,38 +33,67 @@ export default function ReviewPage() {
     setSelectedData(user);
     setIsModalOpen(true);
   };
-
+  const handleDelete = (user: any) => {
+    setSelectedData(user);
+    
+  };
   const columns = [
-    { label: "Booking ID", accessor: "userId" },
-    { label: "Guest Name", accessor: "name" },
-    { label: "Transaction Type", accessor: "transactionType" },
+    { label: "User Name", accessor: "userName", width:"168px" ,
+      formatter: (_, row) => (
+        <div className=" flex gap-2 items-center"><div className=" w-6 h-6 rounded-full overflow-hidden ">
+           <Image src={row?.userImage} alt={row?.userName} width={24} height={24} />
+           </div> <span className="text-headerColor text-xs">{row.userName}</span> </div>
+      ),
+    },
+    { label: "Reservation", accessor: "reservation" ,width:"238px",
+      formatter: (_, row) => (
+        <div className=" flex gap-2 items-center"><div className=" w-17 h-10 rounded-md overflow-hidden ">
+           <Image src={row?.propertyImage} alt={row?.userName} width={68} height={40} />
+           </div><div>
+           <p className="text-headerColor font-medium text-xs">{row.reservation}</p>
+           <p className=" text-xs mt-1">{row?.roomStatus}</p>
+            </div> </div>
+      ),
+    },
 
     {
-      label: "Amount",
-      accessor: "price",
-      formatter: (value) => `$${value}`,
+      label: "Review",
+      accessor: "review",
+      width:"214px",
+      formatter: (_, row) => (
+        <div className=" flex items-center">
+         
+           <p className=" text-xs text-headerColor">{row?.review}</p>
+            </div> 
+      ),
+     
     },
-    { label: "Payment Method", accessor: "pymentMethod" },
+    { label: "Rating", accessor: "rating" , width:"80px",
+      formatter: (_, row) => (
+        <div className=" flex gap-1 text-xs text-headerColor items-center"><FaRegStar className=" text-base text-yellow-400" /> {row.rating}</div>
+      ),
+    },
     {
       label: "Status",
       accessor: "status",
-      formatter: (_, row) => <PaymentStatuse status={row.status} />,
+      width:"134px",
+      formatter: (_, row) => <ReviewStatuse status={row.status} />,
     },
     {
       label: "Action",
       accessor: "status",
+      width:"125px",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails}  status={row} />
+        <ReviewAction onView={handleViewDetails}  onDelete={handleDelete}  status={row} />
       ),
     },
   ];
  
 
-  const filteredUsers = listingData.filter((user) => {
+  const filteredUsers = reviewData.filter((user) => {
     const roleMatch =
       selectedRole === "All" ||
-      user.transactionType === selectedRole ||
-      user?.pymentMethod == selectedRole;
+      user.status === selectedRole 
     
     let dateMatch = true;
 
@@ -102,11 +132,11 @@ export default function ReviewPage() {
         <div className="md:flex justify-between items-center gap-2 md:gap-4 mb-4">
           {/* Role Filters */}
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">
-            {["All", "Booking", "Refunds"].map((role) => (
+            {["All", "Approved", "Pending","Rejected"].map((role) => (
               <button
                 key={role}
                 onClick={() =>
-                  setSelectedRole(role as "All" | "Booking" | "Refunds")
+                  setSelectedRole(role as "All" | "Approved" | "Pending" | "Rejected")
                 }
                 className={`md:px-4 px-1 cursor-pointer text-sm md:text-base py-2 ${
                   selectedRole === role
@@ -114,7 +144,7 @@ export default function ReviewPage() {
                     : "border-b text-[#777980]"
                 }`}
               >
-                {role === "All" ? "All transaction" : role}
+                {role === "All" ? "All reviews" : role}
               </button>
             ))}
           </div>
@@ -155,11 +185,11 @@ export default function ReviewPage() {
         {/* Table */}
         <div>
           {selectedRole  && (
-            <DynamicTableWithPagination
+            <DynamicTableTwo
               columns={columns}
               data={filteredUsers}
               currentPage={currentPage}
-              itemsPerPage={8}
+              itemsPerPage={5}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
