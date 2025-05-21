@@ -60,7 +60,7 @@ export default function DynamicTableTwo({
   return (
     <div>
     
-      <div className="overflow-x-auto  ">
+      <div className="overflow-x-auto  xl:overflow-hidden">
         <table className="min-w-[1000px] w-full text-left">
           <thead className="bg-neutral-50">
             <tr>

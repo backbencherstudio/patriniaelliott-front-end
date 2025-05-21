@@ -14,6 +14,7 @@ import { FaRegStar } from "react-icons/fa";
 import DynamicTableTwo from "../common/DynamicTableTwo";
 import FeedbackChart from "./FeedbackChart";
 import ReviewAction from "./ReviewAction";
+import ReviewDetails from "./ReviewDetails";
 import ReviewStatuse from "./ReviewStatuse";
 import SatisfactionCard from "./SatisfactionCard";
 import TotalReview from "./TotalReview";
@@ -198,7 +199,16 @@ export default function ReviewPage() {
 
     
       </div>
-
+<div>
+   {isModalOpen &&
+            selectedData &&(
+              <ReviewDetails
+                open={isModalOpen}
+                data={selectedData}
+                onOpenChange={setIsModalOpen}
+              />
+            )}
+</div>
       
     </div>
   );
