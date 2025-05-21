@@ -1,8 +1,9 @@
+import SettingsForm from "../../component/setting/SettingsForm"
 
 function SettingPage() {
   return (
-    <div>
-      Setting page
+    <div className="pb-20">
+    <SettingsForm/>
     </div>
   )
 }
