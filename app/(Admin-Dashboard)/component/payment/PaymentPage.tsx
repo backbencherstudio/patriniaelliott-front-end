@@ -156,7 +156,6 @@ export default function PaymentPage() {
     return roleMatch && dateMatch && paymentMatch;
   });
 
-  console.log("==========cancel",cancel ,selectedData);
   
   return (
     <div className="flex flex-col gap-5">

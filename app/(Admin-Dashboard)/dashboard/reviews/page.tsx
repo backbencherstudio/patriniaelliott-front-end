@@ -1,10 +1,11 @@
+import ReviewPage from "../../component/Review/ReviewPage"
 
-function ReviewsPage() {
+function Reviews() {
   return (
     <div>
-      ReviewsPage
+      <ReviewPage/>
     </div>
   )
 }
 
-export default ReviewsPage
+export default Reviews
