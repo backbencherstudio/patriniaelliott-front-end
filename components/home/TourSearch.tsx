@@ -7,7 +7,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import usericon from "@/public/icon/user.svg";
-import 'antd/dist/reset.css';
 import {
   CalendarIcon,
   MapPin,
