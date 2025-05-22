@@ -1,4 +1,4 @@
-import EmailNotificationSettingsForm from '@/app/(Admin-Dashboard)/component/notificationSetting/EmailNotificationSettingsForm'
+import AdminRollTable from '@/app/(Admin-Dashboard)/component/notificationSetting/AdminRollTable'
 import Link from 'next/link'
 import { FaChevronRight } from 'react-icons/fa'
 
@@ -10,7 +10,9 @@ function AdminNotificationPage() {
 
      <Link href="/dashboard/notifications" className="text-grayColor1">Manage notifications </Link>  <FaChevronRight className="text-grayColor1"/> <p className=" text-headerColor">Manage Admin Role</p>
       </div>
-      <EmailNotificationSettingsForm/>
+      <div>
+        <AdminRollTable/>
+      </div>
     </div>
     </div>
   )

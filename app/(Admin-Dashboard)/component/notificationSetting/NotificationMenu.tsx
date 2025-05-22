@@ -2,7 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaChevronRight } from 'react-icons/fa';
 import { IoNotificationsOutline } from 'react-icons/io5';
-import { TbSettingsSpark } from "react-icons/tb";
 import { TfiEmail } from 'react-icons/tfi';
 const settingsMenu = [
   { settingSlug: "general-settings", label: "General Settings" , icon:<TfiEmail className='text-lg  text-descriptionColor/90'/> },
@@ -10,7 +9,7 @@ const settingsMenu = [
   { settingSlug: "email-notification-settings", label: "Email & Notification Settings" , icon:<IoNotificationsOutline className=' text-descriptionColor/90 text-xl '/>},
   { settingSlug: "manage-admin-role", label: "Manage Admin Role" , icon:<Image src="/icon/shopeBox.svg" alt='payment' width={18} height={18}/>},
   { settingSlug: "security-settings", label: "Security Settings" , icon:<Image src="/icon/secure.svg" alt='payment' width={19} height={18}/>},
-  { settingSlug: "api-settings", label: "API Settings" , icon:<TbSettingsSpark className=' text-xl text-descriptionColor/90' />},
+ 
 ];
 
 const NotificationMenu = () => {
