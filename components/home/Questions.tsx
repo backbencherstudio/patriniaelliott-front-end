@@ -13,7 +13,6 @@ import "../css/questions.css";
 
 export default function Questions() {
   const [openItem, setOpenItem] = useState<string | null>("faq-0");
-  console.log(openItem);
   return (
     <section className="container">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 w-full  mx-auto py-20">

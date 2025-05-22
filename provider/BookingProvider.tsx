@@ -42,8 +42,7 @@ export const BookingProvider = ({ children }) => {
   }else{
     price= 0
   }
-  console.log(singleApartment);
-  console.log(price);
+
   
   
   const calculateTotal = () => {
