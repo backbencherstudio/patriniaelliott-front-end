@@ -16,7 +16,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const closeSidebar = () => setSidebarOpen(false);
 
   return (
-    <div className="bg-bgColor w-full h-screen relative overflow-hidden">
+    <div className="bg-bgColor w-full overflow-y-auto h-screen relative overflow-hidden">
       <div className="w-full sticky top-0 left-0 z-10">
         <Header onMenuClick={openSidebar} sidebarOpen={sidebarOpen} />
       </div>
@@ -37,7 +37,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         {/* Main Content Area */}
         <div className={`flex-1 transition-[margin] duration-300 ease-in-out lg:ml-[320px]`}>
           {/* Main Content */}
-          <main className="flex-1 overflow-y-auto p-0 md:p-4 h-screen">
+          <main className="flex-1   p-0 md:p-4 h-screen">
             {children}
             <CustomToastContainer />
           </main>

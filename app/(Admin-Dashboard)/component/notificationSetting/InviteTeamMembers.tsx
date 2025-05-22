@@ -44,7 +44,7 @@ export default function InviteTeamMembers() {
               value={email}
               onChange={(e) => handleEmailChange(index, e.target.value)}
               placeholder="email@example.com"
-              className="w-full pl-10 pr-4 py-2 lg:py-3 rounded-md border border-gray-300 focus:outline-none focus:ring focus:border-blue-400 text-[#777980]"
+              className="w-full pl-10 pr-4 py-2 lg:py-3 rounded-md text-sm md:text-base  border border-gray-300 focus:outline-none focus:ring focus:border-blue-400 text-[#777980]"
             />
           </div>
 
@@ -52,7 +52,7 @@ export default function InviteTeamMembers() {
             <button
               onClick={handleSendInvites}
               type="button"
-              className="bg-blue-600 whitespace-nowrap hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 lg:py-3.5 rounded-md cursor-pointer flex items-center space-x-2"
+              className="bg-blue-600 whitespace-nowrap hover:bg-blue-700 text-white text-xs md:text-sm lg:text-base font-medium px-2 py-2 lg:py-3.5 rounded-md cursor-pointer flex items-center space-x-2"
             >
               <FiMail size={16} />
               <span>Send invites</span>

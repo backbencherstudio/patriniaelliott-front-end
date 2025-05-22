@@ -2,11 +2,11 @@
 import { useState } from "react";
 
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { adminRollData } from "@/DemoAPI/adminRollData";
 import DynamicTableTwo from "../common/DynamicTableTwo";
@@ -87,7 +87,7 @@ export default function AdminRollTable() {
   return (
     <div className="flex flex-col gap-5">
       {/* Overview */}
-      <div className="w-full bg-white rounded-xl p-6  mx-auto">
+      <div className="w-full bg-white rounded-xl p-4 md:p-6  mx-auto">
         <InviteTeamMembers />
       </div>
       {/* Table Section */}
