@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { MdDone } from "react-icons/md";
 import {
   Accordion,
@@ -11,20 +13,46 @@ import FilterHeading from "./FilterHeading";
 
 const FreeCancellationFilter = () => {
   const [isFreeCancellation, setIsFreeCancellation] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
+  // ✅ Load state from URL on mount
+  useEffect(() => {
+    const fromQuery = searchParams.get("freeCancel");
+    setIsFreeCancellation(fromQuery === "true");
+  }, []);
+  // ✅ Sync with URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (isFreeCancellation) {
+      params.set("freeCancel", "true");
+    } else {
+      params.delete("freeCancel");
+    }
+
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [isFreeCancellation]);
+
+  // ✅ Toggle handler
   const handleFreeCancellationChange = () => {
     setIsFreeCancellation((prev) => !prev);
   };
 
+  // ✅ Reset handler
   const handleReset = () => {
     setIsFreeCancellation(false);
+
+    const params = new URLSearchParams(window.location.search);
+    params.delete("freeCancel");
+    router.replace(`?${params.toString()}`, { scroll: false });
   };
 
   return (
     <Accordion type="single" collapsible className="">
-      <AccordionItem value="item-1" className=" border-b-0">
+      <AccordionItem value="item-1" className="border-b-0">
         <AccordionTrigger className="border-b pb-3 items-center rounded-none border-grayColor1/20">
-          <div className=" w-[95%]">
+          <div className="w-[95%]">
             <FilterHeading
               onReset={handleReset}
               title="Free Cancellation options"
@@ -42,7 +70,7 @@ const FreeCancellationFilter = () => {
                 className="peer hidden"
               />
 
-              {/* Styled Checkbox Visual */}
+              {/* Styled Checkbox */}
               <div className="h-4 w-4 flex items-center justify-center border-2 border-grayColor1/20 rounded-xs peer-checked:bg-checkBoxColor peer-checked:border-checkBoxColor transition-colors">
                 {isFreeCancellation && (
                   <MdDone className="text-white text-sm" />

@@ -33,8 +33,6 @@ export default function ApartmentHotelClient({
           </button>
           <span>{isSidebarOpen ? "Close Filter" : "Open Filter"}</span>
         </div>
-
-       
             <div
             className={`  col-span-3 hidden lg:block `}
           >
