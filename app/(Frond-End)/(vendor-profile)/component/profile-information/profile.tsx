@@ -80,6 +80,7 @@ export default function Profile() {
             )}
           </div>
           
+          
           <div className="flex flex-col gap-5 pb-4">
             <div className="h-[70px] flex flex-col gap-2">
               <div className="text-base text-[#070707]">First name</div>
