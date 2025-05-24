@@ -4,7 +4,7 @@ import { Globe, Bell } from 'lucide-react'
 
 export default function Setting() {
   return (
-    <div className="self-stretch p-6 bg-white rounded-2xl flex flex-col gap-6 my-10">
+    <div className="self-stretch p-6 bg-white rounded-2xl flex flex-col gap-6 ">
       <div className="text-[#22262e] text-2xl font-medium">Preference</div>
       <div className="flex flex-col w-full">
         <div className="py-[18px] border-b border-gray-200 flex justify-between items-center">
