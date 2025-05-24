@@ -192,6 +192,9 @@ export default function VendorVerification() {
     }
   }
 
+
+  
+
   if (isCompleted) {
     return <Step5 onEdit={handleEdit} />
   }
