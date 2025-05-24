@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { OWNERSHIP_TYPES } from '../../vendor-verification/page'
+import { OWNERSHIP_TYPES } from '../../vendor-verification/constants'
 
 interface FormData {
   ownershipType: string;
