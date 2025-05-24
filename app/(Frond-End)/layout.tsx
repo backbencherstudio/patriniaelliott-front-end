@@ -2,6 +2,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { BookingProvider } from "@/provider/BookingProvider";
 import { ToureBookingProvider } from "@/provider/TourBookingProvider";
+import { Suspense } from "react";
 import 'react-datepicker/dist/react-datepicker.css';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -12,6 +13,7 @@ export default function FrontEndLayout({
 }) {
     return (
         <div>
+            <Suspense>
             <Navbar/>
             <BookingProvider>
                 <ToureBookingProvider>
@@ -19,6 +21,7 @@ export default function FrontEndLayout({
                 </ToureBookingProvider>
             </BookingProvider>
             <Footer/>
+            </Suspense>
         </div>
     );
 }
