@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MdDone } from "react-icons/md";
 import {
@@ -14,7 +14,13 @@ import FilterHeading from "./FilterHeading";
 const FreeCancellationFilter = () => {
   const [isFreeCancellation, setIsFreeCancellation] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
+  // ✅ Load state from URL on mount
+  useEffect(() => {
+    const fromQuery = searchParams.get("freeCancel");
+    setIsFreeCancellation(fromQuery === "true");
+  }, []);
   // ✅ Sync with URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useDebounce } from "@/hooks/useDebounce";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import FilterHeading from "./FilterHeading";
@@ -13,7 +13,7 @@ const BudgetFilter = () => {
   const [minValue, setMinValue] = useState(MIN);
   const [maxValue, setMaxValue] = useState(MAX);
   const [hasInteracted, setHasInteracted] = useState(false);
-
+  const searchParams = useSearchParams();
   const debouncedMin = useDebounce(minValue, 500);
   const debouncedMax = useDebounce(maxValue, 500);
 
@@ -36,7 +36,13 @@ const BudgetFilter = () => {
     setMaxValue(MAX);
     setHasInteracted(false); // ✅ Reset interaction
   };
+  useEffect(() => {
+    const minParam = searchParams.get("min");
+    const maxParam = searchParams.get("max");
 
+    if (minParam) setMinValue(Number(minParam));
+    if (maxParam) setMaxValue(Number(maxParam));
+  }, []);
   useEffect(() => {
     if (!hasInteracted) return;
 

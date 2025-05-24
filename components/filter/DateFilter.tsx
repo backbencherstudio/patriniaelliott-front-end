@@ -1,7 +1,7 @@
 'use client';
 import { CalendarIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation'; // To update search params
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation'; // To update search params
+import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css"; // Import datepicker styles
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion'; // Correct import for AccordionItem
@@ -11,7 +11,19 @@ const DurationFilter = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const startParam = searchParams.get("startDate");
+    const endParam = searchParams.get("endDate");
 
+    if (startParam) {
+      setStartDate(new Date(startParam));
+    }
+
+    if (endParam) {
+      setEndDate(new Date(endParam));
+    }
+  }, []);
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
     if (date) {

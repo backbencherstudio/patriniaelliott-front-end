@@ -28,7 +28,14 @@ const ExtraServiceFilter = () => {
   const searchParams = useSearchParams();
 
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  useEffect(() => {
+    const params = Array.from(searchParams.entries());
+    const filtered = params
+      .filter(([key]) => key === 'extraServices')
+      .map(([, value]) => decodeURIComponent(value));
 
+    setSelectedServices(filtered);
+  }, []);
   // Load from URL on mount
   useEffect(() => {
     const param = searchParams.get('extraServices');

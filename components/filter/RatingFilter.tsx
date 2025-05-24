@@ -1,44 +1,70 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { MdDone } from "react-icons/md";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
 import FilterHeading from "./FilterHeading";
 
 const RatingFilter = () => {
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // ✅ Update URL params whenever selectedRatings changes
+  // ✅ Load multiple ?ratings=5&ratings=4 into array
+  useEffect(() => {
+    const allParams = Array.from(searchParams.entries());
+    const ratingValues = allParams
+      .filter(([key]) => key === "ratings")
+      .map(([, value]) => parseInt(value))
+      .filter((n) => !isNaN(n));
+
+    if (ratingValues.length > 0) {
+      setSelectedRatings(ratingValues);
+    }
+  }, []);
+
+  // ✅ Update URL when ratings change
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    if (selectedRatings.length > 0) {
-      params.set("ratings", selectedRatings.sort((a, b) => b - a).join(","));
-    } else {
-      params.delete("ratings");
-    }
+    // Clear existing rating params
+    params.delete("ratings");
 
-    router.replace(`?${params.toString()}`,{ scroll: false });
+    // Add each selected rating separately
+    selectedRatings
+      .sort((a, b) => b - a)
+      .forEach((rating) => {
+        params.append("ratings", rating.toString());
+      });
+
+    router.replace(`?${params.toString()}`, { scroll: false });
   }, [selectedRatings]);
 
-  // ✅ Toggle rating selection
+  // ✅ Toggle selection
   const handleRatingChange = (rating: number) => {
     setSelectedRatings((prev) =>
-      prev.includes(rating) ? prev.filter((r) => r !== rating) : [...prev, rating]
+      prev.includes(rating)
+        ? prev.filter((r) => r !== rating)
+        : [...prev, rating]
     );
   };
 
-  // ✅ Reset both state and params
+  // ✅ Reset state + URL
   const handleReset = () => {
     setSelectedRatings([]);
     const params = new URLSearchParams(window.location.search);
     params.delete("ratings");
-    router.replace(`?${params.toString()}`,{ scroll: false });
+    router.replace(`?${params.toString()}`, { scroll: false });
   };
 
+  // ✅ Render stars (filled + unfilled)
   const renderStars = (rating: number) => {
     const filledStars = Array(rating).fill(
       <FaStar className="text-ratingColor text-base" />
@@ -60,7 +86,10 @@ const RatingFilter = () => {
         <AccordionContent className="mt-4 space-y-4">
           <div className="space-y-4">
             {[5, 4, 3, 2, 1].map((rating) => (
-              <label key={rating} className="flex justify-between items-center cursor-pointer">
+              <label
+                key={rating}
+                className="flex justify-between items-center cursor-pointer"
+              >
                 <div className="flex items-center gap-3">
                   <input
                     type="checkbox"
