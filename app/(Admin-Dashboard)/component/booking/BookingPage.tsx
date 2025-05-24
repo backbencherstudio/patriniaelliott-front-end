@@ -1,8 +1,9 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
+import Loader from "@/components/reusable/Loader";
 import { bookings } from "@/DemoAPI/allProparty";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -14,40 +15,38 @@ import BookingPymentStatuse from "./BookingPymentStatuse";
 
 
 export default function BookingPage() {
- 
-
-  const [isModalOpen, setIsModalOpen] = React.useState<any>(false);
-  const [selectedUser, setSelectedUser] = React.useState<any | null>(null);
-  const [selectedRole, setSelectedRole] = React.useState<
-   "All" | "Hotel" | "Appartment" | "Tour"
-  >("All");
-  const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
-    "all"
-  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [selectedRole, setSelectedRole] = useState<"All" | "Hotel" | "Appartment" | "Tour">("All");
+  const [dateRange, setDateRange] = useState<"all" | "7" | "15" | "30">("all");
   const [currentPage, setCurrentPage] = useState(1);
-  
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleViewDetails = (user: any) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
-  const handleExportPDF = () => {
+
+  const handleExportPDF = async () => {
+    setIsLoading(true);
+
     const doc = new jsPDF();
     doc.text("Booking Report", 14, 15);
-  
+
     const tableColumn = columns
       .filter((col) => col.label !== "Action" && col.label !== "Status")
       .map((col) => col.label);
-  
+
     const tableRows = filteredUsers.map((user) => [
       user.bookingId,
       user.name,
       user.service,
-      user.status, // Payment status (string)
+      user.status,
       user.checkIn,
       user.checkOut,
       `$${user.price}`,
     ]);
-  
+
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
@@ -55,21 +54,42 @@ export default function BookingPage() {
       styles: { fontSize: 10 },
       headStyles: { fillColor: [0, 104, 239] },
     });
-  
+
     doc.save("booking_report.pdf");
+
+    setTimeout(() => setIsLoading(false), 300); // smooth fade
   };
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [selectedRole, dateRange]);
+
   const columns = [
     { label: "Booking ID", accessor: "bookingId" },
     { label: "Name", accessor: "name" },
     { label: "Service", accessor: "service" },
-    { label: "Payment",  accessor: "status",
-        formatter: (_, row) => <BookingPymentStatuse  status={row.status} />,},
+    {
+      label: "Payment",
+      accessor: "status",
+      formatter: (_, row) => <BookingPymentStatuse status={row.status} />,
+    },
     { label: "Check-In", accessor: "checkIn" },
     { label: "Check-Out", accessor: "checkOut" },
-    { label: "Price", accessor: "price" ,
-        formatter: (value) => `$${value}`,
+    {
+      label: "Price",
+      accessor: "price",
+      formatter: (value) => `$${value}`,
     },
-    { label: "Action", accessor: "status", formatter: (_, row) => <BookingAction onView={handleViewDetails} status={row} />, },
+    {
+      label: "Action",
+      accessor: "status",
+      formatter: (_, row) => <BookingAction onView={handleViewDetails} status={row} />,
+    },
     {
       label: "Status",
       accessor: "status",
@@ -94,6 +114,10 @@ export default function BookingPage() {
   
   return (
     <div className="flex flex-col gap-5">
+
+{isLoading && (
+        <Loader/>
+      )}
       {/* Overview */}
       <div className="w-full bg-white rounded-xl p-4  mx-auto">
         <h2 className="text-2xl font-medium text-[#22262e] mb-1">Manage bookings</h2>
