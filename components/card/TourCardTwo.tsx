@@ -23,7 +23,7 @@ function TourCardTwo({tour}:any) {
     breakfast,
   } = tour;
   return (
-        <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
+        <Link href={`/tour/${tourSlug}`} className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
         <Image
@@ -122,7 +122,7 @@ function TourCardTwo({tour}:any) {
           Check Details <FaArrowRight />
         </Link>
       </div>
-    </div>
+    </Link>
 
   )
 }

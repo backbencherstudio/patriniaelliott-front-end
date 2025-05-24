@@ -3,8 +3,9 @@ import Image from "next/image";
 import React, { useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
-
 import { bookings } from "@/DemoAPI/allProparty";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import BokingStatuse from "./BokingStatuse";
 import BookingAction from "./BookingAction";
 import BookingCard from "./BookingCard";
@@ -29,7 +30,34 @@ export default function BookingPage() {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
-
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Booking Report", 14, 15);
+  
+    const tableColumn = columns
+      .filter((col) => col.label !== "Action" && col.label !== "Status")
+      .map((col) => col.label);
+  
+    const tableRows = filteredUsers.map((user) => [
+      user.bookingId,
+      user.name,
+      user.service,
+      user.status, // Payment status (string)
+      user.checkIn,
+      user.checkOut,
+      `$${user.price}`,
+    ]);
+  
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [0, 104, 239] },
+    });
+  
+    doc.save("booking_report.pdf");
+  };
   const columns = [
     { label: "Booking ID", accessor: "bookingId" },
     { label: "Name", accessor: "name" },
@@ -98,7 +126,7 @@ export default function BookingPage() {
           {/* Date Range Dropdown */}
           <div className=" mt-4 md:mt-0 justify-end flex gap-2">
           <div>
-            <button className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">Export as PDF</button>
+            <button onClick={handleExportPDF} className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">Export as PDF</button>
           </div>
           <div className=" items-center flex gap-1  md:gap-2 text-sm text-[#0068ef] border p-2 rounded">
             <Image
