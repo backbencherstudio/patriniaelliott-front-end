@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { OWNERSHIP_TYPES } from '../../vendor-verification/page'
+import { useFormContext } from 'react-hook-form'
+import { OWNERSHIP_TYPES } from '../../vendor-verification/constants'
 
 interface FormData {
   ownershipType: string;

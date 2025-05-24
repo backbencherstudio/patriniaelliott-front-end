@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { MANAGER_TYPES } from '../../vendor-verification/page'
+import { useFormContext } from 'react-hook-form'
+import { MANAGER_TYPES } from '../../vendor-verification/constants'
 
 interface FormData {
   propertyManager: string;

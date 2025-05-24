@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { useFormContext } from 'react-hook-form'
-import { COUNTRIES } from '../../vendor-verification/page'
+import { COUNTRIES } from '../../vendor-verification/constants'
 
 interface Step1Props {
   onNext: () => void;
