@@ -1,5 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import React, { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import StepIndicator from './StepIndicator';
 
 const OWNERSHIP_TYPES = [
@@ -17,77 +17,67 @@ const COUNTRIES = [
   "Bangladesh"
 ];
 
-interface Owner {
+interface FormData {
+  propertyName: string;
+  address: string;
+  unitNumber: string;
+  zipCode: string;
+  city: string;
+  country: string;
+  ownershipType: string;
   firstName: string;
   lastName: string;
-}
-
-interface FormData {
-  ownershipType: string;
   alternativeName: string;
-  owners: Owner[];
-  country: string;
+  owners: Array<{ firstName: string; lastName: string }>;
+  propertyManager: string;
+  governmentInvolvement: string;
 }
 
 interface Step2Props {
-  onNext?: () => void;
+  onNext: () => void;
   onBack?: () => void;
-  currentStep?: number;
-  onStepClick?: (step: number) => void;
+  currentStep: number;
+  onStepClick: (step: number) => void;
+  formData: FormData;
+  updateFormData: (updates: Partial<FormData>) => void;
 }
 
 export default function Step2({
   onNext,
   onBack,
   currentStep = 2,
-  onStepClick = () => {}
+  onStepClick = () => {},
+  formData,
+  updateFormData
 }: Step2Props) {
-  const [formData, setFormData] = useState<FormData>({
-    ownershipType: "",
-    alternativeName: "",
-    owners: [{ firstName: "", lastName: "" }],
-    country: ""
-  });
+  const { register, setValue, watch } = useFormContext();
 
   // Add another owner
   const handleAddOwner = () => {
-    setFormData(prev => ({
-      ...prev,
-      owners: [...prev.owners, { firstName: '', lastName: '' }]
-    }));
+    const currentOwners = watch('owners') || [];
+    updateFormData({
+      owners: [...currentOwners, { firstName: '', lastName: '' }]
+    });
   };
 
   // Update owner fields
-  const handleOwnerChange = (idx: number, field: keyof Owner, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      owners: prev.owners.map((owner, i) =>
-        i === idx ? { ...owner, [field]: value } : owner
-      )
-    }));
+  const handleOwnerChange = (idx: number, field: 'firstName' | 'lastName', value: string) => {
+    const currentOwners = watch('owners') || [];
+    const updatedOwners = currentOwners.map((owner, i) =>
+      i === idx ? { ...owner, [field]: value } : owner
+    );
+    updateFormData({ owners: updatedOwners });
   };
 
   // Handle other fields
   const handleChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    updateFormData({ [field]: value });
   };
 
-  // Submit handler
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form Data:", formData);
-    if (onNext) onNext();
-  };
+  const currentOwners = watch('owners') || [{ firstName: '', lastName: '' }];
 
   return (
-    <form
-      className="flex flex-col gap-4"
-      onSubmit={handleSubmit}
-      autoComplete="off"
-    >
+    <div className="flex flex-col gap-4">
       <StepIndicator currentStep={currentStep} onStepClick={onStepClick} />
 
       <div className="p-6 bg-white rounded-2xl flex flex-col gap-6">
@@ -97,7 +87,7 @@ export default function Step2({
         <div className="flex flex-col gap-2">
           <label className="text-[#070707] text-base mb-1">Who owns the property?</label>
           <Select
-            value={formData.ownershipType}
+            value={watch('ownershipType')}
             onValueChange={value => handleChange("ownershipType", value)}
           >
             <SelectTrigger className="w-full px-3 !h-13 py-4 rounded-lg border border-[#d2d2d5] bg-white text-sm focus:outline-none focus:border-[#0068ef] ">
@@ -114,7 +104,7 @@ export default function Step2({
         </div>
 
         {/* Owner Name Fields */}
-        {formData.owners.map((owner, idx) => (
+        {currentOwners.map((owner, idx) => (
           <div className="flex flex-col md:flex-row gap-4" key={idx}>
             <div className="flex-1 flex flex-col gap-2">
               <label className="text-[#070707] text-base">First name</label>
@@ -152,26 +142,17 @@ export default function Step2({
           Add another
         </button>
 
-        {/* Country Select (Bottom input) */}
+        {/* Alternative Name */}
         <div className="flex flex-col gap-2">
            <label className="text-[#070707] text-base">
            If any owners go by an alternative name(s), provide those details
           </label>
-          <Select
-            value={formData.country}
-            onValueChange={value => handleChange("country", value)}
-          >
-            <SelectTrigger className="w-full px-3 py-4 !h-13 rounded-lg border border-[#d2d2d5] bg-white text-sm focus:outline-none focus:border-[#0068ef] ">
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent>
-              {COUNTRIES.map(option => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <input
+            {...register('alternativeName')}
+            type="text"
+            placeholder="Enter alternative name"
+            className="px-5 py-4 rounded-lg border border-[#d2d2d5] text-sm focus:outline-none focus:border-[#0068ef]"
+          />
         </div>
       </div>
 
@@ -185,12 +166,13 @@ export default function Step2({
           Back
         </button>
         <button
-          type="submit"
+          type="button"
+          onClick={onNext}
           className="px-8 py-3 bg-[#0068ef] rounded-lg flex items-center gap-1.5 text-white text-base font-medium cursor-pointer hover:bg-[#0051bd] transition-colors"
         >
           Next
         </button>
       </div>
-    </form>
+    </div>
   )
 }

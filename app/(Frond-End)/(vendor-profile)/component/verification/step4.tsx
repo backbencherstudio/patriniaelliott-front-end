@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import StepIndicator from './StepIndicator';
 
 interface FormData {
   // Step 1 - Property details
@@ -14,10 +15,11 @@ interface FormData {
   firstName: string;
   lastName: string;
   alternativeName: string;
+  owners: Array<{ firstName: string; lastName: string }>;
 
   // Step 3 - Manager's details
   propertyManager: string;
-  governmentInvolvement: boolean;
+  governmentInvolvement: string;
 }
 
 interface Step4Props {
@@ -26,9 +28,11 @@ interface Step4Props {
   currentStep: number;
   onStepClick: (step: number) => void;
   formData: FormData;
+  updateFormData: (updates: Partial<FormData>) => void;
+  isSubmitting?: boolean;
 }
 
-export default function Step4({ onNext, onBack, currentStep, onStepClick, formData }: Step4Props) {
+export default function Step4({ onNext, onBack, currentStep, onStepClick, formData, updateFormData, isSubmitting = false }: Step4Props) {
   const getStepStyle = (step: number) => {
     const isClickable = step <= currentStep;
     const isActive = step === currentStep;
@@ -39,50 +43,21 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
     return `${baseStyle} ${isClickable ? clickableStyle : activeStyle}`;
   };
 
+  const handleSubmit = () => {
+    // Show confirmation dialog
+    const isConfirmed = window.confirm(
+      'Are you sure you want to submit your vendor verification? Please make sure all information is correct.'
+    );
+    
+    if (isConfirmed) {
+      onNext();
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="w-full flex justify-center">
-        <div className="inline-flex items-center gap-2">
-          <div
-            className={getStepStyle(1)}
-            onClick={() => onStepClick(1)}
-          >
-            <div className="w-6 h-6 px-2 py-1 bg-[#d6ae29] rounded-xl flex justify-center items-center">
-              <div className="text-[#070707] text-base leading-none">1</div>
-            </div>
-            <div className="text-[#070707] text-base leading-none">Property details</div>
-          </div>
-          <div className="w-[66px] h-0 outline-1 outline-offset-[-0.50px] outline-[#a5a5ab]" />
-          <div
-            className={getStepStyle(2)}
-            onClick={() => onStepClick(2)}
-          >
-            <div className="w-6 h-6 px-2 py-1 bg-[#d6ae29] rounded-xl flex justify-center items-center">
-              <div className="text-[#070707] text-base leading-none">2</div>
-            </div>
-            <div className="text-[#070707] text-base leading-none">Owner's details</div>
-          </div>
-          <div className="w-[66px] h-0 outline-1 outline-offset-[-0.50px] outline-[#a5a5ab]" />
-          <div
-            className={getStepStyle(3)}
-            onClick={() => onStepClick(3)}
-          >
-            <div className="w-6 h-6 px-2 py-1 bg-[#d6ae29] rounded-xl flex justify-center items-center">
-              <div className="text-[#070707] text-base leading-none">3</div>
-            </div>
-            <div className="text-[#070707] text-base leading-none">Manager's details</div>
-          </div>
-          <div className="w-[66px] h-0 outline-1 outline-offset-[-0.50px] outline-[#a5a5ab]" />
-          <div
-            className={getStepStyle(4)}
-            onClick={() => onStepClick(4)}
-          >
-            <div className="w-6 h-6 px-2 py-1 bg-[#d6ae29] rounded-xl flex justify-center items-center">
-              <div className="text-[#070707] text-base leading-none">4</div>
-            </div>
-            <div className="text-[#070707] text-base leading-none">Confirmation</div>
-          </div>
-        </div>
+     <StepIndicator currentStep={currentStep} onStepClick={onStepClick} />
       </div>
 
       <div className=" p-6 bg-white rounded-xl flex flex-col gap-6">
@@ -163,10 +138,12 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
               <div className="text-[#070707] text-sm leading-snug">Who owns the property?</div>
               <div className="text-[#4a4c56] text-sm leading-snug">{formData.ownershipType}</div>
             </div>
-            <div className=" py-3 border-b border-[#e9e9ea] flex justify-between items-center">
-              <div className="text-[#070707] text-sm leading-snug">Your Full Name</div>
-              <div className="text-[#4a4c56] text-sm leading-snug">{`${formData.firstName} ${formData.lastName}`}</div>
-            </div>
+            {formData.owners && formData.owners.length > 0 && formData.owners.map((owner, index) => (
+              <div key={index} className=" py-3 border-b border-[#e9e9ea] flex justify-between items-center">
+                <div className="text-[#070707] text-sm leading-snug">Owner {index + 1}</div>
+                <div className="text-[#4a4c56] text-sm leading-snug">{`${owner.firstName} ${owner.lastName}`}</div>
+              </div>
+            ))}
             {formData.alternativeName && (
               <div className=" pt-3 flex justify-between items-center">
                 <div className="text-[#070707] text-sm leading-snug">Alternative Name</div>
@@ -209,7 +186,9 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
                 government official involved in the ownership, control, or management of the
                 accommodation?
               </div>
-              <div className="text-[#4a4c56] text-sm leading-snug">{formData.governmentInvolvement ? 'Yes' : 'No'}</div>
+              <div className="text-[#4a4c56] text-sm leading-snug">
+                {formData.governmentInvolvement === 'yes' ? 'Yes' : formData.governmentInvolvement === 'no' ? 'No' : ''}
+              </div>
             </div>
           </div>
         </div>
@@ -218,15 +197,24 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
       <div className="flex justify-end items-center gap-4 mt-3">
         <button
           onClick={onBack}
-          className="px-8 py-3 rounded-lg border border-[#0068ef] flex items-center gap-1.5 text-[#0068ef] text-base font-medium cursor-pointer hover:bg-[#f5f8ff] transition-colors"
+          disabled={isSubmitting}
+          className="px-8 py-3 rounded-lg border border-[#0068ef] flex items-center gap-1.5 text-[#0068ef] text-base font-medium cursor-pointer hover:bg-[#f5f8ff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Back
         </button>
         <button
-          onClick={onNext}
-          className="px-8 py-3 bg-[#0068ef] rounded-lg flex items-center gap-1.5 text-white text-base font-medium cursor-pointer hover:bg-[#0051bd] transition-colors"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="px-8 py-3 bg-[#0068ef] rounded-lg flex items-center gap-1.5 text-white text-base font-medium cursor-pointer hover:bg-[#0051bd] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Submit
+          {isSubmitting ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              Submitting...
+            </>
+          ) : (
+            'Submit'
+          )}
         </button>
       </div>
     </div>

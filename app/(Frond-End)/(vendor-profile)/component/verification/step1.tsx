@@ -4,14 +4,31 @@ import { useFormContext } from 'react-hook-form';
 import { COUNTRIES } from '../../vendor-verification/constants';
 import StepIndicator from './StepIndicator';
 
+interface FormData {
+  propertyName: string;
+  address: string;
+  unitNumber: string;
+  zipCode: string;
+  city: string;
+  country: string;
+  ownershipType: string;
+  firstName: string;
+  lastName: string;
+  alternativeName: string;
+  owners: Array<{ firstName: string; lastName: string }>;
+  propertyManager: string;
+  governmentInvolvement: string;
+}
 
 interface Step1Props {
   onNext: () => void;
   currentStep: number;
   onStepClick: (step: number) => void;
+  formData: FormData;
+  updateFormData: (updates: Partial<FormData>) => void;
 }
 
-export default function Step1({ onNext, currentStep, onStepClick }: Step1Props) {
+export default function Step1({ onNext, currentStep, onStepClick, formData, updateFormData }: Step1Props) {
   const { register, watch, setValue } = useFormContext();
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const selectedCountry = watch('country');

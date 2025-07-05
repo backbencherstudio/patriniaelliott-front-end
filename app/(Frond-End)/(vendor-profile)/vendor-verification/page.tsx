@@ -22,10 +22,11 @@ interface FormData {
   firstName: string;
   lastName: string;
   alternativeName: string;
+  owners: Array<{ firstName: string; lastName: string }>;
 
   // Step 3 - Manager's details
   propertyManager: string;
-  governmentInvolvement: boolean;
+  governmentInvolvement: string;
 }
 
 // Common interface for all step components
@@ -34,8 +35,9 @@ interface StepProps {
   onBack?: () => void;
   currentStep: number;
   onStepClick: (step: number) => void;
-  formData?: FormData;
-  updateFormData?: (updates: Partial<FormData>) => void;
+  formData: FormData;
+  updateFormData: (updates: Partial<FormData>) => void;
+  isSubmitting?: boolean;
 }
 
 const STORAGE_KEY = 'vendorVerificationData';
@@ -55,6 +57,7 @@ const STEPS: Array<{
 export default function VendorVerification() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isCompleted, setIsCompleted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const methods = useForm<FormData>({
     defaultValues: {
@@ -68,8 +71,9 @@ export default function VendorVerification() {
       firstName: '',
       lastName: '',
       alternativeName: '',
+      owners: [{ firstName: '', lastName: '' }],
       propertyManager: '',
-      governmentInvolvement: false
+      governmentInvolvement: ''
     }
   })
 
@@ -77,24 +81,84 @@ export default function VendorVerification() {
   useEffect(() => {
     const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
-      const parsedData = JSON.parse(savedData) as FormData;
-      Object.entries(parsedData).forEach(([key, value]) => {
-        methods.setValue(key as keyof FormData, value as string | boolean);
-      });
+      try {
+        const parsedData = JSON.parse(savedData) as FormData;
+        Object.entries(parsedData).forEach(([key, value]) => {
+          methods.setValue(key as keyof FormData, value);
+        });
+      } catch (error) {
+        console.error('Error parsing saved data:', error);
+      }
     }
-  }, []);
+  }, [methods]);
 
   const saveFormData = () => {
     const currentData = methods.getValues();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
   }
 
+  // Function to submit form data to API
+  const submitFormData = async (formData: FormData) => {
+    setIsSubmitting(true);
+    try {
+      // Make API call to submit verification data
+      const response = await fetch('/api/vendor-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit verification data');
+      }
+      
+      const result = await response.json();
+      console.log('Form data submitted successfully:', result);
+      
+      // Clear localStorage after successful submission
+      localStorage.removeItem(STORAGE_KEY);
+      setIsCompleted(true);
+    } catch (error) {
+      console.error('Error submitting form data:', error);
+      // Show error message to the user
+      alert(error instanceof Error ? error.message : 'Failed to submit verification data. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNext = () => {
     saveFormData();
     
     if (currentStep === 4) {
-      localStorage.removeItem(STORAGE_KEY);
-      setIsCompleted(true);
+      // Get all form data and validate before submitting
+      const formData = methods.getValues();
+      
+      // Validate required fields
+      const requiredFields = [
+        'propertyName', 'address', 'zipCode', 'city', 'country',
+        'ownershipType', 'propertyManager', 'governmentInvolvement'
+      ];
+      
+      const missingFields = requiredFields.filter(field => !formData[field as keyof FormData]);
+      
+      if (missingFields.length > 0) {
+        alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+        return;
+      }
+      
+      // Validate owners array
+      if (!formData.owners || formData.owners.length === 0 || 
+          formData.owners.some(owner => !owner.firstName || !owner.lastName)) {
+        alert('Please add at least one owner with first and last name');
+        return;
+      }
+      
+      // Submit the form data
+      submitFormData(formData);
     } else {
       setCurrentStep(prev => prev + 1);
     }
@@ -113,10 +177,14 @@ export default function VendorVerification() {
   const handleEdit = () => {
     const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
-      const parsedData = JSON.parse(savedData) as FormData;
-      Object.entries(parsedData).forEach(([key, value]) => {
-        methods.setValue(key as keyof FormData, value as string | boolean);
-      });
+      try {
+        const parsedData = JSON.parse(savedData) as FormData;
+        Object.entries(parsedData).forEach(([key, value]) => {
+          methods.setValue(key as keyof FormData, value);
+        });
+      } catch (error) {
+        console.error('Error parsing saved data:', error);
+      }
     }
     setCurrentStep(4);
     setIsCompleted(false);
@@ -150,7 +218,18 @@ export default function VendorVerification() {
             onStepClick={handleStepClick}
             formData={formData}
             updateFormData={updateFormData}
+            isSubmitting={isSubmitting}
           />
+        )}
+
+        {/* Show loading state during submission */}
+        {isSubmitting && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg flex flex-col items-center gap-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0068ef]"></div>
+              <p className="text-[#070707]">Submitting your verification data...</p>
+            </div>
+          </div>
         )}
       </form>
     </FormProvider>
