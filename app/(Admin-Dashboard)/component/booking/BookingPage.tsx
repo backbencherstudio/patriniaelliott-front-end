@@ -5,7 +5,7 @@ import DynamicTableWithPagination from "../common/DynamicTable";
 
 import { bookings } from "@/DemoAPI/allProparty";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import 'jspdf-autotable';
 import BokingStatuse from "./BokingStatuse";
 import BookingAction from "./BookingAction";
 import BookingCard from "./BookingCard";
@@ -42,13 +42,13 @@ export default function BookingPage() {
       user.bookingId,
       user.name,
       user.service,
-      user.status, // Payment status (string)
+      user.status,
       user.checkIn,
       user.checkOut,
       `$${user.price}`,
     ]);
   
-    autoTable(doc, {
+    (doc as any).autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
