@@ -1,9 +1,9 @@
-import TermsAndConditions from "../../component/termsCondition/TermsAndConditions"
+import TermsAndConditions from "../../_component/termsCondition/TermsAndConditions"
 
 function TermsPage() {
   return (
     <div className="mb-6">
-      <TermsAndConditions/>
+      <TermsAndConditions />
     </div>
   )
 }

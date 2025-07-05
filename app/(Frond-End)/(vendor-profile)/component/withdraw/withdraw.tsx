@@ -234,7 +234,7 @@ export default function Withdraw() {
           <div className="relative">
             <div 
               onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
-              className="px-3 py-1.5 rounded outline outline-1 outline-[#0068ef] flex items-center gap-3 cursor-pointer hover:bg-[#f5f5f5]"
+              className="px-3 py-1.5 rounded outline  outline-[#0068ef] flex items-center gap-3 cursor-pointer hover:bg-[#f5f5f5]"
             >
               <div className="flex justify-center items-center gap-1">
                 <div className="w-3.5 h-3.5 relative overflow-hidden flex items-center justify-center">

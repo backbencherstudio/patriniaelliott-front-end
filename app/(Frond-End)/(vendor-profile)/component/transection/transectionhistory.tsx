@@ -151,7 +151,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 
   return (
     <div className="flex">
-      <div className={`inline-flex items-center gap-1 pl-1.5 pr-2 py-1.5 ${style.bg} rounded-2xl outline outline-1 outline-offset-[-1px] ${style.border}`}>
+      <div className={`inline-flex items-center gap-1 pl-1.5 pr-2 py-1.5 ${style.bg} rounded-2xl outline-offset-[-1px] ${style.border}`}>
         <div className="w-3 h-3 flex items-center justify-center">
           <Image src={style.icon} alt={status} width={12} height={12} />
         </div>

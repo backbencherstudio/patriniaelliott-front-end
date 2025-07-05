@@ -1,9 +1,9 @@
-import BookingPage from "../../component/booking/BookingPage"
+import BookingPage from "../../_component/booking/BookingPage"
 
 function Booking() {
   return (
     <div>
-      <BookingPage/>
+      <BookingPage />
     </div>
   )
 }

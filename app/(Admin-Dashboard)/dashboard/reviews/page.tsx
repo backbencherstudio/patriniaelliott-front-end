@@ -1,9 +1,9 @@
-import ReviewPage from "../../component/Review/ReviewPage"
+import ReviewPage from "../../_component/Review/ReviewPage"
 
 function Reviews() {
   return (
     <div>
-      <ReviewPage/>
+      <ReviewPage />
     </div>
   )
 }

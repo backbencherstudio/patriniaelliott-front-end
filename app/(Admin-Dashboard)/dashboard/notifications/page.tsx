@@ -1,9 +1,9 @@
-import NotificationMenu from "../../component/notificationSetting/NotificationMenu"
+import NotificationMenu from "../../_component/notificationSetting/NotificationMenu"
 
 function NotificationPage() {
   return (
     <div>
-      <NotificationMenu/>
+      <NotificationMenu />
     </div>
   )
 }
