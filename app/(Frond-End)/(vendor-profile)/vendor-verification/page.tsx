@@ -8,7 +8,6 @@ import Step4 from '../component/verification/step4'
 import Step5 from '../component/verification/step5'
 import Verification from '../component/verification/verification'
 
-
 interface FormData {
   // Step 1 - Property details
   propertyName: string;
@@ -29,7 +28,29 @@ interface FormData {
   governmentInvolvement: boolean;
 }
 
+// Common interface for all step components
+interface StepProps {
+  onNext: () => void;
+  onBack?: () => void;
+  currentStep: number;
+  onStepClick: (step: number) => void;
+  formData?: FormData;
+  updateFormData?: (updates: Partial<FormData>) => void;
+}
+
 const STORAGE_KEY = 'vendorVerificationData';
+
+// Step configuration with proper typing
+const STEPS: Array<{
+  id: number;
+  title: string;
+  component: React.ComponentType<StepProps>;
+}> = [
+  { id: 1, title: 'Property details', component: Step1 },
+  { id: 2, title: "Owner's details", component: Step2 },
+  { id: 3, title: "Manager's details", component: Step3 },
+  { id: 4, title: 'Confirmation', component: Step4 },
+];
 
 export default function VendorVerification() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -37,21 +58,16 @@ export default function VendorVerification() {
 
   const methods = useForm<FormData>({
     defaultValues: {
-      // Step 1 initial values
       propertyName: '',
       address: '',
       unitNumber: '',
       zipCode: '',
       city: '',
       country: '',
-
-      // Step 2 initial values
       ownershipType: '',
       firstName: '',
       lastName: '',
       alternativeName: '',
-
-      // Step 3 initial values
       propertyManager: '',
       governmentInvolvement: false
     }
@@ -68,13 +84,15 @@ export default function VendorVerification() {
     }
   }, []);
 
-  const handleNext = () => {
-    // Save current form data to localStorage
+  const saveFormData = () => {
     const currentData = methods.getValues();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+  }
 
+  const handleNext = () => {
+    saveFormData();
+    
     if (currentStep === 4) {
-      // Clear localStorage after final submission
       localStorage.removeItem(STORAGE_KEY);
       setIsCompleted(true);
     } else {
@@ -92,17 +110,7 @@ export default function VendorVerification() {
     }
   }
 
-  const onSubmit = (data: FormData) => {
-    console.log('Form submitted:', data);
-    if (currentStep === 4) {
-      // Clear localStorage after final submission
-      localStorage.removeItem(STORAGE_KEY);
-      setIsCompleted(true);
-    }
-  }
-
   const handleEdit = () => {
-    // Load the last saved data from localStorage
     const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
       const parsedData = JSON.parse(savedData) as FormData;
@@ -114,67 +122,36 @@ export default function VendorVerification() {
     setIsCompleted(false);
   }
 
-  const renderStep = () => {
-    const formData = methods.getValues();
-    const updateFormData = (updates: Partial<FormData>) => {
-      Object.entries(updates).forEach(([key, value]) => {
-        methods.setValue(key as keyof FormData, value);
-      });
-      // Save to localStorage whenever form data is updated
-      const updatedData = methods.getValues();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
-    };
-
-    switch (currentStep) {
-      case 1:
-        return <Step1
-          onNext={handleNext}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-        />
-      case 2:
-        return <Step2
-          onNext={handleNext}
-          onBack={handleBack}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-          formData={formData}
-          updateFormData={updateFormData}
-        />
-      case 3:
-        return <Step3
-          onNext={handleNext}
-          onBack={handleBack}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-          formData={formData}
-          updateFormData={updateFormData}
-        />
-      case 4:
-        return <Step4
-          onNext={handleNext}
-          onBack={handleBack}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-          formData={formData}
-        />
-      default:
-        return null
-    }
-  }
-
-
-
+  const updateFormData = (updates: Partial<FormData>) => {
+    Object.entries(updates).forEach(([key, value]) => {
+      methods.setValue(key as keyof FormData, value);
+    });
+    saveFormData();
+  };
 
   if (isCompleted) {
     return <Step5 onEdit={handleEdit} />
   }
 
+  // Get current step component
+  const CurrentStepComponent = STEPS.find(step => step.id === currentStep)?.component;
+  const formData = methods.getValues();
+
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <form className="flex flex-col gap-6">
         <Verification />
-        {renderStep()}
+        
+        {CurrentStepComponent && (
+          <CurrentStepComponent
+            onNext={handleNext}
+            onBack={handleBack}
+            currentStep={currentStep}
+            onStepClick={handleStepClick}
+            formData={formData}
+            updateFormData={updateFormData}
+          />
+        )}
       </form>
     </FormProvider>
   )

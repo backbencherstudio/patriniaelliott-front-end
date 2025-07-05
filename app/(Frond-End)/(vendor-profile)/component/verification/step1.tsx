@@ -2,6 +2,8 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { COUNTRIES } from '../../vendor-verification/constants';
+import StepIndicator from './StepIndicator';
+
 
 interface Step1Props {
   onNext: () => void;
@@ -14,61 +16,9 @@ export default function Step1({ onNext, currentStep, onStepClick }: Step1Props) 
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const selectedCountry = watch('country');
 
-  const getStepStyle = (step: number) => {
-    const isClickable = step <= currentStep;
-    const isActive = step === currentStep;
-    const baseStyle = "flex items-center gap-3 transition-opacity";
-    const clickableStyle = isClickable ? "cursor-pointer hover:opacity-80" : "opacity-30";
-    const activeStyle = isActive ? "" : "opacity-30";
-
-    return `${baseStyle} ${isClickable ? clickableStyle : activeStyle}`;
-  };
-
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full flex justify-center">
-        <div className="inline-flex items-center gap-2">
-          <div
-            className={getStepStyle(1)}
-            onClick={() => onStepClick(1)}
-          >
-            <div className="w-6 h-6 px-2 py-1 bg-[#d6ae29] rounded-xl flex justify-center items-center">
-              <div className="text-[#070707] text-base leading-none">1</div>
-            </div>
-            <div className="text-[#070707] text-base leading-none">Property details</div>
-          </div>
-          <div className="w-[66px] h-0 outline-1 outline-offset-[-0.50px] outline-[#a5a5ab]" />
-          <div
-            className={getStepStyle(2)}
-            onClick={() => onStepClick(2)}
-          >
-            <div className="w-6 h-6 px-2 py-1 bg-[#d6ae29] rounded-xl flex justify-center items-center">
-              <div className="text-[#070707] text-base leading-none">2</div>
-            </div>
-            <div className="text-[#070707] text-base leading-none">Owner's details</div>
-          </div>
-          <div className="w-[66px] h-0 outline-1 outline-offset-[-0.50px] outline-[#a5a5ab]" />
-          <div
-            className={getStepStyle(3)}
-            onClick={() => onStepClick(3)}
-          >
-            <div className="w-6 h-6 px-2 py-1 bg-[#d6ae29] rounded-xl flex justify-center items-center">
-              <div className="text-[#070707] text-base leading-none">3</div>
-            </div>
-            <div className="text-[#070707] text-base leading-none">Manager's details</div>
-          </div>
-          <div className="w-[66px] h-0 outline-1 outline-offset-[-0.50px] outline-[#a5a5ab]" />
-          <div
-            className={getStepStyle(4)}
-            onClick={() => onStepClick(4)}
-          >
-            <div className="w-6 h-6 px-2 py-1 bg-[#d6ae29] rounded-xl flex justify-center items-center">
-              <div className="text-[#070707] text-base leading-none">4</div>
-            </div>
-            <div className="text-[#070707] text-base leading-none">Confirmation</div>
-          </div>
-        </div>
-      </div>
+      <StepIndicator currentStep={currentStep} onStepClick={onStepClick} />
 
       <div className=" p-6 bg-white rounded-xl flex flex-col gap-6">
         <div className=" px-4 py-3 bg-[#fffbee] rounded-xl flex gap-1.5">
