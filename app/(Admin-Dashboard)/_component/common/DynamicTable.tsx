@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -7,8 +6,8 @@ import React from "react";
 
 interface ColumnConfig {
   label: React.ReactNode;
- 
   accessor: string;
+  width?: string;
   formatter?: (value: any, row: any) => React.ReactNode;
 }
 
@@ -64,7 +63,11 @@ export default function DynamicTableWithPagination({
           <thead className="bg-neutral-50">
             <tr>
               {columns.map((col, index) => (
-                <th key={index} className="px-4 py-3 text-sm font-medium text-[#4a4c56]">
+                <th 
+                  key={index} 
+                  className="px-4 py-3 text-sm font-medium text-[#4a4c56]"
+                  style={{ width: col.width }}
+                >
                   {col.label}
                 </th>
               ))}
@@ -78,7 +81,11 @@ export default function DynamicTableWithPagination({
               paginatedData.map((row, i) => (
                 <tr key={i} className="border-t">
                   {columns.map((col, idx) => (
-                    <td key={idx} className="px-4 py-3 text-xs text-[#777980]">
+                    <td 
+                      key={idx} 
+                      className="px-4 py-3 text-xs text-[#777980]"
+                      style={{ width: col.width }}
+                    >
                       {col.formatter ? col.formatter(row[col.accessor], row) : row[col.accessor]}
                     </td>
                   ))}

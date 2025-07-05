@@ -1,6 +1,5 @@
-import React from 'react'
-import { FaStar } from "react-icons/fa6"
-import Image from 'next/image'
+import Image from 'next/image';
+import { FaStar } from "react-icons/fa6";
 
 interface DetailsProps {
   apartment: {
@@ -58,7 +57,7 @@ export default function Details({ apartment, onWriteReview, onBack }: DetailsPro
                 </div>
               </div>
             </div>
-            <div className="p-4 bg-[#e9e9ea]/20 rounded-lg outline outline-1 outline-offset-[-1px] outline-[#e9e9ea]/50 flex flex-col gap-6">
+            <div className="p-4 bg-[#e9e9ea]/20 rounded-lg  outline-offset-[-1px] outline-[#e9e9ea]/50 flex flex-col gap-6">
               <div className="text-2xl font-medium">Booking details</div>
               <div className="inline-flex justify-between items-center">
                 <div className="w-[297px] inline-flex flex-col gap-3">
@@ -87,7 +86,7 @@ export default function Details({ apartment, onWriteReview, onBack }: DetailsPro
         </div>
         <button 
           onClick={onWriteReview}
-          className="px-6 py-[13px] rounded-lg outline outline-1 outline-offset-[-1px] outline-[#0068ef] inline-flex items-center gap-1.5 hover:bg-[#0068ef] group transition-colors"
+          className="px-6 py-[13px] rounded-lg  outline-offset-[-1px] outline-[#0068ef] inline-flex items-center gap-1.5 hover:bg-[#0068ef] group transition-colors"
         >
           <div className="text-base font-medium text-[#0068ef] group-hover:text-white transition-colors">Write a review</div>
         </button>

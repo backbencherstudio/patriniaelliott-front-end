@@ -37,7 +37,7 @@ const DropdownField = ({
       <div className="text-[#070707] text-base leading-normal">{label}</div>
       <div className="relative">
         <div
-          className="self-stretch px-5 py-[15px] rounded-lg border border-[#d2d2d5] cursor-pointer hover:border-[#0068ef] transition-colors"
+          className=" px-5 py-[15px] rounded-lg border border-[#d2d2d5] cursor-pointer hover:border-[#0068ef] transition-colors"
           onClick={() => setIsOpen(!isOpen)}
         >
           <div className="flex justify-between items-center">
@@ -136,7 +136,7 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
         </div>
       </div>
 
-      <div className="self-stretch p-6 bg-white rounded-xl flex flex-col gap-6">
+      <div className=" p-6 bg-white rounded-xl flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="text-[#22262e] text-2xl font-medium leading-[30.24px]">Manager's details</div>
           <DropdownField

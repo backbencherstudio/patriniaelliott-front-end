@@ -16,16 +16,14 @@ const UserProfileLayout: React.FC<UserProfileLayoutProps> = ({ children }) => {
 
     return (
         <div className="bg-bgColor min-h-screen flex flex-col py-12">
-            {/* <div className="w-full sticky top-0 left-0">
-                <Header onMenuClick={openSidebar} sidebarOpen={sidebarOpen} />
-            </div> */}
-
-            <div className="container flex-1 flex flex-col lg:flex-row ">
+            <div className="container flex-1 flex flex-col gap-3 xl:flex-row">
                 <div
                     className={`
+                        fixed xl:relative
+                        !top-20 xl:!top-0 left-0 h-full
                         w-[312px]
-                        transition-transform duration-300 ease-in-out z-20
-                        lg:translate-x-0 
+                        transition-transform duration-300 ease-in-out z-50
+                        xl:translate-x-0 
                         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
                         lg:block
                     `}
@@ -36,14 +34,16 @@ const UserProfileLayout: React.FC<UserProfileLayoutProps> = ({ children }) => {
                 {/* Overlay for mobile when sidebar is open */}
                 {sidebarOpen && (
                     <div
-                        className="fixed inset-0 bg-black/50 lg:hidden"
+                        className="fixed inset-0 bg-black/50 xl:hidden z-40"
                         onClick={closeSidebar}
                     />
                 )}
-
-                {/* Main Content Area */}
-                <div className="flex-1">
-                    <main className="lg:pr-5 px-3">{children}</main>
+                
+                <div className="flex flex-col h-full w-full">
+                    <div className="xl:pt-5 xl:hidden">
+                        <button onClick={openSidebar}>open menu </button>
+                    </div>
+                    <main className="xl:pr-5 flex-1 xl:pt-0 pt-5">{children}</main>
                 </div>
             </div>
         </div>
