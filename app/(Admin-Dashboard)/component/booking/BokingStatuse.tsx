@@ -30,7 +30,6 @@ interface UserData {
   };
 
 function BokingStatuse({ status }: { status: UserData['status'] }) {
- 
     const style = statusStyles[status];
   return (
     <div className={`px-1  py-1.5 ${style.bg} rounded-2xl  outline-1 outline-offset-[-1px] ${style.border} flex justify-center items-center gap-1`}>

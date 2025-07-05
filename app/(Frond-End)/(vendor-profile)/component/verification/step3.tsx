@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import Image from 'next/image'
-import { useFormContext } from 'react-hook-form'
-import { MANAGER_TYPES } from '../../vendor-verification/constants'
+import Image from 'next/image';
+import { useState } from 'react';
+
+import { MANAGER_TYPES } from '../../vendor-verification/constants';
 
 interface FormData {
   propertyManager: string;
@@ -17,13 +17,13 @@ interface Step3Props {
   updateFormData: (updates: Partial<FormData>) => void;
 }
 
-const DropdownField = ({ 
-  label, 
-  value, 
+const DropdownField = ({
+  label,
+  value,
   placeholder,
   options,
   onSelect,
-}: { 
+}: {
   label: string;
   value: string;
   placeholder: string;
@@ -36,17 +36,17 @@ const DropdownField = ({
     <div className="w-full flex flex-col gap-3">
       <div className="text-[#070707] text-base leading-normal">{label}</div>
       <div className="relative">
-        <div 
+        <div
           className="self-stretch px-5 py-[15px] rounded-lg border border-[#d2d2d5] cursor-pointer hover:border-[#0068ef] transition-colors"
           onClick={() => setIsOpen(!isOpen)}
         >
           <div className="flex justify-between items-center">
             <div className="text-[#070707] text-sm leading-[21px]">{value || placeholder}</div>
-            <Image 
-              src="/vendor/downarrow.svg" 
-              alt="dropdown" 
-              width={16} 
-              height={16} 
+            <Image
+              src="/vendor/downarrow.svg"
+              alt="dropdown"
+              width={16}
+              height={16}
               className={`transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`}
             />
           </div>
@@ -86,7 +86,7 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
     const baseStyle = "flex items-center gap-3 transition-opacity";
     const clickableStyle = isClickable ? "cursor-pointer hover:opacity-80" : "opacity-30";
     const activeStyle = isActive ? "" : "opacity-30";
-    
+
     return `${baseStyle} ${isClickable ? clickableStyle : activeStyle}`;
   };
 
@@ -94,7 +94,7 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
     <>
       <div className="w-full flex justify-center">
         <div className="inline-flex items-center gap-2">
-          <div 
+          <div
             className={getStepStyle(1)}
             onClick={() => onStepClick(1)}
           >
@@ -104,7 +104,7 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
             <div className="text-[#070707] text-base leading-none">Property details</div>
           </div>
           <div className="w-[66px] h-0 outline-1 outline-offset-[-0.50px] outline-[#a5a5ab]" />
-          <div 
+          <div
             className={getStepStyle(2)}
             onClick={() => onStepClick(2)}
           >
@@ -114,7 +114,7 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
             <div className="text-[#070707] text-base leading-none">Owner's details</div>
           </div>
           <div className="w-[66px] h-0 outline-1 outline-offset-[-0.50px] outline-[#a5a5ab]" />
-          <div 
+          <div
             className={getStepStyle(3)}
             onClick={() => onStepClick(3)}
           >
@@ -124,7 +124,7 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
             <div className="text-[#070707] text-base leading-none">Manager's details</div>
           </div>
           <div className="w-[66px] h-0 outline-1 outline-offset-[-0.50px] outline-[#a5a5ab]" />
-          <div 
+          <div
             className={getStepStyle(4)}
             onClick={() => onStepClick(4)}
           >
@@ -139,7 +139,7 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
       <div className="self-stretch p-6 bg-white rounded-xl flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="text-[#22262e] text-2xl font-medium leading-[30.24px]">Manager's details</div>
-          <DropdownField 
+          <DropdownField
             label="Who manages the property?"
             value={formData.propertyManager}
             placeholder="Select manager type"
@@ -156,7 +156,7 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
               official involved in the ownership, control, or management of the accommodation?
             </div>
             <div className="flex items-center gap-6">
-              <button 
+              <button
                 type="button"
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() => handleGovernmentInvolvementChange(true)}
@@ -170,7 +170,7 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
                 </div>
                 <div className="text-[#070707] text-sm leading-[21px]">Yes</div>
               </button>
-              <button 
+              <button
                 type="button"
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() => handleGovernmentInvolvementChange(false)}
@@ -190,13 +190,13 @@ export default function Step3({ onNext, onBack, currentStep, onStepClick, formDa
       </div>
 
       <div className="flex justify-end items-center gap-4 mt-6">
-        <button 
+        <button
           onClick={onBack}
           className="px-8 py-3 rounded-lg border border-[#0068ef] flex items-center gap-1.5 text-[#0068ef] text-base font-medium cursor-pointer hover:bg-[#f5f8ff] transition-colors"
         >
           Back
         </button>
-        <button 
+        <button
           onClick={onNext}
           className="px-8 py-3 bg-[#0068ef] rounded-lg flex items-center gap-1.5 text-white text-base font-medium cursor-pointer hover:bg-[#0051bd] transition-colors"
         >

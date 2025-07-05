@@ -1,13 +1,13 @@
 'use client'
-import React, { useState, useEffect } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
-import Verification from '../component/verification/verification'
+import { useEffect, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import Step1 from '../component/verification/step1'
 import Step2 from '../component/verification/step2'
 import Step3 from '../component/verification/step3'
 import Step4 from '../component/verification/step4'
 import Step5 from '../component/verification/step5'
-import { COUNTRIES, OWNERSHIP_TYPES, MANAGER_TYPES, STORAGE_KEY } from './constants'
+import Verification from '../component/verification/verification'
+
 
 interface FormData {
   // Step 1 - Property details
@@ -28,6 +28,8 @@ interface FormData {
   propertyManager: string;
   governmentInvolvement: boolean;
 }
+
+const STORAGE_KEY = 'vendorVerificationData';
 
 export default function VendorVerification() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -125,34 +127,34 @@ export default function VendorVerification() {
 
     switch (currentStep) {
       case 1:
-        return <Step1 
-          onNext={handleNext} 
-          currentStep={currentStep} 
+        return <Step1
+          onNext={handleNext}
+          currentStep={currentStep}
           onStepClick={handleStepClick}
         />
       case 2:
-        return <Step2 
-          onNext={handleNext} 
-          onBack={handleBack} 
-          currentStep={currentStep} 
+        return <Step2
+          onNext={handleNext}
+          onBack={handleBack}
+          currentStep={currentStep}
           onStepClick={handleStepClick}
           formData={formData}
           updateFormData={updateFormData}
         />
       case 3:
-        return <Step3 
-          onNext={handleNext} 
-          onBack={handleBack} 
-          currentStep={currentStep} 
+        return <Step3
+          onNext={handleNext}
+          onBack={handleBack}
+          currentStep={currentStep}
           onStepClick={handleStepClick}
           formData={formData}
           updateFormData={updateFormData}
         />
       case 4:
-        return <Step4 
-          onNext={handleNext} 
-          onBack={handleBack} 
-          currentStep={currentStep} 
+        return <Step4
+          onNext={handleNext}
+          onBack={handleBack}
+          currentStep={currentStep}
           onStepClick={handleStepClick}
           formData={formData}
         />
@@ -162,7 +164,7 @@ export default function VendorVerification() {
   }
 
 
-  
+
 
   if (isCompleted) {
     return <Step5 onEdit={handleEdit} />
