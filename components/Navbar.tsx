@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { BsGlobe2 } from "react-icons/bs";
 import { HiOutlineMenu, HiX } from "react-icons/hi";
+import { IoIosArrowDown } from "react-icons/io";
 
 import {
   DropdownMenu,
@@ -26,6 +28,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [language, setLanguage] = useState<"en" | "bn">("en");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   return (
     <header className="bg-primaryColor py-4 px-4">
@@ -68,15 +71,100 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Link href="/login" className="text-white text-base">
-            Login
-          </Link>
-          <Link
-            href="/registration"
-            className="bg-secondaryColor text-blackColor font-medium cursor-pointer  text-base px-4 py-2 rounded-[8px]"
-          >
-            Sign up
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/profile-info"
+                className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-[100px]"
+              >
+                Become a Vendor
+              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-1.5">
+                  <div className="w-[46px] h-[46px] relative rounded-[200px] bg-white/10 border-[0.75px] border-white/10">
+                    <Image
+                      src="/usericon/avatar.png"
+                      alt="User Avatar"
+                      fill
+                      className="object-cover rounded-[200px]"
+                    />
+                  </div>
+                  <IoIosArrowDown className="text-white" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="p-4 bg-white rounded-lg shadow-[-1px_2px_30px_0px_rgba(0,0,0,0.08)] inline-flex flex-col justify-center items-start gap-2.5">
+                  <div className="pb-3 border-b border-[#e9e9ea] inline-flex justify-start items-center gap-2.5 w-full">
+                    <div className="w-8 h-8 relative rounded-[200px]">
+                      <Image
+                        src="/usericon/avatar.png"
+                        alt="User Avatar"
+                        fill
+                        className="rounded-[200px]"
+                      />
+                      <div className="w-8 h-8 left-0 top-0 absolute opacity-10 rounded-[200px] border-[0.75px] border-black" />
+                    </div>
+                    <div className="justify-start text-[#070707] text-base font-normal font-['Inter'] leading-none">elisabeth_sarah@gmail.com</div>
+                  </div>
+                  <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
+                    <Link href="/my-account" className="w-full">
+                      <DropdownMenuItem className="self-stretch py-2 inline-flex justify-start items-center gap-2.5 w-full focus:bg-transparent">
+                        <div className="w-8 h-8 p-[2.67px] bg-[#fffbee] rounded-full outline-offset-[-1px] inline-flex flex-col justify-center items-center gap-[6.67px] overflow-hidden">
+                          <Image
+                            src="/usericon/user.svg"
+                            alt="My Account"
+                            width={16}
+                            height={16}
+                          />
+                        </div>
+                        <div className={cn(
+                          "justify-start text-base font-medium font-['Inter'] leading-none",
+                          pathname === "/my-account" ? "text-[#d6ae29]" : "text-[#070707]"
+                        )}>My Account</div>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href="/apartment-history" className="w-full">
+                      <DropdownMenuItem className="self-stretch py-2 inline-flex justify-start items-center gap-2.5 w-full focus:bg-transparent">
+                        <div className="w-8 h-8 p-[2.67px] bg-[#fffbee] rounded-full outline-offset-[-1px] inline-flex flex-col justify-center items-center gap-[6.67px] overflow-hidden">
+                          <Image
+                            src="/usericon/date.svg"
+                            alt="My Booking"
+                            width={16}
+                            height={16}
+                          />
+                        </div>
+                        <div className={cn(
+                          "justify-start text-base font-normal font-['Inter'] leading-none",
+                          pathname === "/apartment-history" ? "text-[#d6ae29]" : "text-[#070707]"
+                        )}>My Booking</div>
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuItem className="self-stretch py-2 inline-flex justify-start items-center gap-2.5 w-full focus:bg-transparent" onClick={() => setIsLoggedIn(false)}>
+                      <div className="w-8 h-8 p-[2.67px] bg-[#fffbee] rounded-full outline-offset-[-1px] inline-flex flex-col justify-center items-center gap-[6.67px] overflow-hidden">
+                        <Image
+                          src="/usericon/logout.svg"
+                          alt="Logout"
+                          width={16}
+                          height={16}
+                        />
+                      </div>
+                      <div className="justify-start text-[#070707] text-base font-normal font-['Inter'] leading-none">Logout</div>
+                    </DropdownMenuItem>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-white text-base">
+                Login
+              </Link>
+              <Link
+                href="/registration"
+                className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-[8px]"
+              >
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -108,8 +196,8 @@ export default function Navbar() {
           ))}
 
           {/* Language Dropdown (Mobile) */}
-          <div className=" flex  items-center justify-between">
-            <div className="text-white text-base flex items-center gap-2 ">
+          <div className="flex items-center justify-between">
+            <div className="text-white text-base flex items-center gap-2">
               <BsGlobe2 />
               <select
                 value={language}
@@ -124,17 +212,101 @@ export default function Navbar() {
                 </option>
               </select>
             </div>
-         
-              <Link href="/login" className="text-white text-base">
-                Login
-              </Link>
-              <Link
-                href="/registration"
-                className="bg-secondaryColor inline-block text-blackColor font-medium cursor-pointer  text-base px-4 py-2 rounded-[8px]"
-              >
-                Sign up
-              </Link>
 
+            {isLoggedIn ? (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/profile-info"
+                  className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-[100px]"
+                >
+                  Become a Vendor
+                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-1.5">
+                    <div className="w-[46px] h-[46px] relative rounded-[200px] bg-white/10 border-[0.75px] border-white/10">
+                      <Image
+                        src="/usericon/avatar.png"
+                        alt="User Avatar"
+                        fill
+                        className="object-cover rounded-[200px]"
+                      />
+                    </div>
+                    <IoIosArrowDown className="text-white" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="p-4 bg-white rounded-lg shadow-[-1px_2px_30px_0px_rgba(0,0,0,0.08)] inline-flex flex-col justify-center items-start gap-2.5">
+                    <div className="pb-3 border-b border-[#e9e9ea] inline-flex justify-start items-center gap-2.5 w-full">
+                      <div className="w-8 h-8 relative rounded-[200px]">
+                        <Image
+                          src="/usericon/avatar.png"
+                          alt="User Avatar"
+                          fill
+                          className="rounded-[200px]"
+                        />
+                        <div className="w-8 h-8 left-0 top-0 absolute opacity-10 rounded-[200px] border-[0.75px] border-black" />
+                      </div>
+                      <div className="justify-start text-[#070707] text-base font-normal font-['Inter'] leading-none">elisabeth_sarah@gmail.com</div>
+                    </div>
+                    <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
+                      <Link href="/my-account" className="w-full">
+                        <DropdownMenuItem className="self-stretch py-2 inline-flex justify-start items-center gap-2.5 w-full focus:bg-transparent">
+                          <div className="w-8 h-8 p-[2.67px] bg-[#fffbee] rounded-full outline-offset-[-1px] inline-flex flex-col justify-center items-center gap-[6.67px] overflow-hidden">
+                            <Image
+                              src="/usericon/user.svg"
+                              alt="My Account"
+                              width={16}
+                              height={16}
+                            />
+                          </div>
+                          <div className={cn(
+                            "justify-start text-base font-medium font-['Inter'] leading-none",
+                            pathname === "/my-account" ? "text-[#d6ae29]" : "text-[#070707]"
+                          )}>My Account</div>
+                        </DropdownMenuItem>
+                      </Link>
+                      <Link href="/apartment-history" className="w-full">
+                        <DropdownMenuItem className="self-stretch py-2 inline-flex justify-start items-center gap-2.5 w-full focus:bg-transparent">
+                          <div className="w-8 h-8 p-[2.67px] bg-[#fffbee] rounded-full outline-offset-[-1px] inline-flex flex-col justify-center items-center gap-[6.67px] overflow-hidden">
+                            <Image
+                              src="/usericon/date.svg"
+                              alt="My Booking"
+                              width={16}
+                              height={16}
+                            />
+                          </div>
+                          <div className={cn(
+                            "justify-start text-base font-normal font-['Inter'] leading-none",
+                            pathname === "/apartment-history" ? "text-[#d6ae29]" : "text-[#070707]"
+                          )}>My Booking</div>
+                        </DropdownMenuItem>
+                      </Link>
+                      <DropdownMenuItem className="self-stretch py-2 inline-flex justify-start items-center gap-2.5 w-full focus:bg-transparent" onClick={() => setIsLoggedIn(false)}>
+                        <div className="w-8 h-8 p-[2.67px] bg-[#fffbee] rounded-full outline-offset-[-1px] inline-flex flex-col justify-center items-center gap-[6.67px] overflow-hidden">
+                          <Image
+                            src="/usericon/logout.svg"
+                            alt="Logout"
+                            width={16}
+                            height={16}
+                          />
+                        </div>
+                        <div className="justify-start text-[#070707] text-base font-normal font-['Inter'] leading-none">Logout</div>
+                      </DropdownMenuItem>
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <>
+                <Link href="/login" className="text-white text-base">
+                  Login
+                </Link>
+                <Link
+                  href="/registration"
+                  className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-[8px]"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

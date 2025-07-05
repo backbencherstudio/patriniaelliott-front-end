@@ -84,7 +84,7 @@ const getStatusStyles = (status: string) => {
 export default function Refund() {
   return (
     <>
-      <div className="w-full px-6 py-[23px] bg-white rounded-xl inline-flex flex-col justify-start items-start gap-6 my-10">
+      <div className="w-full px-6 py-[23px] bg-white rounded-xl inline-flex flex-col justify-start items-start gap-6">
         <div className="w-[339px] flex flex-col justify-start items-start gap-[15px]">
           <div className="self-stretch justify-center text-[#070707] text-2xl font-medium ">Refund user</div>
           <div className="self-stretch justify-center text-[#777980] text-base font-normal ">Check up on your latest refund history.</div>

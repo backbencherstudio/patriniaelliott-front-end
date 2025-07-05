@@ -66,7 +66,7 @@ export default function Tour() {
   ];
 
   return (
-    <div className="w-[960px] inline-flex flex-col justify-start items-center my-10">
+    <div className="w-[960px] inline-flex flex-col justify-start items-center">
       <div className="self-stretch px-4 py-6 bg-white rounded-tl-xl rounded-tr-xl inline-flex justify-between items-start">
         <div className="w-[339px] inline-flex flex-col justify-start items-start gap-[15px]">
           <div className="self-stretch justify-center text-[#070707] text-2xl font-medium font-['Inter'] leading-normal">Tour reservation list</div>

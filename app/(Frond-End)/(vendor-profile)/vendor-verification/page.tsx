@@ -7,6 +7,7 @@ import Step2 from '../component/verification/step2'
 import Step3 from '../component/verification/step3'
 import Step4 from '../component/verification/step4'
 import Step5 from '../component/verification/step5'
+import { COUNTRIES, OWNERSHIP_TYPES, MANAGER_TYPES, STORAGE_KEY } from './constants'
 
 interface FormData {
   // Step 1 - Property details
@@ -27,38 +28,6 @@ interface FormData {
   propertyManager: string;
   governmentInvolvement: boolean;
 }
-
-// Dropdown options
-export const COUNTRIES = [
-  'United States of America',
-  'United Kingdom',
-  'Canada',
-  'Australia',
-  'Germany',
-  'France',
-  'Spain',
-  'Italy',
-  'Japan',
-  'Singapore'
-]
-
-export const OWNERSHIP_TYPES = [
-  "I'm an individual running a business",
-  'Company or organization',
-  'Property management company',
-  'Real estate agency',
-  'Other'
-]
-
-export const MANAGER_TYPES = [
-  'Owner',
-  'Professional property manager',
-  'Family member',
-  'Friend',
-  'Other'
-]
-
-const STORAGE_KEY = 'vendorVerificationData';
 
 export default function VendorVerification() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -191,6 +160,9 @@ export default function VendorVerification() {
         return null
     }
   }
+
+
+  
 
   if (isCompleted) {
     return <Step5 onEdit={handleEdit} />
