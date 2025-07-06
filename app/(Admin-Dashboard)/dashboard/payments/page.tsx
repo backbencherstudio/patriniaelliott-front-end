@@ -1,9 +1,9 @@
-import PaymentPage from "../../component/payment/PaymentPage"
+import PaymentPage from "../../_component/payment/PaymentPage"
 
 function Payment() {
   return (
     <div>
-      <PaymentPage/>
+      <PaymentPage />
     </div>
   )
 }

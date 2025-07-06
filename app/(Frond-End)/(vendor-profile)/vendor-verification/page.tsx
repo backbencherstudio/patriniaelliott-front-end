@@ -8,7 +8,6 @@ import Step4 from '../component/verification/step4'
 import Step5 from '../component/verification/step5'
 import Verification from '../component/verification/verification'
 
-
 interface FormData {
   // Step 1 - Property details
   propertyName: string;
@@ -23,37 +22,58 @@ interface FormData {
   firstName: string;
   lastName: string;
   alternativeName: string;
+  owners: Array<{ firstName: string; lastName: string }>;
 
   // Step 3 - Manager's details
   propertyManager: string;
-  governmentInvolvement: boolean;
+  governmentInvolvement: string;
+}
+
+// Common interface for all step components
+interface StepProps {
+  onNext: () => void;
+  onBack?: () => void;
+  currentStep: number;
+  onStepClick: (step: number) => void;
+  formData: FormData;
+  updateFormData: (updates: Partial<FormData>) => void;
+  isSubmitting?: boolean;
 }
 
 const STORAGE_KEY = 'vendorVerificationData';
 
+// Step configuration with proper typing
+const STEPS: Array<{
+  id: number;
+  title: string;
+  component: React.ComponentType<StepProps>;
+}> = [
+  { id: 1, title: 'Property details', component: Step1 },
+  { id: 2, title: "Owner's details", component: Step2 },
+  { id: 3, title: "Manager's details", component: Step3 },
+  { id: 4, title: 'Confirmation', component: Step4 },
+];
+
 export default function VendorVerification() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isCompleted, setIsCompleted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const methods = useForm<FormData>({
     defaultValues: {
-      // Step 1 initial values
       propertyName: '',
       address: '',
       unitNumber: '',
       zipCode: '',
       city: '',
       country: '',
-
-      // Step 2 initial values
       ownershipType: '',
       firstName: '',
       lastName: '',
       alternativeName: '',
-
-      // Step 3 initial values
+      owners: [{ firstName: '', lastName: '' }],
       propertyManager: '',
-      governmentInvolvement: false
+      governmentInvolvement: ''
     }
   })
 
@@ -61,22 +81,84 @@ export default function VendorVerification() {
   useEffect(() => {
     const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
-      const parsedData = JSON.parse(savedData) as FormData;
-      Object.entries(parsedData).forEach(([key, value]) => {
-        methods.setValue(key as keyof FormData, value as string | boolean);
-      });
+      try {
+        const parsedData = JSON.parse(savedData) as FormData;
+        Object.entries(parsedData).forEach(([key, value]) => {
+          methods.setValue(key as keyof FormData, value);
+        });
+      } catch (error) {
+        console.error('Error parsing saved data:', error);
+      }
     }
-  }, []);
+  }, [methods]);
 
-  const handleNext = () => {
-    // Save current form data to localStorage
+  const saveFormData = () => {
     const currentData = methods.getValues();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+  }
 
-    if (currentStep === 4) {
-      // Clear localStorage after final submission
+  // Function to submit form data to API
+  const submitFormData = async (formData: FormData) => {
+    setIsSubmitting(true);
+    try {
+      // Make API call to submit verification data
+      const response = await fetch('/api/vendor-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit verification data');
+      }
+      
+      const result = await response.json();
+      console.log('Form data submitted successfully:', result);
+      
+      // Clear localStorage after successful submission
       localStorage.removeItem(STORAGE_KEY);
       setIsCompleted(true);
+    } catch (error) {
+      console.error('Error submitting form data:', error);
+      // Show error message to the user
+      alert(error instanceof Error ? error.message : 'Failed to submit verification data. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleNext = () => {
+    saveFormData();
+    
+    if (currentStep === 4) {
+      // Get all form data and validate before submitting
+      const formData = methods.getValues();
+      
+      // Validate required fields
+      const requiredFields = [
+        'propertyName', 'address', 'zipCode', 'city', 'country',
+        'ownershipType', 'propertyManager', 'governmentInvolvement'
+      ];
+      
+      const missingFields = requiredFields.filter(field => !formData[field as keyof FormData]);
+      
+      if (missingFields.length > 0) {
+        alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+        return;
+      }
+      
+      // Validate owners array
+      if (!formData.owners || formData.owners.length === 0 || 
+          formData.owners.some(owner => !owner.firstName || !owner.lastName)) {
+        alert('Please add at least one owner with first and last name');
+        return;
+      }
+      
+      // Submit the form data
+      submitFormData(formData);
     } else {
       setCurrentStep(prev => prev + 1);
     }
@@ -92,89 +174,63 @@ export default function VendorVerification() {
     }
   }
 
-  const onSubmit = (data: FormData) => {
-    console.log('Form submitted:', data);
-    if (currentStep === 4) {
-      // Clear localStorage after final submission
-      localStorage.removeItem(STORAGE_KEY);
-      setIsCompleted(true);
-    }
-  }
-
   const handleEdit = () => {
-    // Load the last saved data from localStorage
     const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
-      const parsedData = JSON.parse(savedData) as FormData;
-      Object.entries(parsedData).forEach(([key, value]) => {
-        methods.setValue(key as keyof FormData, value as string | boolean);
-      });
+      try {
+        const parsedData = JSON.parse(savedData) as FormData;
+        Object.entries(parsedData).forEach(([key, value]) => {
+          methods.setValue(key as keyof FormData, value);
+        });
+      } catch (error) {
+        console.error('Error parsing saved data:', error);
+      }
     }
     setCurrentStep(4);
     setIsCompleted(false);
   }
 
-  const renderStep = () => {
-    const formData = methods.getValues();
-    const updateFormData = (updates: Partial<FormData>) => {
-      Object.entries(updates).forEach(([key, value]) => {
-        methods.setValue(key as keyof FormData, value);
-      });
-      // Save to localStorage whenever form data is updated
-      const updatedData = methods.getValues();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
-    };
-
-    switch (currentStep) {
-      case 1:
-        return <Step1
-          onNext={handleNext}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-        />
-      case 2:
-        return <Step2
-          onNext={handleNext}
-          onBack={handleBack}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-          formData={formData}
-          updateFormData={updateFormData}
-        />
-      case 3:
-        return <Step3
-          onNext={handleNext}
-          onBack={handleBack}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-          formData={formData}
-          updateFormData={updateFormData}
-        />
-      case 4:
-        return <Step4
-          onNext={handleNext}
-          onBack={handleBack}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-          formData={formData}
-        />
-      default:
-        return null
-    }
-  }
-
-
-
+  const updateFormData = (updates: Partial<FormData>) => {
+    Object.entries(updates).forEach(([key, value]) => {
+      methods.setValue(key as keyof FormData, value);
+    });
+    saveFormData();
+  };
 
   if (isCompleted) {
     return <Step5 onEdit={handleEdit} />
   }
 
+  // Get current step component
+  const CurrentStepComponent = STEPS.find(step => step.id === currentStep)?.component;
+  const formData = methods.getValues();
+
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <form className="flex flex-col gap-6">
         <Verification />
-        {renderStep()}
+        
+        {CurrentStepComponent && (
+          <CurrentStepComponent
+            onNext={handleNext}
+            onBack={handleBack}
+            currentStep={currentStep}
+            onStepClick={handleStepClick}
+            formData={formData}
+            updateFormData={updateFormData}
+            isSubmitting={isSubmitting}
+          />
+        )}
+
+        {/* Show loading state during submission */}
+        {isSubmitting && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg flex flex-col items-center gap-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0068ef]"></div>
+              <p className="text-[#070707]">Submitting your verification data...</p>
+            </div>
+          </div>
+        )}
       </form>
     </FormProvider>
   )

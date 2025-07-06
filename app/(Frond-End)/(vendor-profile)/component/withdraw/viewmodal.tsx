@@ -1,21 +1,23 @@
 'use client'
-import React from 'react'
-import { X } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay
+} from '@/components/ui/dialog';
 
 interface ViewModalProps {
+  open: boolean;
   transaction: {
     date: string;
     transactionId: string;
     amount: string;
     status: 'Completed' | 'Processing' | 'Canceled';
-  };
-  onClose: () => void;
+  } | null;
+  onClose: any;
 }
 
-export default function ViewModal({ transaction, onClose }: ViewModalProps) {
-  if (!transaction) {
-    return null;
-  }
+export default function ViewModal({ open, transaction, onClose }: ViewModalProps) {
+  if (!transaction) return null;
 
   const formatDate = (dateStr: string) => {
     try {
@@ -29,87 +31,76 @@ export default function ViewModal({ transaction, onClose }: ViewModalProps) {
         minute: 'numeric',
         hour12: true 
       });
-    } catch (error) {
-      console.error('Error formatting date:', error);
+    } catch {
       return 'Invalid Date';
     }
   };
 
   const details = [
-    { label: "Requested On", value: formatDate(transaction?.date || '') },
-    { label: "Transaction ID", value: transaction?.transactionId || 'N/A' },
+    { label: "Requested On", value: formatDate(transaction.date) },
+    { label: "Transaction ID", value: transaction.transactionId },
     { label: "Payment Method", value: "Bank Transfer" },
     { label: "Account Number", value: "3897 2256 1900 3***" },
-    { label: "Status", value: transaction?.status || 'N/A', isStatus: true },
-    { label: "Requested Amount", value: transaction?.amount || 'N/A' }
+    { label: "Status", value: transaction.status, isStatus: true },
+    { label: "Requested Amount", value: transaction.amount }
   ];
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Completed':
-        return 'text-[#299c46]';
-      case 'Processing':
-        return 'text-[#ffa23a]';
-      case 'Canceled':
-        return 'text-[#fe5050]';
-      default:
-        return 'text-[#4a4c56]';
-    }
+    if (status === 'Completed') return 'text-[#299c46]';
+    if (status === 'Processing') return 'text-[#ffa23a]';
+    if (status === 'Canceled') return 'text-[#fe5050]';
+    return 'text-[#4a4c56]';
   };
 
   return (
-    <div className="w-[536px] px-6 pt-12 pb-8 relative bg-white rounded-3xl inline-flex flex-col justify-center items-center gap-8">
-      <div className="self-stretch flex flex-col justify-start items-start gap-2">
-        <h2 className="text-center text-[#070707] text-[32px] font-medium leading-10">
-          Withdraw Details
-        </h2>
-        <p className="text-center text-[#777980] text-base leading-normal">
-          Transaction ID: {transaction?.transactionId || 'N/A'}
-        </p>
-      </div>
-
-      <div className="self-stretch p-4 rounded-xl outline-1 outline-offset-[-1px] outline-[#f3f3f4] flex flex-col justify-start items-start gap-4">
-        <h3 className="text-[#070707] text-xl leading-[30px]">
-          Withdrawal Details
-        </h3>
-        <div className="self-stretch inline-flex justify-between items-center">
-          <div className="flex-1 inline-flex flex-col justify-start items-start gap-5">
-            {details.map((item) => (
-              <div key={item.label} className="text-[#777980] text-base leading-none">
-                {item.label}
-              </div>
-            ))}
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogOverlay />
+      <DialogContent className="p-0 max-w-[90%] md:max-w-[536px] bg-transparent border-none shadow-none">
+        <div className=" w-full p-4 md:px-6 pt-12 pb-8 bg-white rounded-3xl flex flex-col items-center gap-8 relative">
+          <div className="w-full flex flex-col items-start gap-2">
+            <h2 className="text-center text-[#070707] text-2xl md:text-[32px] font-medium leading-10 w-full">
+              Withdraw Details
+            </h2>
+            <p className="text-center text-[#777980] text-base leading-normal w-full">
+              Transaction ID: {transaction.transactionId}
+            </p>
           </div>
-          <div className="w-[252px] inline-flex flex-col justify-center items-end gap-5">
-            {details.map((item) => (
-              <div 
-                key={item.label} 
-                className={`${item.isStatus ? getStatusColor(item.value as string) : 'text-[#4a4c56]'} text-base leading-none`}
-              >
-                {item.value}
+
+          <div className="w-full p-4 rounded-xl outline  outline-[#f3f3f4] flex flex-col gap-4">
+            <h3 className="text-[#070707] text-lg md:text-xl leading-[30px]">Withdrawal Details</h3>
+            <div className="flex justify-between items-center w-full">
+              <div className="flex-1 flex flex-col gap-5">
+                {details.map((item) => (
+                  <div className='flex items-center justify-between gap-2'>
+                  <div key={item.label} className="text-[#777980] text-sm md:text-base leading-none">
+                    {item.label}
+                  </div>
+ <div
+                    key={item.label}
+                    className={`${item.isStatus ? getStatusColor(item.value as string) : 'text-[#4a4c56]'} text-sm md:text-base leading-none`}
+                  >
+                    {item.value}
+                  </div>
+                  </div>
+
+                ))}
               </div>
-            ))}
+             
+            </div>
+          </div>
+
+          <div className="w-full">
+            <button
+              onClick={onClose}
+              className="w-full pl-5 pr-5 py-5 bg-[#d6ae29] rounded-[50px] outline  outline-[#d2d2d5] flex justify-center items-center cursor-pointer hover:bg-[#c19f25] transition-colors"
+            >
+              <span className="text-[#23262f] text-base font-medium">
+                Close
+              </span>
+            </button>
           </div>
         </div>
-      </div>
-
-      <div className="self-stretch">
-        <button 
-          onClick={onClose}
-          className="w-full pl-5 pr-[19px] py-5 bg-[#d6ae29] rounded-[50px] outline-1 outline-[#d2d2d5] flex justify-center items-center cursor-pointer hover:bg-[#c19f25] transition-colors"
-        >
-          <span className="text-[#23262f] text-base font-medium">
-            Close
-          </span>
-        </button>
-      </div>
-
-      <button 
-        onClick={onClose}
-        className="absolute right-6 top-6 p-2 bg-[#e9e9ea] hover:bg-[#d1d1d2] rounded-full transition-colors cursor-pointer"
-      >
-        <X className="h-5 w-5 text-[#09080d]" />
-      </button>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
