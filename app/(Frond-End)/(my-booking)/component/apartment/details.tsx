@@ -1,5 +1,8 @@
+"use client"
+import { useState } from "react";
 import { FaStar } from "react-icons/fa6";
 import { MdArrowBackIos } from "react-icons/md";
+import ReviewModal from "./reviewmodal";
 interface DetailsProps {
   apartment: {
     name: string;
@@ -8,12 +11,14 @@ interface DetailsProps {
     amount: string;
     status: string;
   };
-  onWriteReview: () => void;
+  
   onBack: () => void;
 }
 
-export default function Details({ apartment, onWriteReview, onBack }: DetailsProps) {
+export default function Details({ apartment, onBack }: DetailsProps) {
+    const [showReviewModal, setShowReviewModal] = useState(false)
   return (
+    <div>
     <div className="w-full flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <div className="text-2xl sm:text-3xl font-medium">Apartment details</div>
@@ -74,12 +79,22 @@ export default function Details({ apartment, onWriteReview, onBack }: DetailsPro
           </div>
         </div>
         <button 
-          onClick={onWriteReview}
+          onClick={()=>setShowReviewModal(true)}
           className="self-end px-6 py-3 border border-blueColor cursor-pointer rounded-lg outline-offset-[-1px] outline-[#0068ef] flex items-center gap-2 hover:bg-[#0068ef] group transition-colors"
         >
           <span className="text-base font-medium text-[#0068ef] group-hover:text-white transition-colors">Write a review</span>
         </button>
       </div>
+
+     
+    </div>
+      {showReviewModal && (
+        <ReviewModal
+          onClose={setShowReviewModal}
+          open={showReviewModal}
+          apartment={apartment}
+        />
+      )}
     </div>
   )
 }
