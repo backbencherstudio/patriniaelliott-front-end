@@ -93,7 +93,7 @@ export default function Step1({ onNext, currentStep, onStepClick, formData, upda
               />
             </div>
 
-            <div className=" flex gap-4">
+            <div className=" flex flex-col md:flex-row gap-4">
               <div className="flex-1 flex flex-col gap-3">
                 <div className="text-[#070707] text-base leading-none">Zip code</div>
                 <input
@@ -160,7 +160,7 @@ export default function Step1({ onNext, currentStep, onStepClick, formData, upda
         <button
           type="button"
           onClick={onNext}
-          className="px-8 py-3 bg-[#0068ef] rounded-lg flex items-center gap-1.5 text-white text-base font-medium cursor-pointer hover:bg-[#0051bd] transition-colors"
+          className="px-8 py-2.5 bg-[#0068ef] rounded-lg flex items-center gap-1.5 text-white text-base font-medium cursor-pointer hover:bg-[#0051bd] transition-colors"
         >
           Next
         </button>

@@ -1,6 +1,5 @@
-import Image from 'next/image';
+import { BiEditAlt } from "react-icons/bi";
 import StepIndicator from './StepIndicator';
-
 interface FormData {
   // Step 1 - Property details
   propertyName: string;
@@ -60,24 +59,18 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
      <StepIndicator currentStep={currentStep} onStepClick={onStepClick} />
       </div>
 
-      <div className=" p-6 bg-white rounded-xl flex flex-col gap-6">
+      <div className=" md:p-6 p-4 bg-white rounded-xl flex flex-col gap-6">
         <div className=" flex flex-col gap-6">
           <div className=" inline-flex justify-between items-center">
-            <div className="text-[#22262e] text-2xl font-medium leading-normal">Review and submit your details</div>
+            <div className="text-[#22262e] text-lg md:text-2xl font-medium leading-normal">Review and submit your details</div>
             <button
               onClick={() => onStepClick(1)}
-              className="pl-1.5 pr-2 py-1.5 rounded border border-[#0068ef] flex items-center gap-2 cursor-pointer hover:bg-[#f5f8ff] transition-colors"
+              className="text-[#0068ef] py-1.5 px-1.5 gap-1 rounded border border-[#0068ef] flex items-center  cursor-pointer hover:bg-[#f5f8ff] transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/vendor/edit.svg"
-                  alt="Edit"
-                  width={20}
-                  height={20}
-                  className="w-5 h-5 [filter:invert(31%)_sepia(98%)_saturate(3696%)_hue-rotate(206deg)_brightness(97%)_contrast(107%)]"
-                />
-                <div className="text-[#0068ef] text-sm leading-[14px]">Edit</div>
-              </div>
+        
+              <BiEditAlt/>
+                <div className=" text-sm leading-[14px]">Edit</div>
+            
             </button>
           </div>
 
@@ -115,20 +108,14 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
       <div className=" p-6 bg-white rounded-xl flex flex-col gap-6">
         <div className=" flex flex-col gap-6">
           <div className=" inline-flex justify-between items-center">
-            <div className="text-[#22262e] text-2xl font-medium leading-normal">Owner's details</div>
+            <div className="text-[#22262e] text-lg md:text-2xl font-medium leading-normal">Owner's details</div>
             <button
               onClick={() => onStepClick(2)}
-              className="pl-1.5 pr-2 py-1.5 rounded border border-[#0068ef] flex items-center gap-2 cursor-pointer hover:bg-[#f5f8ff] transition-colors"
+              className="text-[#0068ef] py-1.5 px-1.5 gap-1 rounded border border-[#0068ef] flex items-center  cursor-pointer hover:bg-[#f5f8ff] transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/vendor/edit.svg"
-                  alt="Edit"
-                  width={20}
-                  height={20}
-                  className="w-5 h-5 [filter:invert(31%)_sepia(98%)_saturate(3696%)_hue-rotate(206deg)_brightness(97%)_contrast(107%)]"
-                />
-                <div className="text-[#0068ef] text-sm leading-[14px]">Edit</div>
+        
+              <BiEditAlt/>
+                <div className=" text-sm leading-[14px]">Edit
               </div>
             </button>
           </div>
@@ -154,24 +141,18 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
         </div>
       </div>
 
-      <div className=" p-6 bg-white rounded-xl flex flex-col gap-6">
+      <div className=" md:p-6 p-4 bg-white rounded-xl flex flex-col gap-6">
         <div className=" flex flex-col gap-6">
           <div className=" inline-flex justify-between items-center">
-            <div className="text-[#22262e] text-2xl font-medium leading-normal">Manager's details</div>
+            <div className="text-[#22262e] text-lg md:text-2xl font-medium leading-normal">Manager's details</div>
             <button
               onClick={() => onStepClick(3)}
-              className="pl-1.5 pr-2 py-1.5 rounded border border-[#0068ef] flex items-center gap-2 cursor-pointer hover:bg-[#f5f8ff] transition-colors"
+              className="text-[#0068ef] py-1.5 px-1.5 gap-1 rounded border border-[#0068ef] flex items-center  cursor-pointer hover:bg-[#f5f8ff] transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/vendor/edit.svg"
-                  alt="Edit"
-                  width={20}
-                  height={20}
-                  className="w-5 h-5 [filter:invert(31%)_sepia(98%)_saturate(3696%)_hue-rotate(206deg)_brightness(97%)_contrast(107%)]"
-                />
-                <div className="text-[#0068ef] text-sm leading-[14px]">Edit</div>
-              </div>
+        
+              <BiEditAlt/>
+                <div className=" text-sm leading-[14px]">Edit</div>
+          
             </button>
           </div>
 

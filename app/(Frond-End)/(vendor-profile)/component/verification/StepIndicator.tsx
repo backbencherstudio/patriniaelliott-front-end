@@ -47,7 +47,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, onStepClick 
       </div>
       {/* Current step title center below bar */}
       {currentStepObj && (
-        <div className="mt-2 text-center text-[#070707] text-base sm:text-lg font-medium">
+        <div className="mt-2 md:hidden text-center text-[#070707] text-base sm:text-lg font-medium">
           {currentStepObj.title}
         </div>
       )}

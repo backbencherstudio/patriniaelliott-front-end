@@ -3,6 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import StepIndicator from './StepIndicator';
 
 const MANAGER_TYPES = [
+  "Owner",
   "Self-managed",
   "Professional manager",
   "Management company",
@@ -48,6 +49,8 @@ export default function Step3({
     updateFormData({ [field]: value });
   };
 
+  const governmentValue = watch('governmentInvolvement');
+
   return (
     <div className="flex flex-col gap-4">
       <StepIndicator currentStep={currentStep} onStepClick={onStepClick} />
@@ -62,7 +65,7 @@ export default function Step3({
             value={watch('propertyManager')}
             onValueChange={value => handleChange("propertyManager", value)}
           >
-            <SelectTrigger className="w-full px-5 py-4 rounded-lg border border-[#d2d2d5] bg-white text-sm focus:outline-none focus:border-[#0068ef] h-auto">
+            <SelectTrigger className="w-full px-5 !h-13 py-4 rounded-lg border border-[#d2d2d5] bg-white text-sm focus:outline-none focus:border-[#0068ef] ">
               <SelectValue placeholder="Select manager type" />
             </SelectTrigger>
             <SelectContent>
@@ -75,23 +78,36 @@ export default function Step3({
           </Select>
         </div>
 
-        {/* Government Involvement */}
-        <div className="flex flex-col gap-2">
-          <label className="text-[#070707] text-base mb-1">
+        {/* Government Involvement - Radio Button */}
+        <div className="flex flex-col gap-2 mt-6">
+          <label className="text-[#22262e] text-lg font-medium mb-1">Government representation</label>
+          <div className="text-[#070707] text-sm mb-2">
             Is a government agency, government official, or close family members of a government official involved in the ownership, control, or management of the accommodation?
-          </label>
-          <Select
-            value={watch('governmentInvolvement')}
-            onValueChange={value => handleChange("governmentInvolvement", value)}
-          >
-            <SelectTrigger className="w-full px-5 py-4 rounded-lg border border-[#d2d2d5] bg-white text-sm focus:outline-none focus:border-[#0068ef] h-auto">
-              <SelectValue placeholder="Select answer" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="yes">Yes</SelectItem>
-              <SelectItem value="no">No</SelectItem>
-            </SelectContent>
-          </Select>
+          </div>
+          <div className="flex flex-row gap-6 items-center mt-1">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="governmentInvolvement"
+                value="yes"
+                checked={governmentValue === 'yes'}
+                onChange={() => handleChange('governmentInvolvement', 'yes')}
+                className="accent-[#0068ef] w-4 h-4"
+              />
+              <span className="text-[#070707] text-base">Yes</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="governmentInvolvement"
+                value="no"
+                checked={governmentValue === 'no'}
+                onChange={() => handleChange('governmentInvolvement', 'no')}
+                className="accent-[#0068ef] w-4 h-4"
+              />
+              <span className="text-[#070707] text-base">No</span>
+            </label>
+          </div>
         </div>
       </div>
 
