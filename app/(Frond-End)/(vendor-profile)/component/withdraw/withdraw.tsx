@@ -65,6 +65,11 @@ const withdrawData: WithdrawData[] = [
   }
 ];
 
+interface RequestPopupProps {
+  open: boolean;
+  onClose: () => void;
+}
+
 export default function Withdraw() {
   const [activeTab, setActiveTab] = useState<'All history' | 'Successful' | 'Pending' | 'Canceled'>('All history');
   const [selectedDateRange, setSelectedDateRange] = useState<'all' | '7' | '15' | '30'>('all');
@@ -114,11 +119,6 @@ export default function Withdraw() {
     console.log('Delete transaction:', transactionId);
   };
 
-  const handleCloseViewModal = () => {
-    setShowViewModal(false);
-    setSelectedTransaction(null);
-  };
-
   const columns = [
     { label: "Date", accessor: "date", width: "148px" },
     { label: "Transaction ID", accessor: "transactionId", width: "218px" },
@@ -146,28 +146,14 @@ export default function Withdraw() {
   return (
     <>
       {showRequestModal && (
-        <div
-          className="fixed inset-0 backdrop-blur-[2px] bg-gray-600/30 flex items-center justify-center z-50"
-          onClick={() => setShowRequestModal(false)}
-        >
-          <div onClick={e => e.stopPropagation()}>
-            <RequestPopup onClose={() => setShowRequestModal(false)} />
-          </div>
-        </div>
+        <RequestPopup open={showRequestModal} onClose={setShowRequestModal} />
       )}
-      {showViewModal && selectedTransaction && (
-        <div
-          className="fixed inset-0 backdrop-blur-[2px] bg-gray-600/30 flex items-center justify-center z-50"
-          onClick={handleCloseViewModal}
-        >
-          <div onClick={e => e.stopPropagation()}>
-            <ViewModal
-              transaction={selectedTransaction}
-              onClose={handleCloseViewModal}
-            />
-          </div>
-        </div>
-      )}
+      {showViewModal &&
+        <ViewModal
+          transaction={selectedTransaction}
+          open={showViewModal}
+          onClose={setShowViewModal}
+        />}
       <div className="flex flex-col gap-5">
         {/* Overview */}
         <div className="w-full bg-white rounded-xl p-4 mx-auto">

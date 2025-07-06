@@ -16,20 +16,23 @@ interface WithdrawActionProps {
 export default function WithdrawAction({ onView, onDelete, transaction }: WithdrawActionProps) {
   return (
     <div className="flex items-center gap-8">
-      <span
+      <button
         className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
         onClick={() => onView(transaction)}
       >
         View details
-      </span>
+      </button>
+      <button  onClick={() => onDelete(transaction.transactionId)}>
+
       <Image
-        onClick={() => onDelete(transaction.transactionId)}
+       
         src="/vendor/delete.svg"
         alt="Delete"
         width={16}
         height={16}
         className="cursor-pointer"
       />
+      </button>
     </div>
   );
 } 
