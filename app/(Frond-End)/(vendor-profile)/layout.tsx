@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
+import VendorSidebar from "./component/common/Sidebar";
 
-// import Header from "./component/common/Header";
-import Sidebar from "./component/common/Sidebar";
+
 
 interface UserProfileLayoutProps {
     children: React.ReactNode;
@@ -28,7 +28,7 @@ const UserProfileLayout: React.FC<UserProfileLayoutProps> = ({ children }) => {
                         lg:block
                     `}
                 >
-                    <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+                    <VendorSidebar isOpen={sidebarOpen} onClose={closeSidebar} />
                 </div>
 
                 {/* Overlay for mobile when sidebar is open */}

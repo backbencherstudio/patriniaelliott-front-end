@@ -1,6 +1,7 @@
 "use client"
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Image from "next/image";
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -51,30 +52,34 @@ export default function Profile() {
 
   return (
     <>
-      <div className=" md:px-7 py-6 bg-white rounded-2xl flex flex-col md:flex-row flex-wrap justify-between items-start gap-4">
-        <div className="flex flex-col gap-3 w-full md:w-auto">
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-start">
+      <div className=" md:px-7 py-6 bg-white rounded-2xl  gap-4">
+        <div className="flex flex-col gap-3 p-3 w-full md:w-auto">
+          <div className="flex   gap-3 w-full md:w-auto items-start md:justify-between">
             <div className="flex flex-col gap-4">
               <div className="text-2xl font-medium text-[#070707]">Profile Information</div>
               <div className="text-sm text-[#777980]">Update your info and get started as a vendor.</div>
             </div>
-            <div className="w-[62px] h-[62px] relative mt-4 sm:mt-0">
-              <img
-                className="w-[46px] h-[46px] rounded-full object-cover"
+            <div className=" relative  sm:mt-0">
+              <Image
+                className="w-[46px]  h-[46px]  rounded-full object-cover"
                 src={avatarPreview}
                 alt="Vendor avatar"
+                width={62}
+                height={62}
               />
               <button
                 type="button"
-                className="w-5 h-5 absolute top-[31.5px] right-0 bg-[#0068ef] rounded-full flex items-center justify-center"
+                className="w-5 h-5 absolute top-[25.5px] right-0.5 md:-right-1.5 bg-[#0068ef] rounded-full flex items-center justify-center"
                 onClick={handleAvatarClick}
                 tabIndex={0}
                 aria-label="Change avatar"
               >
-                <img
+                <Image
                   src="/vendor/camera.svg"
                   alt="Camera icon"
                   className="w-[10.7px] h-[10.7px]"
+                  width={20}
+                  height={20}
                 />
                 <input
                   ref={fileInputRef}
@@ -257,14 +262,14 @@ export default function Profile() {
         </div>
 
         {isEditing && (
-          <div className="flex justify-end my-10 w-full max-w-3xl mx-auto">
-            <button
-              type="submit"
-              className="px-8 py-3 rounded-lg outline-1 outline-offset-[-1px] outline-[#0068ef] flex justify-center items-center gap-1.5"
-            >
-              <div className="text-[#0068ef] text-base font-medium">Save</div>
-            </button>
-          </div>
+          <div className='flex justify-end mt-4'>
+        <button
+          type="submit"
+          className="md:mt-4 bg-blueColor text-white py-2 md:py-3 px-5 md:px-8 rounded-lg hover:bg-[#0051bc] transition-colors"
+        >
+          Save 
+        </button>
+      </div>
         )}
       </form>
     </>

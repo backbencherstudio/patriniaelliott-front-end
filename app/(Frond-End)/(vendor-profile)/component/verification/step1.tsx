@@ -55,7 +55,7 @@ export default function Step1({ onNext, currentStep, onStepClick, formData, upda
 
         <div className=" flex flex-col gap-6">
           <div className="text-[#22262e] text-2xl font-medium leading-[30.24px]">Property details</div>
-          <div className=" flex flex-col gap-3">
+          <div className=" flex flex-col gap-5">
             <div className=" flex flex-col gap-3">
               <div className=" flex items-center gap-2">
                 <div className="text-[#070707] text-base leading-none">Full name of the accommodation</div>

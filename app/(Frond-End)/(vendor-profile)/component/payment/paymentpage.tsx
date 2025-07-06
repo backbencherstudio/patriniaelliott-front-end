@@ -117,7 +117,7 @@ export default function PaymentPage() {
       <div className='flex justify-end'>
         <button
           type="submit"
-          className="md:mt-4 bg-[#0068ef] text-white py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-[#0051bc] transition-colors"
+          className="md:mt-4 bg-blueColor text-white py-2 md:py-3 px-5 md:px-6 rounded-lg hover:bg-[#0051bc] transition-colors"
         >
           Save Changes
         </button>
