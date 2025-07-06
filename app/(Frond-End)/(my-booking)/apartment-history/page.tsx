@@ -6,27 +6,12 @@ import ReviewModal from '../component/apartment/reviewmodal'
 import { useState } from 'react'
 
 export default function ApartmentHistory() {
-  const [selectedApartment, setSelectedApartment] = useState(null)
-
-  const handleViewDetails = (apartment) => {
-    setSelectedApartment(apartment)
-  }
-  const handleBackToList = () => {
-    setSelectedApartment(null)
-  }
+  
 
   return (
     <div>
-      {!selectedApartment ? (
-        <Apartment onViewDetails={handleViewDetails} />
-      ) : (
-        <Details
-          apartment={selectedApartment} 
-          onBack={handleBackToList}
-        />
-      )}
+        <Apartment />
       
-     
     </div>
   )
 }

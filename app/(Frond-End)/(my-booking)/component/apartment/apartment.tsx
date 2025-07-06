@@ -3,13 +3,12 @@ import Image from 'next/image';
 import { useState } from 'react';
 // Import your dynamic table component
 import DynamicTableWithPagination from '@/app/(Admin-Dashboard)/_component/common/DynamicTable';
+import Link from 'next/link';
 import ApartmentStatuse from './ApartmentStatuse';
 
-interface ApartmentProps {
-  onViewDetails: (apartment: any) => void;
-}
 
-export default function Apartment({ onViewDetails }: ApartmentProps) {
+
+export default function Apartment() {
   const apartmentData = [
     {
       id: 1,
@@ -132,12 +131,12 @@ export default function Apartment({ onViewDetails }: ApartmentProps) {
       width: '100px',
       formatter: (_: any, row: any) => (
         <div className="flex items-center gap-4">
-          <span
+          <Link href={`/hotel-history/${row?.id}`}
             className="text-xs text-[#777980] underline cursor-pointer hover:text-[#0068ef]"
-            onClick={() => onViewDetails(row)}
+           
           >
             View details
-          </span>
+          </Link>
           <Image
             src="/booking/delete.svg"
             alt="Delete"

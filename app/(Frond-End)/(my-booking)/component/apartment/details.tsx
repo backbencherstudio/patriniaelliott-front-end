@@ -1,4 +1,5 @@
 "use client"
+import Link from "next/link";
 import { useState } from "react";
 import { FaStar } from "react-icons/fa6";
 import { MdArrowBackIos } from "react-icons/md";
@@ -10,25 +11,26 @@ interface DetailsProps {
     bookingDate: string;
     amount: string;
     status: string;
+    
   };
-  
-  onBack: () => void;
+  back:string;
+ 
 }
 
-export default function Details({ apartment, onBack }: DetailsProps) {
+export default function Details({ apartment,back }: DetailsProps) {
     const [showReviewModal, setShowReviewModal] = useState(false)
   return (
     <div>
     <div className="w-full flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <div className="text-2xl sm:text-3xl font-medium">Apartment details</div>
-        <button 
-          onClick={onBack}
+        <Link 
+         href={back}
           className="px-4 py-2 cursor-pointer text-grayColor1 hover:text-blueColor flex items-center gap-1"
         >
           <MdArrowBackIos/>
           Back to list
-        </button>
+        </Link>
       </div>
       <div className="p-4 bg-white rounded-xl flex flex-col gap-6">
         <div className="flex flex-col lg:flex-row items-center gap-6 w-full">
