@@ -2,6 +2,8 @@
 import DynamicTableWithPagination from '@/app/(Admin-Dashboard)/_component/common/DynamicTable'
 import Image from 'next/image'
 import { useState } from 'react'
+
+import InvoiceModal from './InvoiceModal'
 import TransStatCard from './TransStatCard'
 import TransStatuse from './TransStatuse'
 
@@ -135,6 +137,8 @@ export default function TransectionHistory() {
   const [selectedDateRange, setSelectedDateRange] = useState<'all' | '7' | '15' | '30'>('all')
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [showInvoice, setShowInvoice] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState(null)
 
   const dateRanges = [
     { value: 'all', label: 'All Time' },
@@ -161,9 +165,6 @@ export default function TransectionHistory() {
     return statusMatch && dateMatch;
   });
 
-
-
-
   const stats = [
     { title: "Total Bookings", count: "45 transactions", iconPath: "/vendor/tik.svg" },
     { title: "Total Earnings", count: 18000, iconPath: "/vendor/totalearn.svg" },
@@ -188,7 +189,13 @@ export default function TransectionHistory() {
       accessor: 'action',
       width: '120px',
       formatter: (_: any, row: any) => (
-        <button className="text-[#0068ef] underline text-xs hover:text-[#0051bd]">
+        <button
+          className="text-[#0068ef] underline text-xs hover:text-[#0051bd]"
+          onClick={() => {
+            setSelectedTransaction(row);
+            setShowInvoice(true);
+          }}
+        >
           View details
         </button>
       )
@@ -287,6 +294,12 @@ export default function TransectionHistory() {
           />
         </div>
       </div>
+
+    {showInvoice && <InvoiceModal
+        open={showInvoice}
+        onClose={setShowInvoice}
+        transaction={selectedTransaction}
+      />}
     </div>
   )
 }
