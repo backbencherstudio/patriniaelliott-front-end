@@ -179,10 +179,8 @@ export default function Withdraw() {
           </div>
         </div>
 
-        {/* Table Section */}
         <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-lg mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-            {/* Status Filters */}
             <div className="flex flex-wrap gap-2 md:gap-4">
               {['All history', 'Successful', 'Pending', 'Canceled'].map((tab) => (
                 <button
@@ -197,8 +195,6 @@ export default function Withdraw() {
                 </button>
               ))}
             </div>
-
-            {/* Date Range Dropdown */}
             <div className="relative w-full md:w-auto">
               <div
                 onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
@@ -240,7 +236,6 @@ export default function Withdraw() {
             </div>
           </div>
 
-          {/* Table */}
           <div className="overflow-x-auto">
             <DynamicTableWithPagination
               columns={columns}

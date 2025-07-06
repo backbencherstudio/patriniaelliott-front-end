@@ -18,7 +18,6 @@ interface ViewModalProps {
 
 export default function ViewModal({ open, transaction, onClose }: ViewModalProps) {
   if (!transaction) return null;
-console.log(transaction);
 
   const formatDate = (dateStr: string) => {
     try {
