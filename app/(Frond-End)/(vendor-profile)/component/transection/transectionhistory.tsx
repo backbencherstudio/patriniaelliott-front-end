@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 
 import InvoiceModal from './InvoiceModal'
+import RefundDetailsModal from './RefundDetailsModal'
 import TransStatCard from './TransStatCard'
 import TransStatuse from './TransStatuse'
 
@@ -295,11 +296,19 @@ export default function TransectionHistory() {
         </div>
       </div>
 
-    {showInvoice && <InvoiceModal
-        open={showInvoice}
-        onClose={setShowInvoice}
-        transaction={selectedTransaction}
-      />}
+      {showInvoice && selectedTransaction?.type === 'Refund' ? (
+        <RefundDetailsModal
+          open={showInvoice}
+          onClose={setShowInvoice}
+          transaction={selectedTransaction}
+        />
+      ) : showInvoice ? (
+        <InvoiceModal
+          open={showInvoice}
+          onClose={setShowInvoice}
+          transaction={selectedTransaction}
+        />
+      ) : null}
     </div>
   )
 }
