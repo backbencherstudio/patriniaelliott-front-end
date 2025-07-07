@@ -77,7 +77,7 @@ export default function Banner() {
         </Swiper>
 
         {/* Mobile Pagination Dots */}
-       <div className=' absolute bottom-12 left-1/2 -translate-x-1/2 z-50'>
+       <div className=' absolute bottom-12 left-1/2 -translate-x-1/2 z-40'>
            <AllSearch/>
        </div>
       </div>
