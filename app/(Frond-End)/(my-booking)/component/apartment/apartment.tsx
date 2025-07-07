@@ -164,8 +164,6 @@ export default function Apartment() {
           </div>
         </div>
       </div>
-
-      {/* ===================== Table Start ======================= */}
       <div className="w-full bg-white rounded-xl p-4 mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
           <div>
