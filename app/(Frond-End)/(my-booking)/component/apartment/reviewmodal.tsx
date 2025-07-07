@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
-import Image from 'next/image'
-import ReactRating from 'react-rating'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import Image from 'next/image';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import ReactRating from 'react-rating';
 
 // Add type for Rating component
 const Rating = ReactRating as any;
 
 interface ReviewModalProps {
-  onClose: () => void;
+  open: boolean;
+  onClose: any;
   apartment: {
     name: string;
   };
@@ -18,8 +19,7 @@ interface ReviewFormData {
   feedback: string;
 }
 
-export default function ReviewModal({ onClose, apartment }: ReviewModalProps) {
-  const [isClosing, setIsClosing] = useState(false);
+export default function ReviewModal({ open, onClose, apartment }: ReviewModalProps) {
   const { register, handleSubmit, setValue, watch } = useForm<ReviewFormData>({
     defaultValues: {
       rating: 0,
@@ -29,48 +29,26 @@ export default function ReviewModal({ onClose, apartment }: ReviewModalProps) {
 
   const onSubmit: SubmitHandler<ReviewFormData> = (data) => {
     console.log('Form data:', data);
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
-  };
-
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      setIsClosing(true);
-      setTimeout(() => {
-        onClose();
-      }, 300);
-    }
+    onClose();
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center z-50 transition-opacity duration-300"
-      onClick={handleOverlayClick}
-    >
-      <div className={`w-[533px] p-6 bg-white rounded-xl flex flex-col items-center gap-8 transition-all duration-300 ease-in-out ${
-        isClosing ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
-      }`}>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="w-[90vw] md:max-w-md md:w-full p-4 md:p-6 bg-white rounded-xl flex flex-col items-center gap-8">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col items-center gap-8">
           <div className="w-full flex flex-col items-center gap-12">
             <div className="w-full flex flex-col gap-3">
               <div className="w-full flex justify-between items-center">
-                <div className="text-2xl font-bold text-[#22262e]">Give us your feedback</div>
-                <button 
+                <div className="md:text-2xl text-xl font-bold text-[#22262e]">Give us your feedback</div>
+                {/* <button 
                   type="button"
-                  onClick={() => {
-                    setIsClosing(true);
-                    setTimeout(() => {
-                      onClose();
-                    }, 300);
-                  }}
-                  className="w-[34px] h-[34px] p-[9.14px] bg-[#fffbee] rounded-[36.57px] shadow-[0px_9.142857551574707px_18.285715103149414px_-9.142857551574707px_rgba(15,15,15,0.10)] flex justify-center items-center hover:bg-[#fff5d6] transition-colors"
+                  onClick={onClose}
+                  className="w-[34px] h-[34px] p-[9.14px] bg-[#fffbee] rounded-full shadow flex justify-center items-center hover:bg-[#fff5d6] transition-colors"
                 >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M12 4L4 12M4 4L12 12" stroke="#09080D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                </button>
+                </button> */}
               </div>
               <div className="text-base text-[#777980]">What is your experience with {apartment.name}?</div>
             </div>
@@ -78,7 +56,7 @@ export default function ReviewModal({ onClose, apartment }: ReviewModalProps) {
               <Rating
                 initialRating={watch('rating')}
                 emptySymbol={
-                  <div className="w-12 h-12" style={{ marginRight: '10px' }}>
+                  <div className="w-12 h-12 mr-2">
                     <Image
                       src="/booking/star.svg"
                       alt="Empty star"
@@ -89,7 +67,7 @@ export default function ReviewModal({ onClose, apartment }: ReviewModalProps) {
                   </div>
                 }
                 fullSymbol={
-                  <div className="w-12 h-12" style={{ marginRight: '10px' }}>
+                  <div className="w-12 h-12 mr-2">
                     <Image
                       src="/booking/star.svg"
                       alt="Full star"
@@ -101,7 +79,6 @@ export default function ReviewModal({ onClose, apartment }: ReviewModalProps) {
                 }
                 onChange={(value: number) => setValue('rating', value)}
                 stop={5}
-                framerSpacing={10}
               />
             </div>
           </div>
@@ -121,14 +98,14 @@ export default function ReviewModal({ onClose, apartment }: ReviewModalProps) {
           <div className="w-full">
             <button 
               type="submit"
-              className="w-full pl-5 pr-[19.19px] py-5 bg-[#0068ef] rounded-[50px] text-white text-base font-medium hover:bg-[#0051bc] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full pl-5 pr-[19.19px] py-3 bg-[#0068ef] rounded-[50px] text-white text-base font-medium hover:bg-[#0051bc] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               disabled={watch('rating') === 0}
             >
               Submit
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }

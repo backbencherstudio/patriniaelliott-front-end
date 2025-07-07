@@ -1,4 +1,7 @@
-import React from 'react'
+"use client"
+import DynamicTableWithPagination from '@/app/(Admin-Dashboard)/_component/common/DynamicTable'
+import { useState } from 'react'
+import RefundStatuse from './RefundStatuse'
 
 const refundData = [
   {
@@ -8,7 +11,7 @@ const refundData = [
     date: "31/12/2024",
     status: "processing",
     refundAmount: "$999",
-    image: "https://placehold.co/24x24"
+    image: "/profile.png"
   },
   {
     id: 2,
@@ -17,7 +20,7 @@ const refundData = [
     date: "01/01/2025",
     status: "canceled",
     refundAmount: "$699",
-    image: "https://placehold.co/24x24"
+    image: "/profile.png"
   },
   {
     id: 3,
@@ -26,7 +29,7 @@ const refundData = [
     date: "02/01/2025",
     status: "completed",
     refundAmount: "$499",
-    image: "https://placehold.co/24x24"
+    image: "/profile.png"
   },
   {
     id: 4,
@@ -35,7 +38,7 @@ const refundData = [
     date: "02/01/2025",
     status: "completed",
     refundAmount: "$599",
-    image: "https://placehold.co/24x24"
+    image: "/profile.png"
   },
   {
     id: 5,
@@ -44,7 +47,7 @@ const refundData = [
     date: "12/01/2025",
     status: "completed",
     refundAmount: "$599",
-    image: "https://placehold.co/24x24"
+    image: "/profile.png"
   }
 ]
 
@@ -53,28 +56,24 @@ const getStatusStyles = (status: string) => {
     case 'processing':
       return {
         bg: 'bg-[#ffa23a]/10',
-        border: 'outline-[#ffa23a]',
         text: 'text-[#ffa23a]',
         icon: '/booking/processing.svg'
       }
     case 'canceled':
       return {
         bg: 'bg-[#fe5050]/10',
-        border: 'outline-[#fe5050]',
         text: 'text-[#fe5050]',
         icon: '/booking/redx.svg'
       }
     case 'completed':
       return {
         bg: 'bg-[#ecfcf2]',
-        border: 'outline-[#aaefc6]',
         text: 'text-[#057647]',
         icon: '/booking/check.svg'
       }
     default:
       return {
         bg: 'bg-[#ecfcf2]',
-        border: 'outline-[#aaefc6]',
         text: 'text-[#057647]',
         icon: '/booking/check.svg'
       }
@@ -82,77 +81,45 @@ const getStatusStyles = (status: string) => {
 }
 
 export default function Refund() {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const columns = [
+    {
+      label: 'Hotel/Tour name',
+      accessor: 'hotelName',
+      width: '200px',
+      formatter: (_: string, row: any) => (
+        <div className="flex items-center gap-2">
+          <img src={row.image} alt={row.hotelName} className="w-6 h-6 rounded-full" />
+          <span className="text-xs text-[#070707]">{row.hotelName}</span>
+        </div>
+      )
+    },
+    { label: 'Price', accessor: 'price', width: '100px' },
+    { label: 'Time & Date', accessor: 'date', width: '120px' },
+    {
+      label: 'Status',
+      accessor: 'status',
+      width: '120px',
+      formatter: (value: string) => <RefundStatuse value={value}/>
+    },
+    { label: 'Refund Amount', accessor: 'refundAmount', width: '120px' }
+  ];
+
   return (
-    <>
-      <div className="w-full px-6 py-[23px] bg-white rounded-xl inline-flex flex-col justify-start items-start gap-6">
-        <div className="w-[339px] flex flex-col justify-start items-start gap-[15px]">
-          <div className="self-stretch justify-center text-[#070707] text-2xl font-medium ">Refund user</div>
-          <div className="self-stretch justify-center text-[#777980] text-base font-normal ">Check up on your latest refund history.</div>
-        </div>
-        <div className="self-stretch bg-white rounded-xl inline-flex justify-start items-center">
-          <div className="flex-1 inline-flex flex-col justify-start items-start gap-2">
-            <div className="self-stretch h-14 p-4 bg-neutral-50 rounded-tl-xl inline-flex justify-start items-center gap-2.5 overflow-hidden">
-              <div className="flex-1 justify-center text-[#4a4c56] text-sm font-normal ">Hotel/Tour name</div>
-            </div>
-            {refundData.map((item) => (
-              <div key={item.id} className="self-stretch p-4 border-b border-[#eaecf0] inline-flex justify-start items-center gap-3 overflow-hidden">
-                <div className="w-6 h-6 relative">
-                  <img className="w-6 h-6 left-0 top-0 absolute rounded-full" src={item.image} />
-                </div>
-                <div className="justify-center text-[#070707] text-xs font-normal leading-3">{item.hotelName}</div>
-              </div>
-            ))}
-          </div>
-          <div className="flex-1 inline-flex flex-col justify-start items-start gap-2">
-            <div className="self-stretch h-14 p-4 bg-neutral-50 inline-flex justify-start items-center gap-2.5 overflow-hidden">
-              <div className="flex-1 justify-center text-[#4a4c56] text-sm font-normal ">Price</div>
-            </div>
-            {refundData.map((item) => (
-              <div key={item.id} className="self-stretch px-4 py-[22px] border-b border-[#eaecf0] inline-flex justify-start items-center gap-3 overflow-hidden">
-                <div className="justify-center text-[#777980] text-xs font-normal leading-3">{item.price}</div>
-              </div>
-            ))}
-          </div>
-          <div className="flex-1 inline-flex flex-col justify-start items-start gap-2">
-            <div className="self-stretch h-14 p-4 bg-neutral-50 inline-flex justify-start items-center gap-2.5 overflow-hidden">
-              <div className="flex-1 justify-center text-[#4a4c56] text-sm font-normal leading-[14px]">Time & Date</div>
-            </div>
-            {refundData.map((item) => (
-              <div key={item.id} className="self-stretch px-4 py-[22px] border-b border-[#eaecf0] inline-flex justify-start items-center gap-3 overflow-hidden">
-                <div className="justify-center text-[#777980] text-xs font-normal leading-3">{item.date}</div>
-              </div>
-            ))}
-          </div>
-          <div className="flex-1 inline-flex flex-col justify-start items-start gap-2">
-            <div className="self-stretch h-14 p-4 bg-neutral-50 inline-flex justify-start items-center gap-2.5 overflow-hidden">
-              <div className="flex-1 justify-center text-[#4a4c56] text-sm font-normal leading-[14px]">Status</div>
-            </div>
-            {refundData.map((item) => {
-              const styles = getStatusStyles(item.status)
-              return (
-                <div key={item.id} className="self-stretch p-4 border-b border-[#eaecf0] inline-flex justify-start items-center gap-3 overflow-hidden">
-                  <div className={`pl-1.5 pr-2 py-1.5 ${styles.bg} rounded-2xl outline-1 outline-offset-[-1px] ${styles.border} flex justify-start items-center gap-1`}>
-                    <img src={styles.icon} alt={item.status} className="w-3 h-3" />
-                    <div className={`text-center justify-start ${styles.text} text-xs font-normal leading-3`}>
-                      {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-          <div className="flex-1 inline-flex flex-col justify-start items-start gap-2">
-            <div className="self-stretch h-14 p-4 bg-neutral-50 rounded-tr-xl inline-flex justify-start items-center gap-2.5 overflow-hidden">
-              <div className="justify-center text-[#4a4c56] text-sm font-normal  leading-[14px]">Refund Amount</div>
-            </div>
-            {refundData.map((item) => (
-              <div key={item.id} className="self-stretch px-4 py-[22px] border-b border-[#eaecf0] inline-flex justify-start items-center gap-3 overflow-hidden">
-                <div className="justify-center text-[#777980] text-xs font-normal leading-3">{item.refundAmount}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+    <div className="w-full bg-white rounded-xl p-4 md:p-6 mx-auto">
+      <div className="mb-6">
+        <h2 className="text-xl md:text-2xl font-medium text-[#070707]">Refund user</h2>
+        <p className="text-base text-[#777980]">Check up on your latest refund history.</p>
       </div>
-    </>
+      <DynamicTableWithPagination
+        columns={columns}
+        data={refundData}
+        currentPage={currentPage}
+        itemsPerPage={10}
+        onPageChange={setCurrentPage}
+        noDataMessage="No refunds found."
+      />
+    </div>
   )
 }
