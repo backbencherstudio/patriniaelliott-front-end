@@ -59,7 +59,7 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
         {/* Account Section */}
         <div className="mb-4">
-          <h2 className="text-sm font-normal text-gray-500 mb-2">Account</h2>
+          <h2 className="text-sm font-normal text-gray-500 mb-3">My Booking</h2>
           <nav className="flex flex-col gap-1">
             {navItems.slice(0, 5).map((item, idx) => (
               <Link
