@@ -16,21 +16,13 @@ export const UserService = {
     return await Fetch.post("/auth/login", data, config);
   },
 
-  register: async ({
-    username,
-    email,
-    password,
-  }: {
-    username: string;
-    email: string;
-    password: string;
-  }) => {
-    const data = {
-      username: username,
-      email: email,
-      password: password,
-    };
-    return await Fetch.post("/auth/register", data, config);
+  register: async (data) => {
+    // If data is FormData, do not set Content-Type header
+    let headers = {};
+    if (!(data instanceof FormData)) {
+      headers = { "Content-Type": "application/json" };
+    }
+    return await Fetch.post("/auth/register", data, { headers });
   },
 
   logout: (context = null) => {
