@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToken } from "@/hooks/useToken";
 import { cn } from "@/lib/utils";
 import MenuDropDown from "./MenuDropDown";
 
@@ -27,10 +28,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const [language, setLanguage] = useState<"en" | "bn">("en");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const {token}=useToken()
 
+  
   return (
-    <header className="bg-primaryColor py-4 px-4">
+    <header className="bg-primaryColor py-4 ">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="text-white text-2xl md:text-3xl font-semibold tracking-wide">
           LOGO
@@ -64,7 +66,7 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {isLoggedIn ? (
+          {token ? (
             <>
               <Link
                 href="/profile-info"
@@ -81,7 +83,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/registration"
-                className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded"
+                className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-2 md:px-6 py-2 rounded"
               >
                 Sign up
               </Link>
@@ -92,7 +94,18 @@ export default function Navbar() {
         {/* Mobile Menu Toggle */}
         <div className="lg:hidden flex items-center gap-2">
           <div className="md:hidden">
-            <MenuDropDown setMenuOpen={setMenuOpen}/>
+          {token ? <MenuDropDown setMenuOpen={setMenuOpen}/> : <div className=" flex items-center gap-3">
+                <Link href="/login" className="text-white text-base" onClick={() => setMenuOpen(false)}>
+                  Login
+                </Link>
+                <Link
+                  href="/registration"
+                  className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base md:px-4 px-2 py-1 rounded"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Sign up
+                </Link>
+              </div>}  
           </div> 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -154,7 +167,7 @@ export default function Navbar() {
           </div>
           {/* Auth Buttons */}
           <div className="mt-4 flex flex-col gap-3">
-            {isLoggedIn ? (
+            {token && (
               <>
                 <Link
                   href="/profile-info"
@@ -162,29 +175,9 @@ export default function Navbar() {
                   className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
                 >
                   Become a Vendor
-                </Link>
-              
-                <button
-                  onClick={() => { setIsLoggedIn(false); setMenuOpen(false); }}
-                  className="text-white text-base text-left"
-                >
-                  Logout
-                </button>
+                </Link>      
               </>
-            ) : (
-              <>
-                <Link href="/login" className="text-white text-base" onClick={() => setMenuOpen(false)}>
-                  Login
-                </Link>
-                <Link
-                  href="/registration"
-                  className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Sign up
-                </Link>
-              </>
-            )}
+            ) }
           </div>
         </div>
       </div>

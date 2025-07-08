@@ -1,5 +1,6 @@
 'use client';
 
+import { CookieHelper } from '@/helper/cookie.helper';
 import { UserService } from '@/service/user/user.service';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
@@ -28,11 +29,12 @@ export default function LoginForm() {
         try {
            const  res = await UserService?.login(formData)
            console.log(res);
-           
+            const token = res?.data?.authorization?.token
            if (res?.status ==201 ) {
             toast.success(res?.data?.message) 
-              setLoading(false)
-              router.push("/")
+            CookieHelper.set({key:"tourAccessToken",value:token})
+            setLoading(false)
+            router.push("/")
            }
         } catch (error) {
             console.log(error); 

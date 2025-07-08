@@ -29,7 +29,7 @@ export const UserService = {
   },
 
   logout: (context = null) => {
-    CookieHelper.destroy({ key: "token", context });
+    CookieHelper.destroy({ key: "tourAccessToken", context });
   },
   // get user details
   getUserDetails: async ({ token = "", context = null }) => {
