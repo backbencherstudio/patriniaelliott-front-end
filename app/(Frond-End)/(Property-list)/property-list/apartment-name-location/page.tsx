@@ -86,12 +86,12 @@ export default function page() {
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
-                <ul className="flex w-full justify-between">
+                <ul className="hidden lg:flex w-full justify-between">
                     {
                         header.map(item => (
                             <li className="space-y-4 w-fit" key={item}>
                                 <h3 className={`${item === "Name and location" ? "text-[#070707]" : "text-[#777980]"} text-sm text-center`}>{item}</h3>
-                                <div className="w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
+                                <div className="w-[180px] xl:w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
                                     <div className={`absolute top-0 left-0 h-full w-3/4 bg-[#D6AE29] rounded-full ${item === "Name and location" ? "" : "hidden"}`}></div>
                                 </div>
                             </li>
@@ -159,7 +159,7 @@ export default function page() {
                                     <h3 className="text-[#070707]">The Neighborhood</h3>
                                 </div>
                             </div>
-                            <div className="w-[583px]">
+                            <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block">
                                 <PropertySuggestion title="Can I make changes to my host profile later?" body="If you're not ready to add all these details right now, that's okay. You can always change your host profile on the Extranet after completing registration." isList={false}/>
                             </div>
                         </div>
@@ -177,7 +177,7 @@ export default function page() {
                                             sure that the address is correct — it's difficult to make changes to this
                                             later.
                                         </p>
-                                        <Dropdownmenu data={regions} handleSelect={(e: React.FormEvent<HTMLFormElement>) => handleRegionChange(e)} selectedData={selectedRegion} />
+                                        <Dropdownmenu data={regions} handleSelect={(e: React.FormEvent<HTMLFormElement>) => handleRegionChange(e)} selectedData={selectedRegion} title="Country/Region" showTitle={true}/>
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="street" className="text-[#070707]">Street name and house number</label>
@@ -191,7 +191,7 @@ export default function page() {
                                         <label htmlFor="city" className="text-[#070707]">City</label>
                                         <input type="text" required name="city" id="city" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
                                     </div>
-                                    <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} />
+                                    <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true}/>
                                     <h3 className="text-[#23262F] font-medium text-2xl">Pin the location of your property</h3>
                                     <div className="space-y-3">
                                         <p className="text-[#777980] text-sm">
@@ -217,7 +217,7 @@ export default function page() {
                                     <button type="submit" className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer">Continue</button>
                                 </div>
                             </div>
-                            <div className="space-y-4 w-[583px]">
+                            <div className="space-y-4 w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block">
                                 <PropertySuggestion
                                     title="What should I consider when choosing a name?"
                                     body={[
