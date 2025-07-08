@@ -113,7 +113,7 @@ export default function RegisterForm() {
                             disabled={loading}
                             className="w-full disabled:bg-grayColor1 disabled:cursor-not-allowed disabled:text-whiteColor/50  bg-secondaryColor text-blackColor  font-semibold py-4 cursor-pointer rounded-md transition"
                         >
-                            Create Account
+                            { loading ? "Creating..." :  "Create Account"} 
                         </button>
                     </div>
                 </form>

@@ -123,9 +123,10 @@ const Email = localStorage.getItem("verifyEmail")
 
           <button
             type="submit"
-            className="w-full bg-secondaryColor cursor-pointer text-blackColor font-semibold py-4 rounded-md transition"
+            disabled={loading}
+            className="w-full disabled:bg-grayColor1 disabled:text-white/50 disabled:cursor-not-allowed  bg-secondaryColor cursor-pointer text-blackColor font-semibold py-4 rounded-md transition"
           >
-            Submit
+          { loading ? "Submitting..." :  "Submit"}
           </button>
         </form>
       </div>
