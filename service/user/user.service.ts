@@ -17,12 +17,15 @@ export const UserService = {
   },
 
   register: async (data) => {
-    // If data is FormData, do not set Content-Type header
     let headers = {};
     if (!(data instanceof FormData)) {
       headers = { "Content-Type": "application/json" };
     }
     return await Fetch.post("/auth/register", data, { headers });
+  },
+  emailVerify: async (data) => {
+    
+    return await Fetch.post("/auth/verify-email", data, config);
   },
 
   logout: (context = null) => {

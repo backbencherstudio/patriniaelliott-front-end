@@ -1,15 +1,19 @@
 'use client';
 
+import { UserService } from '@/service/user/user.service';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 type OTPFormValues = {
   otp1: string;
   otp2: string;
   otp3: string;
   otp4: string;
+  otp5: string;
+  otp6: string;
 };
 
 export default function OtpVerificationForm() {
@@ -23,8 +27,10 @@ export default function OtpVerificationForm() {
 
   const router = useRouter();
 
-  // Refs for input fields
+  const [loading , setLoading]=useState(false)
   const otpRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -37,8 +43,6 @@ export default function OtpVerificationForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
-
-    // Only allow digits
     if (!/^[0-9]?$/.test(value)) return;
 
     setValue(`otp${index + 1}` as keyof OTPFormValues, value);
@@ -53,11 +57,28 @@ export default function OtpVerificationForm() {
       otpRefs[index - 1].current?.focus();
     }
   };
+const Email = localStorage.getItem("verifyEmail")
 
-  const onSubmit = (data: OTPFormValues) => {
-    const otpCode = `${data.otp1}${data.otp2}${data.otp3}${data.otp4}`;
+  const onSubmit = async(data: OTPFormValues) => {
+    const otpCode = `${data.otp1}${data.otp2}${data.otp3}${data.otp4}${data.otp5}${data.otp6}`;
     console.log('Submitted OTP:', otpCode);
-    router.push('/new-password');
+      const formData: any = {};
+        formData.email = Email;
+        formData.token = otpCode;
+        setLoading(true)
+        try {
+           const  res = await UserService?.emailVerify(formData)
+           if (res?.status ==201 ) {
+            toast.success(res?.data?.message) 
+             localStorage.removeItem("verifyemail")
+             setLoading(false)
+              router.push("/login")
+           }
+        } catch (error) {
+            console.log(error); 
+        }finally{
+            setLoading(true)
+        }
   };
 
   return (
@@ -78,8 +99,8 @@ export default function OtpVerificationForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* OTP Inputs */}
-          <div className="grid grid-cols-4 gap-4">
-            {['otp1', 'otp2', 'otp3', 'otp4'].map((field, index) => (
+          <div className="grid grid-cols-6 gap-4">
+            {['otp1', 'otp2', 'otp3', 'otp4', 'otp5', 'otp6'].map((field, index) => (
               <Controller
                 key={field}
                 control={control}

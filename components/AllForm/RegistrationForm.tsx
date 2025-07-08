@@ -30,7 +30,7 @@ export default function RegisterForm() {
            const  res = await UserService?.register(formData)
            if (res?.status ==201 ) {
             toast.success(res?.data?.message) 
-             localStorage.setItem("verifyemail", email)
+             localStorage.setItem("verifyEmail", email)
               setLoading(false)
               router.push("/verify-email")
            }
@@ -107,10 +107,7 @@ export default function RegisterForm() {
                         </div>
                         {errors.password && <p className="text-red-500 text-base mt-1">{errors.password.message}</p>}
                     </div>
-
-                    {/* Submit Button */}
                     <div className=' pt-4'>
-
                         <button
                             type="submit"
                             disabled={loading}
