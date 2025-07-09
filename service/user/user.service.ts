@@ -16,25 +16,37 @@ export const UserService = {
     return await Fetch.post("/auth/login", data, config);
   },
 
-  register: async ({
-    username,
-    email,
-    password,
-  }: {
-    username: string;
-    email: string;
-    password: string;
-  }) => {
-    const data = {
-      username: username,
-      email: email,
-      password: password,
+  register: async (data) => {
+    let headers = {};
+    if (!(data instanceof FormData)) {
+      headers = { "Content-Type": "application/json" };
+    }
+    return await Fetch.post("/auth/register", data, { headers });
+  },
+  emailVerify: async (data) => {
+    
+    return await Fetch.post("/auth/verify-email", data, config);
+  },
+resendVerificationEmail: async (data) => {
+     const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        
+      },
     };
-    return await Fetch.post("/auth/register", data, config);
+    return await Fetch.post("/auth/resend-verification-email", data, _config);
+  },
+newPassword: async (data) => {
+     const _config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    return await Fetch.post("/auth/reset-password", data, _config);
   },
 
   logout: (context = null) => {
-    CookieHelper.destroy({ key: "token", context });
+    CookieHelper.destroy({ key: "tourAccessToken", context });
   },
   // get user details
   getUserDetails: async ({ token = "", context = null }) => {

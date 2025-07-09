@@ -1,9 +1,12 @@
 'use client';
 
+import { UserService } from '@/service/user/user.service';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import SocialShare from '../reusable/SocialShare';
 type FormValues = {
     name: string;
@@ -14,10 +17,28 @@ type FormValues = {
 export default function RegisterForm() {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
     const [showPassword, setShowPassword] = useState(false);
-
-    const onSubmit = (data: FormValues) => {
-        console.log('Form submitted:', data);
-        // Add your API call or logic here
+    const [loading, setLoading]=useState(false)
+    const router = useRouter()
+    const onSubmit = async (data: FormValues) => {
+        const formData: any = {};
+        formData.name = data.name;
+        formData.email = data.email;
+        formData.password = data.password;
+        const email = data?.email
+        setLoading(true)
+        try {
+           const  res = await UserService?.register(formData)
+            if (res?.data?.success == true ) {
+            toast.success(res?.data?.message) 
+             localStorage.setItem("verifyemail", email)
+              setLoading(false)
+              router.push("/verify-email")
+           }
+        } catch (error) {
+            console.log(error); 
+        }finally{
+            setLoading(false)
+        }
     };
 
     return (
@@ -86,15 +107,13 @@ export default function RegisterForm() {
                         </div>
                         {errors.password && <p className="text-red-500 text-base mt-1">{errors.password.message}</p>}
                     </div>
-
-                    {/* Submit Button */}
                     <div className=' pt-4'>
-
                         <button
                             type="submit"
-                            className="w-full bg-secondaryColor text-blackColor  font-semibold py-4 cursor-pointer rounded-md transition"
+                            disabled={loading}
+                            className="w-full disabled:bg-grayColor1 disabled:cursor-not-allowed disabled:text-whiteColor/50  bg-secondaryColor text-blackColor  font-semibold py-4 cursor-pointer rounded-md transition"
                         >
-                            Create Account
+                            { loading ? "Creating..." :  "Create Account"} 
                         </button>
                     </div>
                 </form>

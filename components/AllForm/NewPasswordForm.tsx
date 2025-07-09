@@ -1,9 +1,11 @@
 "use client";
 
+import { UserService } from "@/service/user/user.service";
 import { Check, Eye, EyeOff, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 type FormValues = {
   password: string;
@@ -21,13 +23,39 @@ export default function NewPasswordForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const password = watch("password");
+  const otpCode = localStorage.getItem("otp");
+  const Email = localStorage.getItem("verifyemail")
+  console.log("Email:", Email);
+  console.log("OTP Code:", otpCode);
+  const onSubmit = async (data: FormValues) => {
+    const formData = {
+      password: data.password,
+      token: otpCode,
+      email: Email,
+    }
+    try {
+      const res = await UserService?.newPassword(formData)
+      console.log(res);
+      if (res?.data?.success == true) {
+        toast.success(res?.data?.message)
+        localStorage.removeItem("verifyemail")
+        setLoading(false)
+        router.push("/complete")
+      } else {
+        toast.error(res?.data?.message)
+        setLoading(false)
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setLoading(false);
 
-  const onSubmit = (data: FormValues) => {
+    }
     console.log("Password updated:", data);
-    // API logic here
-    router.push("/complete")
+    // router.push("/complete")
+    console.log(data);
+
   };
 
   const passwordValidations = {
@@ -61,11 +89,10 @@ export default function NewPasswordForm() {
                 {...register("password", { required: "Password is required" })}
                 type={showPassword ? "text" : "password"}
                 placeholder="********"
-                className={`w-full border rounded-md px-4 py-3 pr-10 focus:outline-none focus:ring-2 ${
-                  errors.password
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-yellow-500"
-                }`}
+                className={`w-full border rounded-md px-4 py-3 pr-10 focus:outline-none focus:ring-2 ${errors.password
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-yellow-500"
+                  }`}
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}
@@ -84,11 +111,10 @@ export default function NewPasswordForm() {
           {/* Password Rules */}
           <ul className="text-sm grid grid-cols-2 space-y-2 ml-1">
             <li
-              className={`${
-                passwordValidations.length
-                  ? "text-greenColor"
-                  : "text-orengeColor"
-              } flex gap-2 capitalize items-center`}
+              className={`${passwordValidations.length
+                ? "text-greenColor"
+                : "text-orengeColor"
+                } flex gap-2 capitalize items-center`}
             >
               {" "}
               <span className=" rounded-full text-sm">
@@ -107,11 +133,10 @@ export default function NewPasswordForm() {
               8 characters
             </li>
             <li
-              className={`${
-                passwordValidations.hasNumber
-                  ? "text-greenColor"
-                  : "text-orengeColor"
-              } flex gap-2 capitalize items-center`}
+              className={`${passwordValidations.hasNumber
+                ? "text-greenColor"
+                : "text-orengeColor"
+                } flex gap-2 capitalize items-center`}
             >
               {" "}
               <span className=" rounded-full text-sm">
@@ -127,14 +152,13 @@ export default function NewPasswordForm() {
                   />
                 )}
               </span>
-               Number (0-9)
+              Number (0-9)
             </li>
             <li
-              className={`${
-                passwordValidations.hasUpper
-                  ? "text-greenColor"
-                  : "text-orengeColor"
-              } flex gap-2 capitalize items-center`}
+              className={`${passwordValidations.hasUpper
+                ? "text-greenColor"
+                : "text-orengeColor"
+                } flex gap-2 capitalize items-center`}
             >
               {" "}
               <span className=" rounded-full text-sm">
@@ -150,14 +174,13 @@ export default function NewPasswordForm() {
                   />
                 )}
               </span>
-               Uppercase letter (A-Z)
+              Uppercase letter (A-Z)
             </li>
             <li
-              className={`${
-                passwordValidations.hasLower
-                  ? "text-greenColor"
-                  : "text-orengeColor"
-              } flex gap-2  items-center`}
+              className={`${passwordValidations.hasLower
+                ? "text-greenColor"
+                : "text-orengeColor"
+                } flex gap-2  items-center`}
             >
               {" "}
               <span className=" rounded-full text-sm">
@@ -173,7 +196,7 @@ export default function NewPasswordForm() {
                   />
                 )}
               </span>
-               Lowercase letter (a-z)
+              Lowercase letter (a-z)
             </li>
           </ul>
 
@@ -191,11 +214,10 @@ export default function NewPasswordForm() {
                 })}
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Re-type your new password"
-                className={`w-full border rounded-md px-4 py-3 pr-10 focus:outline-none focus:ring-2 ${
-                  errors.confirmPassword
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-yellow-500"
-                }`}
+                className={`w-full border rounded-md px-4 py-3 pr-10 focus:outline-none focus:ring-2 ${errors.confirmPassword
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-yellow-500"
+                  }`}
               />
               <span
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}

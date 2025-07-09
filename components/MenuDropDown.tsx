@@ -1,9 +1,9 @@
 "use client"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,8 +11,17 @@ import { usePathname } from "next/navigation";
 import { IoIosArrowDown } from "react-icons/io";
 
 import { cn } from "@/lib/utils";
+import { UserService } from "@/service/user/user.service";
 function MenuDropDown(setMenuOpen:any) {
       const pathname = usePathname();
+      const hanldeLogout =async()=>{
+         try {
+          const res = await UserService?.logout()
+         } catch (error) {
+          console.log(error.message);
+          
+         }
+      }
   return (
     <div>
        <DropdownMenu>
@@ -46,10 +55,10 @@ function MenuDropDown(setMenuOpen:any) {
                     </div>
                     <div className="text-[#070707] text-base">elisabeth_sarah@gmail.com</div>
                   </div>
-                  <div className="flex flex-col gap-1.5 w-full">
-                    <Link href="/my-account" className="w-full">
-                      <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent">
-                        <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
+                  <div className="flex flex-col gap-1.5 mt-1 w-full">
+                      <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
+                    <Link href="/my-account" className="w-full flex items-center gap-2.5">
+                        <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                           <Image
                             src="/usericon/user.svg"
                             alt="My Account"
@@ -61,11 +70,11 @@ function MenuDropDown(setMenuOpen:any) {
                           "text-base font-medium",
                           pathname === "/my-account" ? "text-[#d6ae29]" : "text-[#070707]"
                         )}>My Account</div>
-                      </DropdownMenuItem>
                     </Link>
-                    <Link  onClick={() => setMenuOpen(false)} href="/property-list" className="w-full">
-                        <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent">
-                          <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
+                      </DropdownMenuItem>
+                        <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
+                    <Link  onClick={() => setMenuOpen(false)} href="/property-list" className="w-full flex items-center gap-2.5">
+                          <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                             <Image
                               src="/usericon/date.svg"
                               alt="My Booking"
@@ -77,11 +86,11 @@ function MenuDropDown(setMenuOpen:any) {
                             "text-base",
                             pathname === "/property-list" ? "text-[#d6ae29]" : "text-[#070707]"
                           )}>List Your Property</div>
-                        </DropdownMenuItem>
                       </Link>
-                    <Link href="/apartment-history" className="w-full">
-                      <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent">
-                        <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
+                        </DropdownMenuItem>
+                      <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10 w-full focus:bg-transparent">
+                    <Link href="/apartment-history" className="w-full flex items-center gap-2.5">
+                        <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                           <Image
                             src="/usericon/date.svg"
                             alt="My Booking"
@@ -93,10 +102,11 @@ function MenuDropDown(setMenuOpen:any) {
                           "text-base",
                           pathname === "/apartment-history" ? "text-[#d6ae29]" : "text-[#070707]"
                         )}>My Booking</div>
-                      </DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent" onClick={() => setMenuOpen(false)}>
-                      <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
+                      </DropdownMenuItem>
+                    <DropdownMenuItem className=" w-full group transition-all hover:!bg-secondaryColor/10 focus:bg-transparent" >
+                      <button onClick={hanldeLogout} className=" cursor-pointer flex items-center gap-2.5">
+<div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                         <Image
                           src="/usericon/logout.svg"
                           alt="Logout"
@@ -105,6 +115,8 @@ function MenuDropDown(setMenuOpen:any) {
                         />
                       </div>
                       <div className="text-[#070707] text-base">Logout</div>
+                      </button>
+                      
                     </DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>

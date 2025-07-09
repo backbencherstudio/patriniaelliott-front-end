@@ -1,14 +1,15 @@
 'use client';
-
+import { useToken } from '@/hooks/useToken';
+import { UserService } from '@/service/user/user.service';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-
+import { toast } from 'react-toastify';
 type ForgotPasswordFormValues = {
   email: string;
 };
-
 export default function ForgotPasswordForm() {
   const {
     register,
@@ -16,15 +17,35 @@ export default function ForgotPasswordForm() {
     formState: { errors },
   } = useForm<ForgotPasswordFormValues>();
   const router = useRouter()
-
-  const onSubmit = (data: ForgotPasswordFormValues) => {
+  const [loading, setLoading]=useState(false)
+  const {token}=useToken()
+  const onSubmit = async(data: ForgotPasswordFormValues) => {
+    setLoading(true)
+    const Email= data?.email
+  try {
+           const  res = await UserService?.resendVerificationEmail({email:Email})
+           console.log(res);
+           
+    if (res?.data?.success == true ) {
+            toast.success(res?.data?.message) 
+             localStorage.setItem("verifyemail",Email)
+             setLoading(false)
+             router.push("/otp-verification")
+           }
+        } catch (error) {
+          toast.error(error?.message)
+            console.log(error); 
+             setLoading(true)
+        }finally{
+            setLoading(false)
+        }
     console.log('OTP request sent to:', data.email);
-    // Trigger your OTP send logic here
-    router.push("/otp-verification")
+ 
+    
   };
 
   return (
-    <div className="flex items-center justify-center px-4 min-h-screen">
+    <div className="flex items-center justify-center px-4 h-full">
       <div className="w-full space-y-4">
         {/* Back Link */}
         <div className="text-lg text-descriptionColor flex items-center gap-1">
@@ -32,8 +53,6 @@ export default function ForgotPasswordForm() {
             <ChevronLeft size={25} /> Back
           </Link>
         </div>
-
-        {/* Header */}
         <div className=' mb-6'>
           <h2 className="text-3xl lg:text-5xl font-medium leading-[126%] text-blackColor mb-2 ">Forgot Password</h2>
           <p className="mt-2 text-descriptionColor text-base leading-[150%] lg:pr-24">
@@ -41,7 +60,6 @@ export default function ForgotPasswordForm() {
           </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-base font-medium text-blackColor mb-2">Email</label>
@@ -64,9 +82,11 @@ export default function ForgotPasswordForm() {
 
           <button
             type="submit"
-            className="w-full cursor-pointer mt-3 bg-secondaryColor text-blackColor font-semibold py-4 rounded-md transition"
+            disabled={loading}
+            className="w-full disabled:bg-grayColor1 disabled:text-white/50 disabled:cursor-not-allowed  bg-secondaryColor cursor-pointer text-blackColor font-semibold py-4 rounded-md transition"
           >
-            Send OTP
+          { loading ? "Sending..." :  " Send OTP"}
+           
           </button>
         </form>
       </div>

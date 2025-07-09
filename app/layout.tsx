@@ -1,4 +1,6 @@
+import CustomToastContainer from "@/components/CustomToast/CustomToastContainer";
 import { AppConfig } from "@/config/app.config";
+import { TokenProvider } from "@/hooks/useToken";
 import type { Metadata } from "next";
 import { Inter } from 'next/font/google';
 import "./globals.css";
@@ -17,7 +19,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className}`} >{children}</body>
+      <body className={`${inter.className}`} >
+        <TokenProvider>
+        <CustomToastContainer/>
+        {children}
+        </TokenProvider>
+        </body>
     </html>
   );
 }
