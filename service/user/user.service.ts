@@ -27,6 +27,15 @@ export const UserService = {
     
     return await Fetch.post("/auth/verify-email", data, config);
   },
+resendVerificationEmail: async (data) => {
+     const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        
+      },
+    };
+    return await Fetch.post("/auth/resend-verification-email", data, _config);
+  },
 
   logout: (context = null) => {
     CookieHelper.destroy({ key: "tourAccessToken", context });

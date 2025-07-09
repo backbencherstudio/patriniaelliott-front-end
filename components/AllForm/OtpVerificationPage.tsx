@@ -2,7 +2,7 @@
 
 import { UserService } from '@/service/user/user.service';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -26,7 +26,7 @@ export default function OtpVerificationForm() {
   } = useForm<OTPFormValues>();
 
   const router = useRouter();
-
+  const pathname = usePathname()
   const [loading , setLoading]=useState(false)
   const otpRefs = [
     useRef<HTMLInputElement>(null),
@@ -61,21 +61,29 @@ const Email = localStorage.getItem("verifyEmail")
 
   const onSubmit = async(data: OTPFormValues) => {
     const otpCode = `${data.otp1}${data.otp2}${data.otp3}${data.otp4}${data.otp5}${data.otp6}`;
-    console.log('Submitted OTP:', otpCode);
       const formData: any = {};
         formData.email = Email;
         formData.token = otpCode;
         setLoading(true)
         try {
            const  res = await UserService?.emailVerify(formData)
-           if (res?.status ==201 ) {
+           console.log(res);
+           
+           if (res?.data?.success == true ) {
             toast.success(res?.data?.message) 
              localStorage.removeItem("verifyemail")
              setLoading(false)
-              router.push("/login")
+             if(pathname == "/otp-verification"){
+              router.push("/new-password")
+              localStorage.setItem("otp",otpCode )
+             }else{
+               router.push("/login")
+             }
            }
         } catch (error) {
             console.log(error); 
+            toast.error(error?.message)
+            setLoading(false)
         }finally{
             setLoading(true)
         }

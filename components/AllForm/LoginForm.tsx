@@ -28,7 +28,6 @@ export default function LoginForm() {
         setLoading(true)
         try {
            const  res = await UserService?.login(formData)
-           console.log(res);
             const token = res?.data?.authorization?.token
            if (res?.status ==201 ) {
             toast.success(res?.data?.message) 
