@@ -28,16 +28,16 @@ export default function RegisterForm() {
         setLoading(true)
         try {
            const  res = await UserService?.register(formData)
-           if (res?.status ==201 ) {
+            if (res?.data?.success == true ) {
             toast.success(res?.data?.message) 
-             localStorage.setItem("verifyEmail", email)
+             localStorage.setItem("verifyemail", email)
               setLoading(false)
               router.push("/verify-email")
            }
         } catch (error) {
             console.log(error); 
         }finally{
-            setLoading(true)
+            setLoading(false)
         }
     };
 

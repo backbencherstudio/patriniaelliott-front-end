@@ -36,6 +36,14 @@ resendVerificationEmail: async (data) => {
     };
     return await Fetch.post("/auth/resend-verification-email", data, _config);
   },
+newPassword: async (data) => {
+     const _config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    return await Fetch.post("/auth/reset-password", data, _config);
+  },
 
   logout: (context = null) => {
     CookieHelper.destroy({ key: "tourAccessToken", context });

@@ -27,7 +27,7 @@ export default function OtpVerificationForm() {
 
   const router = useRouter();
   const pathname = usePathname()
-  const [loading , setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
   const otpRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -51,42 +51,43 @@ export default function OtpVerificationForm() {
       otpRefs[index + 1].current?.focus();
     }
   };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === 'Backspace' && !getValues(`otp${index + 1}` as keyof OTPFormValues) && index > 0) {
       otpRefs[index - 1].current?.focus();
     }
   };
-const Email = localStorage.getItem("verifyEmail")
+  const Email = localStorage.getItem("verifyemail")
 
-  const onSubmit = async(data: OTPFormValues) => {
+  const onSubmit = async (data: OTPFormValues) => {
     const otpCode = `${data.otp1}${data.otp2}${data.otp3}${data.otp4}${data.otp5}${data.otp6}`;
-      const formData: any = {};
-        formData.email = Email;
-        formData.token = otpCode;
-        setLoading(true)
-        try {
-           const  res = await UserService?.emailVerify(formData)
-           console.log(res);
-           
-           if (res?.data?.success == true ) {
-            toast.success(res?.data?.message) 
-             localStorage.removeItem("verifyemail")
-             setLoading(false)
-             if(pathname == "/otp-verification"){
-              router.push("/new-password")
-              localStorage.setItem("otp",otpCode )
-             }else{
-               router.push("/login")
-             }
-           }
-        } catch (error) {
-            console.log(error); 
-            toast.error(error?.message)
-            setLoading(false)
-        }finally{
-            setLoading(true)
+    const formData: any = {};
+    formData.email = Email;
+    formData.token = otpCode;
+    setLoading(true)
+    try {
+      const res = await UserService?.emailVerify(formData)
+
+      if (res?.data?.success == true) {
+        toast.success(res?.data?.message)
+        setLoading(false)
+        if (pathname == "/otp-verification") {
+          router.push("/new-password")
+          localStorage.setItem("otp", otpCode)
+        } else {
+          localStorage.removeItem("verifyemail")
+          router.push("/login")
         }
+      } else {
+        toast.error(res?.data?.message)
+        setLoading(false)
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.message)
+      setLoading(false)
+    } finally {
+      setLoading(false)
+    }
   };
 
   return (
@@ -134,7 +135,7 @@ const Email = localStorage.getItem("verifyEmail")
             disabled={loading}
             className="w-full disabled:bg-grayColor1 disabled:text-white/50 disabled:cursor-not-allowed  bg-secondaryColor cursor-pointer text-blackColor font-semibold py-4 rounded-md transition"
           >
-          { loading ? "Submitting..." :  "Submit"}
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </form>
       </div>

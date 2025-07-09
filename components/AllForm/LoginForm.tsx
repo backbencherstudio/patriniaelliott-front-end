@@ -19,28 +19,34 @@ type LoginFormValues = {
 export default function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>();
   const [showPassword, setShowPassword] = useState(false);
-   const [loading, setLoading]=useState(false)
-    const router = useRouter()
-    const onSubmit = async (data: LoginFormValues) => {
-        const formData: any = {};
-        formData.email = data.email;
-        formData.password = data.password;
-        setLoading(true)
-        try {
-           const  res = await UserService?.login(formData)
-            const token = res?.data?.authorization?.token
-           if (res?.status ==201 ) {
-            toast.success(res?.data?.message) 
-            CookieHelper.set({key:"tourAccessToken",value:token})
-            setLoading(false)
-            router.push("/")
-           }
-        } catch (error) {
-            console.log(error); 
-        }finally{
-            setLoading(true)
-        }
-    };
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const onSubmit = async (data: LoginFormValues) => {
+    const formData: any = {};
+    formData.email = data.email;
+    formData.password = data.password;
+    setLoading(true)
+    try {
+      const res = await UserService?.login(formData)
+      console.log(res);
+
+      const token = res?.data?.authorization?.token
+      if (res?.data?.success == true) {
+        toast.success(res?.data?.message)
+        CookieHelper.set({ key: "tourAccessToken", value: token })
+        setLoading(false)
+        router.push("/")
+      } else {
+        toast.error(res?.response?.data?.message?.message)
+        setLoading(false)
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message?.message)
+      console.log(error);
+    } finally {
+      setLoading(false)
+    }
+  };
   return (
     <div className="flex items-center justify-center px-4">
       <div className="w-full space-y-6">
@@ -83,7 +89,7 @@ export default function LoginForm() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-3 flex items-center text-grayColor1 cursor-pointer"
               >
-                {showPassword ? <EyeOff /> : <Eye/>}
+                {showPassword ? <EyeOff /> : <Eye />}
               </span>
             </div>
             {errors.password && <p className="text-red-500 text-base mt-1">{errors.password.message}</p>}
@@ -103,12 +109,12 @@ export default function LoginForm() {
               disabled={loading}
               className="w-full disabled:bg-grayColor1 disabled:text-white/50 disabled:cursor-not-allowed bg-secondaryColor text-blackColor font-semibold py-4 cursor-pointer rounded-md transition"
             >
-          { loading ? "Submitting..." :   "Get started"}
+              {loading ? "Submitting..." : "Get started"}
             </button>
           </div>
         </form>
 
-      
+
         {/* Social Buttons */}
         <SocialShare />
 

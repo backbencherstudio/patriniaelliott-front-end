@@ -26,7 +26,7 @@ export default function ForgotPasswordForm() {
            const  res = await UserService?.resendVerificationEmail({email:Email})
            console.log(res);
            
-           if (res?.status ==201 ) {
+    if (res?.data?.success == true ) {
             toast.success(res?.data?.message) 
              localStorage.setItem("verifyemail",Email)
              setLoading(false)
@@ -37,7 +37,7 @@ export default function ForgotPasswordForm() {
             console.log(error); 
              setLoading(true)
         }finally{
-            setLoading(true)
+            setLoading(false)
         }
     console.log('OTP request sent to:', data.email);
  
