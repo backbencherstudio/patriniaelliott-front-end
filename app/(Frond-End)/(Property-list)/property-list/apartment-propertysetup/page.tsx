@@ -2,12 +2,12 @@
 
 import { FormEvent, useState } from "react"
 import { useRouter } from 'next/navigation';
+import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import Dropdownmenu from "@/components/reusable/Dropdownmenu";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button";
-import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -109,12 +109,12 @@ export default function page() {
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
-                <ul className="hidden lg:flex w-full justify-between">
+                <ul className="hidden md:flex w-full justify-between">
                     {
                         header.map(item => (
                             <li className="space-y-4 w-fit" key={item}>
                                 <h3 className={`${item === "Property setup" ? "text-[#070707]" : "text-[#777980]"} text-sm text-center`}>{item}</h3>
-                                <div className="w-[180px] xl:w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
+                                <div className="w-[140px] lg:w-[180px] xl:w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
                                     <div className={`absolute top-0 left-0 h-full w-3/4 bg-[#D6AE29] rounded-full ${item === "Property setup" ? "" : "hidden"}`}></div>
                                 </div>
                             </li>
@@ -501,7 +501,7 @@ export default function page() {
                         {/* House Rules */}
 
                         <div className="flex gap-6 w-full">
-                            <div className=" flex-1 space-y-5">
+                            <div className="flex-1 space-y-5">
                                 <div className="bg-white p-6 rounded-lg space-y-5">
                                     <h3 className="text-[#23262F] text-2xl font-medium">House Rules</h3>
                                     <div className="space-y-3">
