@@ -1,12 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { BsGlobe2 } from "react-icons/bs";
 import { HiOutlineMenu, HiX } from "react-icons/hi";
-import { IoIosArrowDown } from "react-icons/io";
 
 import {
   DropdownMenu,
@@ -14,7 +12,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToken } from "@/hooks/useToken";
 import { cn } from "@/lib/utils";
+import MenuDropDown from "./MenuDropDown";
 
 const menuItems = [
   { en: "Home", bn: "হোম", slug: "/" },
@@ -28,12 +28,13 @@ export default function Navbar() {
   const pathname = usePathname();
   const [language, setLanguage] = useState<"en" | "bn">("en");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const {token}=useToken()
 
+  
   return (
-    <header className="bg-primaryColor py-4 px-4">
+    <header className="bg-primaryColor py-4 ">
       <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-white text-3xl font-semibold tracking-wide">
+        <Link href="/" className="text-white text-2xl md:text-3xl font-semibold tracking-wide">
           LOGO
         </Link>
         <nav className="hidden lg:flex space-x-6 text-base">
@@ -65,7 +66,7 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {isLoggedIn ? (
+          {token ? (
             <>
               <Link
                 href="/profile-info"
@@ -73,94 +74,7 @@ export default function Navbar() {
               >
                 Become a Vendor
               </Link>
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-1.5">
-                  <div className="w-[46px] h-[46px] relative rounded-full bg-white/10 border border-white/10">
-                    <Image
-                      src="/usericon/avatar.png"
-                      alt="User Avatar"
-                      fill
-                      className="object-cover rounded-full"
-                    />
-                  </div>
-                  <IoIosArrowDown className="text-white" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="p-4 bg-white rounded-lg shadow">
-                  <div className="pb-3 border-b border-[#e9e9ea] flex items-center gap-2.5 w-full">
-                    <div className="w-8 h-8 relative rounded-full">
-                      <Image
-                        src="/usericon/avatar.png"
-                        alt="User Avatar"
-                        fill
-                        className="rounded-full"
-                      />
-                      <div className="w-8 h-8 left-0 top-0 absolute opacity-10 rounded-full border border-black" />
-                    </div>
-                    <div className="text-[#070707] text-base">elisabeth_sarah@gmail.com</div>
-                  </div>
-                  <div className="flex flex-col gap-1.5 w-full">
-                    <Link href="/my-account" className="w-full">
-                      <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent">
-                        <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
-                          <Image
-                            src="/usericon/user.svg"
-                            alt="My Account"
-                            width={16}
-                            height={16}
-                          />
-                        </div>
-                        <div className={cn(
-                          "text-base font-medium",
-                          pathname === "/my-account" ? "text-[#d6ae29]" : "text-[#070707]"
-                        )}>My Account</div>
-                      </DropdownMenuItem>
-                    </Link>
-                    <Link  onClick={() => setMenuOpen(false)} href="/property-list" className="w-full">
-                        <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent">
-                          <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
-                            <Image
-                              src="/usericon/date.svg"
-                              alt="My Booking"
-                              width={16}
-                              height={16}
-                            />
-                          </div>
-                          <div className={cn(
-                            "text-base",
-                            pathname === "/property-list" ? "text-[#d6ae29]" : "text-[#070707]"
-                          )}>List Your Property</div>
-                        </DropdownMenuItem>
-                      </Link>
-                    <Link href="/apartment-history" className="w-full">
-                      <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent">
-                        <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
-                          <Image
-                            src="/usericon/date.svg"
-                            alt="My Booking"
-                            width={16}
-                            height={16}
-                          />
-                        </div>
-                        <div className={cn(
-                          "text-base",
-                          pathname === "/apartment-history" ? "text-[#d6ae29]" : "text-[#070707]"
-                        )}>My Booking</div>
-                      </DropdownMenuItem>
-                    </Link>
-                    <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent" onClick={() => setIsLoggedIn(false)}>
-                      <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
-                        <Image
-                          src="/usericon/logout.svg"
-                          alt="Logout"
-                          width={16}
-                          height={16}
-                        />
-                      </div>
-                      <div className="text-[#070707] text-base">Logout</div>
-                    </DropdownMenuItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
+             <MenuDropDown setMenuOpen={setMenuOpen}/>
             </>
           ) : (
             <>
@@ -169,7 +83,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/registration"
-                className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded"
+                className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-2 md:px-6 py-2 rounded"
               >
                 Sign up
               </Link>
@@ -178,7 +92,21 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu Toggle */}
-        <div className="lg:hidden">
+        <div className="lg:hidden flex items-center gap-2">
+          <div className="md:hidden">
+          {token ? <MenuDropDown setMenuOpen={setMenuOpen}/> : <div className=" flex items-center gap-3">
+                <Link href="/login" className="text-white text-base" onClick={() => setMenuOpen(false)}>
+                  Login
+                </Link>
+                <Link
+                  href="/registration"
+                  className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base md:px-4 px-2 py-1 rounded"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Sign up
+                </Link>
+              </div>}  
+          </div> 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="text-white text-2xl"
@@ -188,9 +116,30 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Content */}
+      {/* Overlay */}
       {menuOpen && (
-        <div className="lg:hidden px-4 mt-4 space-y-3">
+        <div
+          className="fixed inset-0 bg-black/40 z-50"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Slide-in Menu */}
+      <div
+        className={cn(
+          "fixed top-0 right-0 h-full w-[80vw] max-w-xs bg-primaryColor z-50 transition-all duration-300 ease-in-out",
+          menuOpen ? "right-0" : "-right-[100%]"
+        )}
+      >
+        <div className="flex flex-col h-full p-6 space-y-3">
+          {/* Close Button */}
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="self-end text-white text-2xl mb-6"
+          >
+            <HiX />
+          </button>
+          {/* Menu Items */}
           {menuItems.map((item) => (
             <Link
               key={item.slug}
@@ -204,139 +153,34 @@ export default function Navbar() {
               {language === "en" ? item.en : item.bn}
             </Link>
           ))}
-
           {/* Language Dropdown (Mobile) */}
-          <div className="md:flex items-center justify-between">
-            <div className="text-white text-base flex items-center gap-2">
-              <BsGlobe2 />
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as "en" | "bn")}
-                className="bg-transparent outline-none text-white"
-              >
-                <option value="en" className="text-black">
-                  English
-                </option>
-                <option value="bn" className="text-black">
-                  বাংলা
-                </option>
-              </select>
-            </div>
-
-            {isLoggedIn ? (
-              <div className="flex items-center gap-3 mt-3">
+          <div className="flex items-center gap-2 mt-4">
+            <BsGlobe2 className="text-white" />
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as "en" | "bn")}
+              className="bg-transparent outline-none text-white"
+            >
+              <option value="en" className="text-black">English</option>
+              <option value="bn" className="text-black">বাংলা</option>
+            </select>
+          </div>
+          {/* Auth Buttons */}
+          <div className="mt-4 flex flex-col gap-3">
+            {token && (
+              <>
                 <Link
                   href="/profile-info"
                   onClick={() => setMenuOpen(false)}
                   className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
                 >
                   Become a Vendor
-                </Link>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-1.5">
-                    <div className="w-[46px] h-[46px] relative rounded-full bg-white/10 border border-white/10">
-                      <Image
-                        src="/usericon/avatar.png"
-                        alt="User Avatar"
-                        fill
-                        className="object-cover rounded-full"
-                      />
-                    </div>
-                    <IoIosArrowDown className="text-white" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="p-4 bg-white rounded-lg shadow">
-                    <div className="pb-3 border-b border-[#e9e9ea] flex items-center gap-2.5 w-full">
-                      <div className="w-8 h-8 relative rounded-full">
-                        <Image
-                          src="/usericon/avatar.png"
-                          alt="User Avatar"
-                          fill
-                          className="rounded-full"
-                        />
-                        <div className="w-8 h-8 left-0 top-0 absolute opacity-10 rounded-full border border-black" />
-                      </div>
-                      <div className="text-[#070707] text-base">elisabeth_sarah@gmail.com</div>
-                    </div>
-                    <div className="flex flex-col gap-1.5 w-full">
-                      <Link href="/my-account" className="w-full">
-                        <DropdownMenuItem  onClick={() => setMenuOpen(false)} className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent">
-                          <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
-                            <Image
-                              src="/usericon/user.svg"
-                              alt="My Account"
-                              width={16}
-                              height={16}
-                            />
-                          </div>
-                          <div className={cn(
-                            "text-base font-medium",
-                            pathname === "/my-account" ? "text-[#d6ae29]" : "text-[#070707]"
-                          )}>My Account</div>
-                        </DropdownMenuItem>
-                      </Link>
-                      <Link  onClick={() => setMenuOpen(false)} href="/property-list" className="w-full">
-                        <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent">
-                          <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
-                            <Image
-                              src="/usericon/date.svg"
-                              alt="My Booking"
-                              width={16}
-                              height={16}
-                            />
-                          </div>
-                          <div className={cn(
-                            "text-base",
-                            pathname === "/property-list" ? "text-[#d6ae29]" : "text-[#070707]"
-                          )}>List Your Property</div>
-                        </DropdownMenuItem>
-                      </Link>
-                      <Link  onClick={() => setMenuOpen(false)} href="/apartment-history" className="w-full">
-                        <DropdownMenuItem className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent">
-                          <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
-                            <Image
-                              src="/usericon/date.svg"
-                              alt="My Booking"
-                              width={16}
-                              height={16}
-                            />
-                          </div>
-                          <div className={cn(
-                            "text-base",
-                            pathname === "/apartment-history" ? "text-[#d6ae29]" : "text-[#070707]"
-                          )}>My Booking</div>
-                        </DropdownMenuItem>
-                      </Link>
-                      <DropdownMenuItem  className="py-2 flex items-center gap-2.5 w-full focus:bg-transparent" onClick={() => setIsLoggedIn(false)}>
-                        <div className="w-8 h-8 p-1 bg-[#fffbee] rounded-full flex items-center justify-center overflow-hidden">
-                          <Image
-                            src="/usericon/logout.svg"
-                            alt="Logout"
-                            width={16}
-                            height={16}
-                          />
-                        </div>
-                        <div className="text-[#070707] text-base">Logout</div>
-                      </DropdownMenuItem>
-                    </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ) : (
-              <>
-                <Link href="/login" className="text-white text-base">
-                  Login
-                </Link>
-                <Link
-                  href="/registration"
-                  className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded"
-                >
-                  Sign up
-                </Link>
+                </Link>      
               </>
-            )}
+            ) }
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }

@@ -1,9 +1,12 @@
 'use client'
-import React, { useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Image from 'next/image';
+import React, { useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import { LuPencilLine } from 'react-icons/lu';
+import './my-profile-select.css';
 
 interface CustomDateInputProps {
   value?: string;
@@ -33,10 +36,11 @@ interface FormData {
   passportNumber: string;
   passportExpiryDate: Date | null;
   consent: boolean;
+  profileImage: File | null;
 }
 
 export default function MyProfile() {
-  const { register, control, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+  const { register, control, handleSubmit, watch, formState: { errors }, setValue } = useForm<FormData>({
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -58,6 +62,7 @@ export default function MyProfile() {
       passportNumber: '',
       passportExpiryDate: null,
       consent: false,
+      profileImage: null,
     }
   });
 
@@ -70,6 +75,10 @@ export default function MyProfile() {
   const [isGenderOpen, setIsGenderOpen] = useState(false);
   const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [isIssuingCountryOpen, setIsIssuingCountryOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Options for dropdowns
   const genderOptions = ['Female', 'Male', 'Non-binary', 'Prefer not to say'];
@@ -152,7 +161,6 @@ export default function MyProfile() {
     }
   };
 
-  // For debugging - log form values on any change
   const formValues = watch();
   console.log('Current form values:', formValues);
 
@@ -165,47 +173,93 @@ export default function MyProfile() {
           <p className="text-gray-500">Update your info and find out how it's used.</p>
         </div>
         <div className="relative">
-          <div className="w-[46px] h-[46px] rounded-full border border-black/10">
-            <Image src="/usericon/avatar.png" alt="Profile" width={46} height={46} className="rounded-full" />
+          <div
+            className="w-[46px] h-[46px] rounded-full relative border border-black/10 overflow-hidden cursor-pointer"
+            onClick={() => {
+              if (isEditing && fileInputRef.current) {
+                fileInputRef.current.click();
+              }
+            }}
+          >
+            <Image
+              src={previewImage || "/usericon/avatar.png"}
+              alt="Profile"
+              width={46}
+              height={46}
+              className="rounded-full w-full h-full object-cover"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={e => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setValue('profileImage', file);
+                  setPreviewImage(URL.createObjectURL(file));
+                }
+              }}
+              disabled={!isEditing}
+            />
           </div>
-          <div className="absolute bottom-0 right-0 bg-blue-600 p-1 rounded-full">
+          <div
+            className="absolute bottom-0 right-0 bg-blue-600 p-1 rounded-full"
+            style={{ pointerEvents: isEditing ? 'auto' : 'none', cursor: isEditing ? 'pointer' : 'default' }}
+            onClick={() => {
+              if (isEditing && fileInputRef.current) {
+                fileInputRef.current.click();
+              }
+            }}
+          >
             <Image src="/usericon/camera.svg" alt="Camera" width={11} height={11} className="z-10" />
           </div>
         </div>
       </div>
 
       {/* Personal Information */}
-      <div className="p-6 bg-white rounded-xl">
-        <div className="flex justify-between mb-8">
-          <h2 className="text-2xl font-medium">Personal Information</h2>
-          <button type="button" className="flex items-center gap-2 bg-blue-600 text-white px-2 py-1.5 rounded">
-            <Image src="/usericon/edit.svg" alt="Edit" width={20} height={20} />
-            <span>Edit</span>
+      <div className="md:p-6 p-4 bg-white rounded-xl">
+        <div className="flex  justify-between mb-8 md:gap-4">
+          <h2 className="text-xl md:text-2xl font-medium">Personal Information</h2>
+          <button
+            type="button"
+            className="flex items-center gap-1 md:gap-2 bg-blue-600 whitespace-nowrap text-white px-2 py-1.5 rounded"
+            onClick={() => {
+              setIsEditing(prev => !prev);
+              if (isEditing) {
+                setPreviewImage(null);
+              }
+            }}
+          >
+            <LuPencilLine />
+            <span>{isEditing ? "Cancel" : "Edit"}</span>
           </button>
         </div>
 
         {/* Form Fields */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Name Fields */}
           <div className="flex flex-col gap-2">
             <label className="text-base">First name</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="text" 
-                placeholder="Elisabeth" 
+              <input
+                type="text"
+                placeholder="Elisabeth"
                 {...register('firstName')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Last name</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="text" 
-                placeholder="Sarah" 
+              <input
+                type="text"
+                placeholder="Sarah"
                 {...register('lastName')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
@@ -214,22 +268,24 @@ export default function MyProfile() {
           <div className="flex flex-col gap-2">
             <label className="text-base">Display name</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="text" 
-                placeholder="Choose display name" 
+              <input
+                type="text"
+                placeholder="Choose display name"
                 {...register('displayName')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Nationality</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="text" 
-                placeholder="American" 
+              <input
+                type="text"
+                placeholder="American"
                 {...register('nationality')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
@@ -238,22 +294,24 @@ export default function MyProfile() {
           <div className="flex flex-col gap-2">
             <label className="text-base">Email address</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="email" 
-                placeholder="elisabeth_sarah@gmail.com" 
+              <input
+                type="email"
+                placeholder="elisabeth_sarah@gmail.com"
                 {...register('email')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Phone number</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="tel" 
-                placeholder="+6726 664 074" 
+              <input
+                type="tel"
+                placeholder="+6726 664 074"
                 {...register('phone')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
@@ -265,14 +323,18 @@ export default function MyProfile() {
               name="gender"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <CustomDropdown
-                  options={genderOptions}
-                  value={value}
-                  onChange={onChange}
-                  isOpen={isGenderOpen}
-                  setIsOpen={setIsGenderOpen}
-                  placeholder="Select gender"
-                />
+                <Select value={value} onValueChange={onChange} disabled={!isEditing}>
+                  <SelectTrigger className="select-input h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {genderOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
             />
           </div>
@@ -296,6 +358,7 @@ export default function MyProfile() {
                       placeholder="DD/MM/YYYY"
                     />
                   }
+                  disabled={!isEditing}
                 />
               )}
             />
@@ -305,8 +368,8 @@ export default function MyProfile() {
 
       {/* Address Information */}
       <div className="p-6 bg-white rounded-xl">
-        <h2 className="text-2xl font-medium mb-8">Address Information</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <h2 className="text-xl md:text-2xl font-medium mb-8">Address Information</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Country & Street */}
           <div className="flex flex-col gap-2">
             <label className="text-base">Country</label>
@@ -314,25 +377,30 @@ export default function MyProfile() {
               name="country"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <CustomDropdown
-                  options={countryOptions}
-                  value={value}
-                  onChange={onChange}
-                  isOpen={isCountryOpen}
-                  setIsOpen={setIsCountryOpen}
-                  placeholder="Select country"
-                />
+                <Select value={value} onValueChange={onChange} disabled={!isEditing}>
+                  <SelectTrigger className="select-input h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countryOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
             />
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Street address</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="text" 
-                placeholder="e.g. 123 Main St." 
+              <input
+                type="text"
+                placeholder="e.g. 123 Main St."
                 {...register('streetAddress')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
@@ -341,22 +409,24 @@ export default function MyProfile() {
           <div className="flex flex-col gap-2">
             <label className="text-base">Apt, suite. (optional)</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="text" 
-                placeholder="e.g. Apt #123" 
+              <input
+                type="text"
+                placeholder="e.g. Apt #123"
                 {...register('aptSuite')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">City</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="text" 
-                placeholder="e.g. America #123" 
+              <input
+                type="text"
+                placeholder="e.g. America #123"
                 {...register('city')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
@@ -365,22 +435,24 @@ export default function MyProfile() {
           <div className="flex flex-col gap-2">
             <label className="text-base">State / Province / Region</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="text" 
-                placeholder="e.g. State #123" 
+              <input
+                type="text"
+                placeholder="e.g. State #123"
                 {...register('stateProvince')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-base">Zip code</label>
             <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-              <input 
-                type="text" 
-                placeholder="726 664 074" 
+              <input
+                type="text"
+                placeholder="726 664 074"
                 {...register('zipCode')}
-                className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                disabled={!isEditing}
               />
             </div>
           </div>
@@ -390,33 +462,33 @@ export default function MyProfile() {
       {/* Passport Details */}
       <div className="p-6 bg-white rounded-xl">
         <div className="mb-8">
-          <h2 className="text-2xl font-medium mb-4">Passport details</h2>
+          <h2 className="text-xl md:text-2xl font-medium mb-4">Passport details</h2>
           <p className="text-gray-500">Save your passport details for use when booking your next stay, flight.</p>
         </div>
-
         <div className="flex flex-col gap-7">
-          {/* Names Section */}
           <div className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <label className="text-base">First name(s) <span className="text-red-500">*</span></label>
                 <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-                  <input 
-                    type="text" 
-                    placeholder="Elisabeth" 
+                  <input
+                    type="text"
+                    placeholder="Elisabeth"
                     {...register('passportFirstName', { required: true })}
-                    className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                    className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                    disabled={!isEditing}
                   />
                 </div>
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-base">Last name(s) <span className="text-red-500">*</span></label>
                 <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-                  <input 
-                    type="text" 
-                    placeholder="Sarah" 
+                  <input
+                    type="text"
+                    placeholder="Sarah"
                     {...register('passportLastName', { required: true })}
-                    className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                    className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                    disabled={!isEditing}
                   />
                 </div>
               </div>
@@ -425,7 +497,7 @@ export default function MyProfile() {
           </div>
 
           {/* Country & Passport */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-base">Issuing country <span className="text-red-500">*</span></label>
               <Controller
@@ -433,25 +505,30 @@ export default function MyProfile() {
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
-                  <CustomDropdown
-                    options={countryOptions}
-                    value={value}
-                    onChange={onChange}
-                    isOpen={isIssuingCountryOpen}
-                    setIsOpen={setIsIssuingCountryOpen}
-                    placeholder="Select issuing country"
-                  />
+                  <Select value={value} onValueChange={onChange} disabled={!isEditing}>
+                    <SelectTrigger className="select-input h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
+                      <SelectValue placeholder="Select issuing country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countryOptions.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               />
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-base">Passport number <span className="text-red-500">*</span></label>
               <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-                <input 
-                  type="text" 
-                  placeholder="Enter document number" 
+                <input
+                  type="text"
+                  placeholder="Enter document number"
                   {...register('passportNumber', { required: true })}
-                  className="w-full text-gray-500 outline-none h-full leading-[56px]" 
+                  className="w-full text-gray-500 outline-none h-full leading-[56px]"
+                  disabled={!isEditing}
                 />
               </div>
             </div>
@@ -481,6 +558,7 @@ export default function MyProfile() {
                         placeholder="DD/MM/YYYY"
                       />
                     }
+                    disabled={!isEditing}
                   />
                 )}
               />
@@ -498,6 +576,7 @@ export default function MyProfile() {
                 type="checkbox"
                 {...register('consent')}
                 className="w-5 h-5 rounded border border-gray-400 cursor-pointer"
+                disabled={!isEditing}
               />
               <div className="absolute top-0 left-0 w-5 h-5 flex items-center justify-center pointer-events-none">
                 {/* Custom checkmark */}
@@ -523,12 +602,14 @@ export default function MyProfile() {
           </div>
 
           {/* Save Button */}
-          <button 
-            type="submit"
-            className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors"
-          >
-            Save
-          </button>
+          {isEditing && (
+            <button
+              type="submit"
+              className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors"
+            >
+              Save
+            </button>
+          )}
         </div>
       </div>
     </form>

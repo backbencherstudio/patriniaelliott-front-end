@@ -38,7 +38,6 @@ const BookingLayout: React.FC<bookingLayoutProps> = ({ children }) => {
                         onClick={closeSidebar}
                     />
                 )}
-                
                 <div className="flex flex-col h-full w-full">
                     <div className="xl:pt-5 xl:hidden">
                         <button onClick={openSidebar}>open menu </button>

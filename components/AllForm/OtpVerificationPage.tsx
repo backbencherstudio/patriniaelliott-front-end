@@ -1,15 +1,19 @@
 'use client';
 
+import { UserService } from '@/service/user/user.service';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 type OTPFormValues = {
   otp1: string;
   otp2: string;
   otp3: string;
   otp4: string;
+  otp5: string;
+  otp6: string;
 };
 
 export default function OtpVerificationForm() {
@@ -22,9 +26,11 @@ export default function OtpVerificationForm() {
   } = useForm<OTPFormValues>();
 
   const router = useRouter();
-
-  // Refs for input fields
+  const pathname = usePathname()
+  const [loading, setLoading] = useState(false)
   const otpRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -37,8 +43,6 @@ export default function OtpVerificationForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
-
-    // Only allow digits
     if (!/^[0-9]?$/.test(value)) return;
 
     setValue(`otp${index + 1}` as keyof OTPFormValues, value);
@@ -47,17 +51,43 @@ export default function OtpVerificationForm() {
       otpRefs[index + 1].current?.focus();
     }
   };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === 'Backspace' && !getValues(`otp${index + 1}` as keyof OTPFormValues) && index > 0) {
       otpRefs[index - 1].current?.focus();
     }
   };
+  const Email = localStorage.getItem("verifyemail")
 
-  const onSubmit = (data: OTPFormValues) => {
-    const otpCode = `${data.otp1}${data.otp2}${data.otp3}${data.otp4}`;
-    console.log('Submitted OTP:', otpCode);
-    router.push('/new-password');
+  const onSubmit = async (data: OTPFormValues) => {
+    const otpCode = `${data.otp1}${data.otp2}${data.otp3}${data.otp4}${data.otp5}${data.otp6}`;
+    const formData: any = {};
+    formData.email = Email;
+    formData.token = otpCode;
+    setLoading(true)
+    try {
+      const res = await UserService?.emailVerify(formData)
+
+      if (res?.data?.success == true) {
+        toast.success(res?.data?.message)
+        setLoading(false)
+        if (pathname == "/otp-verification") {
+          router.push("/new-password")
+          localStorage.setItem("otp", otpCode)
+        } else {
+          localStorage.removeItem("verifyemail")
+          router.push("/login")
+        }
+      } else {
+        toast.error(res?.data?.message)
+        setLoading(false)
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.message)
+      setLoading(false)
+    } finally {
+      setLoading(false)
+    }
   };
 
   return (
@@ -78,8 +108,8 @@ export default function OtpVerificationForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* OTP Inputs */}
-          <div className="grid grid-cols-4 gap-4">
-            {['otp1', 'otp2', 'otp3', 'otp4'].map((field, index) => (
+          <div className="grid grid-cols-6 gap-4">
+            {['otp1', 'otp2', 'otp3', 'otp4', 'otp5', 'otp6'].map((field, index) => (
               <Controller
                 key={field}
                 control={control}
@@ -102,9 +132,10 @@ export default function OtpVerificationForm() {
 
           <button
             type="submit"
-            className="w-full bg-secondaryColor cursor-pointer text-blackColor font-semibold py-4 rounded-md transition"
+            disabled={loading}
+            className="w-full disabled:bg-grayColor1 disabled:text-white/50 disabled:cursor-not-allowed  bg-secondaryColor cursor-pointer text-blackColor font-semibold py-4 rounded-md transition"
           >
-            Submit
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </form>
       </div>

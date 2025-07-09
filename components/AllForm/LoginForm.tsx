@@ -1,9 +1,13 @@
 'use client';
 
+import { CookieHelper } from '@/helper/cookie.helper';
+import { UserService } from '@/service/user/user.service';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import SocialShare from '../reusable/SocialShare';
 
 type LoginFormValues = {
@@ -15,12 +19,34 @@ type LoginFormValues = {
 export default function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const onSubmit = async (data: LoginFormValues) => {
+    const formData: any = {};
+    formData.email = data.email;
+    formData.password = data.password;
+    setLoading(true)
+    try {
+      const res = await UserService?.login(formData)
+      console.log(res);
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log('Login submitted:', data);
-    // Handle login logic here
+      const token = res?.data?.authorization?.token
+      if (res?.data?.success == true) {
+        toast.success(res?.data?.message)
+        CookieHelper.set({ key: "tourAccessToken", value: token })
+        setLoading(false)
+        router.push("/")
+      } else {
+        toast.error(res?.response?.data?.message?.message)
+        setLoading(false)
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message?.message)
+      console.log(error);
+    } finally {
+      setLoading(false)
+    }
   };
-
   return (
     <div className="flex items-center justify-center px-4">
       <div className="w-full space-y-6">
@@ -30,7 +56,6 @@ export default function LoginForm() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email */}
           <div>
             <label className="block text-base font-medium text-blackColor mb-2">
               Work Email <span className="text-red-500">*</span>
@@ -49,8 +74,6 @@ export default function LoginForm() {
             />
             {errors.email && <p className="text-red-500 text-base mt-1">{errors.email.message}</p>}
           </div>
-
-          {/* Password */}
           <div>
             <label className="block text-base font-medium text-blackColor mb-2">
               Password <span className="text-red-500">*</span>
@@ -66,14 +89,11 @@ export default function LoginForm() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-3 flex items-center text-grayColor1 cursor-pointer"
               >
-                {showPassword ? <EyeOff /> : <Eye/>}
-
+                {showPassword ? <EyeOff /> : <Eye />}
               </span>
             </div>
             {errors.password && <p className="text-red-500 text-base mt-1">{errors.password.message}</p>}
           </div>
-
-          {/* Remember Me + Forgot Password */}
           <div className="flex justify-between items-center pt-1">
             <label className="flex items-center text-sm text-grayColor1">
               <input type="checkbox" {...register('remember')} className="mr-2" />
@@ -83,19 +103,18 @@ export default function LoginForm() {
               Forgot password
             </Link>
           </div>
-
-          {/* Submit Button */}
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full bg-secondaryColor text-blackColor font-semibold py-4 cursor-pointer rounded-md transition"
+              disabled={loading}
+              className="w-full disabled:bg-grayColor1 disabled:text-white/50 disabled:cursor-not-allowed bg-secondaryColor text-blackColor font-semibold py-4 cursor-pointer rounded-md transition"
             >
-              Get started
+              {loading ? "Submitting..." : "Get started"}
             </button>
           </div>
         </form>
 
-      
+
         {/* Social Buttons */}
         <SocialShare />
 
