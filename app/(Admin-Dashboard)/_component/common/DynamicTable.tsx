@@ -83,7 +83,7 @@ export default function DynamicTableWithPagination({
                   {columns.map((col, idx) => (
                     <td 
                       key={idx} 
-                      className="px-4 py-3 text-xs text-[#777980]"
+                      className="px-4 py-3 text-sm text-[#777980]"
                       style={{ width: col.width }}
                     >
                       {col.formatter ? col.formatter(row[col.accessor], row) : row[col.accessor]}
@@ -93,7 +93,7 @@ export default function DynamicTableWithPagination({
                     <td className="px-4 py-3 flex gap-4">
                       {onView && (
                         <span
-                          className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
+                          className="text-sm underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
                           onClick={() => onView(row)}
                         >
                           View details
