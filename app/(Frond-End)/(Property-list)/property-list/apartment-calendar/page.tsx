@@ -313,7 +313,10 @@ export default function page() {
                             <button disabled={(!licenses && !termsPolicy)} className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={handleSubmit}>Continue</button>
                         </div>
                     </div>
-                    <div className="w-[312px] space-y-4">
+
+
+
+                    <div className="w-full md:w-[312px] space-y-4">
                         <div className="space-y-5 p-5 bg-white rounded-lg">
                             <h3 className="text-[#23262F] text-xl font-medium">1 Date Selected</h3>
                             <div className="space-y-4">
@@ -392,7 +395,7 @@ export default function page() {
                                     <h3 className="text-[#23262F] text-xl font-medium">Rates</h3>
                                     <h2 className="text-[#777980]">Standard Rate</h2>
                                 </div>
-                                <div className="text-[#070707] text-sm">
+                                {/* <div className="text-[#070707] text-sm">
                                     <RadioGroup defaultValue={isBookingOpen ? "Open" : "Close"} onValueChange={() => setIsBookingOpen(prev => !prev)} className="flex gap-5 items-center">
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="Open" id="Open" />
@@ -403,7 +406,7 @@ export default function page() {
                                             <Label htmlFor="Close" className="text-sm font-normal">Close</Label>
                                         </div>
                                     </RadioGroup>
-                                </div>
+                                </div> */}
                                 <div className="flex items-center text-[#777980] border border-[#D2D2D5] p-4 rounded-lg ">
                                     <span>US$</span>
                                     <div>
@@ -422,7 +425,7 @@ export default function page() {
                                 <div>
                                     <h3 className="text-[#23262F] text-xl font-medium">Non-refundable Rate</h3>
                                 </div>
-                                <div className="text-[#070707] text-sm">
+                                {/* <div className="text-[#070707] text-sm">
                                     <RadioGroup defaultValue={isBookingOpen ? "Open" : "Close"} onValueChange={() => setIsBookingOpen(prev => !prev)} className="flex gap-5 items-center">
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="Open" id="Open" />
@@ -433,7 +436,7 @@ export default function page() {
                                             <Label htmlFor="Close" className="text-sm font-normal">Close</Label>
                                         </div>
                                     </RadioGroup>
-                                </div>
+                                </div> */}
                                 <div className="flex items-center text-[#777980] border border-[#D2D2D5] p-4 rounded-lg ">
                                     <span>US$</span>
                                     <div>
