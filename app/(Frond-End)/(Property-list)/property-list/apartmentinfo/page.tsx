@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import coverImage from "@/public/vendor/apartment-info-cover.jpg"
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function page() {
     const router = useRouter();
@@ -13,6 +13,10 @@ export default function page() {
         "Pricing and availibility",
         "Create listing",
     ]
+    const searchParams = useSearchParams();
+
+    const data = searchParams.get('data');
+    console.log(data)
     return (
         <div className="py-30 flex items-center justify-center bg-[#F6F7F7]">
             <div className="space-y-6">
@@ -26,7 +30,7 @@ export default function page() {
                                 <path d="M7.99414 5.33398H8.00014" stroke="#070707" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                             <div>
-                                <p className="text-[10px] sm:text-[14px]">You have selected one apartment where guests can book </p>
+                                <p className="text-[10px] sm:text-[14px]">You have selected {data} apartment where guests can book </p>
                                 <p>the entire place.</p>
                             </div>
                         </div>

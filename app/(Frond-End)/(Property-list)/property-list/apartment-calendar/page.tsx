@@ -1,9 +1,19 @@
 "use client"
 
-import { useCallback, useState, useEffect } from "react"
+import { useCallback, useState, useEffect, use } from "react"
 import { useRouter } from 'next/navigation';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 
 const header = [
@@ -34,6 +44,8 @@ export default function page() {
     const [termsPolicy, setTermsPolicy] = useState(false)
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
+    const [isBookingOpen, setIsBookingOpen] = useState(true)
+    const [status, setStatus] = useState("Not available for booking");
 
 
     useEffect(() => {
@@ -85,11 +97,30 @@ export default function page() {
         window.alert("Form is submited")
     }
 
+    function getSameDateNextMonth(inputDate: Date): Date {
+        const date = new Date(inputDate);
+
+        // Get current month and year
+        const currentMonth = date.getMonth();
+        const currentYear = date.getFullYear();
+
+        // Calculate next month (handles December -> January)
+        const nextMonth = (currentMonth + 1) % 12;
+        const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+
+        // Get the day, adjusting for months with fewer days
+        const day = date.getDate();
+        const lastDayOfNextMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
+        const adjustedDay = Math.min(day, lastDayOfNextMonth);
+
+        return new Date(nextYear, nextMonth, adjustedDay);
+    }
+
 
 
 
     return (
-        <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
+        <div className="flex justify-center items-center bg-[#F6F7F7] w-full overflow-hidden">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
                 <ul className="hidden md:flex w-full justify-between">
                     {
@@ -108,11 +139,11 @@ export default function page() {
                 {/* Calendar start  */}
 
 
-                <div className="flex gap-6">
+                <div className="flex flex-col-reverse md:flex-row gap-6 items-center md:items-start">
                     <div className="flex-1 space-y-[32px]">
                         <div className={`flex bg-[#F6F7F7] rounded-lg`}>
                             <div className="flex-1 lg:flex flex-col justify-between">
-                                <div className="w-full bg-white rounded-lg">
+                                <div className="w-full bg-white rounded-tl-lg rounded-tr-lg">
                                     <div className="flex items-center justify-between gap-6 text-sm w-[270px] p-4 bg-white">
                                         <button onClick={handlePrevMonth} className="text-[#292D32] border border-[#F1F2F4] w-[32px] h-[32px] flex items-center justify-center p-[10px] cursor-pointer rounded-[8px]">
                                             <FaChevronLeft />
@@ -130,7 +161,7 @@ export default function page() {
                                 <div className="flex flex-wrap border border-[#F1F2F4]">
                                     {
                                         daysNames.map(day => (
-                                            <div key={day} className="w-[14.28%] h-[52px] bg-[#FAFAFA] border border-[#F1F2F4] text-center text-[12px] text-[#1E1E1E] font-semibold flex items-center justify-center">
+                                            <div key={day} className="w-[14.28%] h-[40px] sm:h-[52px] bg-[#FAFAFA] border border-[#F1F2F4] text-center text-[8px] lg:text-[12px] text-[#1E1E1E] font-semibold flex items-center justify-center">
                                                 <span>{day}</span>
                                             </div>
                                         ))
@@ -139,19 +170,19 @@ export default function page() {
                                 <div className="flex flex-wrap">
                                     {
                                         Array.from({ length: startDay }).map((_, index) => (
-                                            <div key={index} className="w-[14.28%] aspect-square bg-white text-center text-[22.8px]"></div>
+                                            <div key={index} className="w-[14.28%] aspect-square bg-white text-center"></div>
                                         ))
                                     }
                                     {daysInMonth.map((day, index) => (
                                         <div key={day}
-                                            className={`w-[14.28%] aspect-square px-4 py-2 text-center ${index === 0 ? "border-l" : ""} ${index >= 23 ? "border-b" : ""} border-r border-t border-[#DCE4E8] bg-white text-sm text-[#1E1E1E] flex flex-col justify-between select-none relative`}
+                                            className={`w-[14.28%] aspect-square px-4 py-2 text-center ${index === 0 ? "border-l" : ""} ${index >= 23 ? "border-b" : ""} border-r border-t border-[#DCE4E8] bg-white text-[10px] lg:text-sm text-[#1E1E1E] flex flex-col justify-between select-none relative`}
                                         // onClick={() => handleDateClick(day)}
                                         >
                                             {day.getDate() >= new Date().getDate() && <> <span className={`w-full flex items-center justify-end rounded-full text-[#1E1E1E]`}
                                             >{day.getDate()}</span>
                                                 <div className="text-[12px] w-full text-start flex flex-col">
-                                                    <span className="text-[#A4A4A4] font-medium">Available</span>
-                                                    <div className="text-[#4A4C56] text-sm font-medium flex items-center gap-[2px]">${150}
+                                                    <span className="text-[#A4A4A4] font-medium truncate">Available</span>
+                                                    <div className="text-[#4A4C56] text-[10px] lg:text-sm font-medium flex items-center gap-[2px]">${150}
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="14" viewBox="0 0 15 14" fill="none">
                                                             <path d="M11.0703 5.25003C11.0703 5.25003 8.49262 8.75 7.57031 8.75C6.64795 8.75 4.07031 5.25 4.07031 5.25" stroke="#141B34" stroke-linecap="round" stroke-linejoin="round" />
                                                         </svg>
@@ -165,7 +196,7 @@ export default function page() {
                                                         {day.getDate()}
                                                     </div>
                                                     <div
-                                                        className={`h-[33px] w-full bg-[#FE5050] absolute top-1/2 -translate-y-1/2 left-0 flex items-center justify-center text-white font-medium text-sm ${day.getDate() === new Date().getDate() - 1 && day.getMonth() === new Date().getMonth() && day.getFullYear() === new Date().getFullYear() ? "rounded-r-full" : ""} ${index === 0 ? "rounded-l-full" : ""}`}
+                                                        className={`h-[25px] sm:h-[33px] w-full bg-[#FE5050] absolute top-1/2 -translate-y-1/2 left-0 flex items-center justify-center text-white font-medium text-[10px] lg:text-sm ${day.getDate() === new Date().getDate() - 1 && day.getMonth() === new Date().getMonth() && day.getFullYear() === new Date().getFullYear() ? "rounded-r-full" : ""} ${index === 0 ? "rounded-l-full" : ""}`}
                                                     >
                                                         {index === 0 || day.getDate() === new Date().getDate() - 1 && day.getMonth() === new Date().getMonth() && day.getFullYear() === new Date().getFullYear() ? "Closed" : ""}
                                                     </div>
@@ -173,9 +204,9 @@ export default function page() {
                                             }
                                             {
                                                 day.getDate() < new Date().getDate() && (day.getMonth() != new Date().getMonth() || day.getFullYear() > new Date().getFullYear()) && <><div className={`w-full flex justify-end rounded-full`}>{day.getDate()}</div>
-                                                    <div className="text-[12px] w-full text-start flex flex-col">
-                                                        <span className="text-[#A4A4A4] font-medium">Available</span>
-                                                        <div className="text-[#4A4C56] text-sm font-medium">${150}
+                                                    <div className="text-[10px] lg:text-[12px] w-full text-start flex flex-col">
+                                                        <span className="text-[#A4A4A4] font-medium truncate">Available</span>
+                                                        <div className="text-[#4A4C56] text-[10px] lg:text-sm font-medium">${150}
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="14" viewBox="0 0 15 14" fill="none">
                                                                 <path d="M11.0703 5.25003C11.0703 5.25003 8.49262 8.75 7.57031 8.75C6.64795 8.75 4.07031 5.25 4.07031 5.25" stroke="#141B34" stroke-linecap="round" stroke-linejoin="round" />
                                                             </svg>
@@ -192,7 +223,7 @@ export default function page() {
 
 
 
-                        <div className="space-y-6">
+                        <div className="space-y-6 max-w-2xl bg-white rounded-lg p-6">
                             <h3 className="text-[#23262F] text-2xl font-medium">That's it! You've done everything you need to before your
                                 first guest stays.</h3>
                             <div className="space-y-4">
@@ -318,17 +349,117 @@ export default function page() {
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white p-4 rounded-lg">
-                            <div>
+                        <div className="bg-white p-4 rounded-lg space-y-4">
+                            <div className="space-y-3">
                                 <div>
                                     <h3>Open or close for bookings</h3>
-                                    <div className="py-4"></div>
+                                    <div className="text-[#070707] p-4 border-b border-[#77798059]">
+                                        <RadioGroup defaultValue={isBookingOpen ? "Open" : "Close"} onValueChange={() => setIsBookingOpen(prev => !prev)} className="flex gap-5 items-center">
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="Open" id="Open" />
+                                                <Label htmlFor="Open" className="text-sm font-normal">Open</Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="Close" id="Close" />
+                                                <Label htmlFor="Close" className="text-sm font-normal">Close</Label>
+                                            </div>
+                                        </RadioGroup>
+                                    </div>
                                 </div>
-                                <div></div>
+                                <div className="flex flex-col space-y-3">
+                                    <h3 className="text-base font-medium text-[#070707]">Set availability</h3>
+
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="outline" className="flex items-center gap-1 p-0 text-sm font-normal hover:opacity-80 outline-none text-[#777980] justify-between">
+                                                {status}
+                                                <ChevronDown className="" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-full py-3">
+                                            <DropdownMenuItem onClick={() => setStatus("Available for booking")}>
+                                                Available for booking
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => setStatus("Not available for booking")}>
+                                                Not available for booking
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
                             </div>
-                            <div className="flex justify-between w-full space-x-3 px-4">
-                                <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Cancel</div>
-                                <button disabled={(!licenses && !termsPolicy)} className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={handleSubmit}>Save</button>
+                            <div className="space-y-3">
+                                <div>
+                                    <h3 className="text-[#23262F] text-xl font-medium">Rates</h3>
+                                    <h2 className="text-[#777980]">Standard Rate</h2>
+                                </div>
+                                <div className="text-[#070707] text-sm">
+                                    <RadioGroup defaultValue={isBookingOpen ? "Open" : "Close"} onValueChange={() => setIsBookingOpen(prev => !prev)} className="flex gap-5 items-center">
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Open" id="Open" />
+                                            <Label htmlFor="Open" className="text-sm font-normal">Open</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Close" id="Close" />
+                                            <Label htmlFor="Close" className="text-sm font-normal">Close</Label>
+                                        </div>
+                                    </RadioGroup>
+                                </div>
+                                <div className="flex items-center text-[#777980] border border-[#D2D2D5] p-4 rounded-lg ">
+                                    <span>US$</span>
+                                    <div>
+                                        <input type="number" name="rate" id="rate" className="outline-none px-2 py-1 text-sm w-[190px]" />
+                                    </div>
+                                    <div className="flex items-center w-[25px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M3.28879 7.74081C2.5814 8.16201 0.726682 9.02206 1.85633 10.0983C2.40816 10.624 3.02275 11 3.79544 11H8.20455C8.97725 11 9.59185 10.624 10.1437 10.0983C11.2733 9.02206 9.4186 8.16201 8.7112 7.74081C7.0524 6.75306 4.9476 6.75306 3.28879 7.74081Z" stroke="#0068EF" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M8.25 3.25C8.25 4.49264 7.24265 5.5 6 5.5C4.75736 5.5 3.75 4.49264 3.75 3.25C3.75 2.00736 4.75736 1 6 1C7.24265 1 8.25 2.00736 8.25 3.25Z" stroke="#0068EF" />
+                                        </svg>
+                                        <span className="text-[12px] text-[#777980]">3</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                <div>
+                                    <h3 className="text-[#23262F] text-xl font-medium">Non-refundable Rate</h3>
+                                </div>
+                                <div className="text-[#070707] text-sm">
+                                    <RadioGroup defaultValue={isBookingOpen ? "Open" : "Close"} onValueChange={() => setIsBookingOpen(prev => !prev)} className="flex gap-5 items-center">
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Open" id="Open" />
+                                            <Label htmlFor="Open" className="text-sm font-normal">Open</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Close" id="Close" />
+                                            <Label htmlFor="Close" className="text-sm font-normal">Close</Label>
+                                        </div>
+                                    </RadioGroup>
+                                </div>
+                                <div className="flex items-center text-[#777980] border border-[#D2D2D5] p-4 rounded-lg ">
+                                    <span>US$</span>
+                                    <div>
+                                        <input type="number" name="rate" id="rate" className="outline-none px-2 py-1 text-sm w-[190px]" />
+                                    </div>
+                                    <div className="flex items-center w-[25px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M3.28879 7.74081C2.5814 8.16201 0.726682 9.02206 1.85633 10.0983C2.40816 10.624 3.02275 11 3.79544 11H8.20455C8.97725 11 9.59185 10.624 10.1437 10.0983C11.2733 9.02206 9.4186 8.16201 8.7112 7.74081C7.0524 6.75306 4.9476 6.75306 3.28879 7.74081Z" stroke="#0068EF" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M8.25 3.25C8.25 4.49264 7.24265 5.5 6 5.5C4.75736 5.5 3.75 4.49264 3.75 3.25C3.75 2.00736 4.75736 1 6 1C7.24265 1 8.25 2.00736 8.25 3.25Z" stroke="#0068EF" />
+                                        </svg>
+                                        <span className="text-[12px] text-[#777980]">3</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="text-[#0068EF] font-medium py-3">Restrictions</h3>
+                                <p className="text-[#4A4C56]">Changes will be made to the following
+                                    date: <span>{getSameDateNextMonth(startDate).toLocaleDateString('en-US', {
+                                        month: 'long',
+                                        day: '2-digit',
+                                        year: 'numeric'
+                                    })}</span></p>
+                            </div>
+                            <div className="flex justify-between w-full space-x-3">
+                                <div className="text-[#0068EF] border border-[#0068EF] px-[32px] flex items-center justify-center rounded-[8px] cursor-pointer leading-none">Cancel</div>
+                                <div className="text-[#fff] px-[32px] py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer leading-none" onClick={handleSubmit}>Save</div>
                             </div>
                         </div>
                     </div>
