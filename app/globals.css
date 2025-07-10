@@ -192,6 +192,7 @@ input:checked ~ .checkmark {
   border: 1px solid #fff !important;
   border-radius: 0.3rem;
   display: inline-block;
+  right: 85px;
   position: relative;
 }
 h2.react-datepicker__current-month {

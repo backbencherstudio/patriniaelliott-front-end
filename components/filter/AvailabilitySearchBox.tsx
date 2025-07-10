@@ -7,29 +7,34 @@ import { FaClock, FaSearch, FaUsers } from 'react-icons/fa';
 export default function AvailabilitySearchBox() {
   const router = useRouter();
 
-  const [checkIn, setCheckIn] = useState('04 Jan');
-  const [checkOut, setCheckOut] = useState('10 Jan');
-  const [guests, setGuests] = useState('1 room');
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
+  const [guests, setGuests] = useState(1);
 
   const handleSearch = () => {
     const params = new URLSearchParams({
       checkin: checkIn,
       checkout: checkOut,
-      guests: guests,
+      guests: guests.toString(),
     });
 
-    router.push(`/search?${params.toString()}`);
+    router.replace(`?${params.toString()}`);
   };
 
   return (
     <div className="bg-white rounded-xl shadow-md p-4 flex items-center justify-between space-x-4 max-w-5xl mx-auto">
-      
+
       {/* Check-in */}
       <div className="flex items-center space-x-2 border-r pr-6">
         <FaClock className="text-xl text-black" />
         <div>
           <p className="text-sm text-gray-500">Check in</p>
-          <p className="text-base font-medium text-black">{checkIn}</p>
+          <input
+            type="date"
+            value={checkIn}
+            onChange={e => setCheckIn(e.target.value)}
+            className="text-base font-medium text-black outline-none"
+          />
         </div>
       </div>
 
@@ -38,7 +43,12 @@ export default function AvailabilitySearchBox() {
         <FaClock className="text-xl text-black" />
         <div>
           <p className="text-sm text-gray-500">Check out</p>
-          <p className="text-base font-medium text-black">{checkOut}</p>
+          <input
+            type="date"
+            value={checkOut}
+            onChange={e => setCheckOut(e.target.value)}
+            className="text-base font-medium text-black outline-none"
+          />
         </div>
       </div>
 
@@ -47,7 +57,13 @@ export default function AvailabilitySearchBox() {
         <FaUsers className="text-xl text-black" />
         <div>
           <p className="text-sm text-gray-500">Guests</p>
-          <p className="text-base font-medium text-black">{guests}</p>
+          <input
+            type="number"
+            min={1}
+            value={guests}
+            onChange={e => setGuests(Number(e.target.value))}
+            className="text-base font-medium text-black outline-none w-16"
+          />
         </div>
       </div>
 

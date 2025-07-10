@@ -38,12 +38,9 @@ export default function ContactForm() {
     setIsSubmitting(true)
 
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000))
       console.log("Form submitted:", data)
       setIsSuccess(true)
-
-      // Reset success message after 3 seconds
       setTimeout(() => setIsSuccess(false), 3000)
     } catch (error) {
       console.error("Error submitting form:", error)
