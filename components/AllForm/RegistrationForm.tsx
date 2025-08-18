@@ -28,6 +28,8 @@ export default function RegisterForm() {
         setLoading(true)
         try {
            const  res = await UserService?.register(formData)
+           console.log();
+           
             if (res?.data?.success == true ) {
             toast.success(res?.data?.message) 
              localStorage.setItem("verifyemail", email)
