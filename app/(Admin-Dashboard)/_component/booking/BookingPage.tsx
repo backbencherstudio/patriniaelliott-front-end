@@ -11,18 +11,20 @@ import BokingStatuse from "./BokingStatuse";
 import BookingAction from "./BookingAction";
 import BookingCard from "./BookingCard";
 import BookingPymentStatuse from "./BookingPymentStatuse";
+import TableId from "./TableId";
+import DateCheck from "./DateCheck";
 
 
 
 export default function BookingPage() {
 
-  
+
   const [isModalOpen, setIsModalOpen] = React.useState<any>(false);
   const [selectedUser, setSelectedUser] = React.useState<any | null>(null);
   const [selectedRole, setSelectedRole] = React.useState<
-  "all" | "hotel" | "apartment" | "tour"
+    "all" | "hotel" | "apartment" | "tour"
   >("all");
-  const itemsPerPage =2;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const endpoint = `/admin/booking?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
   const { data, loading, error } = useFetchData(endpoint);
@@ -30,7 +32,7 @@ export default function BookingPage() {
   const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
     "all"
   );
-  
+
   const handleViewDetails = (user: any) => {
     setSelectedUser(user);
     setIsModalOpen(true);
@@ -38,30 +40,32 @@ export default function BookingPage() {
   const handleExportPDF = () => {
     const doc = new jsPDF();
     doc.text("Booking Report", 14, 15);
-  
+
     const tableColumn = columns
       .filter((col) => col.label !== "Action" && col.label !== "Status")
       .map((col) => col.label);
-  
- 
-  
 
-  
+
+
+
+
     doc.save("booking_report.pdf");
   };
   const columns = [
-    { label: "Booking ID", accessor: "id", formatter: (_, __, index) => {
-      const num = ((currentPage - 1) * itemsPerPage) + index + 1;
-      return String(num).padStart(2, '0');
-    } },
-    { label: "Name", accessor: "name" , formatter: (_, row) => <div >{row?.user?.name}</div>},
+    {
+      label: "Booking ID", accessor: "id", formatter: (_, __, index) => <TableId currentPage={currentPage} itemsPerPage={itemsPerPage} index={index} />
+    },
+    { label: "Name", accessor: "name", formatter: (_, row) => <div >{row?.user?.name}</div> },
     { label: "Service", accessor: "type" },
-    { label: "Payment",  accessor: "status",
-        formatter: (_, row) => <BookingPymentStatuse status={row.payment_status} />,},
-    { label: "Check-In", accessor: "booking_items" ,formatter: (_, row) => <div >{row?.booking_items[0].start_date && dayjs(row?.booking_items[0].start_date).format("YYYY-MM-DD") }</div>},
-    { label: "Check-Out", accessor: "checkOut" ,formatter: (_, row) => <div >{row?.booking_items[0].end_date && dayjs(row?.booking_items[0].end_date).format("YYYY-MM-DD") }</div>},
-    { label: "Price", accessor: "total_amount" ,
-        formatter: (value) => `$${value}`,
+    {
+      label: "Payment", accessor: "status",
+      formatter: (_, row) => <BookingPymentStatuse status={row.payment_status} />,
+    },
+    { label: "Check-In", accessor: "booking_items", formatter: (_, row) => <DateCheck date={row?.booking_items[0].start_date} /> },
+    { label: "Check-Out", accessor: "checkOut", formatter: (_, row) => <DateCheck date={row?.booking_items[0].end_date} /> },
+    {
+      label: "Price", accessor: "total_amount",
+      formatter: (value) => `$${value}`,
     },
     { label: "Action", accessor: "status", formatter: (_, row) => <BookingAction onView={handleViewDetails} status={row} />, },
     {
@@ -70,17 +74,17 @@ export default function BookingPage() {
       formatter: (_, row) => <BokingStatuse status={row.status} />,
     },
   ];
-  const bookingData =data?.data
+  const bookingData = data?.data
 
-  console.log("loading",bookingData);
-  
+  console.log("loading", bookingData);
+
   return (
     <div className="flex flex-col gap-5">
       {/* Overview */}
       <div className="w-full bg-white rounded-xl p-4  mx-auto">
         <h2 className="text-2xl font-medium text-[#22262e] mb-1">Manage bookings</h2>
         <p className="text-base text-[#777980] mb-4">
-        Check up on your latest reservations and history.
+          Check up on your latest reservations and history.
         </p>
       </div>
       {/* Table Section */}
@@ -94,11 +98,10 @@ export default function BookingPage() {
                 onClick={() =>
                   setSelectedRole(role as "all" | "hotel" | "apartment" | "tour")
                 }
-                className={`md:px-4 px-1 cursor-pointer text-sm md:text-base py-2 ${
-                  selectedRole === role
+                className={`md:px-4 px-1 cursor-pointer text-sm md:text-base py-2 ${selectedRole === role
                     ? "border-b-2 border-[#d6ae29] text-[#070707]"
                     : "border-b text-[#777980]"
-                }`}
+                  }`}
               >
                 {role === "All" ? "All users" : role}
               </button>
@@ -107,38 +110,38 @@ export default function BookingPage() {
 
           {/* Date Range Dropdown */}
           <div className=" mt-4 md:mt-0 justify-end flex gap-2">
-          <div>
-            <button onClick={handleExportPDF} className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">Export as PDF</button>
+            <div>
+              <button onClick={handleExportPDF} className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">Export as PDF</button>
+            </div>
+            <div className=" items-center flex gap-1  md:gap-2 text-sm text-[#0068ef] border p-2 rounded">
+              <Image
+                src="/dashboard/icon/filter.svg"
+                alt="filter"
+                width={14}
+                height={14}
+              />
+              <select
+                value={dateRange}
+                onChange={(e) =>
+                  setDateRange(e.target.value as "all" | "7" | "15" | "30")
+                }
+                className="bg-transparent text-[#0068ef] text-sm md:text-base  cursor-pointer"
+              >
+                <option className="text-xs" value="all">All Time</option>
+                <option className="text-xs" value="7"> Last 7 days</option>
+                <option className="text-xs" value="15">Last 15 days</option>
+                <option className="text-xs" value="30">Last 30 days</option>
+              </select>
+            </div>
           </div>
-          <div className=" items-center flex gap-1  md:gap-2 text-sm text-[#0068ef] border p-2 rounded">
-            <Image
-              src="/dashboard/icon/filter.svg"
-              alt="filter"
-              width={14}
-              height={14}
-            />
-            <select
-              value={dateRange}
-              onChange={(e) =>
-                setDateRange(e.target.value as "all" | "7" | "15" | "30")
-              }
-              className="bg-transparent text-[#0068ef] text-sm md:text-base  cursor-pointer"
-            >
-              <option className="text-xs" value="all">All Time</option>
-              <option className="text-xs" value="7"> Last 7 days</option>
-              <option className="text-xs" value="15">Last 15 days</option>
-              <option className="text-xs" value="30">Last 30 days</option>
-            </select>
-          </div>
-          </div>
-          
+
         </div>
 
         {/* Table */}
         <div>
           <DynamicTableWithPagination
             columns={columns}
-            data={bookingData }
+            data={bookingData}
             currentPage={currentPage}
             loading={loading}
             totalPages={totalPages || 0}
@@ -148,8 +151,8 @@ export default function BookingPage() {
         </div>
       </div>
       <div>
-    {isModalOpen && <BookingCard  open={isModalOpen} data={selectedUser} setIsModalOpen={setIsModalOpen}/>}
-  </div>
+        {isModalOpen && <BookingCard open={isModalOpen} data={selectedUser} setIsModalOpen={setIsModalOpen} />}
+      </div>
     </div>
   );
 }
