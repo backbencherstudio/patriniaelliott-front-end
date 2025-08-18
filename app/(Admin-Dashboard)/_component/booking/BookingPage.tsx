@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import DynamicTableWithPagination from "../common/DynamicTable";
 
-import { bookings } from "@/DemoAPI/allProparty";
+import useFetchData from "@/hooks/useFetchData";
+import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
+import DynamicTableWithPagination from "../common/DynamicTable";
 import BokingStatuse from "./BokingStatuse";
 import BookingAction from "./BookingAction";
 import BookingCard from "./BookingCard";
@@ -14,17 +15,21 @@ import BookingPymentStatuse from "./BookingPymentStatuse";
 
 
 export default function BookingPage() {
- 
 
+  
   const [isModalOpen, setIsModalOpen] = React.useState<any>(false);
   const [selectedUser, setSelectedUser] = React.useState<any | null>(null);
   const [selectedRole, setSelectedRole] = React.useState<
-   "All" | "Hotel" | "Appartment" | "Tour"
-  >("All");
+  "all" | "hotel" | "apartment" | "tour"
+  >("all");
+  const itemsPerPage =2;
+  const [currentPage, setCurrentPage] = useState(1);
+  const endpoint = `/admin/booking?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
+  const { data, loading, error } = useFetchData(endpoint);
+  const totalPages = data?.pagination?.total_pages || 0;
   const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
     "all"
   );
-  const [currentPage, setCurrentPage] = useState(1);
   
   const handleViewDetails = (user: any) => {
     setSelectedUser(user);
@@ -38,35 +43,24 @@ export default function BookingPage() {
       .filter((col) => col.label !== "Action" && col.label !== "Status")
       .map((col) => col.label);
   
-    const tableRows = filteredUsers.map((user) => [
-      user.bookingId,
-      user.name,
-      user.service,
-      user.status,
-      user.checkIn,
-      user.checkOut,
-      `$${user.price}`,
-    ]);
+ 
   
-    (doc as any).autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [0, 104, 239] },
-    });
+
   
     doc.save("booking_report.pdf");
   };
   const columns = [
-    { label: "Booking ID", accessor: "bookingId" },
-    { label: "Name", accessor: "name" },
-    { label: "Service", accessor: "service" },
+    { label: "Booking ID", accessor: "id", formatter: (_, __, index) => {
+      const num = ((currentPage - 1) * itemsPerPage) + index + 1;
+      return String(num).padStart(2, '0');
+    } },
+    { label: "Name", accessor: "name" , formatter: (_, row) => <div >{row?.user?.name}</div>},
+    { label: "Service", accessor: "type" },
     { label: "Payment",  accessor: "status",
-        formatter: (_, row) => <BookingPymentStatuse  status={row.status} />,},
-    { label: "Check-In", accessor: "checkIn" },
-    { label: "Check-Out", accessor: "checkOut" },
-    { label: "Price", accessor: "price" ,
+        formatter: (_, row) => <BookingPymentStatuse status={row.payment_status} />,},
+    { label: "Check-In", accessor: "booking_items" ,formatter: (_, row) => <div >{row?.booking_items[0].start_date && dayjs(row?.booking_items[0].start_date).format("YYYY-MM-DD") }</div>},
+    { label: "Check-Out", accessor: "checkOut" ,formatter: (_, row) => <div >{row?.booking_items[0].end_date && dayjs(row?.booking_items[0].end_date).format("YYYY-MM-DD") }</div>},
+    { label: "Price", accessor: "total_amount" ,
         formatter: (value) => `$${value}`,
     },
     { label: "Action", accessor: "status", formatter: (_, row) => <BookingAction onView={handleViewDetails} status={row} />, },
@@ -76,21 +70,9 @@ export default function BookingPage() {
       formatter: (_, row) => <BokingStatuse status={row.status} />,
     },
   ];
+  const bookingData =data?.data
 
-  const filteredUsers = bookings.filter((user) => {
-    const roleMatch = selectedRole === "All" || user.service === selectedRole;
-    let dateMatch = true;
-
-    if (dateRange !== "all") {
-      const joinDate = new Date(user.joinDate.split("/").reverse().join("-"));
-      const today = new Date();
-      const cutoffDate = new Date(today);
-      cutoffDate.setDate(today.getDate() - parseInt(dateRange));
-      dateMatch = joinDate >= cutoffDate;
-    }
-    return roleMatch && dateMatch;
-  });
-
+  console.log("loading",bookingData);
   
   return (
     <div className="flex flex-col gap-5">
@@ -106,11 +88,11 @@ export default function BookingPage() {
         <div className="md:flex justify-between items-center gap-2 md:gap-4 mb-4">
           {/* Role Filters */}
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">
-            {["All", "Hotel", "Appartment", "Tour"].map((role) => (
+            {["all", "hotel", "apartment", "tour"].map((role) => (
               <button
                 key={role}
                 onClick={() =>
-                  setSelectedRole(role as "All" | "Hotel" | "Appartment" | "Tour")
+                  setSelectedRole(role as "all" | "hotel" | "apartment" | "tour")
                 }
                 className={`md:px-4 px-1 cursor-pointer text-sm md:text-base py-2 ${
                   selectedRole === role
@@ -156,9 +138,11 @@ export default function BookingPage() {
         <div>
           <DynamicTableWithPagination
             columns={columns}
-            data={filteredUsers}
+            data={bookingData }
             currentPage={currentPage}
-            itemsPerPage={10}
+            loading={loading}
+            totalPages={totalPages || 0}
+            itemsPerPage={itemsPerPage}
             onPageChange={(page) => setCurrentPage(page)}
           />
         </div>

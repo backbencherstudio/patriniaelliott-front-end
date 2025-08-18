@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
@@ -8,14 +9,16 @@ interface ColumnConfig {
   label: React.ReactNode;
   accessor: string;
   width?: string;
-  formatter?: (value: any, row: any) => React.ReactNode;
+  formatter?: (value: any, row: any, index: number) => React.ReactNode;
 }
 
 interface DynamicTableProps {
   columns: ColumnConfig[];
   data: any[];
+  loading:boolean;
   currentPage: number;
   itemsPerPage: number;
+  totalPages:number;
   onPageChange: (page: number) => void;
   onView?: (row: any) => void;
   onDelete?: (id: any) => void;
@@ -27,17 +30,15 @@ export default function DynamicTableWithPagination({
   columns,
   data,
   currentPage,
+  loading,
   itemsPerPage,
+  totalPages,
   onPageChange,
   onView,
   onDelete,
   noDataMessage = "No data found.",
 }: DynamicTableProps) {
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-  const paginatedData = data.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  
 
   const getPagination = () => {
     let pages: (number | string)[] = [];
@@ -77,8 +78,14 @@ export default function DynamicTableWithPagination({
             </tr>
           </thead>
           <tbody>
-            {paginatedData.length > 0 ? (
-              paginatedData.map((row, i) => (
+            {loading ? (
+              <tr>
+                <td colSpan={columns.length + 1} className="px-4 py-10 text-center text-[#777980] text-sm">
+                <span className="flex items-center justify-center  gap-2"><Loader size={17} className="text-primaryColor"/> Loading...</span> 
+                </td>
+              </tr>
+            ) : data && data.length > 0 ? (
+              data.map((row, i) => (
                 <tr key={i} className="border-t">
                   {columns.map((col, idx) => (
                     <td 
@@ -86,7 +93,7 @@ export default function DynamicTableWithPagination({
                       className="px-4 py-3 text-sm text-[#777980]"
                       style={{ width: col.width }}
                     >
-                      {col.formatter ? col.formatter(row[col.accessor], row) : row[col.accessor]}
+                      {col.formatter ? col.formatter(row[col.accessor], row, i) : row[col.accessor]}
                     </td>
                   ))}
                   {(onView || onDelete) && (
@@ -130,7 +137,7 @@ export default function DynamicTableWithPagination({
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-40"
+            className="px-3 py-1 border cursor-pointer rounded disabled:opacity-40"
           >
             ❮
           </button>
@@ -139,7 +146,7 @@ export default function DynamicTableWithPagination({
               key={i}
               onClick={() => typeof page === "number" && onPageChange(page)}
               disabled={page === "..."}
-              className={`px-2 py-1 rounded  text-sm ${
+              className={`px-2 py-1 rounded cursor-pointer text-sm ${
                 page === currentPage ? " text-blackColor font-medium" : " text-grayColor1"
               }`}
             >
@@ -149,7 +156,7 @@ export default function DynamicTableWithPagination({
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-40"
+            className="px-3 py-1 border cursor-pointer rounded disabled:opacity-40"
           >
             ❯
           </button>

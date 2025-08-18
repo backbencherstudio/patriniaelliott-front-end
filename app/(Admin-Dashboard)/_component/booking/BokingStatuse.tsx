@@ -6,22 +6,22 @@ interface UserData {
     phone: string;
     role: string;
     joinDate: string;
-    status: 'Confirmed' | 'Pending' | 'Canceled';
+    status: 'approved' | 'pending' | 'cancele';
   }
   export const statusStyles = {
-    Confirmed: {
+    approved: {
       bg: 'bg-[#38c976]/10',
       border: 'outline-[#abefc6]',
       text: 'text-[#067647]',
       icon: '/dashboard/icon/tik.svg'
     },
-    Pending: {
+    pending: {
       bg: 'bg-[#ffa23a]/10',
       border: 'outline-[#ffa23a]',
       text: 'text-[#ffa23a]',
       icon: '/dashboard/icon/loading.svg'
     },
-    Canceled: {
+    cancele: {
       bg: 'bg-[#fe5050]/10',
       border: 'outline-[#fe5050]',
       text: 'text-[#fe5050]',

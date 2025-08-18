@@ -6,7 +6,7 @@ function BookingAction({ status, onView }: any) {
   
   return (
     <div>
-      {status?.status == "Confirmed" || status?.status == "Canceled" ? (
+      {status?.status == "approved" || status?.status == "cancele" ? (
         <span
           className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
           onClick={() => onView(status)}
