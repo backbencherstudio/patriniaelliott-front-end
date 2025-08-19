@@ -3,9 +3,12 @@
 import Image from "next/image"
 import coverImage from "@/public/vendor/apartment-info-cover.jpg"
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from "react";
+import { usePropertyContext } from "../layout";
 
 export default function page() {
     const router = useRouter();
+    const { listProperty } = usePropertyContext();
     const steps = [
         "Input host details",
         "Input property setup",
@@ -16,7 +19,7 @@ export default function page() {
     const searchParams = useSearchParams();
 
     const data = searchParams.get('data');
-    console.log(data)
+
     return (
         <div className="py-30 flex items-center justify-center bg-[#F6F7F7]">
             <div className="space-y-6">

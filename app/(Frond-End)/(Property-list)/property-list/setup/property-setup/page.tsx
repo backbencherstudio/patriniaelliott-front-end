@@ -1,6 +1,6 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import Dropdownmenu from "@/components/reusable/Dropdownmenu";
@@ -15,20 +15,20 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Check } from "lucide-react";
+import { usePropertyContext } from "../../layout";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
-
-
-const header = [
-    "Name and location",
-    "Property setup",
-    "Photos",
-    "Pricing",
-    "Calendar",
-]
 
 export default function page() {
     const router = useRouter()
-    const [bedrooms, setBedRooms] = useState([1])
+    const { listProperty, updateListProperty } = usePropertyContext();
     const [numberOfGuest, setNumberOfGuest] = useState(0)
     const [numberOfBathRooms, setnumberOfBathRooms] = useState(0);
     const [selectedApartmentSizeType, setSelectedApartmentSizeType] = useState("")
@@ -39,28 +39,117 @@ export default function page() {
     const [guestFood, setGuestFood] = useState({ "breakfast": "yes" })
     const [houseRules, setHouseRules] = useState({ "smoking": false, "pets": false, "children": false, "events": false })
     const [formData, setFormData] = useState({})
+    const [bedrooms, setBedRooms] = useState<
+        { title: string; beds: { [key: string]: number } }[]
+    >([{
+        title: "Premium bedrooms",
+        beds: {
+            single_bed: 2
+        }
+    }]);
 
-
-    const increaseBedRooms = (id: number) => {
-        setBedRooms(prevBedrooms => {
-            const newBedrooms = [...prevBedrooms];
-            newBedrooms[id] = (newBedrooms[id] || 0) + 1;
-            return newBedrooms;
-        });
+    const bedIcons = {
+        single_bed: (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+                <path d="M78.25 48h-60.5C16.1 48 15 49.1 15 50.77v30.46C15 82.9 16.1 84 17.75 84s2.75-1.1 2.75-2.77V70.15h55v11.08c0 1.66 1.1 2.77 2.75 2.77S81 82.9 81 81.23V50.77C81 49.1 79.9 48 78.25 48zm-22-27.7h-27.5v-5.53c0-1.66-1.1-2.77-2.75-2.77s-2.75 1.1-2.75 2.77v27.7h33V20.3z" fill="currentColor"></path>
+                <path d="M72.75 23.08v-8.3c0-1.67-1.1-2.78-2.75-2.78s-2.75 1.1-2.75 2.77v5.54h-27.5v22.16h33V23.08z" fill="currentColor"></path>
+            </svg>
+        ),
+        double_bed: (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+                <path d="M89.25 48H6.75C5.1 48 4 49.1 4 50.77v30.46C4 82.9 5.1 84 6.75 84s2.75-1.1 2.75-2.77V70.15h77v11.08c0 1.66 1.1 2.77 2.75 2.77S92 82.9 92 81.23V50.77C92 49.1 90.9 48 89.25 48zm-44-27.7h-27.5v-5.53c0-1.66-1.1-2.77-2.75-2.77s-2.75 1.1-2.75 2.77v27.7h33V20.3zm38.5 2.78v-8.3c0-1.67-1.1-2.78-2.75-2.78s-2.75 1.1-2.75 2.77v5.54h-27.5v22.16h33V23.08z" fill="currentColor"></path>
+            </svg>
+        ),
+        large_bed: (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+                <path d="M89.25 48H6.75C5.1 48 4 49.1 4 50.77v30.46C4 82.9 5.1 84 6.75 84s2.75-1.1 2.75-2.77V70.15h77v11.08c0 1.66 1.1 2.77 2.75 2.77S92 82.9 92 81.23V50.77C92 49.1 90.9 48 89.25 48zm-44-27.7h-27.5v-5.53c0-1.66-1.1-2.77-2.75-2.77s-2.75 1.1-2.75 2.77v27.7h33V20.3zm38.5 2.78v-8.3c0-1.67-1.1-2.78-2.75-2.78s-2.75 1.1-2.75 2.77v5.54h-27.5v22.16h33V23.08z" fill="currentColor"></path>
+            </svg>
+        ),
+        extra_large_bed: (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+                <path d="M89.25 48H6.75C5.1 48 4 49.1 4 50.77v30.46C4 82.9 5.1 84 6.75 84s2.75-1.1 2.75-2.77V70.15h77v11.08c0 1.66 1.1 2.77 2.75 2.77S92 82.9 92 81.23V50.77C92 49.1 90.9 48 89.25 48zm-44-27.7h-27.5v-5.53c0-1.66-1.1-2.77-2.75-2.77s-2.75 1.1-2.75 2.77v27.7h33V20.3zm38.5 2.78v-8.3c0-1.67-1.1-2.78-2.75-2.78s-2.75 1.1-2.75 2.77v5.54h-27.5v22.16h33V23.08z" fill="currentColor"></path>
+            </svg>
+        ),
     };
 
-    const addBedRooms = () => {
-        setBedRooms(prev => [...prev, 1])
-    }
+    // State for dialog
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-    const decreaseBedRooms = (id: number) => {
-        setBedRooms(prevBedrooms => {
-            const newBedrooms = [...prevBedrooms];
-            if (newBedrooms[id] > 1) {
-                newBedrooms[id] -= 1;
-            }
-            return newBedrooms;
+    // Temporary state while adding/editing a bedroom
+    const [newBedroomTitle, setNewBedroomTitle] = useState("");
+    const [newBedCounts, setNewBedCounts] = useState({
+        single_bed: 0,
+        double_bed: 0,
+        large_bed: 0,
+        extra_large_bed: 0,
+    });
+
+    const increaseNewBed = (type: string) => {
+        setNewBedCounts((prev) => ({ ...prev, [type]: prev[type] + 1 }));
+    };
+
+    const decreaseNewBed = (type: string) => {
+        setNewBedCounts((prev) => ({
+            ...prev,
+            [type]: prev[type] > 0 ? prev[type] - 1 : 0,
+        }));
+    };
+
+    const openEditDialog = (index: number) => {
+        const room = bedrooms[index];
+        setNewBedroomTitle(room.title);
+        setNewBedCounts({ ...room.beds });
+        setEditingIndex(index);
+        setDialogOpen(true);
+    };
+
+    const openAddDialog = () => {
+        setNewBedroomTitle("");
+        setNewBedCounts({
+            single_bed: 0,
+            double_bed: 0,
+            large_bed: 0,
+            extra_large_bed: 0,
         });
+        setEditingIndex(null);
+        setDialogOpen(true);
+    };
+
+    const saveBedroom = () => {
+        if (!newBedroomTitle) return;
+
+        const newBedroom = {
+            title: newBedroomTitle,
+            beds: { ...newBedCounts },
+        };
+
+        if (editingIndex !== null) {
+            // Update existing bedroom
+            setBedRooms((prev) => {
+                const updated = [...prev];
+                updated[editingIndex] = newBedroom;
+                return updated;
+            });
+        } else {
+            // Add new bedroom
+            setBedRooms((prev) => [...prev, newBedroom]);
+        }
+
+        // Close dialog and reset state
+        setDialogOpen(false);
+        setNewBedroomTitle("");
+        setNewBedCounts({
+            single_bed: 0,
+            double_bed: 0,
+            large_bed: 0,
+            extra_large_bed: 0,
+        });
+        setEditingIndex(null);
+    };
+
+    const deleteBedroom = (index: number) => {
+        setBedRooms((prev) => prev.filter((_, i) => i !== index));
     };
 
     const handleApartmentSizeType = (data: FormEvent<HTMLFormElement>) => {
@@ -95,19 +184,109 @@ export default function page() {
             guestgeneral: guestGeneral,
             guestcooking: guestCooking,
             guestentertainment: guestEntertainment,
-            guestfood:guestFood,
+            guestfood: guestFood,
             guestparking: guestParking,
             houserules: houseRules,
             checkin: checkIn,
             checkout: checkOut
         })
+
+
+        updateListProperty({
+            general: {
+                wifi: guestGeneral.free_wifi,
+                air_conditioning: guestGeneral.air_condition,
+                heating: guestGeneral.heating,
+                electric_vehicle_charging_station: guestGeneral.ev_charging
+            },
+            cooking_cleaning: {
+                kitchen: guestCooking.kitchen,
+                kitchenette: guestCooking.kitchenette,
+                washing_machine: guestCooking.washing_machine
+            },
+            entertainment: {
+                flat_screen_tv: guestEntertainment.flat_tv,
+                swimming_pool: guestEntertainment.pool,
+                minibar: guestEntertainment.minibar,
+                sauna: guestEntertainment.sauna
+            },
+            breakfast_available: guestFood.breakfast === "yes",
+            parking: {
+                available: guestParking.isavailable === "yes_free" || guestParking.isavailable === "yes_paid",
+                reserveParkingSpot: guestParking.reservation === "yes",
+                parkingType: guestParking.parkingtype === 'public',
+                cost: guestParking.price,
+                type: guestParking.reservation === "yes_free" ? "free" : "paid"
+            },
+            house_rules: {
+                no_smoking: houseRules.smoking,
+                no_pets: houseRules.pets,
+                no_children: houseRules.children,
+                parties_allowed: houseRules.events
+            },
+            check_in_from: checkIn.from,
+            check_in_untill: checkIn.until,
+            check_out_from: checkOut.from,
+            check_out_untill: checkOut.until,
+            bedrooms: [...bedrooms],
+            bathrooms: numberOfGuest,
+            number_of_guest_allowed: numberOfBathRooms,
+
+        })
+
+        const updatedProperty = {
+            ...JSON.parse(localStorage.getItem("propertyData")),
+            general: {
+                wifi: guestGeneral.free_wifi,
+                air_conditioning: guestGeneral.air_condition,
+                heating: guestGeneral.heating,
+                electric_vehicle_charging_station: guestGeneral.ev_charging
+            },
+            cooking_cleaning: {
+                kitchen: guestCooking.kitchen,
+                kitchenette: guestCooking.kitchenette,
+                washing_machine: guestCooking.washing_machine
+            },
+            entertainment: {
+                flat_screen_tv: guestEntertainment.flat_tv,
+                swimming_pool: guestEntertainment.pool,
+                minibar: guestEntertainment.minibar,
+                sauna: guestEntertainment.sauna
+            },
+            breakfast_available: guestFood.breakfast === "yes",
+            parking: {
+                available: guestParking.isavailable === "yes_free" || guestParking.isavailable === "yes_paid",
+                reserveParkingSpot: guestParking.reservation === "yes",
+                parkingType: guestParking.parkingtype === 'public',
+                cost: guestParking.price,
+                type: guestParking.reservation === "yes_free" ? "free" : "paid"
+            },
+            house_rules: {
+                no_smoking: houseRules.smoking,
+                no_pets: houseRules.pets,
+                no_children: houseRules.children,
+                parties_allowed: houseRules.events
+            },
+            check_in_from: checkIn.from,
+            check_in_untill: checkIn.until,
+            check_out_from: checkOut.from,
+            check_out_untill: checkOut.until,
+            bedrooms: [...bedrooms],
+            bathrooms: numberOfGuest,
+            number_of_guest_allowed: numberOfBathRooms,
+        };
+        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
+
         router.push("/property-list/setup/apartment-photos")
     }
 
-    console.log(formData)
+
+    useEffect(() => {
+        console.log("New bedrooms : ", newBedCounts);
+    }, [])
 
     return (
-        <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
+        <div className="flex justify-center items-center w-full bg-[#F6F7F7] relative">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
                 <div className="flex gap-6 w-full">
                     <form className="flex-1 space-y-5" onSubmit={(e) => handleSubmitForm(e)}>
@@ -117,39 +296,125 @@ export default function page() {
                         <div className="flex gap-6 w-full">
                             <div className="p-6 space-y-5 select-none bg-white rounded-lg flex-1">
                                 <h3>Property Details</h3>
-                                <div className="space-y-2">
-                                    <label htmlFor="bedrooms" className="block text-[#070707] font-medium">Bedroom</label>
-                                    {
-                                        bedrooms.map((bedroom: number, index: number) => (
-                                            <div className="flex flex-col sm:flex-row gap-2 select-none" key={index}>
-                                                <div className="flex-1 border border-[#0068EF] rounded-[8px] p-4 text-[#777980] text-sm flex items-center">{bedroom} {bedroom === 1 ? "bedroom" : "bedrooms"}</div>
-                                                <div className="w-fit px-[10px] py-[13px] border border-[#E9E9EA] rounded-[8px] flex gap-4">
-                                                    <div className="bg-[#D6AE29] border border-[#D6AE29] rounded-full cursor-pointer p-[6px] flex items-center justify-center" onClick={() => increaseBedRooms(index)}>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                            <path d="M8.00057 12C7.70032 12 7.45703 11.7567 7.45703 11.4565V4.54354C7.45703 4.24329 7.70032 4 8.00057 4C8.30082 4 8.54411 4.24329 8.54411 4.54354V11.4565C8.54411 11.7567 8.30082 12 8.00057 12Z" fill="black" />
-                                                            <path d="M11.4565 8.54411H4.54354C4.24329 8.54411 4 8.30082 4 8.00057C4 7.70032 4.24329 7.45703 4.54354 7.45703H11.4565C11.7567 7.45703 12 7.70032 12 8.00057C12 8.30082 11.7567 8.54411 11.4565 8.54411Z" fill="black" />
-                                                        </svg>
+                                <div className="space-y-3">
+                                    <label htmlFor="bedrooms" className="block text-[#070707] font-medium">Bedrooms</label>
+                                    {bedrooms.map((room, idx) => (
+                                        <div key={idx} className="p-3 rounded-lg border cursor-pointer relative group" onClick={() => openEditDialog(idx)}>
+                                            <button
+                                                type="button"
+                                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-red-100 rounded-full"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    deleteBedroom(idx);
+                                                }}
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                    <path d="M4 4L12 12M4 12L12 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                                </svg>
+                                            </button>
+                                            <h4 className="font-semibold text-lg">{room.title}</h4>
+                                            <ul className="text-base text-gray-600 list-none pl-5 flex gap-3 flex-wrap font-medium">
+                                                {Object.entries(room.beds)
+                                                    .filter(([_, count]) => count > 0)
+                                                    .map(([type, count]) => (
+                                                        <li key={type}>
+                                                            {count} × {type.split("_").join(" ")}
+                                                        </li>
+                                                    ))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                                        <DialogTrigger className="flex items-center gap-2 p-[10px] border border-[#E9E9EA] w-fit rounded-[8px] cursor-pointer" onClick={openAddDialog}>
+                                            <div className="bg-[#0068EF] w-[16px] h-[16px] rounded-full flex items-center justify-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 16 16"
+                                                    fill="none"
+                                                >
+                                                    <path
+                                                        d="M8.00057 12C7.70032 12 7.45703 11.7567 7.45703 11.4565V4.54354C7.45703 4.24329 7.70032 4 8.00057 4C8.30082 4 8.54411 4.24329 8.54411 4.54354V11.4565C8.54411 11.7567 8.30082 12 8.00057 12Z"
+                                                        fill="white"
+                                                    />
+                                                    <path
+                                                        d="M11.4565 8.54411H4.54354C4.24329 8.54411 4 8.30082 4 8.00057C4 7.70032 4.24329 7.45703 4.54354 7.45703H11.4565C11.7567 7.45703 12 7.70032 12 8.00057C12 8.30082 11.7567 8.54411 11.4565 8.54411Z"
+                                                        fill="white"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <h3 className="text-[#0068EF] text-sm font-medium">Add bedroom</h3>
+                                        </DialogTrigger>
+
+                                        <DialogContent>
+                                            <div className="">
+                                                <DialogTitle className="pb-5">
+                                                    {editingIndex !== null ? 'Edit Bedroom' : 'Which beds are available in this room?'}
+                                                </DialogTitle>
+                                                <div className="space-y-6">
+                                                    {/* Title input */}
+                                                    <div className="flex flex-col gap-1">
+                                                        <label htmlFor="title">Enter bedroom title</label>
+                                                        <input
+                                                            type="text"
+                                                            name="title"
+                                                            id="title"
+                                                            value={newBedroomTitle}
+                                                            onChange={(e) => setNewBedroomTitle(e.target.value)}
+                                                            className="outline-none border px-2 py-2 rounded-lg"
+                                                        />
                                                     </div>
-                                                    <div className="text-[#4A4C56] text-sm flex items-center justify-center w-[20px]">{bedroom < 9 ? `0${bedroom}` : bedroom}</div>
-                                                    <div className="border border-[#D6AE29] rounded-full cursor-pointer p-[6px] flex items-center justify-center" onClick={() => decreaseBedRooms(index)}>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                            <path fillRule="evenodd" clipRule="evenodd" d="M11.5545 7.99913C11.5545 8.11701 11.5076 8.23005 11.4243 8.3134C11.3409 8.39675 11.2279 8.44358 11.11 8.44358H4.8878C4.76993 8.44358 4.65688 8.39675 4.57353 8.3134C4.49018 8.23005 4.44336 8.11701 4.44336 7.99913C4.44336 7.88126 4.49018 7.76821 4.57353 7.68486C4.65688 7.60151 4.76993 7.55469 4.8878 7.55469H11.11C11.2279 7.55469 11.3409 7.60151 11.4243 7.68486C11.5076 7.76821 11.5545 7.88126 11.5545 7.99913Z" fill="#D6AE29" />
-                                                        </svg>
+
+                                                    {/* Bed types list */}
+                                                    <div className="text-[#D6AE29] space-y-4">
+                                                        {Object.keys(bedIcons).map((item) => (
+                                                            <div key={item} className="flex items-center gap-2">
+                                                                <div className="w-7">{bedIcons[item]}</div>
+
+                                                                <div className="capitalize flex-1 text-[#4A4C56] font-medium text-base">
+                                                                    {item.split("_").join(" ")}
+                                                                </div>
+
+                                                                <div className="w-fit px-[10px] py-[13px] border border-[#E9E9EA] rounded-[8px] flex gap-4 items-center select-none">
+                                                                    {/* Increase */}
+                                                                    <div
+                                                                        className="bg-[#D6AE29] rounded-full cursor-pointer p-[6px] flex items-center justify-center"
+                                                                        onClick={() => increaseNewBed(item)}
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" > <path d="M8.00057 12C7.70032 12 7.45703 11.7567 7.45703 11.4565V4.54354C7.45703 4.24329 7.70032 4 8.00057 4C8.30082 4 8.54411 4.24329 8.54411 4.54354V11.4565C8.54411 11.7567 8.30082 12 8.00057 12Z" fill="black" /> <path d="M11.4565 8.54411H4.54354C4.24329 8.54411 4 8.30082 4 8.00057C4 7.70032 4.24329 7.45703 4.54354 7.45703H11.4565C11.7567 7.45703 12 7.70032 12 8.00057C12 8.30082 11.7567 8.54411 11.4565 8.54411Z" fill="black" /> </svg>
+                                                                    </div>
+
+                                                                    {/* Count */}
+                                                                    <div className="text-[#4A4C56] text-sm w-[20px] text-center">
+                                                                        {newBedCounts[item] || 0}
+                                                                    </div>
+
+                                                                    {/* Decrease */}
+                                                                    <div
+                                                                        className="border border-[#D6AE29] rounded-full cursor-pointer p-[6px] flex items-center justify-center"
+                                                                        onClick={() => decreaseNewBed(item)}
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" > <path fillRule="evenodd" clipRule="evenodd" d="M11.5545 7.99913C11.5545 8.11701 11.5076 8.23005 11.4243 8.3134C11.3409 8.39675 11.2279 8.44358 11.11 8.44358H4.8878C4.76993 8.44358 4.65688 8.39675 4.57353 8.3134C4.49018 8.23005 4.44336 8.11701 4.44336 7.99913C4.44336 7.88126 4.49018 7.76821 4.57353 7.68486C4.65688 7.60151 4.76993 7.55469 4.8878 7.55469H11.11C11.2279 7.55469 11.3409 7.60151 11.4243 7.68486C11.5076 7.76821 11.5545 7.88126 11.5545 7.99913Z" fill="#D6AE29" /> </svg>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
                                                     </div>
+
+                                                    {/* Save button */}
+                                                    <button
+                                                        type="button"
+                                                        onClick={saveBedroom}
+                                                        className="text-[#fff] px-6 py-2 border border-[#fff] bg-[#D6AE29] rounded-[8px] cursor-pointer text-lg"
+                                                    >
+                                                        {editingIndex !== null ? 'Update' : 'Save'}
+                                                    </button>
                                                 </div>
                                             </div>
-                                        ))
+                                        </DialogContent>
 
-                                    }
-                                    <div className="flex items-center gap-2 p-[10px] border border-[#E9E9EA] w-fit rounded-[8px] cursor-pointer" onClick={addBedRooms}>
-                                        <div className="bg-[#0068EF] w-[16px] h-[16px] rounded-full">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                <path d="M8.00057 12C7.70032 12 7.45703 11.7567 7.45703 11.4565V4.54354C7.45703 4.24329 7.70032 4 8.00057 4C8.30082 4 8.54411 4.24329 8.54411 4.54354V11.4565C8.54411 11.7567 8.30082 12 8.00057 12Z" fill="white" />
-                                                <path d="M11.4565 8.54411H4.54354C4.24329 8.54411 4 8.30082 4 8.00057C4 7.70032 4.24329 7.45703 4.54354 7.45703H11.4565C11.7567 7.45703 12 7.70032 12 8.00057C12 8.30082 11.7567 8.54411 11.4565 8.54411Z" fill="white" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="text-[#0068EF] text-sm font-medium">Add bedroom</h3>
-                                    </div>
+                                    </Dialog>
                                 </div>
                                 <div className="space-y-2">
                                     <h3 className="text-[#070707] font-medium">How many guests can stay?</h3>

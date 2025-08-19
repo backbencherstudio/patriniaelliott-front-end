@@ -14,11 +14,14 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import { usePropertyContext } from "../../layout";
+import toast,{Toaster} from 'react-hot-toast'
+
 
 
 export default function page() {
     const router = useRouter()
-
+    const { listProperty, updateListProperty } = usePropertyContext();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [nextCurrentDate, setNextCurrentDate] = useState(() => {
         const today = new Date();
@@ -85,7 +88,10 @@ export default function page() {
 
 
     const handleSubmit = () => {
-        window.alert("Form is submited")
+        toast.success("Property setup completed.")
+        console.clear();
+        console.log("Submitted data : ",JSON.parse(localStorage.getItem("propertyData")))
+        localStorage.removeItem("propertyData");
     }
 
     function getSameDateNextMonth(inputDate: Date): Date {
@@ -108,11 +114,10 @@ export default function page() {
     }
 
 
-
-
     return (
         <div className="flex justify-center items-center bg-[#F6F7F7] w-full overflow-hidden">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
+                <Toaster />
                 {/* Calendar start  */}
 
 

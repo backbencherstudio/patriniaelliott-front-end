@@ -1,16 +1,28 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePropertyContext } from './layout';
 
 
 function page() {
   const router = useRouter();
-  const [selectPropertyType,setSelectedPropertyType] = useState("");
-  const handleSelection=(select:string)=>{
+  const { listProperty, updateListProperty } = usePropertyContext();
+  const [selectPropertyType, setSelectedPropertyType] = useState("");
+  const handleSelection = (select: string) => {
     setSelectedPropertyType(select);
-    router.push('/property-list/setup/choose-apartment-type')
-  }
+    updateListProperty({
+      property_type: select
+    });
+    const updatedProperty = {
+      ...listProperty,
+      property_type: select
+    };
+    localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
+
+    router.push('/property-list/choose-apartment-type');
+  };
+
   return (
     <div className="py-30 flex items-center justify-center bg-[#F6F7F7] px-4">
       <div className="space-y-[32px]">
@@ -35,7 +47,7 @@ function page() {
                 <p>vacation homes, villas, etc.</p>
               </div>
             </div>
-            <div className="hover:bg-[#D6AE29] border-[#D6AE29] border px-4 py-3 w-full rounded-[8px] text-[#070707] font-medium cursor-pointer duration-300" onClick={()=>handleSelection("Apartment")}>List your property</div>
+            <div className="hover:bg-[#D6AE29] border-[#D6AE29] border px-4 py-3 w-full rounded-[8px] text-[#070707] font-medium cursor-pointer duration-300" onClick={() => handleSelection("Apartment")}>List your property</div>
           </div>
           <div className="rounded-[12px] p-6 space-y-6 flex flex-col items-center text-center bg-[#fff]">
             <div>
@@ -58,7 +70,7 @@ function page() {
                 <p>hotels, etc.</p>
               </div>
             </div>
-            <div className="border border-[#D6AE29] hover:bg-[#D6AE29] px-4 py-3 w-full rounded-[8px] text-[#070707] font-medium cursor-pointer duration-300" onClick={()=>handleSelection("Hotel")}>List your property</div>
+            <div className="border border-[#D6AE29] hover:bg-[#D6AE29] px-4 py-3 w-full rounded-[8px] text-[#070707] font-medium cursor-pointer duration-300" onClick={() => handleSelection("Hotel")}>List your property</div>
           </div>
         </div>
       </div>
