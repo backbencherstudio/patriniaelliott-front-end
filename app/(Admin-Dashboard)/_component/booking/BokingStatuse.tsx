@@ -21,7 +21,7 @@ interface UserData {
       text: 'text-[#ffa23a]',
       icon: '/dashboard/icon/loading.svg'
     },
-    cancele: {
+    cancel: {
       bg: 'bg-[#fe5050]/10',
       border: 'outline-[#fe5050]',
       text: 'text-[#fe5050]',
