@@ -7,15 +7,6 @@ import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { useDropzone } from "react-dropzone";
 
 
-const header = [
-    "Name and location",
-    "Property setup",
-    "Photos",
-    "Pricing",
-    "Calendar",
-]
-
-
 export default function page() {
     const router = useRouter()
 
@@ -41,25 +32,13 @@ export default function page() {
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        router.push("/property-list/apartment-pricing")
+        router.push("/property-list/setup/apartment-pricing")
     }
 
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
-                <ul className="hidden md:flex w-full justify-between">
-                    {
-                        header.map(item => (
-                            <li className="space-y-4 w-fit" key={item}>
-                                <h3 className={`${item === "Photos" ? "text-[#070707]" : "text-[#777980]"} text-sm text-center`}>{item}</h3>
-                                <div className="w-[140px] lg:w-[180px] xl:w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
-                                    <div className={`absolute top-0 left-0 h-full w-3/4 bg-[#D6AE29] rounded-full ${item === "Photos" ? "" : "hidden"}`}></div>
-                                </div>
-                            </li>
-                        ))
-                    }
-                </ul>
                 <div className="">
                     <div className="flex gap-6 w-full">
                         <form className="space-y-6" onSubmit={(e) => handleFormSubmit(e)}>
@@ -128,7 +107,7 @@ export default function page() {
                                     </div>
 
                                     {/* Preview section */}
-                                    {/* {files.length > 0 && (
+                                    {files.length > 0 && (
                                         <div className="mt-4 grid grid-cols-3 gap-2">
                                             {files.map((file, index) => (
                                                 <div key={index} className="relative h-24 rounded-md overflow-hidden">
@@ -140,7 +119,7 @@ export default function page() {
                                                 </div>
                                             ))}
                                         </div>
-                                    )} */}
+                                    )}
                                 </div>
                             </div>
                             <div className="flex justify-between w-full space-x-3 px-4">

@@ -73,7 +73,7 @@ export default function page() {
                 </div>
                 <div className="flex justify-between w-full space-x-3 px-4">
                     <button className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</button>
-                    <button className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.push("/property-list/apartment-name-location")}>Continue</button>
+                    <button className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.push("/property-list/setup/apartment-name-location")}>Continue</button>
                 </div>
             </div>
         </div>
