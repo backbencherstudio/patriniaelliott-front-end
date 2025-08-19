@@ -9,7 +9,7 @@ function page() {
   const [selectPropertyType,setSelectedPropertyType] = useState("");
   const handleSelection=(select:string)=>{
     setSelectedPropertyType(select);
-    router.push('/property-list/choose-apartment-type')
+    router.push('/property-list/setup/choose-apartment-type')
   }
   return (
     <div className="py-30 flex items-center justify-center bg-[#F6F7F7] px-4">
