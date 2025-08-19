@@ -1,8 +1,8 @@
+
 'use client'
 
 
 import { useContext,createContext,useState } from "react";
-
 
 export default function FrontEndLayout({
     children,
@@ -15,7 +15,6 @@ export default function FrontEndLayout({
         </div>
     );
 }
-
 
 interface formData{
     property_type?:string;

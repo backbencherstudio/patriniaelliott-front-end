@@ -1,10 +1,16 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 
 function page() {
   const router = useRouter();
+  const [selectPropertyType,setSelectedPropertyType] = useState("");
+  const handleSelection=(select:string)=>{
+    setSelectedPropertyType(select);
+    router.push('/property-list/setup/choose-apartment-type')
+  }
   return (
     <div className="py-30 flex items-center justify-center bg-[#F6F7F7] px-4">
       <div className="space-y-[32px]">
@@ -16,7 +22,7 @@ function page() {
           <p className="text-[#4A4C56] text-[12px] sm:text-base">To get started, select the type of property you want to list.</p>
         </div>
         <div className="flex flex-col md:flex-row gap-6">
-          <div className="border border-[#D6AE29] rounded-[12px] p-6 space-y-6 flex flex-col items-center text-center justify-between bg-[#fff]">
+          <div className="border border-[#D6AE29] rounded-[12px] p-6 space-y-6 flex flex-col items-center justify-between text-center bg-[#fff]">
             <div>
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                 <path d="M44.25 20.1563V15.0937L24 7.5L3.75 15.0937V20.1562H6.28127V45.4687H3.75V48H44.25V45.4687H41.7187V20.1563H44.25ZM26.5312 20.1563H34.125V27.75H26.5312V20.1563ZM13.875 20.1563H21.4688V27.75H13.875V20.1563ZM13.875 32.8125H21.4688V40.4063H13.875V32.8125ZM26.5312 45.4688V32.8125H34.125V45.4688H26.5312Z" fill="#D6AE29" />
@@ -29,7 +35,7 @@ function page() {
                 <p>vacation homes, villas, etc.</p>
               </div>
             </div>
-            <div className="bg-[#D6AE29] px-4 py-3 w-full rounded-[8px] text-[#070707] font-medium cursor-pointer" onClick={()=> router.push('/property-list/choose-apartment-type')}>List your property</div>
+            <div className="hover:bg-[#D6AE29] border-[#D6AE29] border px-4 py-3 w-full rounded-[8px] text-[#070707] font-medium cursor-pointer duration-300" onClick={()=>handleSelection("Apartment")}>List your property</div>
           </div>
           <div className="rounded-[12px] p-6 space-y-6 flex flex-col items-center text-center bg-[#fff]">
             <div>
@@ -52,7 +58,7 @@ function page() {
                 <p>hotels, etc.</p>
               </div>
             </div>
-            <div className="border border-[#D6AE29] px-4 py-3 w-full rounded-[8px] text-[#070707] font-medium cursor-pointer" onClick={()=> router.push('/property-list/choose-apartment-type')}>List your property</div>
+            <div className="border border-[#D6AE29] hover:bg-[#D6AE29] px-4 py-3 w-full rounded-[8px] text-[#070707] font-medium cursor-pointer duration-300" onClick={()=>handleSelection("Hotel")}>List your property</div>
           </div>
         </div>
       </div>

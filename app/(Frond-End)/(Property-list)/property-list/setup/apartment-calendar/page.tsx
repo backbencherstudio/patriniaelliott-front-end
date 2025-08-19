@@ -16,15 +16,6 @@ import {
 import { ChevronDown } from "lucide-react";
 
 
-const header = [
-    "Name and location",
-    "Property setup",
-    "Photos",
-    "Pricing",
-    "Calendar",
-]
-
-
 export default function page() {
     const router = useRouter()
 
