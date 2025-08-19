@@ -101,7 +101,7 @@ export default function page() {
             checkin: checkIn,
             checkout: checkOut
         })
-        router.push("/property-list/apartment-photos")
+        router.push("/property-list/setup/apartment-photos")
     }
 
     console.log(formData)
@@ -109,18 +109,6 @@ export default function page() {
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
-                <ul className="hidden md:flex w-full justify-between">
-                    {
-                        header.map(item => (
-                            <li className="space-y-4 w-fit" key={item}>
-                                <h3 className={`${item === "Property setup" ? "text-[#070707]" : "text-[#777980]"} text-sm text-center`}>{item}</h3>
-                                <div className="w-[140px] lg:w-[180px] xl:w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
-                                    <div className={`absolute top-0 left-0 h-full w-3/4 bg-[#D6AE29] rounded-full ${item === "Property setup" ? "" : "hidden"}`}></div>
-                                </div>
-                            </li>
-                        ))
-                    }
-                </ul>
                 <div className="flex gap-6 w-full">
                     <form className="flex-1 space-y-5" onSubmit={(e) => handleSubmitForm(e)}>
 

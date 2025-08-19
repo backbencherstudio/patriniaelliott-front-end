@@ -34,26 +34,12 @@ export default function PropertyPhotosPage() {
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        router.push("/property-list/apartment-pricing");
+        router.push("/property-list/setup/apartment-pricing");
     };
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
-                {/* Progress Header */}
-                <ul className="hidden md:flex w-full justify-between">
-                    {HEADER_ITEMS.map(item => (
-                        <li className="space-y-4 w-fit" key={item}>
-                            <h3 className={`${item === "Photos" ? "text-[#070707]" : "text-[#777980]"} text-sm text-center`}>
-                                {item}
-                            </h3>
-                            <div className="w-[140px] lg:w-[180px] xl:w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
-                                <div className={`absolute top-0 left-0 h-full w-3/4 bg-[#D6AE29] rounded-full ${item === "Photos" ? "" : "hidden"}`}></div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-
                 <div className="flex gap-6 w-full">
                     {/* Main Form */}
                     <form className="space-y-6 flex-1" onSubmit={handleFormSubmit}>
