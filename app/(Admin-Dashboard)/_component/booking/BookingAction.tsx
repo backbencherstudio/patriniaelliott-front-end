@@ -1,9 +1,12 @@
 "use client";
 
 function BookingAction({ status, onView }: any) {
-  
-
-  
+  const handleAccept = () => {
+    console.log("accept");
+  }
+  const handleReject = () => {
+    console.log("reject");
+  }
   return (
     <div>
       {status?.status == "approved" || status?.status == "cancele" ? (
@@ -15,7 +18,7 @@ function BookingAction({ status, onView }: any) {
         </span>
       ) : (
         <div className="flex gap-1">
-          <button className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px]">
+          <button onClick={handleAccept} className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="17"
