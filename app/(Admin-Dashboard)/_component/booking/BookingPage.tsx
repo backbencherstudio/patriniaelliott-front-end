@@ -1,9 +1,8 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import useFetchData from "@/hooks/useFetchData";
-import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import DynamicTableWithPagination from "../common/DynamicTable";
@@ -11,13 +10,12 @@ import BokingStatuse from "./BokingStatuse";
 import BookingAction from "./BookingAction";
 import BookingCard from "./BookingCard";
 import BookingPymentStatuse from "./BookingPymentStatuse";
-import TableId from "./TableId";
 import DateCheck from "./DateCheck";
+import TableId from "./TableId";
 
 
 
 export default function BookingPage() {
-
 
   const [isModalOpen, setIsModalOpen] = React.useState<any>(false);
   const [selectedUser, setSelectedUser] = React.useState<any | null>(null);
@@ -26,6 +24,7 @@ export default function BookingPage() {
   >("all");
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+
   const endpoint = `/admin/booking?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
   const { data, loading, error } = useFetchData(endpoint);
   const totalPages = data?.pagination?.total_pages || 0;
@@ -33,18 +32,38 @@ export default function BookingPage() {
     "all"
   );
 
+  // Local state for optimistic updates - store all updates
+  const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, any>>({});
+
   const handleViewDetails = (user: any) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
-const handleExportPDF = () => {
+
+  // Clear optimistic updates when page or role changes
+  useEffect(() => {
+    setOptimisticUpdates({});
+  }, [currentPage, selectedRole]);
+
+  // Optimistic update function - accumulate updates
+  const handleOptimisticUpdate = useCallback((bookingId: string, newStatus: string, payment_status: string) => {
+    setOptimisticUpdates(prev => ({
+      ...prev,
+      [bookingId]: {
+        status: newStatus,
+        payment_status: payment_status
+      }
+    }));
+  }, []);
+
+  const handleExportPDF = () => {
     const doc = new jsPDF();
     doc.text("Booking Report", 14, 15);
-  
+
     const tableColumn = columns
       .filter((col) => col.label !== "Action" && col.label !== "Status")
       .map((col) => col.label);
-  
+
     const tableRows = data?.data.map((user) => [
       user.id,
       user?.user?.name,
@@ -54,7 +73,7 @@ const handleExportPDF = () => {
       user.booking_items[0]?.end_date,
       `$${user.total_amount}`,
     ]);
-  
+
     (doc as any).autoTable({
       head: [tableColumn],
       body: tableRows,
@@ -62,9 +81,10 @@ const handleExportPDF = () => {
       styles: { fontSize: 10 },
       headStyles: { fillColor: [0, 104, 239] },
     });
-  
+
     doc.save("booking_report.pdf");
   };
+  
   const columns = [
     {
       label: "Booking ID", accessor: "id", formatter: (_, __, index) => <TableId currentPage={currentPage} itemsPerPage={itemsPerPage} index={index} />
@@ -96,7 +116,11 @@ const handleExportPDF = () => {
     },
     { label: "Action", 
       accessor: "status", 
-      formatter: (_, row) => <BookingAction onView={handleViewDetails} status={row} />, 
+      formatter: (_, row) => <BookingAction 
+        onView={handleViewDetails} 
+        status={row} 
+        onOptimisticUpdate={handleOptimisticUpdate}
+      />, 
     },
     {
       label: "Status",
@@ -104,7 +128,19 @@ const handleExportPDF = () => {
       formatter: (_, row) => <BokingStatuse status={row.status} />,
     },
   ];
-  const bookingData = data?.data
+  
+  // Apply optimistic updates to data
+  const bookingData = data?.data?.map((booking: any) => {
+    const optimisticUpdate = optimisticUpdates[booking.id];
+    if (optimisticUpdate) {
+      return {
+        ...booking,
+        status: optimisticUpdate.status,
+        payment_status: optimisticUpdate.payment_status
+      };
+    }
+    return booking;
+  });
 
   return (
     <div className="flex flex-col gap-5">
