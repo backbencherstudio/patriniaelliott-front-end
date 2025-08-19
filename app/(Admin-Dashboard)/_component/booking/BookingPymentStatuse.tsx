@@ -7,7 +7,7 @@ interface UserData {
     phone: string;
     role: string;
     joinDate: string;
-    status: 'paid' | 'pending' | 'cancele';
+    status: 'paid' | 'pending' | 'cancel';
   }
 function BookingPymentStatuse({ status }: { status: UserData['status'] }) {
   const label = status === 'paid' ? 'Full Paid' : status === 'pending' ? 'Pending' : 'Canceled';

@@ -1,15 +1,70 @@
 "use client";
 
-function BookingAction({ status, onView }: any) {
-  const handleAccept = () => {
-    console.log("accept");
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
+import { useState } from "react";
+import { toast } from "react-toastify";
+
+function BookingAction({ status, onView, onOptimisticUpdate }: any) {
+  const {token}=useToken()
+  const [loading, setLoading]= useState(false)
+  
+  const handleAccept = async() => {
+    setLoading(true)
+    
+    // Optimistic update - immediately update UI
+    onOptimisticUpdate?.(status?.id, "approved", "paid");
+    
+    try {
+      const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"approved"},token)
+      console.log("accept",res);
+      
+      if(res.data.success){
+        toast.success(res.data.message || "Booking approved successfully")
+        // Refresh data to ensure consistency
+      
+      }else{
+        toast.error(res.data.message || "Booking approved failed")
+        // Revert optimistic update on failure
+        onOptimisticUpdate?.(status?.id, status?.status ,status?.payment_status);
+      }
+    } catch (error) {
+      toast.error("Something went wrong")
+      // Revert optimistic update on error
+      onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
+    } finally {
+      setLoading(false)
+    }
   }
-  const handleReject = () => {
-    console.log("reject");
+  
+  const handleReject = async() => {
+    setLoading(true)
+    
+    // Optimistic update - immediately update UI
+    onOptimisticUpdate?.(status?.id, "cancel", "cancel");
+    try {
+      const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"cancel"},token)
+      console.log("reject",res);
+      
+      if(res.data.success){
+        toast.success(res.data.message || "Booking rejected successfully")
+      }else{
+        toast.error(res.data.message || "Booking rejected failed")
+        // Revert optimistic update on failure
+        onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
+      }
+    } catch (error) {
+      toast.error("Something went wrong")
+      // Revert optimistic update on error
+      onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
+    } finally {
+      setLoading(false)
+    }
   }
+  
   return (
     <div>
-      {status?.status == "approved" || status?.status == "cancele" ? (
+      {status?.status == "approved" || status?.status == "cancel" ? (
         <span
           className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
           onClick={() => onView(status)}
@@ -18,7 +73,11 @@ function BookingAction({ status, onView }: any) {
         </span>
       ) : (
         <div className="flex gap-1">
-          <button onClick={handleAccept} className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px]">
+          <button 
+            onClick={handleAccept} 
+            disabled={loading}
+            className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px] disabled:opacity-50"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="17"
@@ -40,7 +99,11 @@ function BookingAction({ status, onView }: any) {
               />
             </svg>
           </button>
-          <button className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]">
+          <button 
+            onClick={handleReject} 
+            disabled={loading}
+            className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px] disabled:opacity-50"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="17"
