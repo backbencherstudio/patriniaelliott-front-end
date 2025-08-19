@@ -5,17 +5,22 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import { accommodationsData } from "@/DemoAPI/accommodationsData";
+import useFetchData from "@/hooks/useFetchData";
+import Link from "next/link";
 import AccommodationCard from "../card/AccommodationCard";
 import CustomButton from "../reusable/CustomButton";
+import Loader from "../reusable/Loader";
 
 
 function Accommodation() {
-      const [currentIndex, setCurrentIndex] = useState(1);
-      const swiperRef = useRef<any>(null);
-      const [activeTab, setActiveTab] = useState<'Apartments' | 'Hotels'>('Apartments');
+  const [currentIndex, setCurrentIndex] = useState(1);
 
-  const filteredList = accommodationsData.filter(item => item.category === activeTab);
+  const swiperRef = useRef<any>(null);
+  const [activeTab, setActiveTab] = useState<'apartment' | 'hotel'>('apartment');
+  const endpoint = `/admin/vendor-package?type=${activeTab}&limit=${20}&page=${1}`
+  const { data, loading, error } = useFetchData(endpoint);
+   const packageData =data ? data?.data : []
+  
       const goNext = () => swiperRef.current?.slideNext();
       const goPrev = () => swiperRef.current?.slidePrev();
   return (
@@ -26,13 +31,13 @@ function Accommodation() {
           Our Popular Accommodation 
         </h2>
         <div className="flex justify-center text-center mx-auto  ">
-        {['Apartments', 'Hotels'].map(tab => (
+        {['apartment', 'hotel'].map(tab => (
           <button
             key={tab}
             className={`text-2xl cursor-pointer font-medium px-4 pb-2 transition border-b-[2px] border-[#A5A5AB] ${
               activeTab === tab ? ' border-b-2 border-secondaryColor text-secondaryColor ' : 'text-[#A5A5AB]'
             }`}
-            onClick={() => setActiveTab(tab as 'Apartments' | 'Hotels')}
+            onClick={() => setActiveTab(tab as 'apartment' | 'hotel')}
           >
             {tab}
           </button>
@@ -40,18 +45,18 @@ function Accommodation() {
       </div>
         <div className="relative">
           {/* Swiper Navigation Buttons */}
-          <button
+       { !loading &&  <button
             onClick={goPrev}
             className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 left-0 xl:-left-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
           >
             <FaChevronLeft className="text-black text-sm" />
-          </button>
-          <button
+          </button>}
+            { !loading && <button
             onClick={goNext}
             className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 right-0 xl:-right-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
           >
             <FaChevronRight className="text-black text-sm" />
-          </button>
+          </button>}
           {/* Swiper Carousel */}
           <Swiper
             slidesPerView={1}
@@ -75,15 +80,17 @@ function Accommodation() {
             onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex + 1)}
             className="w-full"
           >
-            {filteredList.map((tour: any, index) => (
+            {loading ? <Loader/> : packageData.length < 0 ? <div>Package Data Not Found!</div> : packageData.map((tour: any, index) => (
               <SwiperSlide key={index} className=" px-1 md:px-4 py-10">
-                <AccommodationCard {...tour} />
+                <AccommodationCard tour={tour} />
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
         <div>
+             { !loading &&<Link href="/apartments">
           <CustomButton>View All Apartments</CustomButton>
+          </Link>}
         </div>
       </div>
     </div>
