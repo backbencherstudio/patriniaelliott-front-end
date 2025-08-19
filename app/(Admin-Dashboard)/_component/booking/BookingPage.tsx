@@ -37,37 +37,67 @@ export default function BookingPage() {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
-  const handleExportPDF = () => {
+const handleExportPDF = () => {
     const doc = new jsPDF();
     doc.text("Booking Report", 14, 15);
-
+  
     const tableColumn = columns
       .filter((col) => col.label !== "Action" && col.label !== "Status")
       .map((col) => col.label);
-
-
-
-
-
+  
+    const tableRows = data?.data.map((user) => [
+      user.id,
+      user?.user?.name,
+      user.type,
+      user.payment_status,
+      user.booking_items[0]?.start_date,
+      user.booking_items[0]?.end_date,
+      `$${user.total_amount}`,
+    ]);
+  
+    (doc as any).autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [0, 104, 239] },
+    });
+  
     doc.save("booking_report.pdf");
   };
   const columns = [
     {
       label: "Booking ID", accessor: "id", formatter: (_, __, index) => <TableId currentPage={currentPage} itemsPerPage={itemsPerPage} index={index} />
     },
-    { label: "Name", accessor: "name", formatter: (_, row) => <div >{row?.user?.name}</div> },
-    { label: "Service", accessor: "type" },
+    { label: "Name", 
+      accessor: "name", 
+      formatter: (_, row) => <div >{row?.user?.name}</div> 
+    },
+    { label: "Service", 
+      accessor: "type" 
+    },
     {
-      label: "Payment", accessor: "status",
+      label: "Payment", 
+      accessor: "status",
       formatter: (_, row) => <BookingPymentStatuse status={row.payment_status} />,
     },
-    { label: "Check-In", accessor: "booking_items", formatter: (_, row) => <DateCheck date={row?.booking_items[0].start_date} /> },
-    { label: "Check-Out", accessor: "checkOut", formatter: (_, row) => <DateCheck date={row?.booking_items[0].end_date} /> },
+    { label: "Check-In", 
+      accessor: "booking_items", 
+      formatter: (_, row) => <DateCheck date={row?.booking_items[0].start_date} /> 
+    },
+    { label: "Check-Out", 
+      accessor: "checkOut", 
+      formatter: (_, row) => <DateCheck date={row?.booking_items[0].end_date} /> 
+    },
     {
-      label: "Price", accessor: "total_amount",
+      label: "Price", 
+      accessor: "total_amount",
       formatter: (value) => `$${value}`,
     },
-    { label: "Action", accessor: "status", formatter: (_, row) => <BookingAction onView={handleViewDetails} status={row} />, },
+    { label: "Action", 
+      accessor: "status", 
+      formatter: (_, row) => <BookingAction onView={handleViewDetails} status={row} />, 
+    },
     {
       label: "Status",
       accessor: "status",
@@ -75,8 +105,6 @@ export default function BookingPage() {
     },
   ];
   const bookingData = data?.data
-
-  console.log("loading", bookingData);
 
   return (
     <div className="flex flex-col gap-5">
