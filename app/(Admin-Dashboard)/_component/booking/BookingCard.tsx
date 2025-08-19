@@ -4,25 +4,49 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
+import noimage from "@/public/hotel/h5.jpg";
+import dayjs from "dayjs";
 import Image from "next/image";
 import React from "react";
+interface BookingItem {
+  end_date: string;
+  package: {
+    name: string;
+    image: string;
+    guest_count:number;
+  };
+  start_date: string;
+}
 
+interface User {
+  id: string;
+  name: string;
+}
+
+interface BookingData {
+  id:string;
+  address1: string | null;
+  address2: string | null;
+  booking_items: BookingItem[];
+  city: string | null;
+  country: string | null;
+  created_at: string;
+  email: string;
+  invoice_number: string;
+  payment_status: string;
+  phone_number: string;
+  state: string | null;
+  status: string;
+  total_amount: string;
+  type: string;
+  updated_at: string;
+  user: User;
+  zip_code: string | null;
+}
 interface BookingDetailsDialogProps {
   open: boolean;
   setIsModalOpen: (open: boolean) => void;
-  data: {
-    image: string;
-    name: string;
-    email: string;
-    bookingId: string;
-    guestCount: number;
-    checkIn: string;
-    checkOut: string;
-    status: string;
-    payment: string;
-    price: string;
-    title: string;
-  };
+  data: BookingData;
 }
 
 const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
@@ -30,6 +54,9 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
   setIsModalOpen,
   data,
 }) => {
+
+  console.log("data",data);
+  
   return (
     <Dialog open={open} onOpenChange={setIsModalOpen}>
      
@@ -42,7 +69,7 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
           {/* Left - Image */}
           <div className="h-[250px]  md:h-full">
             <Image
-              src={data?.image}
+              src={data?.booking_items[0]?.package?.image || noimage}
               alt="Room"
               width={500}
               height={500}
@@ -55,11 +82,11 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
             {/* Title & User */}
             <div className="flex justify-between mt-3 lg:mt-0  items-start gap-4">
               <div>
-                <h2 className="text-base md:text-lg lg:text-2xl font-medium">{data?.title}</h2>
+                <h2 className="text-base md:text-lg lg:text-2xl font-medium">{data?.booking_items[0]?.package?.name}</h2>
                 
               </div>
               <p className="text-base md:text-lg lg:text-2xl font-medium text-right">
-                ${data?.price}
+                ${data?.total_amount}
                 <span className="text-xs md:text-sm font-normal text-muted-foreground ml-1">
                   /per night
                 </span>
@@ -75,7 +102,7 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                     className="rounded-full"
                   />
                   <div>
-                    <p className="font-medium text-base lg:text-lg">{data?.name}</p>
+                    <p className="font-medium text-base lg:text-lg">{data?.user?.name}</p>
                     <p className="text-sm text-muted-foreground">{data?.email}</p>
                   </div>
                 </div>
@@ -90,23 +117,23 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
               </div>
               <div className="space-y-2">
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Guest:</p> <p>{data?.name}</p>
+                <p className=" ">Guest:</p> <p>{data?.user?.name}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Reservation ID:</p> <p>{data?.bookingId}</p>
+                <p className=" ">Reservation ID:</p> <p>{data?.id}</p>
               </div>
              
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Guests:</p> <p>{data?.guestCount}</p>
+                <p className=" ">Guests:</p> <p>{data?.booking_items[0]?.package?.guest_count}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Check in/Check out:</p> <p>{data?.checkIn} / {data?.checkOut}</p>
+                <p className=" ">Check in/Check out:</p> <p>{dayjs(data?.booking_items[0]?.start_date).format("YYYY-MM-DD")} / {dayjs(data?.booking_items[0]?.end_date).format("YYYY-MM-DD")}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
                 <p className=" ">Status:</p> <p>{data?.status}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Payment:</p> <p>{data?.payment}</p>
+                <p className=" ">Payment:</p> <p>{data?.payment_status}</p>
               </div>
 
               </div>

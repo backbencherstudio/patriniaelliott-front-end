@@ -91,7 +91,7 @@ export default function Refund() {
       formatter: (_: string, row: any) => (
         <div className="flex items-center gap-2">
           <img src={row.image} alt={row.hotelName} className="w-6 h-6 rounded-full" />
-          <span className="text-xs text-[#070707]">{row.hotelName}</span>
+          <span className="text-sm text-[#070707]">{row.hotelName}</span>
         </div>
       )
     },

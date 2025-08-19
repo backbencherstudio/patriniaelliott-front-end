@@ -1,3 +1,4 @@
+import Image from "next/image";
 
 interface UserData {
     id: string;
@@ -6,39 +7,21 @@ interface UserData {
     phone: string;
     role: string;
     joinDate: string;
-    status: 'Confirmed' | 'Pending' | 'Canceled';
+    status: 'paid' | 'pending' | 'cancele';
   }
-  export const statusStyles = {
-    Confirmed: {
-      bg: 'bg-[#38c976]/10',
-      border: 'outline-[#abefc6]',
-      text: 'text-[#067647]',
-      icon: '/dashboard/icon/tik.svg'
-    },
-    Pending: {
-      bg: 'bg-[#ffa23a]/10',
-      border: 'outline-[#ffa23a]',
-      text: 'text-[#ffa23a]',
-      icon: '/dashboard/icon/loading.svg'
-    },
-    Canceled: {
-      bg: 'bg-[#fe5050]/10',
-      border: 'outline-[#fe5050]',
-      text: 'text-[#fe5050]',
-      icon: '/dashboard/icon/cross.svg'
-    }
-  };
-
 function BookingPymentStatuse({ status }: { status: UserData['status'] }) {
- 
-    const style = statusStyles[status];
+  const label = status === 'paid' ? 'Full Paid' : status === 'pending' ? 'Pending' : 'Canceled';
+  const bgClass = status === 'paid' ? 'bg-[#38c976]/10' : status === 'pending' ? 'bg-[#ffa23a]/10' : 'bg-[#fe5050]/10';
+  const borderClass = status === 'paid' ? 'outline-[#abefc6]' : status === 'pending' ? 'outline-[#ffa23a]' : 'outline-[#fe5050]';
+  const textClass = status === 'paid' ? 'text-[#067647]' : status === 'pending' ? 'text-[#ffa23a]' : 'text-[#fe5050]';
+  const iconSrc = status === 'paid' ? '/dashboard/icon/tik.svg' : status === 'pending' ? '/dashboard/icon/loading.svg' : '/dashboard/icon/cross.svg';
   return (
-    <div className={`pl-1.5 pr-2 py-1.5 ${style.bg} rounded-2xl  outline-1 outline-offset-[-1px] ${style.border} flex justify-center items-center gap-1`}>
-     
-      <div className={`text-center justify-start ${style.text} text-xs font-normal font-['Inter'] leading-3`}>
-         {status == "Confirmed" && "Full Paid"}
-         {status == "Pending" && "Pending"}
-         {status == "Canceled" && "Canceled"}
+    <div className={`pl-1.5 pr-2 py-1.5 rounded-2xl outline-1 outline-offset-[-1px] flex justify-center items-center gap-1 ${bgClass} ${borderClass}`}>
+      <div className="w-3 h-3 relative overflow-hidden">
+        <Image src={iconSrc} alt={status} width={12} height={12} />
+      </div>
+      <div className={`text-center justify-start text-xs font-normal font-['Inter'] leading-3 ${textClass}`}>
+        {label}
       </div>
     </div>
   )

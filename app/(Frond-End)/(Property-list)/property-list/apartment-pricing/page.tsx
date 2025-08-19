@@ -1,12 +1,9 @@
 "use client"
-
 import { useCallback, useState } from "react"
 import { useRouter } from 'next/navigation';
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-
-
 const header = [
     "Name and location",
     "Property setup",
@@ -81,7 +78,6 @@ export default function page() {
 
     const deleteRefundPolicy = (id: number) => {
         setRefundPolicies(prev => prev.filter((_, index) => index !== id));
-
     }
     const handleOccupancyChange = (value: string, index: number) => {
         setOccupancy(prev => {
@@ -104,7 +100,6 @@ export default function page() {
 
     const deleteOccupancy = (id: number) => {
         setOccupancy(prev => prev.filter((_, index) => index !== id));
-
     }
 
     return (
