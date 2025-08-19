@@ -63,165 +63,56 @@ newPassword: async (data) => {
     return await Fetch.get(`/user/me`, _config);
   },
 
-  findAll: async (context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
+  getData: async (endpoint,token ) => {
 
     const _config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
+        Authorization: "Bearer " + token,
       },
     };
 
-    return await Fetch.get(`/user`, _config);
+    return await Fetch.get(`${endpoint}`, _config);
   },
 
-  findOne: async (id: number, context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
+// update data by id
+  updateData: async (endpoint,data,token) => {
     const _config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
+        Authorization: "Bearer " + token,
       },
     };
 
-    return await Fetch.get(`/user/${id}`, _config);
+    return await Fetch.patch(`${endpoint}`, data, _config);
   },
-
-  findOneByUsername: async ({
-    username,
-    token = "",
-    context = null,
-  }: {
-    username: string;
-    token?: string;
-    context?: any;
-  }) => {
-    // const userToken = CookieHelper.get({ key: "token", context });
-    const userToken = token || CookieHelper.get({ key: "token", context });
+// update form data 
+  updateFormData: async (endpoint,data,token) => {
 
     const _config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    return await Fetch.get(`/user/profile/${username}`, _config);
-  },
-
-  update: async (
-    {
-      fname,
-      lname,
-      date_of_birth,
-      city,
-      country,
-      organization,
-      recipient_name,
-      recipient_zip_code,
-      recipient_country,
-      recipient_state,
-      recipient_city,
-      recipient_address,
-      recipient_phone_number,
-    }: {
-      fname: string;
-      lname: string;
-      date_of_birth: string;
-      city: string;
-      country: string;
-      organization: string;
-      recipient_name: string;
-      recipient_zip_code: string;
-      recipient_country: string;
-      recipient_state: string;
-      recipient_city: string;
-      recipient_address: string;
-      recipient_phone_number: string;
-    },
-    context = null
-  ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
-      },
-    };
-
-    const data = {
-      fname: fname,
-      lname: lname,
-      date_of_birth: date_of_birth,
-      city: city,
-      country: country,
-      organization: organization,
-      recipient_name: recipient_name,
-      recipient_zip_code: recipient_zip_code,
-      recipient_country: recipient_country,
-      recipient_state: recipient_state,
-      recipient_city: recipient_city,
-      recipient_address: recipient_address,
-      recipient_phone_number: recipient_phone_number,
-    };
-
-    return await Fetch.patch(`/user`, data, _config);
-  },
-
-  updateAvatar: async (data: any, context = null) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
-    const _config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
+        Authorization: "Bearer " + token,
         "content-type": "multipart/form-data",
       },
     };
 
-    return await Fetch.patch(`/user/avatar`, data, _config);
+    return await Fetch.patch(`${endpoint}`, data, _config);
   },
-
-  //
-  create: async (
-    {
-      fname,
-      lname,
-      username,
-      email,
-      role_id,
-    }: {
-      fname: string;
-      lname: string;
-      username: string;
-      email: string;
-      role_id: number;
-    },
-    context: any = null
-  ) => {
-    const userToken = CookieHelper.get({ key: "token", context });
-
+  // create data
+  createData: async (endpoint,data,token) => {    
+   
     const _config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + userToken,
+        Authorization: "Bearer " + token,
       },
     };
-    const data = {
-      fname: fname,
-      lname: lname,
-      username: username,
-      email: email,
-      role_id: role_id,
-    };
 
-    return await Fetch.post(`/user`, data, _config);
+    return await Fetch.post(`${endpoint}`, data, _config);
   },
 
-  // TODO
+  // confirm data
   confirm: async (
     {
       id,

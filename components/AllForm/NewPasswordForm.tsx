@@ -27,8 +27,6 @@ export default function NewPasswordForm() {
   const password = watch("password");
   const otpCode = localStorage.getItem("otp");
   const Email = localStorage.getItem("verifyemail")
-  console.log("Email:", Email);
-  console.log("OTP Code:", otpCode);
   const onSubmit = async (data: FormValues) => {
     const formData = {
       password: data.password,

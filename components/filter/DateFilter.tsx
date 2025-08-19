@@ -31,7 +31,7 @@ const DurationFilter = () => {
       const startDateParam = date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
       const currentParams = new URLSearchParams(window.location.search);
       currentParams.set('startDate', startDateParam);
-      router.replace(`${window.location.pathname}?${currentParams.toString()}`, undefined);
+      router.replace(`${window.location.pathname}?${currentParams.toString()}`,  { scroll: false });
     }
   };
 
@@ -42,7 +42,7 @@ const DurationFilter = () => {
       const endDateParam = date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
       const currentParams = new URLSearchParams(window.location.search);
       currentParams.set('endDate', endDateParam);
-      router.replace(`${window.location.pathname}?${currentParams.toString()}`, undefined);
+      router.replace(`${window.location.pathname}?${currentParams.toString()}`,  { scroll: false });
     }
   };
 

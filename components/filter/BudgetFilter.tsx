@@ -1,7 +1,7 @@
 "use client";
 
 import { useDebounce } from "@/hooks/useDebounce";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import FilterHeading from "./FilterHeading";
@@ -16,7 +16,7 @@ const BudgetFilter = () => {
   const searchParams = useSearchParams();
   const debouncedMin = useDebounce(minValue, 500);
   const debouncedMax = useDebounce(maxValue, 500);
-
+  const Pathname = usePathname()
   const router = useRouter();
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +50,7 @@ const BudgetFilter = () => {
     currentParams.set("min", debouncedMin.toString());
     currentParams.set("max", debouncedMax.toString());
 
-    router.replace(`?${currentParams.toString()}`);
+    router.replace(`?${currentParams.toString()}`, { scroll: false });
   }, [debouncedMin, debouncedMax, hasInteracted]);
 
   return (

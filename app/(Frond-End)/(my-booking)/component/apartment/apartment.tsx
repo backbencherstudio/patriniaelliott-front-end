@@ -113,7 +113,7 @@ export default function Apartment() {
       formatter: (_: string, row: any) => (
         <div className="flex items-center gap-2">
           <img src={row.image} alt={row.name} className="w-6 h-6 rounded-full" />
-          <span className="text-xs text-[#070707]">{row.name}</span>
+          <span className="text-sm text-[#070707]">{row.name}</span>
         </div>
       )
     },
@@ -132,7 +132,7 @@ export default function Apartment() {
       formatter: (_: any, row: any) => (
         <div className="flex items-center gap-4">
           <Link href={`/hotel-history/${row?.id}`}
-            className="text-xs text-[#777980] underline cursor-pointer hover:text-[#0068ef]"
+            className="text-sm text-[#777980] underline cursor-pointer hover:text-[#0068ef]"
            
           >
             View details
