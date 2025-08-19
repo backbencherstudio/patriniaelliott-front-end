@@ -99,7 +99,6 @@ newPassword: async (data) => {
 
     return await Fetch.patch(`${endpoint}`, data, _config);
   },
-
   // create data
   createData: async (endpoint,data,token) => {    
    
@@ -140,5 +139,18 @@ newPassword: async (data) => {
     };
 
     return await Fetch.patch(`/user/${id}/password`, data, _config);
+  },
+
+  submitVendorVerification: async (data: any, context = null) => {
+    const userToken = CookieHelper.get({ key: "token", context });
+
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+
+    return await Fetch.post("/vendor-verification", data, _config);
   },
 };

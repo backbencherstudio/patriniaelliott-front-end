@@ -7,6 +7,8 @@ import Step3 from '../component/verification/step3'
 import Step4 from '../component/verification/step4'
 import Step5 from '../component/verification/step5'
 import Verification from '../component/verification/verification'
+import { UserService } from '@/service/user/user.service'
+import { CustomToast } from '@/lib/Toast/CustomToast'
 
 interface FormData {
   // Step 1 - Property details
@@ -54,6 +56,18 @@ const STEPS: Array<{
   { id: 4, title: 'Confirmation', component: Step4 },
 ];
 
+// Function to save form data to localStorage
+const saveFormData = (data: Partial<FormData>) => {
+  try {
+    const existingData = localStorage.getItem(STORAGE_KEY);
+    const parsedData = existingData ? JSON.parse(existingData) : {};
+    const updatedData = { ...parsedData, ...data };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
+  } catch (error) {
+    console.error('Error saving form data:', error);
+  }
+};
+
 export default function VendorVerification() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isCompleted, setIsCompleted] = useState(false)
@@ -92,46 +106,51 @@ export default function VendorVerification() {
     }
   }, [methods]);
 
-  const saveFormData = () => {
-    const currentData = methods.getValues();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
-  }
+  // Watch form changes and save to localStorage
+  useEffect(() => {
+    const subscription = methods.watch((value) => {
+      if (Object.keys(value).length > 0) {
+        const formattedValue = {
+          ...value,
+          owners: value.owners?.map((owner: any) => ({
+            firstName: owner.firstName || '',
+            lastName: owner.lastName || ''
+          })) || []
+        };
+        saveFormData(formattedValue as FormData);
+        console.log('Current Form Data:', formattedValue);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [methods]);
 
   // Function to submit form data to API
   const submitFormData = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
-      // Make API call to submit verification data
-      const response = await fetch('/api/vendor-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      console.log('Submitting Form Data:', formData);
+      const response = await UserService.submitVendorVerification(formData);
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to submit verification data');
+      if (response.success) {
+        console.log('Form submitted successfully:', response);
+        CustomToast.show('Vendor verification submitted successfully');
+        // Clear localStorage after successful submission
+        localStorage.removeItem(STORAGE_KEY);
+        setIsCompleted(true);
+      } else {
+        throw new Error(response.error || 'Failed to submit verification data');
       }
-      
-      const result = await response.json();
-      console.log('Form data submitted successfully:', result);
-      
-      // Clear localStorage after successful submission
-      localStorage.removeItem(STORAGE_KEY);
-      setIsCompleted(true);
     } catch (error) {
       console.error('Error submitting form data:', error);
-      // Show error message to the user
-      alert(error instanceof Error ? error.message : 'Failed to submit verification data. Please try again.');
+      CustomToast.show(error instanceof Error ? error.message : 'Failed to submit verification data. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleNext = () => {
-    saveFormData();
+    const currentData = methods.getValues();
+    saveFormData(currentData);
     
     if (currentStep === 4) {
       // Get all form data and validate before submitting
@@ -146,14 +165,14 @@ export default function VendorVerification() {
       const missingFields = requiredFields.filter(field => !formData[field as keyof FormData]);
       
       if (missingFields.length > 0) {
-        alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+        CustomToast.show(`Please fill in all required fields: ${missingFields.join(', ')}`);
         return;
       }
       
       // Validate owners array
       if (!formData.owners || formData.owners.length === 0 || 
           formData.owners.some(owner => !owner.firstName || !owner.lastName)) {
-        alert('Please add at least one owner with first and last name');
+        CustomToast.show('Please add at least one owner with first and last name');
         return;
       }
       
@@ -165,11 +184,15 @@ export default function VendorVerification() {
   }
 
   const handleBack = () => {
+    const currentData = methods.getValues();
+    saveFormData(currentData);
     setCurrentStep(prev => prev - 1);
   }
 
   const handleStepClick = (step: number) => {
     if (step <= currentStep) {
+      const currentData = methods.getValues();
+      saveFormData(currentData);
       setCurrentStep(step);
     }
   }
@@ -194,7 +217,7 @@ export default function VendorVerification() {
     Object.entries(updates).forEach(([key, value]) => {
       methods.setValue(key as keyof FormData, value);
     });
-    saveFormData();
+    saveFormData(updates); // Save updates directly
   };
 
   if (isCompleted) {
