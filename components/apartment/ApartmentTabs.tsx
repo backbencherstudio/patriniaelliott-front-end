@@ -5,7 +5,7 @@ import HighLight from './HighLight';
 import LocationOnMap from './LocationOnMap ';
 import Overview from './Overview';
 
-const ApatmentTabs = () => {
+const ApatmentTabs = ({singleApartment}:any) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
@@ -53,7 +53,7 @@ const ApatmentTabs = () => {
 
         {/* Tab Contents */}
         <TabsContent value="overview" className="pt-10 pb-8">
-         <Overview/>
+         <Overview overview={singleApartment?.description}/>
         </TabsContent>
         <TabsContent value="highlights" className="pt-10 pb-8">
           <HighLight/>

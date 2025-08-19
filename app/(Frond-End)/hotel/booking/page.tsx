@@ -9,7 +9,7 @@ import { useState } from "react";
 
 function Page() {
       const [activeTab, setActiveTab] = useState('step1');
-      console.log(activeTab);
+
       
   return (
     <div className="py-12 lg:py-20">

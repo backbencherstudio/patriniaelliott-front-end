@@ -9,7 +9,7 @@ import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 
 
 export default function AccommodationCard({tour}: {tour: Package}) {
-  const {id, name,  reviews, amenities,bedrooms,bathrooms,cancellation_policy, breakfast_available, price,address} = tour
+  const {id, name, type, reviews, amenities,bedrooms,bathrooms,cancellation_policy, breakfast_available, price,address} = tour
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full">
       <div className="relative">
@@ -31,7 +31,7 @@ export default function AccommodationCard({tour}: {tour: Package}) {
           <IoLocationSharp size={18} className=" text-grayColor1" />
           <span>{address}</span>
         </div>
-        <Link href={`/apartment/${id}`} className="font-medium text-[22px] text-blackColor">{name}</Link>
+        <Link href={`${type === "apartment" ? "/apartment" : "/hotel"}/${id}`} className="font-medium text-[22px] text-blackColor">{name}</Link>
 
         <div className="flex items-center gap-2 text-sm text-seborder-secondaryColor">
           <span className="text-gray-800">{5}</span>

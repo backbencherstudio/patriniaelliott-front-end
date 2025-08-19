@@ -1,15 +1,14 @@
 import ApartmentHeader from "@/components/apartment/ApartmentHeader";
 import ApatmentTabs from "@/components/apartment/ApartmentTabs";
-import BookingForm from "@/components/apartment/BookingForm";
+import HotelBookingForm from "@/components/apartment/HotelBookingForm";
 import PolicyDetails from "@/components/apartment/PolicyDetails";
 import ProfileCard from "@/components/apartment/ProfileCard";
 import ReviewList from "@/components/apartment/ReviewList";
 import ReviewSection from "@/components/apartment/ReviewSection";
 import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
-import ApartmentDettailsPageCard from "@/components/card/ApartmentDettailsPageCard";
-import AvailabilitySearchBox from "@/components/filter/AvailabilitySearchBox";
-import { hotelData } from "@/DemoAPI/hotelData";
+import { UserService } from "@/service/user/user.service";
 import { ChevronRight } from "lucide-react";
+import { cookies } from "next/headers";
 import Image from "next/image";
 
 async function HotelDetailsPage(props: {
@@ -17,11 +16,21 @@ async function HotelDetailsPage(props: {
 }) {
   const params = await props.params;
   const { hotelSlug } = params;
-  const singleHotel: any = hotelData.find(
-    (item: any) => item?.hotelSlug == hotelSlug
-  );
+  const tokenStore = await cookies();
+  const token = tokenStore.get("tourAccessToken")?.value;
 
-  const { title, reviews, price, rating, image, location } = singleHotel;
+  // Fetch server-side without causing side effects during render
+  let vendorPackage: any = null;
+  try {
+    const res = await UserService.getData(`/admin/vendor-package/${hotelSlug}`, token);
+    vendorPackage = res?.data?.data ?? null;
+  } catch (error) {
+     console.log(error);
+     
+  }
+console.log("=============",vendorPackage);
+
+
   return (
     <div>
       <div className=" container">
@@ -34,13 +43,13 @@ async function HotelDetailsPage(props: {
           </span>
         </div>
         <div>
-          <ApartmentHeader singleApartment={singleHotel} />
+          <ApartmentHeader singleApartment={vendorPackage} />
         </div>
         <div className="lg:grid grid-cols-6 gap-6">
           <div className=" col-span-4 h-auto lg:h-[536px] rounded-2xl overflow-hidden">
             <Image
-              src={image}
-              alt={title}
+              src={"/hotel/h5.jpg"}
+              alt={"image"}
               width={900}
               height={600}
               className=" w-full h-full object-cover"
@@ -49,8 +58,8 @@ async function HotelDetailsPage(props: {
           <div className="  col-span-2 flex  lg:flex-col gap-3 mt-3 lg:mt-0 lg:gap-6 mb-12 md:mb-14 lg:mb-20">
             <div className=" lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={image}
-                alt={title}
+                src={"/hotel/h5.jpg"}
+                alt={"image"}
                 width={900}
                 height={600}
                 className=" w-full h-full object-cover"
@@ -58,8 +67,8 @@ async function HotelDetailsPage(props: {
             </div>
             <div className=" relative lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={image}
-                alt={title}
+                src={"/hotel/h5.jpg"}
+                alt={"image"}
                 width={900}
                 height={600}
                 className=" w-full h-full object-cover"
@@ -105,23 +114,23 @@ async function HotelDetailsPage(props: {
         </div>
         <div className="lg:grid grid-cols-6 gap-8 pb-12 md:pb-14 lg:pb-20">
           <div className=" col-span-4 ">
-            <ApatmentTabs />
+            <ApatmentTabs singleApartment={vendorPackage} />
           </div>
           <div className=" col-span-2">
-            <BookingForm singleApartments={singleHotel} />
+            <HotelBookingForm singleApartments={vendorPackage} />
           </div>
         </div>
       </div>
       <div className=" bg-bgColor relative lg:mt-15 py-12 lg:py-20">
         <div className="hidden md:block container absolute left-1/2 -translate-1/2 -top-2">
-          <AvailabilitySearchBox />
+          {/* <AvailabilitySearchBox /> */}
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
-          {hotelData.map((tour: any, index) => (
+          {/* {hotelData.map((tour: any, index) => (
             <div key={tour.title}>
               <ApartmentDettailsPageCard data={tour} />
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
 
@@ -143,3 +152,4 @@ async function HotelDetailsPage(props: {
 }
 
 export default HotelDetailsPage;
+
