@@ -12,12 +12,10 @@ import Loader from "../reusable/Loader";
 function ApartmentPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6
-
     const endpoint = `/admin/vendor-package?type=apartment&limit=${itemsPerPage}&page=${currentPage}`
     const { data, loading, error } = useFetchData(endpoint);
     console.log(data?.meta);
     const totalPages = data?.meta?.totalPages
-
     const packageData = data ? data?.data : []
     console.log("============hotel data ", packageData);
 

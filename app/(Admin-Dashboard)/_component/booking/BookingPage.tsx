@@ -198,10 +198,7 @@ export default function BookingPage() {
               </select>
             </div>
           </div>
-
         </div>
-
-        {/* Table */}
         <div>
           <DynamicTableWithPagination
             columns={columns}

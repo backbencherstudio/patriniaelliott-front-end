@@ -7,7 +7,7 @@ import { FaArrowRight, FaWifi } from "react-icons/fa6";
 import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 
 const HotelCard = ({ hotel }: any) => {
-  const { id, name, type, reviews, amenities, bedrooms, bathrooms, cancellation_policy, breakfast_available, price, address } = hotel;
+  const { id, name, type, reviews, amenities, bedrooms, bathrooms, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
 
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  md:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
@@ -35,13 +35,13 @@ const HotelCard = ({ hotel }: any) => {
             <Link href={`/hotel/${id}`} className="text-xl font-semibold text-black ">{name}</Link>
           </div>
           <div className="flex gap-2 items-center">
-            <span className="text-headerColor text-sm">{5}</span>
+            <span className="text-headerColor text-sm">{Number(rating_summary?.averageRating ?? 0).toFixed(1)}</span>
             <div className="flex gap-1">
               {Array.from({ length: 5 }, (_, i) => (
                 <FaStar
                   key={i}
                   className={
-                    i < Math.round(5) ? "text-yellow-400" : "text-gray-300"
+                    i < Math.round(rating_summary?.averageRating) ? "text-yellow-400" : "text-gray-300"
                   }
                 />
               ))}
