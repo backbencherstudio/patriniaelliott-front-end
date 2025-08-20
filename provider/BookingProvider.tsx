@@ -14,13 +14,21 @@ export const BookingProvider = ({ children }) => {
     chauffeur: false,
     fullCleaning: false,
   });
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+
+  // Set initial dates: today and tomorrow
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(tomorrow);
+  
   const [carRent, setCarRent] = useState(150);
   const [dinnerPrice, setDinnerPrice] = useState(150);
   const [bookingData, setBookingData] = useState(null); // To store the final booking data
 
- const totalDay =  startDate && endDate ? (endDate - startDate) / (1000 * 3600 * 24) : 0;
+  const totalDay = startDate && endDate ? Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) : 1;
+  
   // Handle service checkbox change
   const handleServiceChange = (service) => {
     setSelectedServices((prevState) => ({
@@ -28,6 +36,7 @@ export const BookingProvider = ({ children }) => {
       [service]: !prevState[service],
     }));
   };
+  
   // Pricing for services
   const servicePrices = {
     breakfast: 50,
@@ -35,19 +44,19 @@ export const BookingProvider = ({ children }) => {
     dailyHousekeeping: 40,
     chauffeur: 100,
     fullCleaning: 60,
-  };  // Calculate total price
-  let price ;
+  };
+  
+  // Calculate total price
+  let price;
   if(singleApartment){
-    price =Number(singleApartment.price)
-  }else{
-    price= 0
+    price = Number(singleApartment.price)
+  } else {
+    price = 0
   }
 
-  
-  
   const calculateTotal = () => {
     const daysStayed =
-      startDate && endDate ? (endDate - startDate) / (1000 * 3600 * 24) : 0;
+      startDate && endDate ? Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) : 0;
     const serviceCost = Object.keys(selectedServices)
       .filter((service) => selectedServices[service])
       .reduce((total, service) => total + servicePrices[service], 0);
@@ -56,10 +65,11 @@ export const BookingProvider = ({ children }) => {
   };
 
   let totalPrice = calculateTotal();
-   let discountNumber = 10
+  let discountNumber = 10
   let persentage = discountNumber/100
 
-const discount =(totalPrice * persentage).toFixed(2)
+  const discount = (totalPrice * persentage).toFixed(2)
+  
   // Handle "Book Now" click
   const handleBookNow = () => {
     const bookingDetails = {

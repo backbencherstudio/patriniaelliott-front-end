@@ -1,5 +1,7 @@
 "use client";
 
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import gsap from "gsap";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +9,7 @@ import { FaStar } from "react-icons/fa6";
 import ReviewList from "./ReviewList";
 
 const ReviewSection = ({singleApartment}) => {
+  const {token} = useToken()
   const searchParams = useSearchParams();
   const progressRefs = useRef<HTMLDivElement[]>([]);
   const ratingRef = useRef<HTMLDivElement>(null);
@@ -80,6 +83,15 @@ const [starValue, setStarValue] = useState(0);
       comment: comment,
      }
      console.log(data);
+     const endpoint = `/booking/feedback`
+     try {
+      const res = await UserService?.createData(endpoint,data,token)
+      console.log("create response",res);
+      
+     } catch (error) {
+      console.log(error.message);
+      
+     }
      
   }
   return (

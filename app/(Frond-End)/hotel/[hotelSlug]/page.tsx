@@ -1,9 +1,8 @@
 import ApartmentHeader from "@/components/apartment/ApartmentHeader";
 import ApatmentTabs from "@/components/apartment/ApartmentTabs";
-import HotelBookingForm from "@/components/apartment/HotelBookingForm";
+import BookingForm from "@/components/apartment/BookingForm";
 import PolicyDetails from "@/components/apartment/PolicyDetails";
 import ProfileCard from "@/components/apartment/ProfileCard";
-import ReviewList from "@/components/apartment/ReviewList";
 import ReviewSection from "@/components/apartment/ReviewSection";
 import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
 import AvailabilitySearchBox from "@/components/filter/AvailabilitySearchBox";
@@ -118,7 +117,7 @@ async function HotelDetailsPage(props: {
             <ApatmentTabs singleApartment={vendorPackage} />
           </div>
           <div className=" col-span-2">
-            <HotelBookingForm singleApartments={vendorPackage} />
+            <BookingForm singleApartments={vendorPackage} />
           </div>
         </div>
       </div>
