@@ -3,28 +3,25 @@
 import ApartmentCard from "@/components/card/ApartmentCard";
 import FilterHeader from "@/components/filter/FilterHeader";
 import PaginationPage from "@/components/reusable/PaginationPage";
-import { accommodationsData } from "@/DemoAPI/accommodationsData";
 import useFetchData from "@/hooks/useFetchData";
 import { useState } from 'react';
 import Loader from "../reusable/Loader";
 
-const HotelsPerPage = 6;
+
 
 function ApartmentPage() {
     const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6
 
-    // Calculate the total pages
-    const totalPages = Math.ceil(accommodationsData.length / HotelsPerPage);
-    const endpoint = `/admin/vendor-package?type=apartment&limit=${20}&page=${1}`
+    const endpoint = `/admin/vendor-package?type=apartment&limit=${itemsPerPage}&page=${currentPage}`
     const { data, loading, error } = useFetchData(endpoint);
+    console.log(data?.meta);
+    const totalPages = data?.meta?.totalPages
+
     const packageData = data ? data?.data : []
     console.log("============hotel data ", packageData);
 
-    // Paginated data for the current page
-    const currentData = accommodationsData.slice(
-        (currentPage - 1) * HotelsPerPage,
-        currentPage * HotelsPerPage
-    );
+
 
     return (
         <div>
