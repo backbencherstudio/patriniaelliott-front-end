@@ -4,12 +4,14 @@ import gsap from "gsap";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa6";
+import ReviewList from "./ReviewList";
 
-const ReviewSection = () => {
+const ReviewSection = ({singleApartment}) => {
   const searchParams = useSearchParams();
   const progressRefs = useRef<HTMLDivElement[]>([]);
   const ratingRef = useRef<HTMLDivElement>(null);
   const circlePathRef = useRef<SVGCircleElement>(null); // Updated to circle
+  const [comment , setComment] = useState("");
   const [reviewStats, setReviewStats] = useState([
     { rating: 5, count: 160 },
     { rating: 4, count: 12 },
@@ -17,7 +19,7 @@ const ReviewSection = () => {
     { rating: 2, count: 0 },
     { rating: 1, count: 0 },
   ]);
-
+const [starValue, setStarValue] = useState(0);
   const totalReviews = reviewStats.reduce((acc, item) => acc + item.count, 0);
 
   const averageRating =
@@ -71,21 +73,53 @@ const ReviewSection = () => {
     }
   }, [reviewStats, totalReviews, averageRating]);
 
+  const handleReviewComment =async()=>{
+     const data = {
+      booking_id:singleApartment?.id,
+      rating_value: starValue,
+      comment: comment,
+     }
+     console.log(data);
+     
+  }
   return (
+    <div>
     <div className=" my-8">
       <h2 className="text-2xl lg:text-[32px] font-semibold mb-4">
         Add a review
       </h2>
 
       {/* Input Box */}
+      <div className="flex items-center gap-4">
+         <div className="mb-2">
+                    <label className="block mb-1 font-medium">Rating (1 to 5)</label>
+                    <div className="flex gap-1 mb-2">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                            <button
+                                type="button"
+                                key={i}
+                                onClick={() => setStarValue(i + 1)}
+                                className="focus:outline-none"
+                            >
+                                <FaStar
+                                    size={28}
+                                    color={i < starValue ? "#FFD700" : "#e5e7eb"}
+                                    style={{ cursor: "pointer" }}
+                                />
+                            </button>
+                        ))}
+                    </div>
+                    </div>
+      </div>
       <div className="bg-white border rounded-lg p-4 mb-6">
         <div className="flex items-center gap-2">
           <input
             type="text"
             placeholder="Share your overall thoughts"
             className="flex-1 border-none outline-none text-sm"
+            onChange={(e)=>setComment(e.target.value)}
           />
-          <button className="bg-secondaryColor hover:bg-secondaryColor text-headerColor text-sm font-medium px-4 py-2 rounded-[4px] cursor-pointer">
+          <button onClick={handleReviewComment} className="bg-secondaryColor hover:bg-secondaryColor text-headerColor text-sm font-medium px-4 py-2 rounded-[4px] cursor-pointer">
             Submit
           </button>
         </div>
@@ -184,6 +218,8 @@ const ReviewSection = () => {
           </div>
         </div>
       </div>
+    </div>
+<ReviewList />
     </div>
   );
 };

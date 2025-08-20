@@ -3,18 +3,21 @@
 import Image from "next/image";
 import { FaStar } from "react-icons/fa6";
 
-const ProfileCard = () => {
+const ProfileCard = ({ user }) => {
+
   return (
     <div className="bg-[#D6AE29]/8 border border-secondaryColor rounded-lg p-6 lg:p-4 lg:py-6 xl:p-6 ">
       <div className="flex items-center space-x-4">
-        <img
-          src="/profile.png"
+        <Image
+          src={ user?.user?.avatar_url || "/profile.png"}
           alt="Profile"
           className="w-20 h-20 rounded-full"
+          width={100}
+          height={100}
         />
         <div className="flex-1">
           <h2 className="text-xl flex items-center gap-2 font-semibold text-blackColor">
-            Jacob Jones
+            {user?.user?.name}
             <Image
               src="/icon/check.svg"
               alt="checkicon"
@@ -30,7 +33,7 @@ const ProfileCard = () => {
             <span className="text-grayColor1 text-base">(256 reviews)</span>
           </div>
           <p className="text-xs text-grayColor1 mt-2">
-            Member since Mar 15, 2017
+            Member since {user?.user?.created_at && user?.user?.created_at}
           </p>
         </div>
       </div>
@@ -65,10 +68,7 @@ const ProfileCard = () => {
       </button>
       <div className="text-sm text-grayColor1 leading-[140%] ">
         <p>
-          Jacob Jones, with 12+ years in hospitality, owns Eclipse Haven
-          apartments. He offers modern, charming stays and partners with local
-          vendors for tours and car rentals, ensuring a memorable guest
-          experience.
+          {user?.user?.bio && user?.user?.bio}
         </p>
       </div>
       <button className="text-xs flex gap-2 cursor-pointer items-center text-red-500 mt-6 w-full ">

@@ -5,7 +5,7 @@ import HighLight from './HighLight';
 import LocationOnMap from './LocationOnMap ';
 import Overview from './Overview';
 
-const ApatmentTabs = ({singleApartment}:any) => {
+const ApatmentTabs = ({ singleApartment }: any) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
@@ -23,7 +23,7 @@ const ApatmentTabs = ({singleApartment}:any) => {
           <TabsTrigger
             value="highlights"
             className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'highlights' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
-            
+
           >
             Highlights
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'highlights' ? 'bg-secondaryColor' : 'hidden'}`} />
@@ -37,36 +37,36 @@ const ApatmentTabs = ({singleApartment}:any) => {
           </TabsTrigger>
           <TabsTrigger
             value="policies"
-           className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'policies' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
+            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'policies' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
           >
             Policies
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'policies' ? 'bg-secondaryColor' : 'hidden'}`} />
           </TabsTrigger>
-          <TabsTrigger
+          {/* <TabsTrigger
             value="reviews"
             className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'reviews' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
           >
             Reviews
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'reviews' ? 'bg-secondaryColor' : 'hidden'}`} />
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
 
         {/* Tab Contents */}
         <TabsContent value="overview" className="pt-10 pb-8">
-         <Overview overview={singleApartment?.description}/>
+          <Overview overview={singleApartment?.description} />
         </TabsContent>
         <TabsContent value="highlights" className="pt-10 pb-8">
-          <HighLight/>
+          <HighLight aminate={singleApartment?.amenities} />
         </TabsContent>
         <TabsContent value="map" className="pt-10 pb-8">
-          <LocationOnMap/>
+          <LocationOnMap />
         </TabsContent>
         <TabsContent value="policies" className="pt-10 pb-8">
-          <p>Policies content goes here...</p>
+          <p>{singleApartment?.cancellation_policy_id}</p>
         </TabsContent>
-        <TabsContent value="reviews" className="pt-10 pb-8">
+        {/* <TabsContent value="reviews" className="pt-10 pb-8">
           <p>Reviews content goes here...</p>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );

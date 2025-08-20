@@ -6,6 +6,7 @@ import ProfileCard from "@/components/apartment/ProfileCard";
 import ReviewList from "@/components/apartment/ReviewList";
 import ReviewSection from "@/components/apartment/ReviewSection";
 import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
+import AvailabilitySearchBox from "@/components/filter/AvailabilitySearchBox";
 import { UserService } from "@/service/user/user.service";
 import { ChevronRight } from "lucide-react";
 import { cookies } from "next/headers";
@@ -25,10 +26,10 @@ async function HotelDetailsPage(props: {
     const res = await UserService.getData(`/admin/vendor-package/${hotelSlug}`, token);
     vendorPackage = res?.data?.data ?? null;
   } catch (error) {
-     console.log(error);
-     
+    console.log(error);
+
   }
-console.log("=============",vendorPackage);
+  console.log("=============", vendorPackage);
 
 
   return (
@@ -123,7 +124,7 @@ console.log("=============",vendorPackage);
       </div>
       <div className=" bg-bgColor relative lg:mt-15 py-12 lg:py-20">
         <div className="hidden md:block container absolute left-1/2 -translate-1/2 -top-2">
-          {/* <AvailabilitySearchBox /> */}
+          <AvailabilitySearchBox />
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
           {/* {hotelData.map((tour: any, index) => (
@@ -138,11 +139,11 @@ console.log("=============",vendorPackage);
         <div className="lg:grid flex flex-col-reverse grid-cols-6 gap-8 container">
           <div className=" col-span-4 ">
             <PolicyDetails />
-            <ReviewSection />
-            <ReviewList />
+            <ReviewSection singleApartment={vendorPackage} />
+            
           </div>
           <div className=" col-span-2">
-            <ProfileCard />
+            {vendorPackage && <ProfileCard user={vendorPackage} />}
             <VerifiedVendorCard />
           </div>
         </div>
