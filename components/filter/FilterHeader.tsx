@@ -3,7 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const FilterHeader = ({ data,title }: { data: any[], title:string}) => {
+const FilterHeader = ({ data, title }: { data: any[], title: string }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -29,23 +29,23 @@ const FilterHeader = ({ data,title }: { data: any[], title:string}) => {
   return (
     <div className="items-center mb-4">
       <h4 className="text-2xl font-semibold text-headerColor">
-        {title} found: {data.length} available apartments
+        {title} found: {data.length} available {title}
       </h4>
 
       <div className="flex gap-3 mt-2">
-       
-          <>
-            <p className="text-base text-grayColor1">
-              {filterCount} {filterCount === 1 ? "Filter" : "Filters"} applied
-            </p>
-            <button
-              onClick={handleClearAll}
-              className="text-blueColor text-base cursor-pointer"
-            >
-              Clear All
-            </button>
-          </>
-        
+
+        <>
+          <p className="text-base text-grayColor1">
+            {filterCount} {filterCount === 1 ? "Filter" : "Filters"} applied
+          </p>
+          <button
+            onClick={handleClearAll}
+            className="text-blueColor text-base cursor-pointer"
+          >
+            Clear All
+          </button>
+        </>
+
       </div>
     </div>
   );
