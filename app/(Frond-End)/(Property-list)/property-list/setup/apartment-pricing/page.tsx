@@ -1,9 +1,13 @@
 "use client"
-import { useCallback, useState } from "react"
+
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { usePropertyContext } from "../../layout";
+
+
 const header = [
     "Name and location",
     "Property setup",
@@ -15,6 +19,7 @@ const header = [
 
 export default function page() {
     const router = useRouter()
+    const { listProperty, updateListProperty } = usePropertyContext();
     const [priceRange, setPriceRange] = useState({
         minprice: 109.86,
         maxprice: 186.33
@@ -28,10 +33,10 @@ export default function page() {
     const [isSuggestionOpen, setIsSuggestionOpen] = useState(true);
     const [refundSuggestionOpen, setRefundSuggestionOpen] = useState(true);
     const [formData, setFormData] = useState({})
-    const [isCancelEdit, setIsCancelEdit] = useState(true);
-    const [isRefundEdit, setIsRefundEdit] = useState(true);
-    const [isOccupancyEdit, setIsOccupancyEdit] = useState(true);
-    const [occupancy, setOccupancy] = useState([['3', '150']]);
+    const [isCancelEdit, setIsCancelEdit] = useState(false);
+    const [isRefundEdit, setIsRefundEdit] = useState(false);
+    const [isOccupancyEdit, setIsOccupancyEdit] = useState(false);
+    const [occupancy, setOccupancy] = useState([{ occupancy: "3", price: "150" }]);
     const [cancelPolicies, setCancelPolicies] = useState(["Guests can cancel their bookings for free up to 1 day before their arrival", "Guests who cancel within 24 hours will have their cancellation fee waived"])
     const [refundPolicies, setRefundPolicies] = useState(["Guests will pay 10% less than the standard rate for a non- refundable rate", "Guests can't cancel their bookings for free anytime"])
 
@@ -45,7 +50,37 @@ export default function page() {
             guest_checkin: guestCheckIn,
             reservation30: reservation30,
         })
-        router.push("/property-list/apartment-calendar")
+        updateListProperty({
+            booking_method: guestBooking,
+            price_per_night: guestPrice,
+            standard_rate_plan: {
+                cancellation_policy: cancelPolicies,
+                price_per_group_size: occupancy
+            },
+            non_refundable_rate_plan: refundPolicies,
+            guest_check_in: {
+                asSoon: guestCheckIn === "as_soon_as_possible",
+            },
+            maxReservation: reservation30 === "yes"
+        })
+
+        const updatedProperty = {
+            ...JSON.parse(localStorage.getItem("propertyData")),
+            booking_method: guestBooking,
+            price_per_night: guestPrice,
+            standard_rate_plan: {
+                cancellation_policy: cancelPolicies,
+                price_per_group_size: occupancy
+            },
+            non_refundable_rate_plan: refundPolicies,
+            guest_check_in: {
+                asSoon: guestCheckIn === "as_soon_as_possible",
+            },
+            maxReservation: reservation30 === "yes"
+        };
+        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
+
+        router.push("/property-list/setup/apartment-calendar")
     }
 
     const handleCancelPolicyChange = (value: string, index: number) => {
@@ -78,45 +113,35 @@ export default function page() {
 
     const deleteRefundPolicy = (id: number) => {
         setRefundPolicies(prev => prev.filter((_, index) => index !== id));
+
     }
     const handleOccupancyChange = (value: string, index: number) => {
         setOccupancy(prev => {
             const newPolicies = [...prev];
-            newPolicies[index] = [value, prev[index][1]];
+            newPolicies[index].occupancy = value;
             return newPolicies;
         });
     }
     const handleOccupancyPriceChange = (value: string, index: number) => {
         setOccupancy(prev => {
             const newPolicies = [...prev];
-            newPolicies[index] = [prev[index][0], value];
+            newPolicies[index].price = value;
             return newPolicies;
         });
     }
 
     const addNewOccupancy = () => {
-        setOccupancy(prev => [...prev, ['0', '0']])
+        setOccupancy(prev => [...prev, { occupancy: "0", price: "0" }])
     }
 
     const deleteOccupancy = (id: number) => {
         setOccupancy(prev => prev.filter((_, index) => index !== id));
+
     }
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
-                <ul className="hidden md:flex w-full justify-between">
-                    {
-                        header.map(item => (
-                            <li className="space-y-4 w-fit" key={item}>
-                                <h3 className={`${item === "Pricing" ? "text-[#070707]" : "text-[#777980]"} text-sm text-center`}>{item}</h3>
-                                <div className="w-[140px] lg:w-[180px] xl:w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
-                                    <div className={`absolute top-0 left-0 h-full w-3/4 bg-[#D6AE29] rounded-full ${item === "Pricing" ? "" : "hidden"}`}></div>
-                                </div>
-                            </li>
-                        ))
-                    }
-                </ul>
                 <div className="w-full">
                     <form onSubmit={(e) => handleFormSubmit(e)} className="space-y-5">
                         <div className="flex gap-6">
@@ -240,7 +265,7 @@ export default function page() {
                                                     <h2 className="text-[#4A4C56] text-sm">We promote your place on Google</h2>
                                                 </div>
                                             </div>
-                                            <h3 className="text-[#4A4C56] text-sm font-medium">{guestPrice - (guestPrice * (commition / 100))}$ Your earning ( included taxes)</h3>
+                                            <h3 className="text-[#4A4C56] text-sm font-medium">{guestPrice ? guestPrice - (guestPrice * (commition / 100)) : 0}$ Your earning ( included taxes)</h3>
                                         </div>
                                     </div>
                                 </div>
@@ -378,17 +403,19 @@ export default function page() {
                                                     <ul className="space-y-4 text-[#4A4C56] text-[18px] font-medium">
                                                         {
                                                             occupancy.map((item, index) => (
-                                                                <li key={item[0]} className="flex items-center gap-1">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                                                        <path d="M4.93318 11.6151C3.8721 12.2469 1.09002 13.537 2.7845 15.1514C3.61223 15.9399 4.53412 16.5039 5.69315 16.5039H12.3068C13.4659 16.5039 14.3878 15.9399 15.2155 15.1514C16.91 13.537 14.1279 12.2469 13.0668 11.6151C10.5786 10.1335 7.42139 10.1335 4.93318 11.6151Z" stroke="#4A4C56" stroke-linecap="round" stroke-linejoin="round" />
-                                                                        <path d="M12.375 4.87891C12.375 6.74287 10.864 8.25391 9 8.25391C7.13604 8.25391 5.625 6.74287 5.625 4.87891C5.625 3.01495 7.13604 1.50391 9 1.50391C10.864 1.50391 12.375 3.01495 12.375 4.87891Z" stroke="#4A4C56" />
-                                                                    </svg>
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
-                                                                        <path d="M11.25 4.25391L7.5 8.00391M7.5 8.00391L3.75 11.7539M7.5 8.00391L11.25 11.7539M7.5 8.00391L3.75 4.25391" stroke="#777980" stroke-linecap="round" stroke-linejoin="round" />
-                                                                    </svg>
-                                                                    {!isOccupancyEdit ? <span>{item[0]}</span>
+                                                                <li className="flex items-center gap-1">
+                                                                    <div className="flex items-center gap-1">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                                                            <path d="M4.93318 11.6151C3.8721 12.2469 1.09002 13.537 2.7845 15.1514C3.61223 15.9399 4.53412 16.5039 5.69315 16.5039H12.3068C13.4659 16.5039 14.3878 15.9399 15.2155 15.1514C16.91 13.537 14.1279 12.2469 13.0668 11.6151C10.5786 10.1335 7.42139 10.1335 4.93318 11.6151Z" stroke="#4A4C56" stroke-linecap="round" stroke-linejoin="round" />
+                                                                            <path d="M12.375 4.87891C12.375 6.74287 10.864 8.25391 9 8.25391C7.13604 8.25391 5.625 6.74287 5.625 4.87891C5.625 3.01495 7.13604 1.50391 9 1.50391C10.864 1.50391 12.375 3.01495 12.375 4.87891Z" stroke="#4A4C56" />
+                                                                        </svg>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
+                                                                            <path d="M11.25 4.25391L7.5 8.00391M7.5 8.00391L3.75 11.7539M7.5 8.00391L11.25 11.7539M7.5 8.00391L3.75 4.25391" stroke="#777980" stroke-linecap="round" stroke-linejoin="round" />
+                                                                        </svg>
+                                                                    </div>
+                                                                    {!isOccupancyEdit ? <div>{item.occupancy}</div>
                                                                         :
-                                                                        <input type="text" value={item[0] ? item[0] : ""} onChange={(e) => handleOccupancyChange(e.target.value, index)} className="border w-[50px] py-1 rounded-lg px-[4px]" />}
+                                                                        <input type="text" name="occupancy" id="occupancy" value={item.occupancy} onChange={(e) => handleOccupancyChange(e.target.value, index)} className="outline-none border py-1 w-[50px] px-1 rounded-lg" />}
                                                                 </li>
                                                             ))
                                                         }
@@ -397,36 +424,21 @@ export default function page() {
                                                 <div className="space-y-5">
                                                     <h2 className="text-[#23262F] text-[18px] font-medium">Guests pay</h2>
                                                     <ul className="space-y-4 text-[#4A4C56] text-[18px] font-medium">
-                                                        {occupancy.map((item, index) => (
-                                                            <li key={item[1]} className="flex items-center gap-1">
-                                                                {!isOccupancyEdit ? (
-                                                                    `$${item[1]}`
-                                                                ) : (
-                                                                    <>
-                                                                        <input
-                                                                            type="text"
-                                                                            value={item[1] || ""}
-                                                                            onChange={(e) => handleOccupancyPriceChange(e.target.value, index)}
-                                                                            className="border w-[100px] py-1 rounded-lg px-[4px]"
-                                                                        />
-                                                                        <svg
-                                                                            className="cursor-pointer w-[10px]"
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            width="12"
-                                                                            height="13"
-                                                                            viewBox="0 0 12 13"
-                                                                            fill="none"
-                                                                            onClick={() => deleteOccupancy(index)}
-                                                                        >
-                                                                            <path
-                                                                                d="M10.9723 10.6673C11.1955 10.8905 11.1955 11.2524 10.9723 11.4756C10.861 11.5868 10.7148 11.6431 10.5685 11.6431C10.4222 11.6431 10.2759 11.5875 10.1647 11.4756L5.99756 7.30845L1.83041 11.4756C1.71918 11.5868 1.57291 11.6431 1.42664 11.6431C1.28037 11.6431 1.1341 11.5875 1.02288 11.4756C0.799665 11.2524 0.799665 10.8905 1.02288 10.6673L5.19004 6.5002L1.02288 2.33313C0.799665 2.10992 0.799665 1.74804 1.02288 1.52483C1.24609 1.30162 1.60796 1.30162 1.83117 1.52483L5.99833 5.69194L10.1655 1.52483C10.3887 1.30162 10.7506 1.30162 10.9738 1.52483C11.197 1.74804 11.197 2.10992 10.9738 2.33313L6.80662 6.5002L10.9723 10.6673Z"
-                                                                                fill="#070707"
-                                                                            />
-                                                                        </svg>
-                                                                    </>
-                                                                )}
-                                                            </li>
-                                                        ))}
+                                                        {
+                                                            occupancy.map((item, index) => (
+                                                                <li>
+                                                                    {
+                                                                        isOccupancyEdit ? <div className="flex items-center gap-1">
+                                                                            <input type="text" name="price" id="price" value={item.price} onChange={(e) => handleOccupancyPriceChange(e.target.value, index)} className="outline-none border py-1 w-[100px] px-1 rounded-lg" />
+                                                                            <svg className="cursor-pointer w-[10px] items-center justify-center" xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none" onClick={() => deleteOccupancy(index)}>
+                                                                                <path d="M10.9723 10.6673C11.1955 10.8905 11.1955 11.2524 10.9723 11.4756C10.861 11.5868 10.7148 11.6431 10.5685 11.6431C10.4222 11.6431 10.2759 11.5875 10.1647 11.4756L5.99756 7.30845L1.83041 11.4756C1.71918 11.5868 1.57291 11.6431 1.42664 11.6431C1.28037 11.6431 1.1341 11.5875 1.02288 11.4756C0.799665 11.2524 0.799665 10.8905 1.02288 10.6673L5.19004 6.5002L1.02288 2.33313C0.799665 2.10992 0.799665 1.74804 1.02288 1.52483C1.24609 1.30162 1.60796 1.30162 1.83117 1.52483L5.99833 5.69194L10.1655 1.52483C10.3887 1.30162 10.7506 1.30162 10.9738 1.52483C11.197 1.74804 11.197 2.10992 10.9738 2.33313L6.80662 6.5002L10.9723 10.6673Z" fill="#070707" />
+                                                                            </svg>
+                                                                        </div> :
+                                                                            <div>${item.price}</div>
+                                                                    }
+                                                                </li>
+                                                            ))
+                                                        }
                                                     </ul>
                                                 </div>
                                             </div>

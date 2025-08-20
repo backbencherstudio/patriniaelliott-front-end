@@ -14,20 +14,14 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import { usePropertyContext } from "../../layout";
+import toast,{Toaster} from 'react-hot-toast'
 
-
-const header = [
-    "Name and location",
-    "Property setup",
-    "Photos",
-    "Pricing",
-    "Calendar",
-]
 
 
 export default function page() {
     const router = useRouter()
-
+    const { listProperty, updateListProperty } = usePropertyContext();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [nextCurrentDate, setNextCurrentDate] = useState(() => {
         const today = new Date();
@@ -94,7 +88,10 @@ export default function page() {
 
 
     const handleSubmit = () => {
-        window.alert("Form is submited")
+        toast.success("Property setup completed.")
+        console.clear();
+        console.log("Submitted data : ",JSON.parse(localStorage.getItem("propertyData")))
+        localStorage.removeItem("propertyData");
     }
 
     function getSameDateNextMonth(inputDate: Date): Date {
@@ -117,25 +114,10 @@ export default function page() {
     }
 
 
-
-
     return (
         <div className="flex justify-center items-center bg-[#F6F7F7] w-full overflow-hidden">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
-                <ul className="hidden md:flex w-full justify-between">
-                    {
-                        header.map(item => (
-                            <li className="space-y-4 w-fit" key={item}>
-                                <h3 className={`${item === "Calendar" ? "text-[#070707]" : "text-[#777980]"} text-sm text-center`}>{item}</h3>
-                                <div className="w-[140px] lg:w-[180px] xl:w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
-                                    <div className={`absolute top-0 left-0 h-full w-3/4 bg-[#D6AE29] rounded-full ${item === "Calendar" ? "" : "hidden"}`}></div>
-                                </div>
-                            </li>
-                        ))
-                    }
-                </ul>
-
-
+                <Toaster />
                 {/* Calendar start  */}
 
 
