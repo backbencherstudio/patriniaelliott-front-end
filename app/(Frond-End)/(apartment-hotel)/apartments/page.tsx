@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 const HotelsPerPage = 6;
 
-function HotelPage() {
+function ApartmentMainPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate the total pages
@@ -22,10 +22,10 @@ function HotelPage() {
 
   return (
     <div>
-      <FilterHeader title="Apartment" data={accommodationsData}/>
+      <FilterHeader title="Apartment" data={accommodationsData} />
 
       <div className="">
-        {currentData.map((tour:any, index) => (
+        {currentData.map((tour: any, index) => (
           <div key={index} className="px-4 py-4">
             <ApartmentCard hotel={tour} />
           </div>
@@ -33,9 +33,9 @@ function HotelPage() {
       </div>
 
       {/* Pagination Controls */}
-    <PaginationPage totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+      <PaginationPage totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
     </div>
   );
 }
 
-export default HotelPage;
+export default ApartmentMainPage;

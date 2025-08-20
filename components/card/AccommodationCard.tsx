@@ -120,10 +120,10 @@ export default function AccommodationCard({tour}: {tour: Package}) {
               ${price}/night
             </p>
           </div>
-          <button className="text-sm flex items-center gap-1 lg:gap-3 font-medium border border-secondaryColor text-secondaryColor px-2 lg:px-4 py-1 lg:py-2 rounded-full hover:bg-secondaryColor cursor-pointer hover:text-blackColor transition">
+          <Link href={`${type === "apartment" ? "/apartment" : "/hotel"}/${id}`} className="text-sm flex items-center gap-1 lg:gap-3 font-medium border border-secondaryColor text-secondaryColor px-2 lg:px-4 py-1 lg:py-2 rounded-full hover:bg-secondaryColor cursor-pointer hover:text-blackColor transition">
             Check Availability <FaArrowRight />
 
-          </button>
+          </Link>
         </div>
       </div>
     </div>
