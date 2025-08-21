@@ -1,15 +1,58 @@
 import ApartmentHeader from "@/components/apartment/ApartmentHeader";
-import ApatmentTabs from "@/components/apartment/ApartmentTabs";
-import BookingForm from "@/components/apartment/BookingForm";
 import PolicyDetails from "@/components/apartment/PolicyDetails";
 import ProfileCard from "@/components/apartment/ProfileCard";
-import ReviewSection from "@/components/apartment/ReviewSection";
 import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
-import AvailabilitySearchBox from "@/components/filter/AvailabilitySearchBox";
 import { UserService } from "@/service/user/user.service";
 import { ChevronRight } from "lucide-react";
+import dynamic from 'next/dynamic';
 import { cookies } from "next/headers";
 import Image from "next/image";
+
+// ✅ Dynamic imports for all client components
+const BookingForm = dynamic(() => import('@/components/apartment/BookingForm'), {
+  loading: () => (
+    <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded mb-4"></div>
+        <div className="h-4 bg-gray-200 rounded mb-2"></div>
+        <div className="h-4 bg-gray-200 rounded mb-4"></div>
+        <div className="h-12 bg-gray-200 rounded mb-4"></div>
+        <div className="h-12 bg-gray-200 rounded mb-4"></div>
+        <div className="h-32 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  )
+});
+
+const ApatmentTabs = dynamic(() => import('@/components/apartment/ApartmentTabs'), {
+  loading: () => (
+    <div className="animate-pulse">
+      <div className="h-8 bg-gray-200 rounded mb-4"></div>
+      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+      <div className="h-4 bg-gray-200 rounded mb-4"></div>
+      <div className="h-32 bg-gray-200 rounded"></div>
+    </div>
+  )
+});
+
+const AvailabilitySearchBox = dynamic(() => import('@/components/filter/AvailabilitySearchBox'), {
+  loading: () => (
+    <div className="animate-pulse">
+      <div className="h-12 bg-gray-200 rounded"></div>
+    </div>
+  )
+});
+
+const ReviewSection = dynamic(() => import('@/components/apartment/ReviewSection'), {
+  loading: () => (
+    <div className="animate-pulse">
+      <div className="h-8 bg-gray-200 rounded mb-4"></div>
+      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+      <div className="h-4 bg-gray-200 rounded mb-4"></div>
+      <div className="h-32 bg-gray-200 rounded"></div>
+    </div>
+  )
+});
 
 async function HotelDetailsPage(props: {
   params: Promise<{ hotelSlug: string }>;
@@ -26,9 +69,7 @@ async function HotelDetailsPage(props: {
     vendorPackage = res?.data?.data ?? null;
   } catch (error) {
     console.log(error);
-
   }
-  console.log("=============", vendorPackage);
 
 
   return (
@@ -83,7 +124,7 @@ async function HotelDetailsPage(props: {
                       viewBox="0 0 50 50"
                       fill="none"
                     >
-                      <g clip-path="url(#clip0_5471_6422)">
+                      <g clipPath="url(#clip0_5471_6422)">
                         <path
                           d="M36.3609 50.0002C36.0109 50.0002 35.6525 49.9564 35.2984 49.8627L3.08379 41.2356C2.02168 40.9408 1.11782 40.2407 0.566841 39.2861C0.0158638 38.3314 -0.138154 37.1985 0.137954 36.1314L4.20254 20.9814C4.27745 20.7186 4.45262 20.4958 4.69029 20.361C4.92795 20.2262 5.20908 20.1901 5.47308 20.2606C5.73707 20.3311 5.96279 20.5025 6.10158 20.7379C6.24037 20.9733 6.28112 21.2538 6.21504 21.5189L2.15254 36.6648C1.86295 37.7689 2.52545 38.9189 3.6317 39.2252L35.8338 47.8481C36.3645 47.9893 36.9295 47.9142 37.4049 47.6392C37.8802 47.3643 38.2271 46.9119 38.3692 46.3814L39.9963 40.3523C40.0319 40.2201 40.0931 40.0963 40.1765 39.9878C40.26 39.8793 40.3639 39.7883 40.4825 39.7201C40.6011 39.6518 40.732 39.6075 40.8677 39.5898C41.0034 39.5721 41.1412 39.5813 41.2734 39.6168C41.4055 39.6524 41.5294 39.7136 41.6378 39.7971C41.7463 39.8805 41.8373 39.9845 41.9056 40.1031C41.9739 40.2217 42.0181 40.3525 42.0358 40.4882C42.0535 40.6239 42.0444 40.7618 42.0088 40.8939L40.3838 46.9148C40.1469 47.8004 39.6241 48.5831 38.8966 49.141C38.1691 49.699 37.2777 50.001 36.3609 50.0002Z"
                           fill="white"
@@ -114,15 +155,18 @@ async function HotelDetailsPage(props: {
         </div>
         <div className="lg:grid grid-cols-6 gap-8 pb-12 md:pb-14 lg:pb-20">
           <div className=" col-span-4 ">
+            {/* ✅ Dynamic import - Client component */}
             <ApatmentTabs singleApartment={vendorPackage} />
           </div>
           <div className=" col-span-2">
-            <BookingForm singleApartments={vendorPackage} />
+            {/* ✅ Dynamic import - Client component */}
+            <BookingForm singleApartments={vendorPackage} type="hotel" />
           </div>
         </div>
       </div>
       <div className=" bg-bgColor relative lg:mt-15 py-12 lg:py-20">
-        <div className="hidden md:block container absolute left-1/2 -translate-1/2 -top-2">
+        <div className="hidden md:block container absolute left-1/2 -translate-x-1/2 -top-2">
+          {/* ✅ Dynamic import - Client component */}
           <AvailabilitySearchBox />
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
@@ -138,6 +182,7 @@ async function HotelDetailsPage(props: {
         <div className="lg:grid flex flex-col-reverse grid-cols-6 gap-8 container">
           <div className=" col-span-4 ">
             <PolicyDetails />
+            {/* ✅ Dynamic import - Client component */}
             <ReviewSection singleApartment={vendorPackage} />
           </div>
           <div className=" col-span-2">

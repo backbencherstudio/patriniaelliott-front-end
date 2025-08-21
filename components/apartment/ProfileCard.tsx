@@ -9,7 +9,7 @@ const ProfileCard = ({ user }) => {
     <div className="bg-[#D6AE29]/8 border border-secondaryColor rounded-lg p-6 lg:p-4 lg:py-6 xl:p-6 ">
       <div className="flex items-center space-x-4">
         <Image
-          src={ user?.user?.avatar_url || "/profile.png"}
+          src={user?.user?.avatar_url || "/profile.png"}
           alt="Profile"
           className="w-20 h-20 rounded-full"
           width={100}
@@ -79,10 +79,10 @@ const ProfileCard = ({ user }) => {
           viewBox="0 0 12 12"
           fill="none"
         >
-          <g clip-path="url(#clip0_5471_6625)">
+          <g clipPath="url(#clip0_5471_6625)">
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M8 4.5L9.58504 2.65079C10.141 2.00212 9.68013 1 8.82578 1L2 1L2 8L8.82578 8C9.68013 8 10.141 6.99788 9.58504 6.34921L8 4.5ZM3 7L8.82578 7L6.68292 4.5L8.82578 2L3 2L3 7Z"
               fill="#E3322C"
             />
