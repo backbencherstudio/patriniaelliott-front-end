@@ -139,7 +139,6 @@ async function HotelDetailsPage(props: {
           <div className=" col-span-4 ">
             <PolicyDetails />
             <ReviewSection singleApartment={vendorPackage} />
-            
           </div>
           <div className=" col-span-2">
             {vendorPackage && <ProfileCard user={vendorPackage} />}

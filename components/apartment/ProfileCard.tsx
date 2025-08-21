@@ -28,9 +28,9 @@ const ProfileCard = ({ user }) => {
           <div className="flex items-center text-sm text-grayColor1 leading-[124%]">
             <span className="mr-2 text-base text-headerColor gap-2 flex items-center">
               {" "}
-              <FaStar className=" text-ratingColor" size={25} /> 4.9
+              <FaStar className=" text-ratingColor" size={25} /> {Number(user?.user?.rating_summary?.averageRating ?? 0).toFixed(1)}
             </span>
-            <span className="text-grayColor1 text-base">(256 reviews)</span>
+            <span className="text-grayColor1 text-base">({user?.user?.rating_summary?.totalReviews} reviews)</span>
           </div>
           <p className="text-xs text-grayColor1 mt-2">
             Member since {user?.user?.created_at && user?.user?.created_at}

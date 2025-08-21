@@ -10,7 +10,6 @@ const ApatmentTabs = ({ singleApartment }: any) => {
 
   return (
     <div className="w-full">
-      {/* Tab List */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex lg:space-x-8 border border-gray-200 bg-whiteColor shadow-none py-6 w-full lg:px-40">
           <TabsTrigger

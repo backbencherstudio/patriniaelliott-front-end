@@ -1,7 +1,7 @@
 import Rating from "../reusable/Rating";
 
 const ApartmentHeader = ({ singleApartment }: any) => {
-  const { name, reviews, price, rating, address } = singleApartment;
+  const { name, rating_summary, price, rating, address } = singleApartment;
   return (
     <div className="lg:flex justify-between items-center pb-8">
       {/* Left side: Hotel Information */}
@@ -11,8 +11,8 @@ const ApartmentHeader = ({ singleApartment }: any) => {
           <div className="pr-5 lg:pr-16 border-r border-y-grayColor1/20">
             <h4 className=" text-base text-grayColor1 mb-1">Review</h4>
             <div className="flex gap-2 items-center text-sm text-yellow-500 mb-2 ">
-              <Rating rating={5} />
-              <span className="text-gray-500">({reviews} reviews)</span>
+              <Rating rating={rating_summary?.averageRating} />
+              <span className="text-gray-500">({rating_summary?.totalReviews} reviews)</span>
             </div>
           </div>
           <div className="text-base text-headerColor pl-5 lg:pl-16">
