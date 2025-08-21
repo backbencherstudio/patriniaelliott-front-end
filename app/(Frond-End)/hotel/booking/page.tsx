@@ -9,15 +9,15 @@ import { useState } from "react";
 
 function Page() {
       const [activeTab, setActiveTab] = useState('step1');
-      console.log(activeTab);
+
       
   return (
     <div className="py-12 lg:py-20">
       <div className="container grid grid-cols-12 gap-7">
         <div className="col-span-12">
           <span className="flex flex-wrap items-center text-grayColor1 gap-2">
-            Home <ChevronRight className="w-4 h-4 text-[#737373]" /> Apartment{" "}
-            <ChevronRight className="w-4 h-4 text-[#737373]" /> Apartment
+            Home <ChevronRight className="w-4 h-4 text-[#737373]" /> Hotel{" "}
+            <ChevronRight className="w-4 h-4 text-[#737373]" /> Hotel
             details <ChevronRight className="w-4 h-4 text-[#737373]" /> <span className=" text-headerColor">Booking</span> 
           </span>
         </div>

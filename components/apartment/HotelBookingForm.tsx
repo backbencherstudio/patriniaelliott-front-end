@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { MdDone } from "react-icons/md";
 import Rating from "../reusable/Rating";
 
-const BookingForm = ({ singleApartments,type }: any) => {
+const HotelBookingForm = ({ singleApartments }: any) => {
   const {
     setSingleApartment,
     selectedServices,
@@ -31,7 +31,7 @@ const router = useRouter()
     const handleBook = () => {
 
      handleBookNow()
-     router.push(type === "apartment" ? "/apartment/booking" : "/hotel/booking")
+     router.push("/hotel/booking")
    
   };
   return (
@@ -218,4 +218,4 @@ const router = useRouter()
   );
 };
 
-export default BookingForm;
+export default HotelBookingForm;

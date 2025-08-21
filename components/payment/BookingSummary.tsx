@@ -23,7 +23,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
 
  if (!singleApartment) return null;
 
-  const { title, reviews, price, rating, image } = singleApartment;
+   const { name, reviews, price, rating, address } = singleApartment;
 
   return (
    
@@ -35,8 +35,8 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
       <div className="flex flex-col  md:flex-row items-center md:items-start gap-4">
         <div className=" w-[180px] h-[163px]">
           <img
-            src={image.src || "/apartment.jpg"}
-            alt={title ? title : ""}
+            src={ "/apartment.jpg"}
+            alt={name ? name : ""}
             width={180}
             height={163}
             className=" w-full h-full  rounded-md object-cover"
@@ -50,7 +50,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
               /per night
             </span>
           </p>
-          <h3 className="font-medium text-xl lg:text-lg xl:text-xl mt-1 text-black">{ title ? title : ""}</h3>
+          <h3 className="font-medium text-xl lg:text-lg xl:text-xl mt-1 text-black">{ name ? name : ""}</h3>
           <div className="flex gap-2 mt-2">
             <Image
               src="/profile.png"

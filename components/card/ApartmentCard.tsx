@@ -6,51 +6,22 @@ import { FaStar } from "react-icons/fa";
 import { FaArrowRight, FaWifi } from "react-icons/fa6";
 import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 
-interface ApartmentCardProps {
-  hotel: {
-    image: string;
-    location: string;
-    title: string;
-    rating: number;
-    price: number;
-    tv: boolean;
-    bed: number;
-    bath: number;
-    wifi: boolean;
-    cancellation: string;
-    breakfast: boolean;
-    apartmentSlug: string;
-  };
-}
 
-const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
-  const {
-    image,
-    location,
-    title,
-    rating,
-    price,
-    tv,
-    bed,
-    bath,
-    wifi,
-    cancellation,
-    apartmentSlug,
-    breakfast,
-  } = hotel;
+const ApartmentCard = ({ hotel }: any) => {
+  const { id, name, type, reviews, amenities, rating_summary, bedrooms, bathrooms, cancellation_policy, breakfast_available, price, address } = hotel;
 
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
         <Image
-          src={image}
-          alt={title}
+          src={"/hotel/h5.jpg"}
+          alt={name}
           width={400}
           height={250}
           className="w-full h-full object-cover rounded-xl"
         />
-        {breakfast && (
+        {breakfast_available && (
           <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1  rounded-full">
             Breakfast Included
           </span>
@@ -63,25 +34,25 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
         <div className=" mb-3">
           <div className="flex items-center gap-2 text-sm text-grayColor1">
             <IoLocationSharp size={18} className=" text-grayColor1" />
-            <span>{location}</span>
+            <span>{address}</span>
           </div>
           <div className="py-1">
             <Link
-              href={`/apartment/${apartmentSlug}`}
+              href={`/apartment/${id}`}
               className="text-xl font-semibold text-black mb-2"
             >
-              {title}
+              {name}
             </Link>
           </div>
 
           <div className="flex gap-2 items-center">
-            <span className="text-headerColor text-sm">{rating}</span>
+            <span className="text-headerColor text-sm">{Number(rating_summary?.averageRating ?? 0).toFixed(1)}</span>
             <div className="flex gap-1">
               {Array.from({ length: 5 }, (_, i) => (
                 <FaStar
                   key={i}
                   className={
-                    i < Math.round(rating) ? "text-yellow-400" : "text-gray-300"
+                    i < Math.round(rating_summary?.averageRating) ? "text-yellow-400" : "text-gray-300"
                   }
                 />
               ))}
@@ -91,12 +62,12 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
         {/* Free Cancellation */}
         <div className="flex items-center gap-2 text-sm text-[#0068EF] border-b pb-2 border-secondaryColor/20">
           Free cancellation{" "}
-          <span className="text-xs text-gray-400">({cancellation})</span>
+          <span className="text-xs text-gray-400">(24 hourse)</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4 w-[85%] items-center  text-descriptionColor text-sm mt-4 ">
-          <div className="flex items-center gap-1 pr-3 ">
-            {tv && (
+          {amenities?.TV && (
+            <div className="flex items-center gap-1 pr-3 ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -109,12 +80,12 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
                   fill="#D6AE29"
                 />
               </svg>
-            )}{" "}
-            TV
-          </div>
+              TV
+            </div>
+          )}{" "}
           <div className="flex items-center gap-1  ">
             <IoBedOutline className=" text-secondaryColor" size={18} />
-            {bed} Bed
+            {bedrooms} Bed
           </div>
           <div className="flex items-center gap-1  ">
             <svg
@@ -124,22 +95,22 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
               viewBox="0 0 18 18"
               fill="none"
             >
-              <g clip-path="url(#clip0_5471_6109)">
+              <g clipPath="url(#clip0_5471_6109)">
                 <path
                   d="M8.71184 3.28863L8.86617 2.21929C8.95554 1.60009 8.6412 0.992609 8.08415 0.707922C7.36483 0.340282 6.48369 0.62539 6.11605 1.3447L3.68359 5.48745V9.96289"
                   stroke="#D6AE29"
-                  stroke-width="1.05271"
-                  stroke-miterlimit="10"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.05271"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
                 <path
                   d="M14.8885 16.3994L15.583 17.4521M5.17755 16.3994L4.48308 17.4521M2.33444 3.68441L1.58997 2.93994M1.57628 5.41759H0.523438M6.45333 5.2933L10.0645 5.98387L10.1695 5.43475C10.3602 4.43756 9.70636 3.47458 8.70917 3.2839C7.71198 3.09322 6.749 3.74702 6.55832 4.74421L6.45333 5.2933ZM17.4707 9.96293H2.59534V12.4029C2.80774 12.4029 2.97993 12.575 2.97993 12.7874V14.0751C2.97993 15.3588 4.02053 16.3994 5.30419 16.3994H14.7619C16.0456 16.3994 17.0862 15.3588 17.0862 14.0751V12.7874C17.0862 12.575 17.2584 12.4029 17.4708 12.4029V9.96293H17.4707Z"
                   stroke="#D6AE29"
-                  stroke-width="1.05271"
-                  stroke-miterlimit="10"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.05271"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </g>
               <defs>
@@ -148,9 +119,9 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
                 </clipPath>
               </defs>
             </svg>
-            {bath} Bath
+            {bathrooms} Bath
           </div>
-          {wifi && (
+          {amenities?.wifi && (
             <div className="flex items-center gap-1  ">
               <FaWifi size={16} className=" text-secondaryColor" />
               Free WiFi
@@ -168,7 +139,7 @@ const ApartmentCard = ({ hotel }: ApartmentCardProps) => {
           <p className="text-sm text-gray-500">per night</p>
         </div>
         <Link
-          href={`/apartment/${apartmentSlug}`}
+          href={`/apartment/${id}`}
           className="bg-secondaryColor mt-4 lg:mt-0 font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-full cursor-pointer text-blackColor transition-colors"
         >
           Check Availability <FaArrowRight />

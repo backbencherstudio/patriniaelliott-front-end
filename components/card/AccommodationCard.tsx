@@ -1,82 +1,54 @@
 "use client";
 
+import { Package } from "@/types/index";
 import Image from "next/image";
 import Link from "next/link";
 import { FaStar } from "react-icons/fa";
 import { FaArrowRight, FaWifi } from "react-icons/fa6";
 import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
-type AccommodationCardProps = {
-  image: string;
-  location: string;
-  flag: string;
-  title: string;
-  rating: number;
-  reviews: number;
-  cancellation: string;
-  wifi: boolean;
-  bed: number;
-  bath: number;
-  breakfast: boolean;
-  tv: boolean;
-  apartmentSlug:string,
-  price: string;
-};
 
-export default function AccommodationCard({
-  image,
-  location,
-  flag,
-  title,
-  rating,
-  reviews,
-  cancellation,
-  wifi,
-  bed,
-  breakfast,
-  tv,
-  apartmentSlug,
-  bath,
-  price,
-}: AccommodationCardProps) {
+
+export default function AccommodationCard({tour}: {tour: Package}) {
+  const {id, name, type, reviews, amenities,bedrooms,bathrooms,cancellation_policy, breakfast_available, price,address} = tour
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full">
       <div className="relative">
         <div className=" p-3">
           <Image
-            src={image}
-            alt={title}
+            src={ "/Accommodation/a1.png"}
+            alt={name}
             width={400}
             height={200}
             className="w-full  object-cover"
           />
         </div>
         <span className="absolute top-6 left-6 bg-redColor text-white text-xs px-3 py-1 rounded-full font-semibold z-10">
-          {breakfast && "Breakfast Included"}
+          {breakfast_available && "Breakfast Included"}
         </span>
       </div>
       <div className="p-4 space-y-1">
         <div className="flex items-center gap-2 text-sm text-grayColor1">
           <IoLocationSharp size={18} className=" text-grayColor1" />
-          <span>{location}</span>
+          <span>{address}</span>
         </div>
-        <Link href={`/apartment/${apartmentSlug}`} className="font-medium text-[22px] text-blackColor">{title}</Link>
+        <Link href={`${type === "apartment" ? "/apartment" : "/hotel"}/${id}`} className="font-medium text-[22px] text-blackColor">{name}</Link>
 
         <div className="flex items-center gap-2 text-sm text-seborder-secondaryColor">
-          <span className="text-gray-800">{rating}</span>
+          <span className="text-gray-800">{5}</span>
           {Array.from({ length: 5 }, (_, i) => (
-             <FaStar key={i} className={i < rating ? 'text-yellow-400' : 'text-[#A7B6CC]'}/>
+             <FaStar key={i} className={i < 5 ? 'text-yellow-400' : 'text-[#A7B6CC]'}/>
           ))}
           
         </div>
 
         <div className="flex items-center gap-2 text-sm text-[#0068EF]">
           Free cancellation{" "}
-          <span className="text-xs text-gray-400">({cancellation})</span>
+          <span className="text-xs text-gray-400">({cancellation_policy})</span>
         </div>
 
         <div className="flex items-center  text-descriptionColor text-sm mt-4 mb-5">
-          <div className="flex items-center gap-1 pr-3 border-r border-[#D2D2D5]">
-            {tv && (
+         {amenities?.TV && <div className="flex items-center gap-1 pr-3 border-r border-[#D2D2D5]">
+             
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -89,13 +61,16 @@ export default function AccommodationCard({
                   fill="#D6AE29"
                 />
               </svg>
-            )}{" "}
             TV
           </div>
-          <div className="flex items-center gap-1 px-3 border-r border-[#D2D2D5]">
+}
+        {
+         bedrooms &&
+           <div className="flex items-center gap-1 px-3 border-r border-[#D2D2D5]">
             <IoBedOutline className=" text-secondaryColor" size={18} />
-            {bed} Bed
+            {bedrooms} Bed
           </div>
+        } 
           <div className="flex items-center gap-1 px-3 border-r border-[#D2D2D5]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -128,9 +103,9 @@ export default function AccommodationCard({
                 </clipPath>
               </defs>
             </svg>
-            {bath} Bath
+            {bathrooms} Bath
           </div>
-          {wifi && (
+          { amenities?.wifi && (
             <div className="flex items-center gap-1 px-3 ">
               <FaWifi size={16} className=" text-secondaryColor" />
               Free WiFi
@@ -145,10 +120,10 @@ export default function AccommodationCard({
               ${price}/night
             </p>
           </div>
-          <button className="text-sm flex items-center gap-1 lg:gap-3 font-medium border border-secondaryColor text-secondaryColor px-2 lg:px-4 py-1 lg:py-2 rounded-full hover:bg-secondaryColor cursor-pointer hover:text-blackColor transition">
+          <Link href={`${type === "apartment" ? "/apartment" : "/hotel"}/${id}`} className="text-sm flex items-center gap-1 lg:gap-3 font-medium border border-secondaryColor text-secondaryColor px-2 lg:px-4 py-1 lg:py-2 rounded-full hover:bg-secondaryColor cursor-pointer hover:text-blackColor transition">
             Check Availability <FaArrowRight />
 
-          </button>
+          </Link>
         </div>
       </div>
     </div>
