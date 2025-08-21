@@ -1,6 +1,5 @@
 "use client";
 
-import useFetchData from "@/hooks/useFetchData";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
 import gsap from "gsap";
@@ -16,9 +15,39 @@ const ReviewSection = ({ singleApartment }) => {
   const progressRefs = useRef<HTMLDivElement[]>([]);
   const ratingRef = useRef<HTMLDivElement>(null);
   const [currentPage, setCurrentPage] = useState(1)
+  const [reviewData, setReviewData] = useState(null);
+  const [reviewList, setReviewList] = useState([]);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState(null);
+
   const circlePathRef = useRef<SVGCircleElement>(null); // Updated to circle
   const endpoint = `/admin/vendor-package/${singleApartment?.id}/reviews?page=${currentPage}&limit=${10}`
-  const { data, loading, error } = useFetchData(endpoint)
+  useEffect(() => {
+    const fetchReviewData = async () => {
+      if (!singleApartment?.id) {
+        setReviewData(null);
+        return;
+      }
+
+      setReviewLoading(true);
+      setReviewError(null);
+
+      try {
+        const endpoint = `/admin/vendor-package/${singleApartment.id}/reviews?page=${currentPage}&limit=${10}`;
+        const response = await UserService.getData(endpoint, token)
+        const data = response?.data?.data
+        setReviewData(data);
+        setReviewList(data?.reviews)
+      } catch (error) {
+        console.error('Error fetching review data:', error);
+        setReviewError(error.message);
+      } finally {
+        setReviewLoading(false);
+      }
+    };
+
+    fetchReviewData();
+  }, [singleApartment?.id, currentPage]);
   const [comment, setComment] = useState("");
   const [reviewStats, setReviewStats] = useState([
     { rating: 5, count: 160 },
@@ -27,11 +56,12 @@ const ReviewSection = ({ singleApartment }) => {
     { rating: 2, count: 0 },
     { rating: 1, count: 0 },
   ]);
-  const [review, setReview] = useState([])
+
+
 
   const [starValue, setStarValue] = useState(0);
   const totalReviews = reviewStats.reduce((acc, item) => acc + item.count, 0);
-  const reviewData = data && data?.data
+
 
   const ratingNu = reviewData?.summary?.averageRating ? reviewData?.summary?.averageRating : 0
   const averageRating =
@@ -110,7 +140,6 @@ const ReviewSection = ({ singleApartment }) => {
         <h2 className="text-2xl lg:text-[32px] font-semibold mb-4">
           Add a review
         </h2>
-
         {/* Input Box */}
         <div className="flex items-center gap-4">
           <div className="mb-2">
@@ -241,7 +270,7 @@ const ReviewSection = ({ singleApartment }) => {
           </div>
         </div>
       </div>
-      <ReviewList reviewData={reviewData} />
+      <ReviewList reviewData={reviewList} currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={reviewData?.pagination?.totalPages}/>
     </div>
   );
 };

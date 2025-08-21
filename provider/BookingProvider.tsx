@@ -47,62 +47,55 @@ const setToStorage = (key, value) => {
 export const BookingProvider = ({ children }) => {
   // Initialize state from localStorage
   const [singleApartment, setSingleApartment] = useState(null);
-  
-  const [selectedServices, setSelectedServices] = useState(() => 
+
+  const [selectedServices, setSelectedServices] = useState(() =>
     getFromStorage(STORAGE_KEYS.SELECTED_SERVICES, DEFAULT_SERVICES)
   );
-  
+
   const [startDate, setStartDate] = useState(() => {
     const stored = getFromStorage(STORAGE_KEYS.START_DATE, null);
     return stored ? new Date(stored) : null;
   });
-  
+
   const [endDate, setEndDate] = useState(() => {
     const stored = getFromStorage(STORAGE_KEYS.END_DATE, null);
     return stored ? new Date(stored) : null;
   });
-  
-  const [carRent, setCarRent] = useState(() => 
+
+  const [carRent, setCarRent] = useState(() =>
     getFromStorage(STORAGE_KEYS.CAR_RENT, 150)
   );
-  
-  const [dinnerPrice, setDinnerPrice] = useState(() => 
+
+  const [dinnerPrice, setDinnerPrice] = useState(() =>
     getFromStorage(STORAGE_KEYS.DINNER_PRICE, 150)
   );
-  
+
   const [bookingData, setBookingData] = useState(null);
 
-  // ✅ Optimized day calculation with useMemo
+  // ✅ Day calculation - only useMemo for complex calculation
   const totalDay = useMemo(() => {
     if (!startDate || !endDate) return 1;
-    
+
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
-    // ✅ Simple approach: endDate - startDate
+
     const daysDiff = end.getDate() - start.getDate();
-    
-    // ✅ Fix: Return clean integer, no floating point
     return Math.max(1, Math.abs(daysDiff));
   }, [startDate, endDate]);
 
-  // ✅ Optimized service prices with useMemo
-  const servicePrices = useMemo(() => ({
+  // ✅ Service prices - static object, no need for useMemo
+  const servicePrices = {
     breakfast: 50,
     groceryDelivery: 30,
     dailyHousekeeping: 40,
     chauffeur: 100,
     fullCleaning: 60,
-  }), []);
+  };
 
-  // ✅ Optimized price calculation - ensure integer
-  const price = useMemo(() => {
-    const apartmentPrice = singleApartment ? Number(singleApartment.price) : 0;
-    // ✅ Fix: Return clean integer, no floating point
-    return Math.floor(apartmentPrice);
-  }, [singleApartment]);
+  // ✅ Price calculation - simple, no need for useMemo
+  const price = singleApartment ? Number(singleApartment.price) : 0;
 
-  // ✅ Optimized total calculation with useMemo
+  // ✅ Total calculation - complex, keep useMemo
   const totalPrice = useMemo(() => {
     const daysStayed = totalDay;
     const serviceCost = Object.entries(selectedServices)
@@ -110,61 +103,53 @@ export const BookingProvider = ({ children }) => {
       .reduce((total, [service]) => total + servicePrices[service], 0);
 
     const calculatedTotal = price * daysStayed + serviceCost + carRent + dinnerPrice;
-    // ✅ Fix: Return clean integer, no floating point
     return Math.floor(calculatedTotal);
-  }, [price, totalDay, selectedServices, servicePrices, carRent, dinnerPrice]);
+  }, [price, totalDay, selectedServices, carRent, dinnerPrice]);
 
-  // ✅ Optimized discount calculation
-  const discount = useMemo(() => {
-    const discountNumber = 10;
-    const percentage = discountNumber / 100;
-    const calculatedDiscount = totalPrice * percentage;
-    // ✅ Fix: Return clean integer, no floating point
-    return Math.floor(calculatedDiscount);
-  }, [totalPrice]);
+  // ✅ Discount calculation - simple, no need for useMemo
+  const discount = Number((totalPrice * 0.1).toFixed(2));
 
-  // ✅ Optimized service change handler with useCallback
+  // ✅ Service change handler - keep useCallback for performance
   const handleServiceChange = useCallback((service) => {
     setSelectedServices((prevState) => {
       const newState = {
         ...prevState,
         [service]: !prevState[service],
       };
-      // Save to localStorage
       setToStorage(STORAGE_KEYS.SELECTED_SERVICES, newState);
       return newState;
     });
   }, []);
 
-  // ✅ Optimized date setters with localStorage
-  const handleStartDateChange = useCallback((date) => {
+  // ✅ Date setters - simple functions, no need for useCallback
+  const handleStartDateChange = (date) => {
     setStartDate(date);
     if (date) {
       setToStorage(STORAGE_KEYS.START_DATE, date.toISOString());
     }
-  }, []);
+  };
 
-  const handleEndDateChange = useCallback((date) => {
+  const handleEndDateChange = (date) => {
     setEndDate(date);
     if (date) {
       setToStorage(STORAGE_KEYS.END_DATE, date.toISOString());
     }
-  }, []);
+  };
 
-  // ✅ Optimized car rent setter
-  const handleCarRentChange = useCallback((value) => {
+  // ✅ Car rent setter - simple function
+  const handleCarRentChange = (value) => {
     setCarRent(value);
     setToStorage(STORAGE_KEYS.CAR_RENT, value);
-  }, []);
+  };
 
-  // ✅ Optimized dinner price setter
-  const handleDinnerPriceChange = useCallback((value) => {
+  // ✅ Dinner price setter - simple function
+  const handleDinnerPriceChange = (value) => {
     setDinnerPrice(value);
     setToStorage(STORAGE_KEYS.DINNER_PRICE, value);
-  }, []);
+  };
 
-  // ✅ Optimized book now handler
-  const handleBookNow = useCallback(() => {
+  // ✅ Book now handler - simple function
+  const handleBookNow = () => {
     const bookingDetails = {
       apartment: singleApartment,
       startDate,
@@ -177,10 +162,10 @@ export const BookingProvider = ({ children }) => {
     };
     setBookingData(bookingDetails);
     console.log("Booking confirmed:", bookingDetails);
-  }, [singleApartment, startDate, endDate, selectedServices, carRent, dinnerPrice, totalPrice, discount]);
+  };
 
-  // ✅ Clear all stored data
-  const clearStoredData = useCallback(() => {
+  // ✅ Clear stored data - simple function
+  const clearStoredData = () => {
     Object.values(STORAGE_KEYS).forEach(key => {
       localStorage.removeItem(key);
     });
@@ -189,9 +174,9 @@ export const BookingProvider = ({ children }) => {
     setEndDate(null);
     setCarRent(150);
     setDinnerPrice(150);
-  }, []);
+  };
 
-  // ✅ Context value with useMemo
+  // ✅ Context value - keep useMemo for performance
   const contextValue = useMemo(() => ({
     singleApartment,
     setSingleApartment,
@@ -220,18 +205,12 @@ export const BookingProvider = ({ children }) => {
     handleServiceChange,
     startDate,
     endDate,
-    servicePrices,
     carRent,
     dinnerPrice,
     totalDay,
     totalPrice,
-    handleBookNow,
     bookingData,
     discount,
-    handleStartDateChange,
-    handleEndDateChange,
-    handleCarRentChange,
-    handleDinnerPriceChange,
     clearStoredData
   ]);
 
