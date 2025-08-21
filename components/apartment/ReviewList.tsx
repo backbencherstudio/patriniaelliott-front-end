@@ -52,7 +52,7 @@ const reviewsData = [
 ];
 
 
-const ReviewList = () => {
+const ReviewList = ({ reviewData }) => {
   const [tab, setTab] = useState("all"); // Track current tab: "all" or "recent"
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 2;

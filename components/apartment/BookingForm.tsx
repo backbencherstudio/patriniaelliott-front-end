@@ -2,6 +2,7 @@
 import { useBookingContext } from "@/provider/BookingProvider";
 import { LucideCalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdDone } from "react-icons/md";
@@ -23,7 +24,11 @@ const BookingForm = ({ singleApartments,type }: any) => {
     handleBookNow
     
   } = useBookingContext();
-  setSingleApartment(singleApartments);
+
+  // ✅ Fix: useEffect এ state update করা
+  useEffect(() => {
+    setSingleApartment(singleApartments);
+  }, [singleApartments]);
 
 const router = useRouter()
    const { name, reviews, price,cancellation_policy, rating, address } =singleApartments;
