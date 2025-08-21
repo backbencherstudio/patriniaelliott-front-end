@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 import { toast } from "react-toastify";
+import Loader from "../reusable/Loader";
 import ReviewList from "./ReviewList";
 
 const ReviewSection = ({ singleApartment }) => {
@@ -19,16 +20,16 @@ const ReviewSection = ({ singleApartment }) => {
   const [reviewList, setReviewList] = useState([]);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState(null);
-
+  const [loading, setLoading] = useState(false)
+  const [dloading, setDLoading] = useState(false)
   const circlePathRef = useRef<SVGCircleElement>(null); // Updated to circle
-  const endpoint = `/admin/vendor-package/${singleApartment?.id}/reviews?page=${currentPage}&limit=${10}`
+
   useEffect(() => {
     const fetchReviewData = async () => {
       if (!singleApartment?.id) {
         setReviewData(null);
         return;
       }
-
       setReviewLoading(true);
       setReviewError(null);
 
@@ -45,7 +46,6 @@ const ReviewSection = ({ singleApartment }) => {
         setReviewLoading(false);
       }
     };
-
     fetchReviewData();
   }, [singleApartment?.id, currentPage]);
   const [comment, setComment] = useState("");
@@ -56,8 +56,6 @@ const ReviewSection = ({ singleApartment }) => {
     { rating: 2, count: 0 },
     { rating: 1, count: 0 },
   ]);
-
-
 
   const [starValue, setStarValue] = useState(0);
   const totalReviews = reviewStats.reduce((acc, item) => acc + item.count, 0);
@@ -70,6 +68,7 @@ const ReviewSection = ({ singleApartment }) => {
       : "0.0";
 
   const handleReviewComment = async () => {
+    setLoading(true)
     const data = {
       rating_value: starValue,
       comment: comment,
@@ -82,12 +81,35 @@ const ReviewSection = ({ singleApartment }) => {
         toast.success(res?.data?.message)
         setComment("")
         setStarValue(0)
+        setLoading(false)
+        setReviewList((prev) => [...prev, res?.data?.data])
       } else {
         toast.warning(res?.data?.message)
       }
       console.log("create response", res);
     } catch (error) {
       console.log(error.message);
+      setLoading(false)
+    }
+  }
+  const handleDeleteComment = async (id) => {
+    setDLoading(true)
+    const endpoint = `/admin/vendor-package/${singleApartment?.id}/reviews/${id}`
+    try {
+      const res = await UserService?.deleteData(endpoint, token)
+      if (res?.data?.success) {
+        toast.success(res?.data?.message)
+        setComment("")
+        setStarValue(0)
+        setDLoading(false)
+        setReviewList((prev) => prev.filter((item) => item.id !== id))
+      } else {
+        toast.warning(res?.data?.message)
+      }
+      console.log("delete response", res);
+    } catch (error) {
+      console.log(error.message);
+      setDLoading(false)
     }
   }
 
@@ -134,6 +156,9 @@ const ReviewSection = ({ singleApartment }) => {
     }
   }, [reviewStats, totalReviews, averageRating]);
 
+  console.log("test============", reviewList);
+
+  if (reviewLoading) return <Loader />
   return (
     <div>
       <div className=" my-8">
@@ -168,9 +193,10 @@ const ReviewSection = ({ singleApartment }) => {
               type="text"
               placeholder="Share your overall thoughts"
               className="flex-1 border-none outline-none text-sm"
+              value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
-            <button onClick={handleReviewComment} className="bg-secondaryColor hover:bg-secondaryColor text-headerColor text-sm font-medium px-4 py-2 rounded-[4px] cursor-pointer">
+            <button onClick={handleReviewComment} disabled={loading} className="bg-secondaryColor disabled:bg-grayColor1 disabled:cursor-not-allowed cursor-pointer hover:bg-secondaryColor text-headerColor text-sm font-medium px-4 py-2 rounded-[4px] ">
               Submit
             </button>
           </div>
@@ -270,7 +296,7 @@ const ReviewSection = ({ singleApartment }) => {
           </div>
         </div>
       </div>
-      <ReviewList reviewData={reviewList} currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={reviewData?.pagination?.totalPages}/>
+      <ReviewList reviewData={reviewList} currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={reviewData?.pagination?.totalPages} onDelete={handleDeleteComment} />
     </div>
   );
 };

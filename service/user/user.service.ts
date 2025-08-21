@@ -111,6 +111,17 @@ newPassword: async (data) => {
 
     return await Fetch.post(`${endpoint}`, data, _config);
   },
+  deleteData: async (endpoint,token) => {    
+   
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    };
+
+    return await Fetch.delete(`${endpoint}`, _config);
+  },
 
   // confirm data
   confirm: async (

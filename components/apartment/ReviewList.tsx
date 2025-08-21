@@ -1,21 +1,15 @@
 "use client";
-import p1 from "@/public/icon/r1.png";
-import p2 from "@/public/icon/r2.png";
 import proImg from "@/public/profile.png";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { useState } from "react";
-import { AiFillDislike, AiOutlineDislike } from "react-icons/ai";
+import React, { useState } from "react";
 import { BiLike, BiSolidLike } from "react-icons/bi";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import PaginationPage from "../reusable/PaginationPage";
 import Rating from "../reusable/Rating";
 
-
-const ReviewList = ({ reviewData , currentPage,setCurrentPage, totalPages }) => {
-  const [tab, setTab] = useState("all"); 
-
-
-
+function ReviewList({ reviewData, currentPage, setCurrentPage, totalPages, onDelete }: any) {
+  const [tab, setTab] = useState("all");
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -51,31 +45,27 @@ const ReviewList = ({ reviewData , currentPage,setCurrentPage, totalPages }) => 
           <p className="text-grayColor1/80 text-base">{dayjs(review.created_at).format("MMMM D, YYYY hh:mm A")}</p>
           <div className="flex justify-between items-end text-sm text-gray-500">
             <div>
-
               <div className="flex items-center gap-3 mt-5">
                 <Image src={review.user?.avatar ? review?.user?.avatar : proImg} alt="rating" width={36} height={36} className=" rounded-full overflow-hidden" />
                 <h4 className="text-base lg:text-xl font-medium text-headerColor">{review?.user?.first_name}</h4>
               </div>
             </div>
-
-
             <div className="flex items-center space-x-2">
-
               <button
                 className={`
                  border text-base border-grayColor1/20 text-[#8F6F65] px-3 py-1 rounded-sm flex items-center space-x-1`}
-                
               >
                 <span>{review.likes % 2 === 0 ? <BiSolidLike /> : <BiLike />}</span>
                 <span className="text-descriptionColor">{review.likes}</span>
               </button>
               <button
+                onClick={() => onDelete(review.id)}
                 className={`
-                 border text-base border-grayColor1/20 text-[#8F6F65] px-3 py-1 rounded-sm flex items-center space-x-1`}
-                
+                 border text-base cursor-pointer border-redColor/20 text-redColor px-3 py-1 rounded-sm flex items-center space-x-1`}
+
               >
-                <span>{review.dislikes % 2 === 0 ? <AiFillDislike /> : <AiOutlineDislike />}</span>
-                <span className="text-descriptionColor">{review.dislikes}</span>
+                <span><RiDeleteBin6Line /></span>
+
               </button>
 
             </div>
@@ -93,4 +83,4 @@ const ReviewList = ({ reviewData , currentPage,setCurrentPage, totalPages }) => 
   );
 };
 
-export default ReviewList;
+export default React.memo(ReviewList);
