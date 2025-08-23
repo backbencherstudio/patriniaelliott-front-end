@@ -1,4 +1,5 @@
 "use client";
+import { useToken } from "@/hooks/useToken";
 import { useToureBookingContext } from "@/provider/TourBookingProvider";
 import { LucideCalendarDays, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -46,13 +47,21 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
   setSingleToure(singlToureDetails);
 
 const router = useRouter()
+const {token} = useToken()
   const { title, cancellation, duration, reviews, price, rating, image, location } =
     singlToureDetails;
   setTravelPrice(price* travelCount) 
     const handleBook = () => {
 
-     handleBookNow()
-     router.push("/toure/booking")
+      if (token) {
+        // If token exists, proceed to the booking page
+        handleBookNow();
+        router.push("/toure/booking");
+      } else {
+        // If token doesn't exist, redirect to login page with current page as a redirect
+        const currentUrl = window.location.pathname + window.location.search;
+        router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+      }
    
   };
   return (

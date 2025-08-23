@@ -9,7 +9,7 @@ import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 
 
 export default function AccommodationCard({tour}: {tour: Package}) {
-  const {id, name, type, reviews, amenities,bedrooms,bathrooms,cancellation_policy, breakfast_available, price,address} = tour
+  const {id, name, type, reviews, amenities,bedrooms,bathrooms,cancellation_policy, breakfast_available, price,address,rating_summary} = tour
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full">
       <div className="relative">
@@ -22,9 +22,9 @@ export default function AccommodationCard({tour}: {tour: Package}) {
             className="w-full  object-cover"
           />
         </div>
-        <span className="absolute top-6 left-6 bg-redColor text-white text-xs px-3 py-1 rounded-full font-semibold z-10">
-          {breakfast_available && "Breakfast Included"}
-        </span>
+      {breakfast_available &&  <span className="absolute top-6 left-6 bg-redColor text-white text-xs px-3 py-1 rounded-full font-semibold z-10">
+           Breakfast Included
+        </span>}
       </div>
       <div className="p-4 space-y-1">
         <div className="flex items-center gap-2 text-sm text-grayColor1">
@@ -34,9 +34,9 @@ export default function AccommodationCard({tour}: {tour: Package}) {
         <Link href={`${type === "apartment" ? "/apartment" : "/hotel"}/${id}`} className="font-medium text-[22px] text-blackColor">{name}</Link>
 
         <div className="flex items-center gap-2 text-sm text-seborder-secondaryColor">
-          <span className="text-gray-800">{5}</span>
+          <span className="text-gray-800">{Number(rating_summary?.averageRating ?? 0).toFixed(1)}</span>
           {Array.from({ length: 5 }, (_, i) => (
-             <FaStar key={i} className={i < 5 ? 'text-yellow-400' : 'text-[#A7B6CC]'}/>
+             <FaStar key={i} className={i < Math.round(rating_summary?.averageRating) ? 'text-yellow-400' : 'text-[#A7B6CC]'}/>
           ))}
           
         </div>

@@ -12,7 +12,7 @@ const useFetchData = (url) => {
   const {token} = useToken()
   
   useEffect(() => {
-    if (!url || !token) return; // Skip if URL or token is missing
+    if (!url ) return; // Skip if URL or token is missing
 
     const fetchData = async () => {
       try {

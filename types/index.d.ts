@@ -74,4 +74,8 @@ export type Package = {
   cancellation_policy: any | null;
   package_languages: any[];
   reviews: any[];
+  rating_summary: {
+    averageRating: number;
+    totalReviews: number;
+  };
 };

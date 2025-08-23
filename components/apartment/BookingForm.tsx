@@ -1,4 +1,5 @@
 "use client";
+import { useToken } from "@/hooks/useToken";
 import { useBookingContext } from "@/provider/BookingProvider";
 import { LucideCalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -31,12 +32,20 @@ const BookingForm = ({ singleApartments,type }: any) => {
   }, [singleApartments]);
 
 const router = useRouter()
+const {token}=useToken()
    const { name, reviews, price,cancellation_policy, rating, address } =singleApartments;
 
     const handleBook = () => {
 
-     handleBookNow()
-     router.push(type === "apartment" ? "/apartment/booking" : "/hotel/booking")
+      if (token) {
+        // If token exists, proceed to the booking page
+        handleBookNow();
+        router.push(type === "apartment" ? "/apartment/booking" : "/hotel/booking");
+      } else {
+        // If token doesn't exist, redirect to login page with current page as a redirect
+        const currentUrl = window.location.pathname + window.location.search;
+        router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+      }
    
   };
   return (
