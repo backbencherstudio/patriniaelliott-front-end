@@ -11,24 +11,24 @@ import Rating from "../reusable/Rating";
 
 const ToureBookingForm = ({ singlToureDetails }: any) => {
   const {
-   
-        setSingleToure,
-        startDate,
-        setStartDate,
-        endDate,
-        setEndDate,
-        servicefee,
-        totalDay,
-        totalPrice,
-        calculateTotal,
-        handleBookNow,
-        bookingData,
-        discountNumber,
-        travelprice,
-        setTravelPrice,
-        discount ,
-        travelCount, setTravelCount
-    
+
+    setSingleToure,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    servicefee,
+    totalDay,
+    totalPrice,
+    calculateTotal,
+    handleBookNow,
+    bookingData,
+    discountNumber,
+    travelprice,
+    setTravelPrice,
+    discount,
+    travelCount, setTravelCount
+
   } = useToureBookingContext();
 
 
@@ -36,33 +36,33 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
   useEffect(() => {
     const today = new Date();
     setStartDate(today);
-    
+
     // Calculate end date based on duration
     const durationDays = parseInt(duration) || 4; // Default to 4 if duration is not provided
     const endDate = new Date(today);
     endDate.setDate(today.getDate() + durationDays);
     setEndDate(endDate);
-  }, [ setStartDate, setEndDate]);
+  }, [setStartDate, setEndDate]);
 
   setSingleToure(singlToureDetails);
 
-const router = useRouter()
-const {token} = useToken()
+  const router = useRouter()
+  const { token } = useToken()
   const { title, cancellation, duration, reviews, price, rating, image, location } =
     singlToureDetails;
-  setTravelPrice(price* travelCount) 
-    const handleBook = () => {
+  setTravelPrice(price * travelCount)
+  const handleBook = () => {
 
-      if (token) {
-        // If token exists, proceed to the booking page
-        handleBookNow();
-        router.push("/toure/booking");
-      } else {
-        // If token doesn't exist, redirect to login page with current page as a redirect
-        const currentUrl = window.location.pathname + window.location.search;
-        router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
-      }
-   
+    if (token) {
+      // If token exists, proceed to the booking page
+      handleBookNow();
+      router.push("/toure/booking");
+    } else {
+      // If token doesn't exist, redirect to login page with current page as a redirect
+      const currentUrl = window.location.pathname + window.location.search;
+      router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+    }
+
   };
   return (
     <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
@@ -92,16 +92,16 @@ const {token} = useToken()
             <Rating rating={rating} />
           </div>
         </div>
-        
+
       </div>
-        <div>
-          <p className="text-grayColor1 text-base"><span className="text-headerColor font-medium">{totalDay} Nights</span> in {location} Tour Package</p>
-            <div className="flex mt-1 items-center gap-2 text-base text-[#0068EF] ">
+      <div>
+        <p className="text-grayColor1 text-base"><span className="text-headerColor font-medium">{totalDay} Nights</span> in {location} Tour Package</p>
+        <div className="flex mt-1 items-center gap-2 text-base text-[#0068EF] ">
           Cancellation Policy{" "}
           <span className="text-sm text-gray-400">({cancellation})</span>
         </div>
-        </div>
-        
+      </div>
+
       {/* Start Date */}
       <div
         className="flex cursor-pointer items-center justify-between border border-secondaryColor rounded-md p-2"
@@ -153,17 +153,17 @@ const {token} = useToken()
       </div>
 
       <div className=" flex justify-between text-sm py-2 px-4 rounded-md border border-secondaryColor">
-            <span className=" text-grayColor1">Add your traveler</span>
-            <div className=" flex items-center  gap-3">
-            <button onClick={()=>setTravelCount((prev)=>prev ==0 ? 0 :prev - 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiMinus /></button> 
-            <p>{travelCount}</p>
-<button onClick={()=>setTravelCount((prev)=>prev + 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiPlus /></button> 
-            </div>
-            
-      </div>
-      
+        <span className=" text-grayColor1">Add your traveler</span>
+        <div className=" flex items-center  gap-3">
+          <button onClick={() => setTravelCount((prev) => prev == 0 ? 0 : prev - 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiMinus /></button>
+          <p>{travelCount}</p>
+          <button onClick={() => setTravelCount((prev) => prev + 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiPlus /></button>
+        </div>
 
-    
+      </div>
+
+
+
 
       {/* Pricing Summary */}
       <div className="mt-6 bg-secondaryColor/10 rounded-lg p-4">
@@ -173,7 +173,7 @@ const {token} = useToken()
         <div className="mt-5 text-base space-y-2">
           <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
             <span className=" items-center gap-1 flex">
-              Package 1 <X size={16}/> {travelCount}
+              Package 1 <X size={16} /> {travelCount}
             </span>
             <span>
               ${travelprice}
@@ -183,16 +183,16 @@ const {token} = useToken()
             <span className=" text-descriptionColor">{discountNumber}% campaign discount</span>
             <span>- ${discount}</span>
           </div>
-          
+
           <div className="flex text-descriptionColor justify-between text-base border-b border-grayColor1/20 py-2">
             <span className=" ">Service fee</span>
             <span> ${servicefee}</span>
           </div>
-          
+
         </div>
         <div className="flex justify-between mt-4 font-medium text-base">
           <span>Total</span>
-          <span>${calculateTotal() -discount}</span>
+          <span>${calculateTotal() - discount}</span>
         </div>
       </div>
 
