@@ -44,26 +44,32 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
     setEndDate(endDate);
   }, [setStartDate, setEndDate]);
 
-  setSingleToure(singlToureDetails);
+  // ✅ Fix: useEffect এ state update করা
+  useEffect(() => {
+    setSingleToure(singlToureDetails);
+  }, [singlToureDetails, setSingleToure]);
 
   const router = useRouter()
   const { token } = useToken()
   const { title, cancellation, duration, reviews, price, rating, image, location } =
     singlToureDetails;
   setTravelPrice(price * travelCount)
-  const handleBook = () => {
+     const handleBook = () => {
 
-    if (token) {
-      // If token exists, proceed to the booking page
-      handleBookNow();
-      router.push("/toure/booking");
-    } else {
-      // If token doesn't exist, redirect to login page with current page as a redirect
-      const currentUrl = window.location.pathname + window.location.search;
-      router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
-    }
+     if (token) {
+       // ✅ Ensure tour data is saved to localStorage before proceeding
+       setSingleToure(singlToureDetails);
+       
+       // If token exists, proceed to the booking page
+       handleBookNow();
+       router.push("/toure/booking");
+     } else {
+       // If token doesn't exist, redirect to login page with current page as a redirect
+       const currentUrl = window.location.pathname + window.location.search;
+       router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+     }
 
-  };
+   };
   return (
     <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
       <div className="text-center border-b border-grayColor1/20 pb-3">
