@@ -16,7 +16,7 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
 
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl group overflow-hidden w-full">
+    <div className="bg-white hover:shadow-2xl rounded-2xl shadow-xl group overflow-hidden w-full">
       <div className="relative ">
         <div className=" p-3 ">
           {
@@ -29,7 +29,7 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
                   delay: 5000,
                   disableOnInteraction: false,
                 }}
-               
+
                 modules={[Autoplay, Navigation, Pagination]}
                 pagination={{
                   clickable: true,
@@ -37,7 +37,7 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
                   bulletActiveClass: 'hero-bullet-active',
                 }}>
                 {
-                  roomFiles?.slice(0,4).map((file: any, index: number) => (
+                  roomFiles?.slice(0, 4).map((file: any, index: number) => (
                     <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
                       <Image
                         src={file}

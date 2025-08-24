@@ -1,12 +1,10 @@
 'use client';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-
 export default function RefundDetailsModal({ open, onClose, transaction }) {
   if (!transaction) return null;
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="md:max-w-[400px] max-w-[90%] w-full p-0 pb-6 bg-white rounded-2xl shadow-lg border border-[#e5e7eb]">
+      <DialogContent className="md:max-w-[400px] max-w-[90%] w-full !p-0 !pb-6 bg-white rounded-2xl shadow-lg border border-[#e5e7eb]">
         <div className="p-6">
           <div className="text-2xl font-semibold text-[#22262e] mb-1">Refund Details</div>
           <div className="text-sm text-[#777980] mb-4">Transaction ID: {transaction.transactionId}</div>

@@ -286,6 +286,8 @@ export default function TransectionHistory() {
 
         <div className="overflow-x-auto">
           <DynamicTableWithPagination
+            loading={false}
+            totalPages={1}
             columns={columns}
             data={filteredTransactions}
             currentPage={currentPage}
