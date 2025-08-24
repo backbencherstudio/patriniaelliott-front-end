@@ -16,8 +16,8 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
 
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full">
-      <div className="relative">
+    <div className="bg-white rounded-2xl shadow-xl group overflow-hidden w-full">
+      <div className="relative ">
         <div className=" p-3 ">
           {
             roomFiles?.length >= 2 ?
@@ -37,27 +37,27 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
                   bulletActiveClass: 'hero-bullet-active',
                 }}>
                 {
-                  roomFiles.map((file: any, index: number) => (
-                    <SwiperSlide key={index} className="w-full lg:!h-[240px] !h-[200px] ">
+                  roomFiles?.slice(0,4).map((file: any, index: number) => (
+                    <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
                       <Image
                         src={file}
                         alt={name}
                         width={400}
                         height={200}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
                       />
                     </SwiperSlide>
                   ))
                 }
               </Swiper>
               :
-              <div className="lg:h-[240px] h-[200px] w-full">
+              <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
                 <Image
                   src={"/Accommodation/a1.png"}
                   alt={name}
                   width={400}
                   height={200}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
                 />
               </div>
           }
@@ -167,16 +167,7 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
         </div>
       </div>
       <style jsx global>{` 
-        .hero-bullet {
-          width: 20px !important;
-          height: 8px !important;
-          transition: all 0.3s ease;
-          margin: 0px 5px;
-          display: inline-block;
-          cursor: pointer;
         
-          // padding:10px;
-        }
 
         .hero-bullet-active {
           position: relative;
