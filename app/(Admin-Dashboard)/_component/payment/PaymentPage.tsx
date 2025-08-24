@@ -255,6 +255,8 @@ export default function PaymentPage() {
           {selectedRole === "All" && (
             <DynamicTableWithPagination
               columns={columns}
+              loading={false}
+              totalPages={1}
               data={filteredUsers}
               currentPage={currentPage}
               itemsPerPage={8}
@@ -264,6 +266,8 @@ export default function PaymentPage() {
           {selectedRole === "Booking" && (
             <DynamicTableWithPagination
               columns={Bookcolumns}
+              loading={false}
+              totalPages={1}
               data={filteredUsers}
               currentPage={currentPage}
               itemsPerPage={8}
@@ -273,6 +277,8 @@ export default function PaymentPage() {
           {selectedRole === "Refunds" && (
             <DynamicTableWithPagination
               columns={Refundcolumns}
+              loading={false}
+              totalPages={1}
               data={filteredUsers}
               currentPage={currentPage}
               itemsPerPage={8}

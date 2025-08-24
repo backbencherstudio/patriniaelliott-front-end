@@ -155,6 +155,8 @@ export default function ListingPage() {
         <div>
           <DynamicTableWithPagination
             columns={columns}
+            loading={false}
+            totalPages={1}
             data={filteredUsers}
             currentPage={currentPage}
             itemsPerPage={10}
