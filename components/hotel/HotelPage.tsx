@@ -5,7 +5,7 @@ import FilterHeader from "@/components/filter/FilterHeader";
 import PaginationPage from "@/components/reusable/PaginationPage";
 import useFetchData from "@/hooks/useFetchData";
 import { useState } from 'react';
-import Loader from "../reusable/Loader";
+import BigCardSkleton from "../apartment/BigCardSkleton";
 
 
 
@@ -24,7 +24,11 @@ function HotelPage() {
             <FilterHeader title="Hotel" data={packageData} />
 
             <div className="">
-                {loading ? <Loader /> : packageData.length < 0 ? <div>Not found data !</div> : packageData.map((tour: any, index) => (
+                {loading ? <div className="grid grid-cols-1 gap-5 pb-10">
+                    {Array.from({ length: 5 }, (_, i) => (
+                        <BigCardSkleton key={i} />
+                    ))}
+                </div> : packageData.length < 0 ? <div>Not found data !</div> : packageData.map((tour: any, index) => (
                     <div key={index} className=" py-4">
                         <HotelCard hotel={tour} />
                     </div>

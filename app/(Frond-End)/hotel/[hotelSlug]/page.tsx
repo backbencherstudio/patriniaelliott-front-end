@@ -61,7 +61,6 @@ async function HotelDetailsPage(props: {
   const { hotelSlug } = params;
   const tokenStore = await cookies();
   const token = tokenStore.get("tourAccessToken")?.value;
-
   // Fetch server-side without causing side effects during render
   let vendorPackage: any = null;
   try {

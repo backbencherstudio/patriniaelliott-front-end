@@ -8,14 +8,14 @@ import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 
 
 const ApartmentCard = ({ hotel }: any) => {
-  const { id, name, type, reviews, amenities, rating_summary, bedrooms, bathrooms, cancellation_policy, breakfast_available, price, address } = hotel;
+  const { id, name, type, reviews, amenities, package_room_types, rating_summary, bedrooms, bathrooms, cancellation_policy, breakfast_available, price, address } = hotel;
 
   return (
-    <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
+    <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  md:grid md:grid-cols-9 lg:grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
         <Image
-          src={"/hotel/h5.jpg"}
+          src={package_room_types || "/hotel/h5.jpg"}
           alt={name}
           width={400}
           height={250}
@@ -130,7 +130,7 @@ const ApartmentCard = ({ hotel }: any) => {
         </div>
       </div>
       {/* Price and Check Availability */}
-      <div className=" flex flex-col justify-between items-center lg:items-end text-end  px-4 py-7 rounded-[12px] h-full col-span-2 bg-[#D6AE29]/20">
+      <div className=" flex flex-col justify-between items-center lg:items-end text-end  px-4 py-7 rounded-[12px] h-full col-span-3 lg:col-span-2 bg-[#D6AE29]/20">
         <div>
           <p className="text-sm  text-descriptionColor mb-1">Starting from</p>
           <h5 className="text-[32px] font-semibold text-primaryColor">

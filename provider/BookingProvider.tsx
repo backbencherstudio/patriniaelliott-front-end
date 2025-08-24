@@ -10,7 +10,8 @@ const STORAGE_KEYS = {
   CAR_RENT: 'booking_car_rent',
   DINNER_PRICE: 'booking_dinner_price',
   START_DATE: 'booking_start_date',
-  END_DATE: 'booking_end_date'
+  END_DATE: 'booking_end_date',
+  SINGLE_APARTMENT: 'booking_single_apartment'
 };
 
 // Default values
@@ -46,7 +47,9 @@ const setToStorage = (key, value) => {
 // Create a provider component
 export const BookingProvider = ({ children }) => {
   // Initialize state from localStorage
-  const [singleApartment, setSingleApartment] = useState(null);
+  const [singleApartment, setSingleApartment] = useState(() =>
+    getFromStorage(STORAGE_KEYS.SINGLE_APARTMENT, null)
+  );
 
   const [selectedServices, setSelectedServices] = useState(() =>
     getFromStorage(STORAGE_KEYS.SELECTED_SERVICES, DEFAULT_SERVICES)
@@ -148,6 +151,14 @@ export const BookingProvider = ({ children }) => {
     setToStorage(STORAGE_KEYS.DINNER_PRICE, value);
   };
 
+  // ✅ Set apartment with localStorage persistence
+  const handleSetSingleApartment = (apartment) => {
+    console.log("Setting apartment data:", apartment);
+    setSingleApartment(apartment);
+    setToStorage(STORAGE_KEYS.SINGLE_APARTMENT, apartment);
+    console.log("Apartment data saved to localStorage");
+  };
+
   // ✅ Book now handler - simple function
   const handleBookNow = () => {
     const bookingDetails = {
@@ -174,12 +185,13 @@ export const BookingProvider = ({ children }) => {
     setEndDate(null);
     setCarRent(150);
     setDinnerPrice(150);
+    setSingleApartment(null);
   };
 
   // ✅ Context value - keep useMemo for performance
   const contextValue = useMemo(() => ({
     singleApartment,
-    setSingleApartment,
+    setSingleApartment: handleSetSingleApartment,
     selectedServices,
     handleServiceChange,
     startDate,

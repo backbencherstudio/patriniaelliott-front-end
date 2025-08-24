@@ -350,6 +350,8 @@ export default function Dashboard() {
             data={filteredUsers}
             currentPage={currentPage}
             itemsPerPage={8}
+            loading={false}
+            totalPages={1}
             onPageChange={(page) => setCurrentPage(page)}
             onView={(user) => handleViewDetails(user)}
             onDelete={(id) => handleDelete(id)}
