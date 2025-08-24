@@ -68,10 +68,14 @@ export type Package = {
   size_sqm: number | null;
   unit_number: string | null;
   user: User;
-  package_files: PackageFile[];
+  roomFiles: PackageFile[];
   package_room_types: any[];
   package_availabilities: any[];
   cancellation_policy: any | null;
   package_languages: any[];
   reviews: any[];
+  rating_summary: {
+    averageRating: number;
+    totalReviews: number;
+  };
 };

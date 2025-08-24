@@ -1,7 +1,9 @@
 "use client";
+import { useToken } from "@/hooks/useToken";
 import { useBookingContext } from "@/provider/BookingProvider";
 import { LucideCalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdDone } from "react-icons/md";
@@ -23,17 +25,32 @@ const HotelBookingForm = ({ singleApartments }: any) => {
     handleBookNow
     
   } = useBookingContext();
-  setSingleApartment(singleApartments);
+  
+  // ✅ Fix: useEffect এ state update করা
+  useEffect(() => {
+    setSingleApartment(singleApartments);
+  }, [singleApartments, setSingleApartment]);
 
 const router = useRouter()
+const {token} = useToken()
    const { name, reviews, price,cancellation_policy, rating, address } =singleApartments;
 
-    const handleBook = () => {
+         const handleBook = () => {
 
-     handleBookNow()
-     router.push("/hotel/booking")
-   
-  };
+       if (token) {
+         // ✅ Ensure apartment data is saved to localStorage before proceeding
+         setSingleApartment(singleApartments);
+         
+         // If token exists, proceed to the booking page
+         handleBookNow();
+         router.push("/hotel/booking");
+       } else {
+         // If token doesn't exist, redirect to login page with current page as a redirect
+         const currentUrl = window.location.pathname + window.location.search;
+         router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+       }
+    
+   };
   return (
     <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
       <div className="text-center border-b border-grayColor1/20 pb-3">

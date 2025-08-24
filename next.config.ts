@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "plus.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "critics-database-treasurer-developing.trycloudflare.com",
+      },
     ],
   },
 };
