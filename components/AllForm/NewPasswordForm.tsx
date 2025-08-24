@@ -3,7 +3,7 @@
 import { UserService } from "@/service/user/user.service";
 import { Check, Eye, EyeOff, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -24,9 +24,17 @@ export default function NewPasswordForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [Email, setEmail] = useState<string|null>();
+  const [otpCode, setOtpCode] = useState<string|null>();
   const password = watch("password");
-  const otpCode = localStorage.getItem("otp");
-  const Email = localStorage.getItem("verifyemail")
+  
+  
+useEffect(()=>{
+  const Email = localStorage.getItem("verifyemail") as string
+  const otpCode = localStorage.getItem("otp") as string
+  setEmail(Email)
+  setOtpCode(otpCode)
+},[])
   const onSubmit = async (data: FormValues) => {
     const formData = {
       password: data.password,
