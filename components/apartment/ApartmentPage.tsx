@@ -56,9 +56,6 @@ function ApartmentPage() {
     console.log(data?.meta);
     const totalPages = data?.meta?.totalPages
     const packageData = data ? data?.data : []
-    console.log("============apart data ", packageData);
-
-
 
     return (
         <div>

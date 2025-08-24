@@ -16,7 +16,7 @@ function Accommodation() {
   const [currentIndex, setCurrentIndex] = useState(1);
 
   const swiperRef = useRef<any>(null);
-  const [activeTab, setActiveTab] = useState<'apartment' | 'hotel'>('apartment');
+  const [activeTab, setActiveTab] = useState<'apartments' | 'hotels'>('apartments');
   const endpoint = `/admin/vendor-package?type=${activeTab}&limit=${20}&page=${1}`
   const { data, loading, error } = useFetchData(endpoint);
   const packageData = data ? data?.data : []
@@ -31,12 +31,12 @@ function Accommodation() {
             Our Popular Accommodation
           </h2>
           <div className="flex justify-center text-center mx-auto  ">
-            {['apartment', 'hotel'].map(tab => (
+            {['apartments', 'hotels'].map(tab => (
               <button
                 key={tab}
                 className={`text-2xl cursor-pointer font-medium px-4 pb-2 transition border-b-[2px] border-[#A5A5AB] ${activeTab === tab ? ' border-b-2 border-secondaryColor text-secondaryColor ' : 'text-[#A5A5AB]'
                   }`}
-                onClick={() => setActiveTab(tab as 'apartment' | 'hotel')}
+                onClick={() => setActiveTab(tab as 'apartments' | 'hotels')}
               >
                 {tab}
               </button>
@@ -44,27 +44,24 @@ function Accommodation() {
           </div>
           <div className="relative">
             {/* Swiper Navigation Buttons */}
-            {!loading && <button
+            {!error && (!loading && <button
               onClick={goPrev}
               className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 left-0 xl:-left-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
             >
               <FaChevronLeft className="text-black text-sm" />
-            </button>}
-            {!loading && <button
+            </button>)}
+            {!error && (!loading && <button
               onClick={goNext}
               className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 right-0 xl:-right-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
             >
               <FaChevronRight className="text-black text-sm" />
-            </button>}
+            </button>)}
             {/* Swiper Carousel */}
             <Swiper
               slidesPerView={1}
               loop={true}
               speed={1000}
-              autoplay={{
-                delay: 3000,
-                disableOnInteraction: false,
-              }}
+              autoplay={false}
               breakpoints={{
                 640: { slidesPerView: 1 },
                 768: { slidesPerView: 2 },
@@ -79,7 +76,7 @@ function Accommodation() {
               onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex + 1)}
               className="w-full"
             >
-              {loading ? <div className="grid grid-cols-3 gap-6 py-10">
+              {loading ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-10">
                 {Array.from({ length: 3 }, (_, i) => (
                   <CardSkeleton key={i} />
                 ))}
@@ -88,12 +85,13 @@ function Accommodation() {
                   <AccommodationCard tour={tour} />
                 </SwiperSlide>
               ))}
+              {error && <div className="text-center text-2xl font-bold text-redColor py-10">Server is not responding!</div> }
             </Swiper>
           </div>
           <div>
-            {!loading && <Link href="/apartments">
+              {!error && (!loading && <Link href={`/${activeTab}`}>
               <CustomButton>View All Apartments</CustomButton>
-            </Link>}
+            </Link>)}
           </div>
         </div>
       </div>

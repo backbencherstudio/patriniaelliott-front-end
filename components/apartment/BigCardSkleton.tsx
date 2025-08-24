@@ -3,7 +3,7 @@ import { Skeleton } from '../ui/skeleton'
 function BigCardSkleton() {
     return (
         <div>
-            <div className="lg:grid grid-cols-8 gap-6 items-center space-x-4 bg-white shadow-lg rounded-lg p-4">
+            <div className="md:grid grid-cols-8 gap-6 items-center space-x-4 bg-white shadow-lg rounded-lg p-4">
                 {/* Left image skeleton */}
                 <Skeleton className="lg:h-[220px] h-[200px] w-full col-span-3 rounded-lg" />
 
