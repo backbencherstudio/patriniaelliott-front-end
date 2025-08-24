@@ -1,6 +1,6 @@
 'use client'
 
-import { useState,createContext,useContext } from "react";
+import { useState, createContext, useContext } from "react";
 
 const PropertyContext = createContext<{
     listProperty: formDataType | undefined;
@@ -40,10 +40,10 @@ export default function PropertySetupProvider({ children }) {
 
 // Your existing interfaces...
 interface bedTypes {
-    single_bed: number;
-    double_bed: number;
-    large_bed: number;
-    extra_large_bed: number;
+    single_bed?: number;
+    double_bed?: number;
+    large_bed?: number;
+    extra_large_bed?: number;
 }
 
 interface bedroomsType {
@@ -107,14 +107,7 @@ interface formDataType {
     city?: string;
     region?: string;
     max_guests: number;
-    bedrooms: [
-        {
-            title: string;
-            beds: {
-                [key: string]: number
-            }
-        }
-    ],
+    bedrooms: bedroomsType[],
     number_of_guest_allowed: number;
     bathrooms: number;
     general: generalType;

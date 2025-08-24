@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { usePropertyContext } from './layout';
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 
 
 function page() {

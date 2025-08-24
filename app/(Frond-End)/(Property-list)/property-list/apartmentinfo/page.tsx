@@ -4,7 +4,7 @@ import Image from "next/image"
 import coverImage from "@/public/vendor/apartment-info-cover.jpg"
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from "react";
-import { usePropertyContext } from "../layout";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 
 export default function page() {
     const router = useRouter();

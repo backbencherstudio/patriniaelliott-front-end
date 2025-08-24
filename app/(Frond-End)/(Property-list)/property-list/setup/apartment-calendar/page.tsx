@@ -14,7 +14,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
-import { usePropertyContext } from "../../layout";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import toast,{Toaster} from 'react-hot-toast'
 
 

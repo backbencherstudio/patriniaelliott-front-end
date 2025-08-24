@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
 import Dropdownmenu from "@/components/reusable/Dropdownmenu";
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
-import { usePropertyContext } from "../../layout";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 
 
 const regions = [
