@@ -224,15 +224,21 @@ h2.react-datepicker__current-month {
   background-color: #d6ae29 !important;
   border-radius: 0.3rem;
 }
-
+.hero-bullet {
+          width: 12px !important;
+          height: 12px !important;
+          transition: all 0.3s ease;
+          margin: 0px 5px;
+          display: inline-block;
+          cursor: pointer;
+        border: 1px solid #ffc52e;
+      border-radius: 4px;
+ }
 .swiper-pagination-bullets{
   display: flex !important;
   justify-content: center !important;
 }
-.hero-bullet {
-      background-color: var(--grayColor1) !important;
-      border-radius: 4px;
-    }
+
     .hero-bullet-active {
-      background-color: #45CCD2 !important;
+      background-color: var(--secondaryColor) !important;
     }

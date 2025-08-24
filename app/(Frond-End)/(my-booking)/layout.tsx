@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import BookingSidbar from "./component/common/BookingSidebar";
 
 
@@ -16,6 +16,7 @@ const BookingLayout: React.FC<bookingLayoutProps> = ({ children }) => {
     const closeSidebar = () => setSidebarOpen(false);
 
     return (
+      
         <div className="bg-bgColor min-h-screen flex flex-col py-12">
             <div className="container flex-1 flex flex-col gap-3 xl:flex-row">
                 <div
@@ -42,10 +43,11 @@ const BookingLayout: React.FC<bookingLayoutProps> = ({ children }) => {
                     <div className="xl:pt-5 xl:hidden">
                         <button onClick={openSidebar}>open menu </button>
                     </div>
-                    <main className="xl:pr-5 flex-1 xl:pt-0 pt-5">{children}</main>
+                    <main className="xl:pr-5 flex-1 xl:pt-0 pt-5">  <Suspense fallback={<div>Loading...</div>}>{children} </Suspense></main>
                 </div>
             </div>
         </div>
+       
     );
 };
 

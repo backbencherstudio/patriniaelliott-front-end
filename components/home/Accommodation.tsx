@@ -16,13 +16,15 @@ function Accommodation() {
   const [currentIndex, setCurrentIndex] = useState(1);
 
   const swiperRef = useRef<any>(null);
-  const [activeTab, setActiveTab] = useState<'apartments' | 'hotels'>('apartments');
-  const endpoint = `/admin/vendor-package?type=${activeTab}&limit=${20}&page=${1}`
+  const [activeTab, setActiveTab] = useState<'apartment' | 'hotel'>('apartment');
+  const endpoint = `/admin/vendor-package?type=${activeTab}&limit=${10}&page=${1}`
   const { data, loading, error } = useFetchData(endpoint);
   const packageData = data ? data?.data : []
 
   const goNext = () => swiperRef.current?.slideNext();
   const goPrev = () => swiperRef.current?.slidePrev();
+  console.log(error);
+  
   return (
     <section className=" bg-bgColor py-12">
       <div className="container px-4 md:px-16  relative">
@@ -31,12 +33,12 @@ function Accommodation() {
             Our Popular Accommodation
           </h2>
           <div className="flex justify-center text-center mx-auto  ">
-            {['apartments', 'hotels'].map(tab => (
+            {['apartment', 'hotel'].map(tab => (
               <button
                 key={tab}
                 className={`text-2xl cursor-pointer font-medium px-4 pb-2 transition border-b-[2px] border-[#A5A5AB] ${activeTab === tab ? ' border-b-2 border-secondaryColor text-secondaryColor ' : 'text-[#A5A5AB]'
                   }`}
-                onClick={() => setActiveTab(tab as 'apartments' | 'hotels')}
+                onClick={() => setActiveTab(tab as 'apartment' | 'hotel')}
               >
                 {tab}
               </button>
@@ -85,11 +87,11 @@ function Accommodation() {
                   <AccommodationCard tour={tour} />
                 </SwiperSlide>
               ))}
-              {error && <div className="text-center text-2xl font-bold text-redColor py-10">Server is not responding!</div> }
+              {(error && packageData.length === 0) && <div className="text-center text-2xl font-bold text-redColor py-10">Server is not responding!</div> }
             </Swiper>
           </div>
           <div>
-              {!error && (!loading && <Link href={`/${activeTab}`}>
+              {!error && (!loading && <Link href={`/${activeTab}s`}>
               <CustomButton>View All Apartments</CustomButton>
             </Link>)}
           </div>

@@ -1,6 +1,7 @@
+
 import Details from '../../component/apartment/details';
 
-export const hotelData = [
+ const hotelData = [
     {
       id: 1,
       name: "Mandarin Oriental",
@@ -51,8 +52,12 @@ export const hotelData = [
     }
   ];
 
-async function page({params}:any) {
-const {id} = await params
+async function page(props: {
+  params: Promise<{ id: any }>;
+}) {
+
+const params = await props.params;
+  const { id } = params;
 console.log(id);
 
 const apartment = hotelData?.find((item)=>item?.id == id)
