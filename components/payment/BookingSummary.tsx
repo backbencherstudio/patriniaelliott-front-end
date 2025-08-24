@@ -19,24 +19,35 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
     discount,
     discountNumber
   } = useBookingContext();
-  console.log(singleApartment);
+  console.log("BookingSummary - singleApartment:", singleApartment);
+  console.log("BookingSummary - startDate:", startDate);
+  console.log("BookingSummary - endDate:", endDate);
+  console.log("BookingSummary - selectedServices:", selectedServices);
 
- if (!singleApartment) return null;
+  // Show loading state if no apartment data
+  if (!singleApartment) {
+    return (
+      <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
+        <div className="text-center py-8">
+          <p className="text-grayColor1 text-lg">No booking data available</p>
+          <p className="text-sm text-grayColor1 mt-2">Please select an apartment and configure your booking first.</p>
+        </div>
+      </div>
+    );
+  }
 
-  const { title, reviews, price, rating, image } = singleApartment;
+  const { name, reviews, price, rating, address } = singleApartment;
 
   return (
    
     <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
-         {
-        !singleApartment ? "Apartment data not available."  :
         <div>
              {/* Apartment Header */}
       <div className="flex flex-col  md:flex-row items-center md:items-start gap-4">
         <div className=" w-[180px] h-[163px]">
           <img
-            src={image.src || "/apartment.jpg"}
-            alt={title ? title : ""}
+            src={ "/apartment.jpg"}
+            alt={name ? name : ""}
             width={180}
             height={163}
             className=" w-full h-full  rounded-md object-cover"
@@ -50,7 +61,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
               /per night
             </span>
           </p>
-          <h3 className="font-medium text-xl lg:text-lg xl:text-xl mt-1 text-black">{ title ? title : ""}</h3>
+          <h3 className="font-medium text-xl lg:text-lg xl:text-xl mt-1 text-black">{ name ? name : ""}</h3>
           <div className="flex gap-2 mt-2">
             <Image
               src="/profile.png"
@@ -225,8 +236,6 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
       }
       
         </div>
-    }
-     
     </div>
   );
 };

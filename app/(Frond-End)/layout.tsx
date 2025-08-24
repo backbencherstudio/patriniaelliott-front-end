@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import ClientProviders from "@/components/reusable/ClientProviders";
 import { BookingProvider } from "@/provider/BookingProvider";
 import { ToureBookingProvider } from "@/provider/TourBookingProvider";
 import { Suspense } from "react";
@@ -15,11 +16,9 @@ export default function FrontEndLayout({
         <div>
             <Suspense>
             <Navbar/>
-            <BookingProvider>
-                <ToureBookingProvider>
+            <ClientProviders>
                     {children}
-                </ToureBookingProvider>
-            </BookingProvider>
+            </ClientProviders>
             <Footer/>
             </Suspense>
         </div>
