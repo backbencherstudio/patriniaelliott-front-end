@@ -238,6 +238,8 @@ export default function Withdraw() {
 
           <div className="overflow-x-auto">
             <DynamicTableWithPagination
+              loading={false}
+              totalPages={1}
               columns={columns}
               data={filteredData}
               currentPage={currentPage}

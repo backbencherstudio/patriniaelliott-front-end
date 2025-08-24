@@ -219,6 +219,8 @@ export default function Tour() {
           </div>
         </div>
         <DynamicTableWithPagination
+         loading={false}
+         totalPages={1}
           columns={columns}
           data={filteredData}
           currentPage={currentPage}
