@@ -24,7 +24,7 @@ function Accommodation() {
   const goNext = () => swiperRef.current?.slideNext();
   const goPrev = () => swiperRef.current?.slidePrev();
   console.log(error);
-  
+
   return (
     <section className=" bg-bgColor py-12">
       <div className="container px-4 md:px-16  relative">
@@ -83,15 +83,15 @@ function Accommodation() {
                   <CardSkeleton key={i} />
                 ))}
               </div> : packageData.length < 0 ? <div>Package Data Not Found!</div> : packageData.map((tour: any, index) => (
-                <SwiperSlide key={index} className=" px-1 md:px-4 py-10">
+                <SwiperSlide key={index} className=" px-1 md:px-4 py-10 ">
                   <AccommodationCard tour={tour} />
                 </SwiperSlide>
               ))}
-              {(error && packageData.length === 0) && <div className="text-center text-2xl font-bold text-redColor py-10">Server is not responding!</div> }
+              {(error && packageData.length === 0) && <div className="text-center text-2xl font-bold text-redColor py-10">Server is not responding!</div>}
             </Swiper>
           </div>
           <div>
-              {!error && (!loading && <Link href={`/${activeTab}s`}>
+            {!error && (!loading && <Link href={`/${activeTab}s`}>
               <CustomButton>View All Apartments</CustomButton>
             </Link>)}
           </div>
