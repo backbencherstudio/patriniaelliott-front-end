@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { usePropertyContext } from "../../layout";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 
 
 const header = [

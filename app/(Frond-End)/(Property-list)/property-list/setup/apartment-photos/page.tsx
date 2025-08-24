@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
 import { useDropzone } from "react-dropzone";
-import { usePropertyContext } from "../../layout";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 
 const HEADER_ITEMS = [
     "Name and location",

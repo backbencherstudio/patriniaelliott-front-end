@@ -15,7 +15,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Check } from "lucide-react";
-import { usePropertyContext } from "../../layout";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import {
     Dialog,
     DialogContent,
@@ -40,13 +40,21 @@ export default function page() {
     const [houseRules, setHouseRules] = useState({ "smoking": false, "pets": false, "children": false, "events": false })
     const [formData, setFormData] = useState({})
     const [bedrooms, setBedRooms] = useState<
-        { title: string; beds: { [key: string]: number } }[]
+        { title: string; beds: bedTypes }[]
     >([{
         title: "Premium bedrooms",
         beds: {
             single_bed: 2
         }
     }]);
+
+
+    interface bedTypes {
+        single_bed?: number;
+        double_bed?: number;
+        large_bed?: number;
+        extra_large_bed?: number;
+    }
 
     const bedIcons = {
         single_bed: (
@@ -78,7 +86,7 @@ export default function page() {
 
     // Temporary state while adding/editing a bedroom
     const [newBedroomTitle, setNewBedroomTitle] = useState("");
-    const [newBedCounts, setNewBedCounts] = useState({
+    const [newBedCounts, setNewBedCounts] = useState<bedTypes>({
         single_bed: 0,
         double_bed: 0,
         large_bed: 0,
