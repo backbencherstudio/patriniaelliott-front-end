@@ -7,7 +7,7 @@ import Step3 from '../component/verification/step3'
 import Step4 from '../component/verification/step4'
 import Step5 from '../component/verification/step5'
 import Verification from '../component/verification/verification'
-import { UserService } from '@/service/user/user.service'
+import { useVendorVerification } from '@/hooks/useVendorVerification'
 import { CustomToast } from '@/lib/Toast/CustomToast'
 
 interface FormData {
@@ -72,6 +72,14 @@ export default function VendorVerification() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isCompleted, setIsCompleted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { submitVerification, loading: apiLoading, error: apiError, clearError } = useVendorVerification()
+  
+  // Clear any API errors when component mounts
+  useEffect(() => {
+    if (apiError) {
+      clearError();
+    }
+  }, [apiError, clearError]);
 
   const methods = useForm<FormData>({
     defaultValues: {
@@ -129,7 +137,7 @@ export default function VendorVerification() {
     setIsSubmitting(true);
     try {
       console.log('Submitting Form Data:', formData);
-      const response = await UserService.submitVendorVerification(formData);
+      const response = await submitVerification(formData);
       
       if (response.success) {
         console.log('Form submitted successfully:', response);

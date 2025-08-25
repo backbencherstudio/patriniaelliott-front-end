@@ -1,11 +1,13 @@
 'use client'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DynamicTableWithPagination from '../../../../(Admin-Dashboard)/_component/common/DynamicTable'
 import RequestPopup from './requestmodal'
 import ViewModal from './viewmodal'
 import WithdrawAction from './WithdrawAction'
 import { WithdrawStatusBadge } from './WithdrawStatusBadge'
+import { useVendorApi } from '@/hooks/useVendorApi'
+import { VendorService } from '@/service/vendor/vendor.service'
 
 interface WithdrawData {
   date: string;
@@ -78,6 +80,33 @@ export default function Withdraw() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<WithdrawData | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // API Integration
+  const { loading, error, handleApiCall, clearError } = useVendorApi();
+  const [balance, setBalance] = useState<any>(null);
+  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+
+  // Load balance and withdrawal history
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Load balance
+        const balanceResult = await handleApiCall(VendorService.getBalance);
+        if (balanceResult.data) {
+          setBalance(balanceResult.data);
+        }
+
+        // Load withdrawal history
+        const withdrawalResult = await handleApiCall(VendorService.getWithdrawalHistory, { page: 1, limit: 50 });
+        if (withdrawalResult.data) {
+          setWithdrawals(withdrawalResult.data);
+        }
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    };
+    loadData();
+  }, [handleApiCall]);
 
   const dateRanges = [
     { value: 'all', label: 'All Time' },
@@ -166,14 +195,17 @@ export default function Withdraw() {
             </div>
             <div className="w-full lg:w-[286px] p-4 bg-white rounded-lg border flex flex-col gap-2.5">
               <div className="flex flex-col gap-2">
-                <div className="text-[28px] font-medium text-[#070707]">$20,500</div>
+                <div className="text-[28px] font-medium text-[#070707]">
+                  ${balance ? balance.total : '0'}
+                </div>
                 <div className="text-xs text-[#777980]">Total balance</div>
               </div>
               <button
                 onClick={() => setShowRequestModal(true)}
-                className="px-8 py-3 bg-[#0068ef] rounded-lg text-white font-medium hover:bg-[#0056c7] transition-colors"
+                disabled={!balance || balance.available <= 0}
+                className="px-8 py-3 bg-[#0068ef] rounded-lg text-white font-medium hover:bg-[#0056c7] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Withdraw request
+                {balance && balance.available > 0 ? 'Withdraw request' : 'No balance available'}
               </button>
             </div>
           </div>
@@ -244,6 +276,8 @@ export default function Withdraw() {
               itemsPerPage={10}
               onPageChange={(page) => setCurrentPage(page)}
               noDataMessage="No withdraw transactions found."
+              loading={loading}
+              totalPages={1}
             />
           </div>
         </div>

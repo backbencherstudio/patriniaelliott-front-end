@@ -2,8 +2,10 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Image from "next/image";
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useVendorProfile } from '@/hooks/useVendorProfile';
+import { CustomToast } from '@/lib/Toast/CustomToast';
 
 const vendorTypeOptions = [
   { value: "Property Manager", label: "Property Manager" },
@@ -28,13 +30,59 @@ export default function Profile() {
   const [avatarPreview, setAvatarPreview] = useState<string>("/vendor/avatar.png");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const { profile, loading, error, updateProfile, updateProfileWithImage, clearError } = useVendorProfile();
 
-  const onSubmit = (data: FormData) => {
-    // Attach avatar file to data
-    data.avatar = avatarFile;
-    console.log(data);
-    setIsEditing(false);
+  // Populate form with existing profile data
+  useEffect(() => {
+    if (profile) {
+      setValue('firstName', profile.firstName || '');
+      setValue('email', profile.email || '');
+      setValue('phoneNumber', profile.phoneNumber || '');
+      setValue('businessWebsite', profile.businessWebsite || '');
+      setValue('vendorType', profile.vendorType || '');
+      setValue('taxId', profile.taxId || '');
+      
+      if (profile.avatar) {
+        setAvatarPreview(profile.avatar);
+      }
+    }
+  }, [profile, setValue]);
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      if (avatarFile) {
+        // If there's an avatar file, use FormData
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, value);
+          }
+        });
+        formData.append('avatar', avatarFile);
+        
+        await updateProfileWithImage(formData);
+      } else {
+        // If no avatar file, update without image
+        const { avatar, ...profileData } = data;
+        await updateProfile(profileData);
+      }
+      
+      CustomToast.show('Profile updated successfully!');
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      CustomToast.show('Failed to update profile. Please try again.');
+    }
   };
+
+  // Show error if API fails
+  useEffect(() => {
+    if (error) {
+      CustomToast.show(error);
+      clearError();
+    }
+  }, [error, clearError]);
 
   const handleAvatarClick = () => {
     if (isEditing && fileInputRef.current) {
