@@ -42,11 +42,11 @@ export const ToureBookingProvider = ({ children }) => {
   const [travelprice, setTravelPrice] = useState(() =>
     getFromStorage(STORAGE_KEYS.TRAVEL_PRICE, 0)
   );
-  const [startDate, setStartDate] = useState(() => {
+  const [startDate, setStartDate] = useState<any>(() => {
     const stored = getFromStorage(STORAGE_KEYS.START_DATE, null);
     return stored ? new Date(stored) : null;
   });
-  const [endDate, setEndDate] = useState(() => {
+  const [endDate, setEndDate] = useState<any>(() => {
     const stored = getFromStorage(STORAGE_KEYS.END_DATE, null);
     return stored ? new Date(stored) : null;
   });

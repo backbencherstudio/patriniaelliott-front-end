@@ -16,7 +16,7 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
 
 
   return (
-    <div className="bg-white hover:shadow-2xl rounded-2xl shadow-xl group overflow-hidden w-full">
+    <div className="bg-white hover:shadow-sm rounded-2xl shadow-xl group overflow-hidden w-full">
       <div className="relative ">
         <div className=" p-3 ">
           {
