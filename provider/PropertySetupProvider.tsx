@@ -131,5 +131,7 @@ interface formDataType {
         asSoon: boolean;
         date?: string;
     };
+    start_date:string;
+    end_date:string;
     maxReservation: boolean;
 }
