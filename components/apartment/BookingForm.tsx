@@ -1,13 +1,15 @@
 "use client";
+import { useToken } from "@/hooks/useToken";
 import { useBookingContext } from "@/provider/BookingProvider";
 import { LucideCalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdDone } from "react-icons/md";
 import Rating from "../reusable/Rating";
 
-const BookingForm = ({ singleApartments }: any) => {
+const BookingForm = ({ singleApartments,type }: any) => {
   const {
     setSingleApartment,
     selectedServices,
@@ -23,16 +25,30 @@ const BookingForm = ({ singleApartments }: any) => {
     handleBookNow
     
   } = useBookingContext();
-  setSingleApartment(singleApartments);
+
+  // ✅ Fix: useEffect এ state update করা
+  useEffect(() => {
+    setSingleApartment(singleApartments);
+  }, [singleApartments, setSingleApartment]);
 
 const router = useRouter()
-  const { title, cancellation, reviews, price, rating, image, location } =
-    singleApartments;
+const {token}=useToken()
+   const { name, reviews, price,cancellation_policy, rating, address } =singleApartments;
 
     const handleBook = () => {
 
-     handleBookNow()
-     router.push("/apartment/booking")
+      if (token) {
+        // ✅ Ensure apartment data is saved to localStorage before proceeding
+        setSingleApartment(singleApartments);
+        
+        // If token exists, proceed to the booking page
+        handleBookNow();
+        router.push(type === "apartment" ? "/apartment/booking" : "/hotel/booking");
+      } else {
+        // If token doesn't exist, redirect to login page with current page as a redirect
+        const currentUrl = window.location.pathname + window.location.search;
+        router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+      }
    
   };
   return (
@@ -116,7 +132,7 @@ const router = useRouter()
         </div>
         <div className="flex mt-1 items-center gap-2 text-sm text-[#0068EF] ">
           Cancellation Policy{" "}
-          <span className="text-xs text-gray-400">({cancellation})</span>
+          <span className="text-xs text-gray-400">({cancellation_policy})</span>
         </div>
       </div>
 

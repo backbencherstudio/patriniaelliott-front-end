@@ -53,7 +53,7 @@ const DurationFilter = () => {
     const currentParams = new URLSearchParams(window.location.search);
     currentParams.delete('startDate');
     currentParams.delete('endDate');
-    router.replace(`${window.location.pathname}?${currentParams.toString()}`, undefined);
+    router.replace(`${window.location.pathname}?${currentParams.toString()}`, { scroll: false });
   };
 
   return (
@@ -61,7 +61,6 @@ const DurationFilter = () => {
       <AccordionItem value="item-1" className=' border-b-0'>
         <AccordionTrigger className='border-b pb-3 rounded-none border-grayColor1/20'>
         <div className=' w-[95%]'>
-
           <FilterHeading onReset={handleReset} title="Durations" />
         </div>
         </AccordionTrigger>
@@ -85,6 +84,7 @@ const DurationFilter = () => {
               onChange={handleStartDateChange}
               placeholderText="Select a date"
               className="hidden"
+              minDate={new Date()}
             />
             <CalendarIcon className="text-yellow-500" />
           </div>
@@ -107,6 +107,7 @@ const DurationFilter = () => {
               onChange={handleEndDateChange}
               placeholderText="Select a date"
               className="hidden"
+              minDate={startDate || new Date()}
             />
             <CalendarIcon className="text-yellow-500" />
           </div>

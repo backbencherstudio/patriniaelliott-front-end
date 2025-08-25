@@ -3,9 +3,12 @@
 import Image from "next/image"
 import coverImage from "@/public/vendor/apartment-info-cover.jpg"
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from "react";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 
 export default function page() {
     const router = useRouter();
+    const { listProperty } = usePropertyContext();
     const steps = [
         "Input host details",
         "Input property setup",
@@ -16,7 +19,7 @@ export default function page() {
     const searchParams = useSearchParams();
 
     const data = searchParams.get('data');
-    console.log(data)
+
     return (
         <div className="py-30 flex items-center justify-center bg-[#F6F7F7]">
             <div className="space-y-6">
@@ -73,7 +76,7 @@ export default function page() {
                 </div>
                 <div className="flex justify-between w-full space-x-3 px-4">
                     <button className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</button>
-                    <button className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.push("/property-list/apartment-name-location")}>Continue</button>
+                    <button className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.push("/property-list/setup/apartment-name-location")}>Continue</button>
                 </div>
             </div>
         </div>

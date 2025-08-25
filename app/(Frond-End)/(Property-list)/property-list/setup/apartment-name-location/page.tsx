@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
 import Dropdownmenu from "@/components/reusable/Dropdownmenu";
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 
 
 const regions = [
@@ -23,18 +24,13 @@ const countries = [
 
 export default function page() {
     const router = useRouter();
+    const { listProperty, updateListProperty } = usePropertyContext();
     const [selectedRegion, setSelectedRegion] = useState('');
     const [selectedCountry, setSelectedCountry] = useState('');
     const [mapSrc, setMapSrc] = useState(
         "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215209179342!2d-73.98784492401708!3d40.74844097138971!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1712345678901!5m2!1sen!2sus"
     );
-    const header = [
-        "Name and location",
-        "Property setup",
-        "Photos",
-        "Pricing",
-        "Calendar",
-    ]
+
     const [hostProperty, setHostProperty] = useState(false);
     const [aboutHost, setAboutHost] = useState(false);
     const [hostNeighborhood, setHostNeighborhood] = useState(false)
@@ -68,10 +64,34 @@ export default function page() {
             country: selectedCountry
         }));
 
-        router.push("/property-list/apartment-propertysetup")
-    }
+        updateListProperty({
+            about_property: formElements.propertyintro.value,
+            host_name: formElements.hostname.value,
+            about_host: formElements.hostabout.value,
+            email: formElements.email.value,
+            region: selectedRegion,
+            street: formElements.street.value,
+            zip_code: formElements.zipcode.value,
+            city: formElements.city.value,
+            country: selectedCountry
+        })
 
-    console.log("Form data : ", formData);
+        const updatedProperty = {
+            ...JSON.parse(localStorage.getItem("propertyData")),
+            about_property: formElements.propertyintro.value,
+            host_name: formElements.hostname.value,
+            about_host: formElements.hostabout.value,
+            email: formElements.email.value,
+            region: selectedRegion,
+            street: formElements.street.value,
+            zip_code: formElements.zipcode.value,
+            city: formElements.city.value,
+            country: selectedCountry
+        };
+        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
+
+        router.push("/property-list/setup/property-setup")
+    }
 
     const handleRegionChange = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -82,22 +102,12 @@ export default function page() {
         e.preventDefault();
         setSelectedCountry(e.currentTarget.value);
     }
+
+
     // const [hostSuggestion,setHostSuggestion] = useState([{title:"Can I make changes to my host profile later?",body:[""]}])
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
-                <ul className="hidden md:flex w-full justify-between">
-                    {
-                        header.map(item => (
-                            <li className="space-y-4 w-fit" key={item}>
-                                <h3 className={`${item === "Name and location" ? "text-[#070707]" : "text-[#777980]"} text-sm text-center`}>{item}</h3>
-                                <div className="w-[140px] lg:w-[180px] xl:w-[210px] h-[12px] bg-[#D9D9D9] rounded-full relative">
-                                    <div className={`absolute top-0 left-0 h-full w-3/4 bg-[#D6AE29] rounded-full ${item === "Name and location" ? "" : "hidden"}`}></div>
-                                </div>
-                            </li>
-                        ))
-                    }
-                </ul>
                 <div className="space-y-5">
                     <form className="space-y-5" onSubmit={(e) => handleFormSubmit(e)}>
                         <div className="flex w-full gap-6">
@@ -160,7 +170,7 @@ export default function page() {
                                 </div>
                             </div>
                             <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block">
-                                <PropertySuggestion title="Can I make changes to my host profile later?" body="If you're not ready to add all these details right now, that's okay. You can always change your host profile on the Extranet after completing registration." isList={false}/>
+                                <PropertySuggestion title="Can I make changes to my host profile later?" body="If you're not ready to add all these details right now, that's okay. You can always change your host profile on the Extranet after completing registration." isList={false} />
                             </div>
                         </div>
                         <div className="flex w-full gap-6">
@@ -177,7 +187,7 @@ export default function page() {
                                             sure that the address is correct — it's difficult to make changes to this
                                             later.
                                         </p>
-                                        <Dropdownmenu data={regions} handleSelect={(e: React.FormEvent<HTMLFormElement>) => handleRegionChange(e)} selectedData={selectedRegion} title="Country/Region" showTitle={true}/>
+                                        <Dropdownmenu data={regions} handleSelect={(e: React.FormEvent<HTMLFormElement>) => handleRegionChange(e)} selectedData={selectedRegion} title="Country/Region" showTitle={true} />
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="street" className="text-[#070707]">Street name and house number</label>
@@ -191,7 +201,7 @@ export default function page() {
                                         <label htmlFor="city" className="text-[#070707]">City</label>
                                         <input type="text" required name="city" id="city" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
                                     </div>
-                                    <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true}/>
+                                    <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
                                     <h3 className="text-[#23262F] font-medium text-2xl">Pin the location of your property</h3>
                                     <div className="space-y-3">
                                         <p className="text-[#777980] text-sm">

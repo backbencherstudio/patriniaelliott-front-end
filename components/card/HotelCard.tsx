@@ -6,45 +6,16 @@ import { FaStar } from "react-icons/fa";
 import { FaArrowRight, FaWifi } from "react-icons/fa6";
 import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 
-interface HotelCardProps {
-  hotel: {
-    image: string;
-    location: string;
-    title: string;
-    rating: number;
-    price: number;
-    tv: boolean;
-    bed: number;
-    bath: number;
-    wifi: boolean;
-    cancellation: string;
-    breakfast: boolean;
-    hotelSlug:string;
-  };
-}
-const HotelCard = ({ hotel }: HotelCardProps) => {
-  const {
-    image,
-    location,
-    title,
-    rating,
-    price,
-    tv,
-    bed,
-    bath,
-    wifi,
-    hotelSlug,
-    cancellation,
-    breakfast,
-  } = hotel;
+const HotelCard = ({ hotel }: any) => {
+  const { id, name, type, reviews, amenities, bedrooms, bathrooms, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
 
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  md:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
         <Image
-          src={image}
-          alt={title}
+          src={"/hotel/h5.jpg"}
+          alt={name}
           width={400}
           height={250}
           className="w-full h-full object-cover rounded-xl"
@@ -57,20 +28,20 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
         <div className=" mb-3">
           <div className="flex items-center gap-2 text-sm text-grayColor1 pb-[2px]">
             <IoLocationSharp size={18} className=" text-grayColor1" />
-            <span>{location}</span>
+            <span>{address}</span>
           </div>
           <div className="py-1">
 
-          <Link href={`/hotel/${hotelSlug}`} className="text-xl font-semibold text-black ">{title}</Link>
+            <Link href={`/hotel/${id}`} className="text-xl font-semibold text-black ">{name}</Link>
           </div>
           <div className="flex gap-2 items-center">
-            <span className="text-headerColor text-sm">{rating}</span>
+            <span className="text-headerColor text-sm">{Number(rating_summary?.averageRating ?? 0).toFixed(1)}</span>
             <div className="flex gap-1">
               {Array.from({ length: 5 }, (_, i) => (
                 <FaStar
                   key={i}
                   className={
-                    i < Math.round(rating) ? "text-yellow-400" : "text-gray-300"
+                    i < Math.round(rating_summary?.averageRating) ? "text-yellow-400" : "text-gray-300"
                   }
                 />
               ))}
@@ -80,12 +51,12 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
         {/* Free Cancellation */}
         <div className="flex items-center gap-2 text-sm text-[#0068EF] border-b pb-2 border-secondaryColor/20">
           Free cancellation{" "}
-          <span className="text-xs text-gray-400">({cancellation})</span>
+          <span className="text-xs text-gray-400">(24 hourse)</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4 w-[85%] items-center  text-descriptionColor text-sm mt-4 ">
-          <div className="flex items-center gap-1 pr-3 ">
-            {tv && (
+          {amenities?.TV && (
+            <div className="flex items-center gap-1 pr-3 ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -98,12 +69,12 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
                   fill="#D6AE29"
                 />
               </svg>
-            )}{" "}
-            TV
-          </div>
+              TV
+            </div>
+          )}{" "}
           <div className="flex items-center gap-1  ">
             <IoBedOutline className=" text-secondaryColor" size={18} />
-            {bed} Bed
+            {bedrooms} Bed
           </div>
           <div className="flex items-center gap-1  ">
             <svg
@@ -137,9 +108,9 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
                 </clipPath>
               </defs>
             </svg>
-            {bath} Bath
+            {bathrooms} Bath
           </div>
-          {wifi && (
+          {amenities?.wifi && (
             <div className="flex items-center gap-1  ">
               <FaWifi size={16} className=" text-secondaryColor" />
               Free WiFi
@@ -156,7 +127,7 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
           </h5>
           <p className="text-sm text-gray-500">per night</p>
         </div>
-        <Link href={`/hotel/${hotelSlug}`} className="bg-secondaryColor font-medium mt-4 md:mt-0 flex justify-center items-center gap-1   py-2  px-3 rounded-sm cursor-pointer text-blackColor transition-colors">
+        <Link href={`/hotel/${id}`} className="bg-secondaryColor font-medium mt-4 md:mt-0 flex justify-center items-center gap-1   py-2  px-3 rounded-sm cursor-pointer text-blackColor transition-colors">
           Check Availability <FaArrowRight />
         </Link>
       </div>

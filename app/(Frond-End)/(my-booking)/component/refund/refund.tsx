@@ -113,6 +113,8 @@ export default function Refund() {
         <p className="text-base text-[#777980]">Check up on your latest refund history.</p>
       </div>
       <DynamicTableWithPagination
+         loading={false}
+         totalPages={1}
         columns={columns}
         data={refundData}
         currentPage={currentPage}

@@ -29,26 +29,7 @@ export const useVendorVerification = () => {
         return { success: false, data: null, message: 'Authentication required' };
       }
       
-      let result;
-      switch (step) {
-        case 0:
-          result = await handleApiCall(VendorService.submitVerificationStep0, data);
-          break;
-        case 1:
-          result = await handleApiCall(VendorService.submitVerificationStep1, data);
-          break;
-        case 2:
-          result = await handleApiCall(VendorService.submitVerificationStep2, data);
-          break;
-        case 3:
-          result = await handleApiCall(VendorService.submitVerificationStep3, data);
-          break;
-        case 4:
-          result = await handleApiCall(VendorService.submitVerificationStep4, data);
-          break;
-        default:
-          throw new Error(`Invalid step number: ${step}`);
-      }
+      const result = await handleApiCall(VendorService.submitVerificationStep, step, data);
       return result;
     } catch (err) {
       console.error(`Failed to submit verification step ${step}:`, err);

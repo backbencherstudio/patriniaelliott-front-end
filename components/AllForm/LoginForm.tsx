@@ -4,7 +4,7 @@ import { CookieHelper } from '@/helper/cookie.helper';
 import { UserService } from '@/service/user/user.service';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -21,6 +21,8 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
   const onSubmit = async (data: LoginFormValues) => {
     const formData: any = {};
     formData.email = data.email;
@@ -35,7 +37,7 @@ export default function LoginForm() {
         toast.success(res?.data?.message)
         CookieHelper.set({ key: "tourAccessToken", value: token })
         setLoading(false)
-        router.push("/")
+        router.push(redirect || "/");
       } else {
         toast.error(res?.response?.data?.message?.message)
         setLoading(false)

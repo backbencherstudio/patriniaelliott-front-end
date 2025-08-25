@@ -3,6 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
 .container {
   max-width: 1342px;
   padding: 0 16px;
@@ -192,7 +193,7 @@ input:checked ~ .checkmark {
   /* border: 1px solid #fff !important; */
   border-radius: 0.3rem;
   display: inline-block;
-  right: 85px;
+  right: 0px;
   position: relative;
 }
 h2.react-datepicker__current-month {
@@ -223,3 +224,21 @@ h2.react-datepicker__current-month {
   background-color: #d6ae29 !important;
   border-radius: 0.3rem;
 }
+.hero-bullet {
+          width: 12px !important;
+          height: 12px !important;
+          transition: all 0.3s ease;
+          margin: 0px 5px;
+          display: inline-block;
+          cursor: pointer;
+        border: 1px solid #ffc52e;
+      border-radius: 4px;
+ }
+.swiper-pagination-bullets{
+  display: flex !important;
+  justify-content: center !important;
+}
+
+    .hero-bullet-active {
+      background-color: var(--secondaryColor) !important;
+    }

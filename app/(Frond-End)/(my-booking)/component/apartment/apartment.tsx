@@ -211,6 +211,8 @@ export default function Apartment() {
           </div>
         </div>
         <DynamicTableWithPagination
+          loading={false}
+          totalPages={1}
           columns={columns}
           data={filteredData}
           currentPage={currentPage}

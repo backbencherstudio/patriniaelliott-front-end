@@ -2,15 +2,30 @@
 
 import Image from "next/image"
 import coverImage from "@/public/vendor/apartment-cover.jpg"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 
 export default function page() {
     const router = useRouter();
+    const { listProperty, updateListProperty } = usePropertyContext();
     const [selectedApartmentType, setSelectedApartmentType] = useState("one");
     const handleNextPage = () => {
+        updateListProperty({
+            isMultiple: selectedApartmentType === 'one' ? false : true
+        })
+
+
+        const updatedProperty = {
+            ...JSON.parse(localStorage.getItem("propertyData")),
+            isMultiple: selectedApartmentType === 'one' ? false : true
+        };
+        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
+
         router.push(`/property-list/apartmentinfo?data=${selectedApartmentType}`);
     }
+
+
     return (
         <div className="py-30 flex items-center justify-center bg-[#F6F7F7]">
             <div className="bg-white rounded-[24px] p-6 space-y-[32px]">
