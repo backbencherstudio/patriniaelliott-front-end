@@ -14,7 +14,7 @@ export const useVendorProfile = () => {
         return { success: false, data: null, message: 'Authentication required' };
       }
       
-      const result = await handleApiCall(VendorService.getProfile);
+      const result = await handleApiCall(VendorService.getVendorProfileWithCookie, null);
       if (result.data) {
         setProfile(result.data);
       }
@@ -32,7 +32,7 @@ export const useVendorProfile = () => {
         return { success: false, data: null, message: 'Authentication required' };
       }
       
-      const result = await handleApiCall(VendorService.updateProfile, data);
+      const result = await handleApiCall(VendorService.updateVendorProfileWithCookie, null, data);
       if (result.data) {
         setProfile(prev => prev ? { ...prev, ...result.data } : result.data);
       }
@@ -50,7 +50,7 @@ export const useVendorProfile = () => {
         return { success: false, data: null, message: 'Authentication required' };
       }
       
-      const result = await handleApiCall(VendorService.updateProfileWithImage, data);
+      const result = await handleApiCall(VendorService.updateVendorProfileFormData, null, data);
       if (result.data) {
         setProfile(prev => prev ? { ...prev, ...result.data } : result.data);
       }
