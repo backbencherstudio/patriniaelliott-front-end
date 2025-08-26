@@ -13,10 +13,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function AccommodationCard({ tour }: { tour: Package }) {
   const { id, name, type, reviews, roomFiles, amenities, bedrooms, bathrooms, cancellation_policy, breakfast_available, price, address, rating_summary } = tour
-
+ 
 
   return (
-    <div className="bg-white hover:shadow-sm rounded-2xl shadow-xl group overflow-hidden w-full">
+    <div className="bg-white shadow-lg hover:-mt-2  transition-all duration-200 rounded-2xl hover:shadow-xl group overflow-hidden w-full">
       <div className="relative ">
         <div className=" p-3 ">
           {
@@ -82,12 +82,13 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
         </div>
 
         <div className="flex items-center gap-2 text-sm text-[#0068EF]">
-          Free cancellation{" "}
-          <span className="text-xs text-gray-400">({cancellation_policy})</span>
+          Free cancellation{""}
+          <span className="text-xs text-gray-400">(Cancel within 24h)</span>
         </div>
 
         <div className="flex items-center  text-descriptionColor text-sm mt-4 mb-5">
-          {amenities?.TV && <div className="flex items-center gap-1 pr-3 border-r border-[#D2D2D5]">
+          {amenities?.entertainment?.flat_screen_tv
+ && <div className="flex items-center gap-1 pr-3 border-r border-[#D2D2D5]">
 
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +146,7 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
             </svg>
             {bathrooms} Bath
           </div>
-          {amenities?.wifi && (
+          {amenities?.general?.wifi && (
             <div className="flex items-center gap-1 px-3 ">
               <FaWifi size={16} className=" text-secondaryColor" />
               Free WiFi

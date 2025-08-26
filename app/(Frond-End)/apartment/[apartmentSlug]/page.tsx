@@ -57,10 +57,10 @@ async function ApartmnetDetailsPage(props: {
   const token = tokenStore.get("tourAccessToken")?.value;
 
   // Fetch server-side without causing side effects during render
-  let vendorPackage: any = null;
+  let vendorPackage: any = {};
   try {
     const res = await UserService.getData(`/admin/vendor-package/${apartmentSlug}`, token);
-    vendorPackage = res?.data?.data ?? null;
+    vendorPackage = res?.data?.data ?? {};
   } catch (error) {
     console.log(error);
 
@@ -83,7 +83,7 @@ async function ApartmnetDetailsPage(props: {
         <div className="lg:grid grid-cols-6 gap-6">
           <div className=" col-span-4 h-auto lg:h-[536px] rounded-2xl overflow-hidden">
             <Image
-              src={ vendorPackage?.roomFiles ? vendorPackage?.roomFiles[0] : "/hotel/h5.jpg"}
+              src={ vendorPackage?.roomFiles ? vendorPackage?.roomFiles[0] : "/empty.png"}
               alt={"image"}
               width={900}
               height={600}
@@ -93,7 +93,7 @@ async function ApartmnetDetailsPage(props: {
           <div className="  col-span-2 flex  lg:flex-col gap-3 mt-3 lg:mt-0 lg:gap-6 mb-12 md:mb-14 lg:mb-20">
             <div className=" lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={ vendorPackage?.roomFiles ? vendorPackage?.roomFiles[1] : "/hotel/h5.jpg"}
+                src={ vendorPackage?.roomFiles ? vendorPackage?.roomFiles[1] : "/empty.png"}
                 alt={"image"}
                 width={900}
                 height={600}
@@ -102,7 +102,7 @@ async function ApartmnetDetailsPage(props: {
             </div>
             <div className=" relative lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={vendorPackage?.roomFiles ? vendorPackage?.roomFiles[2] : "/hotel/h5.jpg"}
+                src={vendorPackage?.roomFiles ? vendorPackage?.roomFiles[2] : "/empty.png"}
                 alt={"image"}
                 width={900}
                 height={600}

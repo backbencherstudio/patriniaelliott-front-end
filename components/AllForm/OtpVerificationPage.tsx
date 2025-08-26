@@ -56,13 +56,11 @@ export default function OtpVerificationForm() {
       otpRefs[index - 1].current?.focus();
     }
   };
- let Email
 
- useEffect(()=>{
-   Email  = localStorage.getItem("verifyemail")
- },[])
+
 
   const onSubmit = async (data: OTPFormValues) => {
+    const Email = localStorage.getItem("verifyemail")
     const otpCode = `${data.otp1}${data.otp2}${data.otp3}${data.otp4}${data.otp5}${data.otp6}`;
     const formData: any = {};
     formData.email = Email;

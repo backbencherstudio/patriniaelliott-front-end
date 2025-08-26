@@ -1,21 +1,12 @@
 "use client"
 
-import { useCallback, useState, useEffect, use } from "react"
-import { useRouter } from 'next/navigation';
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { useToken } from "@/hooks/useToken";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
-import toast, { Toaster } from 'react-hot-toast'
+import { UserService } from "@/service/user/user.service";
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import toast, { Toaster } from 'react-hot-toast';
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 
 
@@ -39,8 +30,9 @@ export default function page() {
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
     const [isBookingOpen, setIsBookingOpen] = useState(true)
+    const [loading , setLoading] = useState(false)
     const [status, setStatus] = useState("Not available for booking");
-
+  const {token}=useToken()
 
     useEffect(() => {
         const year = currentDate.getFullYear();
@@ -85,36 +77,77 @@ export default function page() {
         setNextCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))
     }
 
-
-
-    const handleSubmit = () => {
-        toast.success("Property setup completed.")
+    const handleSubmit = async() => {
+        setLoading(true)
         console.clear();
         updateListProperty({
             calendar_start_date: startDate.toDateString(),
             calendar_end_date: endDate.toDateString()
         })
+        const fd = new FormData();
+        const propertyData = JSON.parse(localStorage.getItem("propertyData"))
+        const amenities = {
+            general: propertyData.general,
+           entertainment:propertyData.entertainment,
+           cooking_cleaning:propertyData.cooking_cleaning,
+        }
+        const check_in = {
+            from: propertyData.check_in_from,
+            until: propertyData.check_in_untill
+        }
+        const check_out = {
+            from: propertyData.check_out_from,
+            until: propertyData.check_out_untill        
+        }
+fd.append("name", propertyData.name);
+fd.append("description", propertyData.about_property);
+fd.append("price", propertyData.price_per_night);
+fd.append("type", propertyData.property_type);
+fd.append("room_photos", JSON.stringify(propertyData.photos));
+fd.append("amenities", JSON.stringify(amenities));
+fd.append("extra_services", JSON.stringify(propertyData.extra_services));
+fd.append("country", propertyData.country);
+fd.append("city", propertyData.city);
+fd.append("address", propertyData.street);
+fd.append("postal_code", propertyData.zip_code);
+fd.append("bedrooms",  propertyData.bathrooms);
+fd.append("bathrooms", propertyData.bathrooms);
+fd.append("max_capacity", propertyData.max_guests);
+fd.append("check_in", JSON.stringify(check_in));
+fd.append("check_out", JSON.stringify(check_out));
+fd.append("breakfast_available", propertyData.breakfast_available);
+fd.append("max_guests", propertyData.max_guests ? String(Number(propertyData.max_guests)) : "1");
+fd.append("calendar_start_date", startDate.toDateString());
+fd.append("calendar_end_date", endDate.toDateString());
+const endpoint = "/admin/vendor-package"
 
-        const updatedProperty = {
-            ...JSON.parse(localStorage.getItem("propertyData")),
-            calendar_start_date: startDate.toDateString(),
-            calendar_end_date: endDate.toDateString()
-        };
-        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
-        console.log("Submitted data : ", JSON.parse(localStorage.getItem("propertyData")))
+ try {
+    const res = await UserService?.createPropertyData(endpoint,fd,token)
+    if (res.data?.success === true) {
+        toast.success("Property setup completed.")
+         setLoading(false)
+         localStorage.removeItem("propertyData")
+         router.push("/property-list")
+    }else{
+        toast.error("Something went wrong")
+         setLoading(false)
+    }
+ } catch (error) {
+    console.log(error);
+     setLoading(false)
+ }
+    
+       
     }
 
     function getSameDateNextMonth(inputDate: Date): Date {
         const date = new Date(inputDate);
-
         // Get current month and year
         const currentMonth = date.getMonth();
         const currentYear = date.getFullYear();
-
         // Calculate next month (handles December -> January)
         const nextMonth = (currentMonth + 1) % 12;
         const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
-
         // Get the day, adjusting for months with fewer days
         const day = date.getDate();
         const lastDayOfNextMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
@@ -129,8 +162,6 @@ export default function page() {
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
                 <Toaster />
                 {/* Calendar start  */}
-
-
                 <div className="flex flex-col-reverse md:flex-row gap-6 items-center md:items-start">
                     <div className="flex-1 space-y-[32px]">
                         <div className={`flex bg-[#F6F7F7] rounded-lg`}>
@@ -302,7 +333,7 @@ export default function page() {
                         </div>
                         <div className="flex justify-between w-full space-x-3 px-4">
                             <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
-                            <button type="button" disabled={(!licenses && !termsPolicy)} className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={handleSubmit}>Continue</button>
+                            <button type="button"  disabled={(!licenses && !termsPolicy ) || loading} className="text-[#fff] px-6 disabled:bg-grayColor1 disabled:cursor-not-allowed sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={handleSubmit}>{loading ? "Creating....":"Continue"} </button>
                         </div>
                     </div>
 
