@@ -165,7 +165,7 @@ export default function MyProfile() {
     );
   };
 
-  // Custom input component for the date picker
+  // Custom input component for the date picker ()
   const CustomDateInput = React.forwardRef<HTMLDivElement, CustomDateInputProps>(
     ({ value, onClick, placeholder, icon }, ref) => (
       <div
