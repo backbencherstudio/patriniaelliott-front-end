@@ -300,7 +300,7 @@ export default function page() {
 
                     <div className="w-full md:w-[312px] space-y-4">
                         <div className="space-y-5 p-5 bg-white rounded-lg">
-                            <h3 className="text-[#23262F] text-xl font-medium">1 Date Selected</h3>
+                            {/* <h3 className="text-[#23262F] text-xl font-medium">1 Day Selected</h3> */}
                             <div className="space-y-4">
                                 <div className="space-y-3">
                                     <div className="flex flex-col space-y-3">
@@ -326,125 +326,6 @@ export default function page() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                        <path d="M10.5 5.25003C10.5 5.25003 7.92231 8.75 7 8.75C6.07763 8.75 3.5 5.25 3.5 5.25" stroke="#4A4C56" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <h3 className="text-[#4A4C56] text-sm cursor-pointer">Advanced date selection</h3>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-white p-4 rounded-lg space-y-4">
-                            <div className="space-y-3">
-                                <div>
-                                    <h3>Open or close for bookings</h3>
-                                    <div className="text-[#070707] p-4 border-b border-[#77798059]">
-                                        <RadioGroup defaultValue={isBookingOpen ? "Open" : "Close"} onValueChange={() => setIsBookingOpen(prev => !prev)} className="flex gap-5 items-center">
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="Open" id="Open" />
-                                                <Label htmlFor="Open" className="text-sm font-normal">Open</Label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem value="Close" id="Close" />
-                                                <Label htmlFor="Close" className="text-sm font-normal">Close</Label>
-                                            </div>
-                                        </RadioGroup>
-                                    </div>
-                                </div>
-                                <div className="flex flex-col space-y-3">
-                                    <h3 className="text-base font-medium text-[#070707]">Set availability</h3>
-
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="outline" className="flex items-center gap-1 p-0 text-sm font-normal hover:opacity-80 outline-none text-[#777980] justify-between">
-                                                {status}
-                                                <ChevronDown className="" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className="w-full py-3">
-                                            <DropdownMenuItem onClick={() => setStatus("Available for booking")}>
-                                                Available for booking
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => setStatus("Not available for booking")}>
-                                                Not available for booking
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                <div>
-                                    <h3 className="text-[#23262F] text-xl font-medium">Rates</h3>
-                                    <h2 className="text-[#777980]">Standard Rate</h2>
-                                </div>
-                                {/* <div className="text-[#070707] text-sm">
-                                    <RadioGroup defaultValue={isBookingOpen ? "Open" : "Close"} onValueChange={() => setIsBookingOpen(prev => !prev)} className="flex gap-5 items-center">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="Open" id="Open" />
-                                            <Label htmlFor="Open" className="text-sm font-normal">Open</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="Close" id="Close" />
-                                            <Label htmlFor="Close" className="text-sm font-normal">Close</Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div> */}
-                                <div className="flex items-center text-[#777980] border border-[#D2D2D5] p-4 rounded-lg ">
-                                    <span>US$</span>
-                                    <div>
-                                        <input type="number" name="rate" id="rate" className="outline-none px-2 py-1 text-sm w-[190px]" />
-                                    </div>
-                                    <div className="flex items-center w-[25px]">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                            <path d="M3.28879 7.74081C2.5814 8.16201 0.726682 9.02206 1.85633 10.0983C2.40816 10.624 3.02275 11 3.79544 11H8.20455C8.97725 11 9.59185 10.624 10.1437 10.0983C11.2733 9.02206 9.4186 8.16201 8.7112 7.74081C7.0524 6.75306 4.9476 6.75306 3.28879 7.74081Z" stroke="#0068EF" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M8.25 3.25C8.25 4.49264 7.24265 5.5 6 5.5C4.75736 5.5 3.75 4.49264 3.75 3.25C3.75 2.00736 4.75736 1 6 1C7.24265 1 8.25 2.00736 8.25 3.25Z" stroke="#0068EF" />
-                                        </svg>
-                                        <span className="text-[12px] text-[#777980]">3</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                <div>
-                                    <h3 className="text-[#23262F] text-xl font-medium">Non-refundable Rate</h3>
-                                </div>
-                                {/* <div className="text-[#070707] text-sm">
-                                    <RadioGroup defaultValue={isBookingOpen ? "Open" : "Close"} onValueChange={() => setIsBookingOpen(prev => !prev)} className="flex gap-5 items-center">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="Open" id="Open" />
-                                            <Label htmlFor="Open" className="text-sm font-normal">Open</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="Close" id="Close" />
-                                            <Label htmlFor="Close" className="text-sm font-normal">Close</Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div> */}
-                                <div className="flex items-center text-[#777980] border border-[#D2D2D5] p-4 rounded-lg ">
-                                    <span>US$</span>
-                                    <div>
-                                        <input type="number" name="rate" id="rate" className="outline-none px-2 py-1 text-sm w-[190px]" />
-                                    </div>
-                                    <div className="flex items-center w-[25px]">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                            <path d="M3.28879 7.74081C2.5814 8.16201 0.726682 9.02206 1.85633 10.0983C2.40816 10.624 3.02275 11 3.79544 11H8.20455C8.97725 11 9.59185 10.624 10.1437 10.0983C11.2733 9.02206 9.4186 8.16201 8.7112 7.74081C7.0524 6.75306 4.9476 6.75306 3.28879 7.74081Z" stroke="#0068EF" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M8.25 3.25C8.25 4.49264 7.24265 5.5 6 5.5C4.75736 5.5 3.75 4.49264 3.75 3.25C3.75 2.00736 4.75736 1 6 1C7.24265 1 8.25 2.00736 8.25 3.25Z" stroke="#0068EF" />
-                                        </svg>
-                                        <span className="text-[12px] text-[#777980]">3</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 className="text-[#0068EF] font-medium py-3">Restrictions</h3>
-                                <p className="text-[#4A4C56]">Changes will be made to the following
-                                    date: <span>{getSameDateNextMonth(startDate).toLocaleDateString('en-US', {
-                                        month: 'long',
-                                        day: '2-digit',
-                                        year: 'numeric'
-                                    })}</span></p>
-                            </div>
-                            <div className="flex justify-between w-full space-x-3">
-                                <div className="text-[#0068EF] border border-[#0068EF] px-[32px] flex items-center justify-center rounded-[8px] cursor-pointer leading-none">Cancel</div>
-                                <div className="text-[#fff] px-[32px] py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer leading-none" onClick={handleSubmit}>Save</div>
                             </div>
                         </div>
                     </div>
