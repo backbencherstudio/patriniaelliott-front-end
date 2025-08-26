@@ -1,29 +1,28 @@
 "use client"
 
-import { FormEvent, useEffect, useState } from "react"
-import { useRouter } from 'next/navigation';
-import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import Dropdownmenu from "@/components/reusable/Dropdownmenu";
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Switch } from "@/components/ui/switch"
+import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Check } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+import { Check } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { FormEvent, useState } from "react";
+import AddExtraServices from "../_components/AddExtraServices";
 
 
 export default function page() {
@@ -39,6 +38,7 @@ export default function page() {
     const [guestFood, setGuestFood] = useState({ "breakfast": "yes" })
     const [houseRules, setHouseRules] = useState({ "smoking": false, "pets": false, "children": false, "events": false })
     const [formData, setFormData] = useState({})
+    const [services, setServices] = useState([]);
     const [bedrooms, setBedRooms] = useState<
         { title: string; beds: bedTypes }[]
     >([{
@@ -83,7 +83,8 @@ export default function page() {
     // State for dialog
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
-
+    const [propertyName, setPropertyName] = useState("")
+    const [propertyDescription, setPropertyDescription] = useState("")
     // Temporary state while adding/editing a bedroom
     const [newBedroomTitle, setNewBedroomTitle] = useState("");
     const [newBedCounts, setNewBedCounts] = useState<bedTypes>({
@@ -111,6 +112,10 @@ export default function page() {
         setEditingIndex(index);
         setDialogOpen(true);
     };
+
+    const handleExtraServices=(data:{name:string,price:number}[])=>{
+        setServices(data);
+    }
 
     const openAddDialog = () => {
         setNewBedroomTitle("");
@@ -177,14 +182,21 @@ export default function page() {
     });
 
     // Time options
-    const checkInFromOptions = ["12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
-    const checkInUntilOptions = ["4:00 PM", "5:00 PM", "6:00 PM", "7:00 PM", "8:00 PM"];
-    const checkOutFromOptions = ["6:00 AM", "7:00 AM", "8:00 AM", "9:00 AM", "10:00 AM"];
-    const checkOutUntilOptions = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM"];
+    const ampmTimes = [
+        "12:00 AM", "12:30 AM", "1:00 AM", "1:30 AM", "2:00 AM", "2:30 AM", "3:00 AM", "3:30 AM", "4:00 AM", "4:30 AM", "5:00 AM", "5:30 AM",
+        "6:00 AM", "6:30 AM", "7:00 AM", "7:30 AM", "8:00 AM", "8:30 AM", "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
+        "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM",
+        "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"
+    ];
+    const checkInFromOptions = ampmTimes;
+    const checkInUntilOptions = ampmTimes;
+    const checkOutFromOptions = ampmTimes;
+    const checkOutUntilOptions = ampmTimes;
 
     const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setFormData({
+            name: propertyName,
             bedroom: bedrooms,
             numberofguest: numberOfGuest,
             numberofbathrooms: numberOfBathRooms,
@@ -201,6 +213,7 @@ export default function page() {
 
 
         updateListProperty({
+            name: propertyName,
             general: {
                 wifi: guestGeneral.free_wifi,
                 air_conditioning: guestGeneral.air_condition,
@@ -244,6 +257,7 @@ export default function page() {
 
         const updatedProperty = {
             ...JSON.parse(localStorage.getItem("propertyData")),
+            name: propertyName,
             general: {
                 wifi: guestGeneral.free_wifi,
                 air_conditioning: guestGeneral.air_condition,
@@ -282,16 +296,12 @@ export default function page() {
             bedrooms: [...bedrooms],
             bathrooms: numberOfGuest,
             number_of_guest_allowed: numberOfBathRooms,
+            extra_services: services
         };
         localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
 
         router.push("/property-list/setup/apartment-photos")
     }
-
-
-    useEffect(() => {
-        console.log("New bedrooms : ", newBedCounts);
-    }, [])
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7] relative">
@@ -304,6 +314,14 @@ export default function page() {
                         <div className="flex gap-6 w-full">
                             <div className="p-6 space-y-5 select-none bg-white rounded-lg flex-1">
                                 <h3>Property Details</h3>
+                                <div>
+                                    <label htmlFor="property-name" className="block text-[#070707] font-medium mb-3">Property Name</label>
+                                        <input type="text" name="property-name" id="property-name" placeholder="Enter property name" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" onChange={(e)=>setPropertyName(e.target.value)} />
+                                </div>
+                                {/* <div>
+                                    <label htmlFor="property-description" className="block text-[#070707] font-medium mb-3">Property Description</label>
+                                        <textarea name="property-description" id="property-description" placeholder="Enter property description" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" />
+                                </div> */}
                                 <div className="space-y-3">
                                     <label htmlFor="bedrooms" className="block text-[#070707] font-medium">Bedrooms</label>
                                     {bedrooms.map((room, idx) => (
@@ -654,6 +672,18 @@ export default function page() {
                                     </div>
                                 </div>
 
+                            </div>
+                            <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block"></div>
+                        </div>
+
+
+                        <div className="flex gap-6 w-full">
+                            <div className="space-y-5 bg-white p-6 rounded-lg flex-1">
+                                <h3 className="text-[#23262F] text-2xl font-medium">Add Extra Services</h3>
+                                <AddExtraServices 
+                                    services={services}
+                                    handleExtraServices={handleExtraServices}
+                                />
                             </div>
                             <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block"></div>
                         </div>
