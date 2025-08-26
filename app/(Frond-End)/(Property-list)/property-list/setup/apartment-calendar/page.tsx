@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
-import toast,{Toaster} from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 
 
 
@@ -90,8 +90,18 @@ export default function page() {
     const handleSubmit = () => {
         toast.success("Property setup completed.")
         console.clear();
-        console.log("Submitted data : ",JSON.parse(localStorage.getItem("propertyData")))
-        localStorage.removeItem("propertyData");
+        updateListProperty({
+            calendar_start_date: startDate.toDateString(),
+            calendar_end_date: endDate.toDateString()
+        })
+
+        const updatedProperty = {
+            ...JSON.parse(localStorage.getItem("propertyData")),
+            calendar_start_date: startDate.toDateString(),
+            calendar_end_date: endDate.toDateString()
+        };
+        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
+        console.log("Submitted data : ", JSON.parse(localStorage.getItem("propertyData")))
     }
 
     function getSameDateNextMonth(inputDate: Date): Date {
@@ -292,11 +302,9 @@ export default function page() {
                         </div>
                         <div className="flex justify-between w-full space-x-3 px-4">
                             <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
-                            <button disabled={(!licenses && !termsPolicy)} className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={handleSubmit}>Continue</button>
+                            <button type="button" disabled={(!licenses && !termsPolicy)} className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={handleSubmit}>Continue</button>
                         </div>
                     </div>
-
-
 
                     <div className="w-full md:w-[312px] space-y-4">
                         <div className="space-y-5 p-5 bg-white rounded-lg">

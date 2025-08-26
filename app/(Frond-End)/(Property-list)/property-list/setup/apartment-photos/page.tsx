@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { useDropzone } from "react-dropzone";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
@@ -21,7 +21,7 @@ export default function PropertyPhotosPage() {
     const [isSuggestionOpen, setIsSuggestionOpen] = useState(true);
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
-        setFiles(acceptedFiles);
+        setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
         setIsDragging(false);
     }, []);
 
@@ -31,22 +31,30 @@ export default function PropertyPhotosPage() {
         onDragLeave: () => setIsDragging(false),
         accept: {
             'image/*': ['.jpeg', '.jpg', '.png', '.webp']
-        }
+        },
+        multiple: true, // Allow multiple images at a time
     });
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         updateListProperty({
             photos: files
-        })
+        });
 
         const updatedProperty = {
-            ...JSON.parse(localStorage.getItem("propertyData")),
+            ...JSON.parse(localStorage.getItem("propertyData") || '{}'),
             photos: files
         };
         localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
 
         router.push("/property-list/setup/apartment-pricing");
+    };
+
+    const handleAddSingleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setFiles((prevFiles) => [...prevFiles, file]);
+        }
     };
 
     return (
@@ -79,15 +87,13 @@ export default function PropertyPhotosPage() {
                                             <PhotoUploadIcon />
                                         ) : (
                                             <div
-                                                className={`
-    grid 
-    ${files.length === 1 ? "grid-cols-1" :
+                                                className={`grid 
+                                                ${files.length === 1 ? "grid-cols-1" :
                                                         files.length === 2 ? "grid-cols-2" :
                                                             files.length === 3 ? "grid-cols-3" : "grid-cols-4"
                                                     } 
-    gap-2 w-full relative
-  `}
-                                            >
+                                                gap-2 w-full relative
+                                            `}>
                                                 {files.slice(0, 4).map((file, index) => (
                                                     <div key={index} className="relative group">
                                                         <img
@@ -113,16 +119,19 @@ export default function PropertyPhotosPage() {
                                             <div className="flex items-center space-x-2 text-[#4A4C56] text-sm">
                                                 <span>Or</span>
                                             </div>
-                                            <UploadButton />
+                                            <UploadButton onClick={() => document.getElementById("file-upload")?.click()} />
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Import Photos */}
-                                <div className="flex gap-[10px] items-center justify-center">
-                                    <ImportIcon />
-                                    <p className="text-[#4A4C56] text-[18px]">Import photos from your Airbnb listing</p>
-                                </div>
+                                {/* Upload single image */}
+                                <input
+                                    id="file-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleAddSingleImage}
+                                />
                             </div>
                         </div>
 
@@ -159,10 +168,11 @@ const PhotoUploadIcon = () => (
     </svg>
 );
 
-const UploadButton = () => (
+const UploadButton = ({ onClick }: { onClick: () => void }) => (
     <button
         type="button"
         className="p-3 text-[#0068EF] rounded-md focus:outline-none border-[#0068EF] border flex items-center gap-1 cursor-pointer"
+        onClick={onClick}
     >
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M5.83463 5C4.81743 5.00305 4.25449 5.02738 3.79191 5.22154C3.14397 5.4935 2.61631 5.99586 2.30806 6.63425C2.05645 7.15532 2.01528 7.82292 1.93293 9.15812L1.8039 11.2504C1.59912 14.5707 1.49673 16.2309 2.47104 17.2819C3.44534 18.3329 5.08674 18.3329 8.36957 18.3329H11.6331C14.9159 18.3329 16.5572 18.3329 17.5316 17.2819C18.5059 16.2309 18.4035 14.5707 18.1987 11.2504L18.0696 9.15812C17.9873 7.82292 17.9461 7.15532 17.6946 6.63425C17.3863 5.99586 16.8587 5.4935 16.2107 5.22154C15.7482 5.02738 15.1852 5.00305 14.168 5" stroke="#0068EF" strokeWidth="1.5" strokeLinecap="round" />
@@ -174,15 +184,6 @@ const UploadButton = () => (
     </button>
 );
 
-const ImportIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path fillRule="evenodd" clipRule="evenodd" d="M12.9141 3.125C13.0798 3.125 13.2388 3.19085 13.356 3.30806C13.4732 3.42527 13.5391 3.58424 13.5391 3.75V9.16667C13.5391 9.33243 13.4732 9.4914 13.356 9.60861C13.2388 9.72582 13.0798 9.79167 12.9141 9.79167C12.7483 9.79167 12.5893 9.72582 12.4721 9.60861C12.3549 9.4914 12.2891 9.33243 12.2891 9.16667V3.75C12.2891 3.58424 12.3549 3.42527 12.4721 3.30806C12.5893 3.19085 12.7483 3.125 12.9141 3.125Z" fill="#4A4C56" />
-        <path fillRule="evenodd" clipRule="evenodd" d="M9.97185 6.64424C10.089 6.52719 10.2479 6.46145 10.4135 6.46145C10.5791 6.46145 10.738 6.52719 10.8552 6.64424L12.9135 8.70257L14.9718 6.64424C15.0291 6.58283 15.0981 6.53358 15.1747 6.49942C15.2514 6.46526 15.3342 6.44689 15.4181 6.44541C15.502 6.44393 15.5854 6.45937 15.6632 6.4908C15.741 6.52223 15.8117 6.56902 15.871 6.62837C15.9304 6.68772 15.9772 6.75841 16.0086 6.83624C16.04 6.91406 16.0555 6.99742 16.054 7.08134C16.0525 7.16526 16.0342 7.24802 16 7.32468C15.9658 7.40135 15.9166 7.47035 15.8552 7.52757L13.3552 10.0276C13.238 10.1446 13.0791 10.2104 12.9135 10.2104C12.7479 10.2104 12.589 10.1446 12.4718 10.0276L9.97185 7.52757C9.8548 7.41038 9.78906 7.25153 9.78906 7.0859C9.78906 6.92028 9.8548 6.76142 9.97185 6.64424Z" fill="#4A4C56" />
-        <path fillRule="evenodd" clipRule="evenodd" d="M3.33073 2.29297C2.75573 2.29297 2.28906 2.75964 2.28906 3.33464V16.668C2.28906 17.243 2.75573 17.7096 3.33073 17.7096H16.6641C17.2391 17.7096 17.7057 17.243 17.7057 16.668V12.918C17.7057 12.7522 17.7716 12.5932 17.8888 12.476C18.006 12.3588 18.165 12.293 18.3307 12.293C18.4965 12.293 18.6555 12.3588 18.7727 12.476C18.8899 12.5932 18.9557 12.7522 18.9557 12.918V16.668C18.9557 17.2758 18.7143 17.8586 18.2845 18.2884C17.8547 18.7182 17.2718 18.9596 16.6641 18.9596H3.33073C2.72294 18.9596 2.14005 18.7182 1.71028 18.2884C1.28051 17.8586 1.03906 17.2758 1.03906 16.668V3.33464C1.03906 2.72685 1.28051 2.14395 1.71028 1.71418C2.14005 1.28441 2.72294 1.04297 3.33073 1.04297H7.08073C7.24649 1.04297 7.40546 1.10882 7.52267 1.22603C7.63988 1.34324 7.70573 1.50221 7.70573 1.66797C7.70573 1.83373 7.63988 1.9927 7.52267 2.10991C7.40546 2.22712 7.24649 2.29297 7.08073 2.29297H3.33073Z" fill="#4A4C56" />
-        <path fillRule="evenodd" clipRule="evenodd" d="M6.56854 13.5671C6.47396 13.4506 6.35536 13.356 6.22083 13.2896C6.08631 13.2233 5.93904 13.1867 5.78909 13.1825C5.63914 13.1783 5.49006 13.2066 5.35203 13.2653C5.21401 13.3241 5.0903 13.4119 4.98937 13.5229L2.12687 16.6721C2.01526 16.7947 1.85949 16.868 1.69383 16.8758C1.52817 16.8837 1.3662 16.8253 1.24354 16.7137C1.12087 16.6021 1.04757 16.4464 1.03976 16.2807C1.03194 16.115 1.09026 15.9531 1.20187 15.8304L4.06437 12.6821C4.28639 12.4378 4.55857 12.2443 4.86228 12.1149C5.16599 11.9856 5.49407 11.9233 5.82406 11.9325C6.15405 11.9417 6.47817 12.0221 6.77422 12.1681C7.07027 12.3142 7.33128 12.5225 7.53937 12.7787L11.7327 17.9404C11.8354 18.0692 11.8832 18.2334 11.8655 18.3972C11.8478 18.561 11.7661 18.7112 11.6383 18.8152C11.5104 18.9191 11.3467 18.9683 11.1827 18.9521C11.0187 18.9359 10.8678 18.8556 10.7627 18.7287L6.56854 13.5671Z" fill="#4A4C56" />
-        <path fillRule="evenodd" clipRule="evenodd" d="M14.4081 15.711C14.2211 15.5243 13.9701 15.4155 13.706 15.4069C13.4419 15.3982 13.1844 15.4902 12.9856 15.6644L10.8256 17.5544C10.7007 17.6635 10.5376 17.7186 10.3721 17.7075C10.2066 17.6964 10.0522 17.6201 9.94306 17.4952C9.83388 17.3703 9.77877 17.2072 9.78987 17.0417C9.80096 16.8762 9.87735 16.7219 10.0022 16.6127L12.1622 14.7235C12.5997 14.3408 13.1664 14.1386 13.7474 14.1579C14.3284 14.1773 14.8803 14.4167 15.2914 14.8277L17.9389 17.4752C18.0493 17.5937 18.1094 17.7504 18.1065 17.9123C18.1037 18.0742 18.0381 18.2287 17.9236 18.3432C17.8091 18.4577 17.6546 18.5233 17.4927 18.5262C17.3307 18.529 17.174 18.4689 17.0556 18.3585L14.4081 15.711ZM12.9139 11.8752C13.9422 11.8748 14.9431 11.5436 15.7687 10.9306C16.5943 10.3176 17.2008 9.4552 17.4986 8.47094C17.7963 7.48667 17.7695 6.43273 17.4221 5.46487C17.0748 4.497 16.4253 3.66656 15.5696 3.09626C14.7139 2.52597 13.6974 2.24608 12.6704 2.29795C11.6434 2.34983 10.6604 2.73071 9.86649 3.38433C9.07263 4.03794 8.51009 4.9296 8.26201 5.92755C8.01394 6.92549 8.09348 7.97676 8.48889 8.92602C8.55 9.07844 8.54867 9.24878 8.48519 9.40023C8.4217 9.55167 8.30117 9.67205 8.14964 9.73533C7.99811 9.79861 7.82776 9.79972 7.67542 9.73841C7.52309 9.67709 7.401 9.55829 7.33556 9.40768C6.79772 8.11642 6.72459 6.67855 7.12866 5.33939C7.53273 4.00023 8.38896 2.84277 9.55124 2.06449C10.7135 1.28622 12.1099 0.93536 13.502 1.07178C14.8941 1.2082 16.1958 1.82345 17.1849 2.81254C18.174 3.80164 18.7892 5.10329 18.9256 6.49542C19.062 7.88754 18.7112 9.28387 17.9329 10.4462C17.1546 11.6084 15.9972 12.4647 14.658 12.8687C13.3189 13.2728 11.881 13.1997 10.5897 12.6619C10.4391 12.5964 10.3203 12.4743 10.259 12.322C10.1977 12.1696 10.1988 11.9993 10.2621 11.8478C10.3254 11.6962 10.4457 11.5757 10.5972 11.5122C10.7486 11.4487 10.919 11.4474 11.0714 11.5085C11.6552 11.7515 12.2815 11.8762 12.9139 11.8752Z" fill="#4A4C56" />
-    </svg>
-);
 
 const BackButton = ({ onClick }: { onClick: () => void }) => (
     <div
