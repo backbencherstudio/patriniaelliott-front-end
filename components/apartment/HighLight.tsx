@@ -1,12 +1,17 @@
 "use client"
 import { featuresData } from "@/DemoAPI/featureData";
 import icon7 from "@/public/icon/ac.svg";
+import bar from "@/public/icon/bar.svg";
 import icon2 from "@/public/icon/bed.svg";
 import icon9 from "@/public/icon/car.svg";
 import icon5 from "@/public/icon/fitness.svg";
-import icon11 from "@/public/icon/kitchen.svg";
+import heating from "@/public/icon/heater.svg";
+import kitchen from "@/public/icon/kitchen.svg";
+import laundry from "@/public/icon/laundry.svg";
 import icon3 from "@/public/icon/pool.svg";
+import private_beach from "@/public/icon/private_beach.svg";
 import icon6 from "@/public/icon/proparty.svg";
+import sauna from "@/public/icon/sauna.svg";
 import icon10 from "@/public/icon/service.svg";
 import icon1 from "@/public/icon/tv.svg";
 import icon4 from "@/public/icon/wifi.svg";
@@ -14,9 +19,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 function HighLight({ aminate }) {
-  const [data, setData] = useState(12)
-  const [isShow, setIsShow] = useState()
-  const feture = featuresData.slice(0, data)
+
   return (
     <div>
       <h3 className="text-2xl lg:text-[32px] font-medium text-blackColor leading-[126%]">
@@ -26,7 +29,7 @@ function HighLight({ aminate }) {
 
 
         {
-          aminate?.TV && <div className=" flex items-center gap-4">
+          aminate?.entertainment?.flat_screen_tv && <div className=" flex items-center gap-4">
             <Image
               src={icon1}
               alt="icon1"
@@ -48,7 +51,7 @@ function HighLight({ aminate }) {
           <p className=" text-base text-descriptionColor">3 Bedrooms</p>
         </div>
         {
-          aminate?.wifi && <div className=" flex items-center gap-4">
+          aminate?.general?.wifi && <div className=" flex items-center gap-4">
             <Image
               src={icon4}
               alt="icon1"
@@ -60,7 +63,19 @@ function HighLight({ aminate }) {
           </div>
         }
         {
-          aminate?.air_conditioning &&
+          aminate?.general?.wifi && <div className=" flex items-center gap-4">
+            <Image
+              src={heating}
+              alt="icon1"
+              width={26}
+              height={26}
+              className=""
+            />
+            <p className=" text-base text-descriptionColor">Heating</p>
+          </div>
+        }
+        {
+          aminate?.general?.air_conditioning &&
           <div className=" flex items-center gap-4">
             <Image
               src={icon7}
@@ -73,7 +88,7 @@ function HighLight({ aminate }) {
           </div>
         }
         {
-          aminate?.room_service &&
+          aminate?.general?.room_service &&
           <div className=" flex items-center gap-4">
             <Image
               src={icon10}
@@ -86,10 +101,10 @@ function HighLight({ aminate }) {
           </div>
         }
         {
-          aminate?.private_beach &&
+          aminate?.general?.private_beach &&
           <div className=" flex items-center gap-4">
             <Image
-              src={icon11}
+              src={private_beach}
               alt="icon1"
               width={26}
               height={26}
@@ -99,7 +114,20 @@ function HighLight({ aminate }) {
           </div>
         }
         {
-          aminate?.swimming_pool &&
+          aminate?.general?.minibar &&
+          <div className=" flex items-center gap-4">
+            <Image
+              src={bar}
+              alt="icon1"
+              width={26}
+              height={26}
+              className=""
+            />
+            <p className=" text-base text-descriptionColor">minibar</p>
+          </div>
+        }
+        {
+          aminate?.entertainment?.swimming_pool &&
           <div className=" flex items-center gap-4">
             <Image
               src={icon3}
@@ -112,7 +140,7 @@ function HighLight({ aminate }) {
           </div>
         }
         {
-          aminate?.parking &&
+          aminate?.general?.parking &&
           <div className=" flex items-center gap-4">
             <Image
               src={icon9}
@@ -125,7 +153,46 @@ function HighLight({ aminate }) {
           </div>
         }
         {
-          aminate?.restaurant && <div className=" flex items-center gap-4">
+          aminate?.cooking_cleaning?.washing_machine &&
+          <div className=" flex items-center gap-4">
+            <Image
+              src={laundry}
+              alt="icon1"
+              width={26}
+              height={26}
+              className=""
+            />
+            <p className=" text-base text-descriptionColor">Washing Machine</p>
+          </div>
+        }
+        {
+          aminate?.entertainment?.sauna &&
+          <div className=" flex items-center gap-4">
+            <Image
+              src={sauna}
+              alt="icon1"
+              width={26}
+              height={26}
+              className=""
+            />
+            <p className=" text-base text-descriptionColor">Kitchen</p>
+          </div>
+        }
+        {
+          aminate?.cooking_cleaning?.kitchen &&
+          <div className=" flex items-center gap-4">
+            <Image
+              src={kitchen}
+              alt="icon1"
+              width={26}
+              height={26}
+              className=""
+            />
+            <p className=" text-base text-descriptionColor">Kitchen</p>
+          </div>
+        }
+        {
+          aminate?.general?.restaurant && <div className=" flex items-center gap-4">
             <Image
               src={icon6}
               alt="icon1"
@@ -136,7 +203,7 @@ function HighLight({ aminate }) {
             <p className=" text-base text-descriptionColor">Restaurant</p>
           </div>}
         {
-          aminate?.spa &&
+          aminate?.general?.spa &&
           <div className=" flex items-center gap-4">
             <Image
               src={icon5}

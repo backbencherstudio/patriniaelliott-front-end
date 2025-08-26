@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
-import { useDropzone } from "react-dropzone";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
+import { useRouter } from 'next/navigation';
+import { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
 
 const HEADER_ITEMS = [
     "Name and location",
@@ -57,6 +57,10 @@ export default function PropertyPhotosPage() {
         }
     };
 
+    const handleDeleteImage = (index: number) => {
+        setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    };
+
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
@@ -81,7 +85,7 @@ export default function PropertyPhotosPage() {
                                     className={`border-2 border-dashed rounded-lg p-[48px] text-center cursor-pointer transition-colors ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-[#4A4C56] hover:border-gray-400'
                                         }`}
                                 >
-                                    <input {...getInputProps()} required />
+                                    <input {...getInputProps()} />
                                     <div className="flex flex-col items-center space-y-6">
                                         {files.length === 0 ? (
                                             <PhotoUploadIcon />
@@ -102,6 +106,18 @@ export default function PropertyPhotosPage() {
                                                             className="w-full h-24 object-cover rounded-md"
                                                             onLoad={() => URL.revokeObjectURL(file["path"])} // Clean up memory
                                                         />
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleDeleteImage(index);
+                                                            }}
+                                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                                                <path d="M10.9742 10.1673C11.1974 10.3905 11.1974 10.7524 10.9742 10.9756C10.863 11.0868 10.7167 11.1431 10.5704 11.1431C10.4242 11.1431 10.2779 11.0875 10.1667 10.9756L5.99952 6.80845L1.83236 10.9756C1.72113 11.0868 1.57487 11.1431 1.4286 11.1431C1.28233 11.1431 1.13606 11.0875 1.02483 10.9756C0.801619 10.7524 0.801619 10.3905 1.02483 10.1673L5.19199 6.0002L1.02483 1.83313C0.801619 1.60992 0.801619 1.24804 1.02483 1.02483C1.24805 0.80162 1.60991 0.80162 1.83313 1.02483L6.00029 5.19194L10.1674 1.02483C10.3906 0.80162 10.7525 0.80162 10.9757 1.02483C11.1989 1.24804 11.1989 1.60992 10.9757 1.83313L6.80857 6.0002L10.9742 10.1673Z" fill="white" />
+                                                            </svg>
+                                                        </button>
                                                         {index === 3 && files.length > 4 && (
                                                             <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-white text-4xl font-light rounded-md">
                                                                 +{files.length - 4}

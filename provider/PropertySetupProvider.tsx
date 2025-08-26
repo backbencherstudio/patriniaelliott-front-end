@@ -97,6 +97,7 @@ interface standardRatePlanType {
 interface formDataType {
     type?: string;
     isMultiple?: boolean;
+    name?: string;
     about_property?: string;
     host_name?: string;
     about_host?: string;
