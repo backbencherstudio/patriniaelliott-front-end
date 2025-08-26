@@ -112,7 +112,6 @@ newPassword: async (data) => {
     return await Fetch.post(`${endpoint}`, data, _config);
   },
   createPropertyData: async (endpoint,data,token) => {    
-   
     const _config = {
       headers: {
         "content-type": "multipart/form-data",
