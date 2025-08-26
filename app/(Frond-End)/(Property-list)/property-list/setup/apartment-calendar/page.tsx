@@ -112,7 +112,7 @@ fd.append("address", propertyData.street);
 fd.append("postal_code", propertyData.zip_code);
 fd.append("bedrooms",  propertyData.bathrooms);
 fd.append("bathrooms", propertyData.bathrooms);
-fd.append("max_capacity", propertyData.max_guests);
+fd.append("max_capacity", propertyData.max_guests ? String(Number(propertyData.max_guests)) : "1");
 fd.append("check_in", JSON.stringify(check_in));
 fd.append("check_out", JSON.stringify(check_out));
 fd.append("breakfast_available", propertyData.breakfast_available);
