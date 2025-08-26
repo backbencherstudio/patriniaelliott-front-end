@@ -112,6 +112,7 @@ fd.append("address", propertyData.street);
 fd.append("postal_code", propertyData.zip_code);
 fd.append("bedrooms",  propertyData.bathrooms);
 fd.append("bathrooms", propertyData.bathrooms);
+fd.append("max_capacity", propertyData.max_guests);
 fd.append("check_in", JSON.stringify(check_in));
 fd.append("check_out", JSON.stringify(check_out));
 fd.append("breakfast_available", propertyData.breakfast_available);
@@ -126,6 +127,7 @@ const endpoint = "/admin/vendor-package"
         toast.success("Property setup completed.")
          setLoading(false)
          localStorage.removeItem("propertyData")
+         router.push("/property-list")
     }else{
         toast.error("Something went wrong")
          setLoading(false)
@@ -134,24 +136,18 @@ const endpoint = "/admin/vendor-package"
     console.log(error);
      setLoading(false)
  }
-        
-
-        console.log("Submitted data : ", propertyData)
-        console.log("updatedProperty data : ", fd)
+    
        
     }
 
     function getSameDateNextMonth(inputDate: Date): Date {
         const date = new Date(inputDate);
-
         // Get current month and year
         const currentMonth = date.getMonth();
         const currentYear = date.getFullYear();
-
         // Calculate next month (handles December -> January)
         const nextMonth = (currentMonth + 1) % 12;
         const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
-
         // Get the day, adjusting for months with fewer days
         const day = date.getDate();
         const lastDayOfNextMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
@@ -337,7 +333,7 @@ const endpoint = "/admin/vendor-package"
                         </div>
                         <div className="flex justify-between w-full space-x-3 px-4">
                             <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
-                            <button type="button" disabled={(!licenses && !termsPolicy)} className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={handleSubmit}>Continue</button>
+                            <button type="button"  disabled={(!licenses && !termsPolicy ) || loading} className="text-[#fff] px-6 disabled:bg-grayColor1 disabled:cursor-not-allowed sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer" onClick={handleSubmit}>{loading ? "Creating....":"Continue"} </button>
                         </div>
                     </div>
 
