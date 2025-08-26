@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button";
+import AddExtraServices from "../_components/AddExtraServices";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -39,6 +40,7 @@ export default function page() {
     const [guestFood, setGuestFood] = useState({ "breakfast": "yes" })
     const [houseRules, setHouseRules] = useState({ "smoking": false, "pets": false, "children": false, "events": false })
     const [formData, setFormData] = useState({})
+    const [services, setServices] = useState([]);
     const [bedrooms, setBedRooms] = useState<
         { title: string; beds: bedTypes }[]
     >([{
@@ -111,6 +113,10 @@ export default function page() {
         setEditingIndex(index);
         setDialogOpen(true);
     };
+
+    const handleExtraServices=(data:{name:string,price:number}[])=>{
+        setServices(data);
+    }
 
     const openAddDialog = () => {
         setNewBedroomTitle("");
@@ -282,16 +288,12 @@ export default function page() {
             bedrooms: [...bedrooms],
             bathrooms: numberOfGuest,
             number_of_guest_allowed: numberOfBathRooms,
+            extra_services: services
         };
         localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
 
         router.push("/property-list/setup/apartment-photos")
     }
-
-
-    useEffect(() => {
-        console.log("New bedrooms : ", newBedCounts);
-    }, [])
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7] relative">
@@ -654,6 +656,18 @@ export default function page() {
                                     </div>
                                 </div>
 
+                            </div>
+                            <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block"></div>
+                        </div>
+
+
+                        <div className="flex gap-6 w-full">
+                            <div className="space-y-5 bg-white p-6 rounded-lg flex-1">
+                                <h3 className="text-[#23262F] text-2xl font-medium">Add Extra Services</h3>
+                                <AddExtraServices 
+                                    services={services}
+                                    handleExtraServices={handleExtraServices}
+                                />
                             </div>
                             <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block"></div>
                         </div>

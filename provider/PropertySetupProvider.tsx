@@ -95,15 +95,15 @@ interface standardRatePlanType {
 }
 
 interface formDataType {
-    property_type?: string;
+    type?: string;
     isMultiple?: boolean;
     about_property?: string;
     host_name?: string;
     about_host?: string;
     email?: string;
     country?: string;
-    street?: string;
-    zip_code?: string;
+    address?: string;
+    postal_code?: string;
     city?: string;
     region?: string;
     max_guests: number;
@@ -122,14 +122,20 @@ interface formDataType {
     check_out_untill: string;
     photos: File[];
     booking_method: string;
-    max_price: number;
-    min_price: number;
-    price_per_night: number;
+    price: number;
     standard_rate_plan: standardRatePlanType;
     non_refundable_rate_plan: string[];
     guest_check_in: {
         asSoon: boolean;
         date?: string;
     };
+    start_date:string;
+    end_date:string;
     maxReservation: boolean;
+    extra_services:{
+        name:string;
+        price:number;
+    }[];
+    calendar_start_date: string;
+    calendar_end_date: string;
 }
