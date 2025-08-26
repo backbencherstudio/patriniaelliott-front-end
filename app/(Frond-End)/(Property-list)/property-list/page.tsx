@@ -12,7 +12,7 @@ function page() {
   const handleSelection = (select: string) => {
     setSelectedPropertyType(select);
     updateListProperty({
-      property_type: select
+      type: select
     });
     const updatedProperty = {
       ...listProperty,
