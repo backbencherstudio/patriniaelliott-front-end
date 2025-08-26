@@ -13,10 +13,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function AccommodationCard({ tour }: { tour: Package }) {
   const { id, name, type, reviews, roomFiles, amenities, bedrooms, bathrooms, cancellation_policy, breakfast_available, price, address, rating_summary } = tour
-
+ console.log("AccommodationCard",amenities);
+ 
 
   return (
-    <div className="bg-white hover:shadow-sm rounded-2xl shadow-xl group overflow-hidden w-full">
+    <div className="bg-white shadow-lg hover:-mt-2  transition-all duration-200 rounded-2xl hover:shadow-xl group overflow-hidden w-full">
       <div className="relative ">
         <div className=" p-3 ">
           {
