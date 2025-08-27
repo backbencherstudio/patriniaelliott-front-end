@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 
 const PropertyContext = createContext<{
     listProperty: formDataType | undefined;
@@ -104,7 +104,9 @@ interface formDataType {
     email?: string;
     country?: string;
     address?: string;
+    street?: string;
     postal_code?: string;
+    zip_code?: string;
     city?: string;
     region?: string;
     max_guests: number;
@@ -123,7 +125,8 @@ interface formDataType {
     check_out_untill: string;
     photos: File[];
     booking_method: string;
-    price: number;
+    price?: number;
+    price_per_night?: number;
     standard_rate_plan: standardRatePlanType;
     non_refundable_rate_plan: string[];
     guest_check_in: {

@@ -13,10 +13,8 @@ function Page() {
   const [guests, setGuests] = useState([
     { firstName: "", lastName: "", email: "", phone: "" },
   ]);
-            const endpoint ="/auth/me"
+      const endpoint ="/auth/me"
       const {data,loading}= useFetchData(endpoint)
-      console.log(activeTab);
-      console.log("user data ============",guests);
   return (
     <div className="py-12 lg:py-20">
       <div className="container grid grid-cols-12 gap-7">

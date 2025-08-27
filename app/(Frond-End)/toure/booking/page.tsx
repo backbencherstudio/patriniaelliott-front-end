@@ -4,12 +4,17 @@ import StepOne from "@/components/payment/StepOne";
 import StepTwo from "@/components/payment/StepTwo";
 import ToureBookingSummary from "@/components/toure/ToureBookingSummary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useFetchData from "@/hooks/useFetchData";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 function Page() {
       const [activeTab, setActiveTab] = useState('step1');
-      console.log(activeTab);
+       const [guests, setGuests] = useState([
+    { firstName: "", lastName: "", email: "", phone: "" },
+  ]);
+      const endpoint ="/auth/me"
+      const {data,loading}= useFetchData(endpoint)
       
   return (
     <div className="py-20">
@@ -41,14 +46,13 @@ function Page() {
             </TabsList>
 
             <TabsContent value="step1">
-              <StepOne  />
+              <StepOne data={data?.data} guests={guests} setGuests={setGuests} />
             </TabsContent>
             <TabsContent value="step2">
               <StepTwo />
             </TabsContent>
           </Tabs>
         </div>
-
         <div className="col-span-12 lg:col-span-5">
           <ToureBookingSummary activeTab={activeTab} setActiveTab={setActiveTab}/>
         </div>
