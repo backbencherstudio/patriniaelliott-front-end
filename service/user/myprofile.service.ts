@@ -50,5 +50,28 @@ export const MyProfileService = {
     }
     return await Fetch.post("/auth/change-password", data, config);
   },
+
+  // POST /user-profile/card → add a new payment card for the authenticated user
+  addCard: async (
+    data: {
+      card_number: string;
+      expiry_month: number;
+      expiry_year: number;
+      cvv: string;
+      billing_country: string;
+      billing_street_address: string;
+      billing_apt_suite_unit?: string | null;
+      billing_city: string;
+      billing_state: string;
+      billing_zip_code: string;
+    },
+    context: any = null
+  ) => {
+    const config = buildAuthHeader(context);
+    if (!config) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+    return await Fetch.post("/user-profile/card", data, config);
+  },
 };
 

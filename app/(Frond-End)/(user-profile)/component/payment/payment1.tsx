@@ -1,10 +1,13 @@
+"use client";
 import Link from "next/link";
+import { Toaster } from 'react-hot-toast'
 
 
 
 export default function Payment1() {
   return (
     <div className="max-w-[960px] bg-white rounded-xl p-6 flex flex-col gap-6">
+      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
       <div className="flex flex-col gap-4">
         <h2 className="text-[#22262e] text-2xl font-medium">Add payment cards</h2>
         <p className="text-[#777980] text-base">Save your passport details for use when booking your next stay, flight.</p>

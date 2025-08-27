@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { toast } from 'react-hot-toast'
+import { toast, Toaster } from 'react-hot-toast'
 import { MyProfileService } from '../../../../../service/user/myprofile.service'
 
 export default function ChangePassword() {
@@ -60,6 +60,7 @@ export default function ChangePassword() {
 
   return (
     <div className="w-full p-6 bg-white rounded-xl inline-flex flex-col justify-start items-start gap-8">
+      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
       <div className="justify-center text-[#22262e] text-2xl font-medium font-['Inter'] leading-[30.24px]">Change password</div>
       <form onSubmit={handleSubmit} className="self-stretch flex flex-col justify-start items-start gap-3 w-full">
         <div className="self-stretch inline-flex justify-start items-start gap-4 w-full">
