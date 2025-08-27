@@ -73,5 +73,17 @@ export const MyProfileService = {
     }
     return await Fetch.post("/user-profile/card", data, config);
   },
+
+  // DELETE /user-profile/delete → permanently delete authenticated user account
+  deleteAccount: async (
+    data: { email: string; password: string; feedback?: string },
+    context: any = null
+  ) => {
+    const config = buildAuthHeader(context);
+    if (!config) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+    return await Fetch.delete("/user-profile/delete", { ...config, data });
+  },
 };
 
