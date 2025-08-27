@@ -65,7 +65,7 @@ async function ApartmnetDetailsPage(props: {
     console.log(error);
 
   }
-  console.log("=============", vendorPackage);
+
   return (
     <div>
       <div className=" container">
