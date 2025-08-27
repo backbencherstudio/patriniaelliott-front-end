@@ -23,7 +23,7 @@ function Accommodation() {
 
   const goNext = () => swiperRef.current?.slideNext();
   const goPrev = () => swiperRef.current?.slidePrev();
-  console.log(error);
+  console.log(packageData);
 
   return (
     <section className=" bg-bgColor py-12">
@@ -82,12 +82,12 @@ function Accommodation() {
                 {Array.from({ length: 3 }, (_, i) => (
                   <CardSkeleton key={i} />
                 ))}
-              </div> : packageData.length < 0 ? <div>Package Data Not Found!</div> : packageData.map((tour: any, index) => (
+              </div> : packageData?.length < 0 ? <div>Package Data Not Found!</div> : packageData?.map((tour: any, index) => (
                 <SwiperSlide key={index} className=" px-1 md:px-4 py-10 ">
                   <AccommodationCard tour={tour} />
                 </SwiperSlide>
               ))}
-              {(error && packageData.length === 0) && <div className="text-center text-2xl font-bold text-redColor py-10">Server is not responding!</div>}
+              {(error && packageData?.length === 0) && <div className="text-center text-2xl font-bold text-redColor py-10">Server is not responding!</div>}
             </Swiper>
           </div>
           <div>

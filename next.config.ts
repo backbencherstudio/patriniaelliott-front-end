@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "critics-database-treasurer-developing.trycloudflare.com",
+        hostname: "paraguay-moscow-up-you.trycloudflare.com",
       },
     ],
   },

@@ -31,9 +31,7 @@ export const BookingProvider = ({ children }) => {
     if (bookingDetails.apartment) {
       setSingleApartment(bookingDetails.apartment);
     }
-    if (bookingDetails.selectedExtraServices) {
-      setSelectedExtraServices(bookingDetails.selectedExtraServices);
-    }
+   
     if (bookingDetails.startDate) {
       setStartDate(new Date(bookingDetails.startDate));
     }

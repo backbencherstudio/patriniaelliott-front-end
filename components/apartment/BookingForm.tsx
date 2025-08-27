@@ -20,7 +20,6 @@ const BookingForm = ({ singleApartments, type }: any) => {
     setEndDate,
     totalDays,
     basePrice,
-    extraServicesTotal,
     totalPrice,
     handleBookNow
   } = useBookingContext();
