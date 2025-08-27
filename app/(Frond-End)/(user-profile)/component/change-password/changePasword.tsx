@@ -1,6 +1,8 @@
 'use client'
 import React, { useState } from 'react'
 import Image from 'next/image'
+import { toast } from 'react-hot-toast'
+import { MyProfileService } from '../../../../../service/user/myprofile.service'
 
 export default function ChangePassword() {
   const [showOldPassword, setShowOldPassword] = useState(false)
@@ -19,10 +21,41 @@ export default function ChangePassword() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle password update logic here
-    console.log('Passwords:', passwords)
+
+    if (!passwords.oldPassword || !passwords.newPassword || !passwords.confirmPassword) {
+      toast.error('All fields are required')
+      return
+    }
+    if (passwords.newPassword !== passwords.confirmPassword) {
+      toast.error('New password and confirmation do not match')
+      return
+    }
+
+    try {
+      setSubmitting(true)
+      const res = await MyProfileService.changePassword({
+        old_password: passwords.oldPassword,
+        new_password: passwords.newPassword,
+      })
+
+      const success = res?.success === true || res?.status === 200 || res?.status === 201 || res?.data?.success === true
+      if (success) {
+        toast.success('Password updated successfully')
+        setPasswords({ oldPassword: '', newPassword: '', confirmPassword: '' })
+      } else {
+        const message = res?.data?.message || 'Failed to update password'
+        toast.error(message)
+      }
+    } catch (error: any) {
+      const message = error?.response?.data?.message || error?.message || 'Failed to update password'
+      toast.error(message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -127,9 +160,10 @@ export default function ChangePassword() {
           </div>
           <button
             type="submit"
-            className="px-6 py-3.5 bg-[#0068ef] rounded-lg inline-flex justify-center items-center gap-1.5 overflow-hidden hover:bg-[#0056cc] transition-colors"
+            disabled={submitting}
+            className="px-6 py-3.5 bg-[#0068ef] rounded-lg inline-flex justify-center items-center gap-1.5 overflow-hidden hover:bg-[#0056cc] transition-colors disabled:opacity-50"
           >
-            <div className="justify-start text-white text-lg font-medium font-['Inter'] leading-[18px]">Update Password</div>
+            <div className="justify-start text-white text-lg font-medium font-['Inter'] leading-[18px]">{submitting ? 'Updating...' : 'Update Password'}</div>
           </button>
         </div>
       </form>
