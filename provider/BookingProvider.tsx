@@ -1,17 +1,46 @@
 "use client"
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 // Create the context
 const BookingContext = createContext(null);
 
+// Helper function to safely get from localStorage
+const getFromLocalStorage = (key: string, defaultValue: any) => {
+  if (typeof window === 'undefined') return defaultValue;
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : defaultValue;
+  } catch (error) {
+    console.error(`Error reading from localStorage: ${key}`, error);
+    return defaultValue;
+  }
+};
+
 // Create a provider component
 export const BookingProvider = ({ children }) => {
-  // Initialize state
+  // Initialize state with safe defaults
   const [singleApartment, setSingleApartment] = useState(null);
   const [selectedExtraServices, setSelectedExtraServices] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [bookingData, setBookingData] = useState(null);
+
+  // Load data from localStorage on client-side
+  useEffect(() => {
+    const bookingDetails = getFromLocalStorage("bookingDetails", {});
+    if (bookingDetails.apartment) {
+      setSingleApartment(bookingDetails.apartment);
+    }
+    if (bookingDetails.selectedExtraServices) {
+      setSelectedExtraServices(bookingDetails.selectedExtraServices);
+    }
+    if (bookingDetails.startDate) {
+      setStartDate(new Date(bookingDetails.startDate));
+    }
+    if (bookingDetails.endDate) {
+      setEndDate(new Date(bookingDetails.endDate));
+    }
+  }, []);
 
   // Calculate total days
   const totalDays = useMemo(() => {
@@ -37,7 +66,7 @@ export const BookingProvider = ({ children }) => {
     return basePrice + extraServicesTotal;
   }, [basePrice, extraServicesTotal]);
 
-  const discountNumber = 10
+  const discountNumber = 10;
   // Calculate discount
   const discount = useMemo(() => {
     return Number((totalPrice * (discountNumber/100)).toFixed(2));
@@ -57,7 +86,16 @@ export const BookingProvider = ({ children }) => {
       basePrice,
       extraServicesTotal
     };
-    localStorage.setItem("bookingDetails", JSON.stringify(bookingDetails));
+    
+    // Save to localStorage safely
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem("bookingDetails", JSON.stringify(bookingDetails));
+      } catch (error) {
+        console.error("Error saving to localStorage:", error);
+      }
+    }
+    
     setBookingData(bookingDetails);
   };
 
@@ -68,6 +106,15 @@ export const BookingProvider = ({ children }) => {
     setSingleApartment(null);
     setSelectedExtraServices([]);
     setBookingData(null);
+    
+    // Clear localStorage safely
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem("bookingDetails");
+      } catch (error) {
+        console.error("Error clearing localStorage:", error);
+      }
+    }
   };
 
   // Context value
@@ -85,6 +132,7 @@ export const BookingProvider = ({ children }) => {
     extraServicesTotal,
     totalPrice,
     discount,
+    discountNumber,
     handleBookNow,
     bookingData,
     clearStoredData
@@ -98,6 +146,7 @@ export const BookingProvider = ({ children }) => {
     extraServicesTotal,
     totalPrice,
     discount,
+    discountNumber,
     bookingData
   ]);
 

@@ -26,7 +26,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
     setBookingData(JSON.parse(data))
   },[])
 
-  console.log("bookingDetails",bookingData);
+
   
   // Show loading state if no apartment data
   if (!bookingData) {
@@ -41,7 +41,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
   }
 
   const { name, reviews, price, rating, address } = bookingData?.apartment;
-
+ const serviceFee = 170;
   return (
    
     <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
@@ -169,13 +169,13 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
           
           <div className="flex text-base text-headerColor justify-between">
             <span className=" !text-descriptionColor">Service fee</span>
-            <span>$170</span>
+            <span>${serviceFee}</span>
           </div>
         </div>
         {/* Total */}
         <div className="flex justify-between mt-4 text-base font-semibold text-black border-t pt-3">
           <span>Total</span>
-          <span>${bookingData?.totalPrice - Number(bookingData?.discount)}</span>
+          <span>${(bookingData?.totalPrice +serviceFee) - Number(bookingData?.discount)}</span>
         </div>
       </div>
       {/* Proceed Button */}
