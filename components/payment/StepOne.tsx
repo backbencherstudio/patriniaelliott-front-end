@@ -1,12 +1,8 @@
 "use client";
-import { useState } from "react";
+import Image from "next/image";
 import { BiEditAlt } from "react-icons/bi";
 import { CiCirclePlus } from "react-icons/ci";
-export default function StepOne() {
-  const [guests, setGuests] = useState([
-    { firstName: "", lastName: "", email: "", phone: "" },
-  ]);
-
+export default function StepOne({data,guests,setGuests}:{data?:any,guests:any,setGuests:any}) {
   const handleAddGuest = () => {
     setGuests((prev) => [
       ...prev,
@@ -37,17 +33,19 @@ export default function StepOne() {
 
       {/* Logged-in user preview */}
       <div className="flex items-center gap-4 py-5 px-4 bg-white border rounded-lg ">
-        <img
+        <Image
+        width={40}
+         height={40}
           src="https://i.pravatar.cc/40"
           className="w-10 h-10 rounded-full"
           alt="avatar"
         />
         <div className="flex-1 text-base">
-          <p className="font-medium  text-headerColor">Elisabeth Sarah</p>
+          <p className="font-medium  text-headerColor">{data?.name}</p>
           <p className="text-descriptionColor text-sm mt-1">
             Email:{" "}
-            <span className="text-headerColor">elisabeth_sarah@gmail.com</span>{" "}
-            • Number: <span className="text-headerColor">+6716 464 594</span>
+            <span className="text-headerColor">{data?.email}</span>{" "}
+            • Number: <span className="text-headerColor">{data?.phone_number}</span>
           </p>
         </div>
         <button className=" cursor-pointer">

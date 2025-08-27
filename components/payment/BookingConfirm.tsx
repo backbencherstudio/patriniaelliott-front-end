@@ -7,23 +7,15 @@ import { FaStar } from "react-icons/fa6";
 export default function BookingConfirm({ isOpen, setIsOpen }: any) {
   const {
     singleApartment,
-    selectedServices,
-    startDate,
-    endDate,
-    servicePrices,
-    carRent,
-    dinnerPrice,
     totalPrice,
     totalDay,
-    calculateTotal,
     discount,
-    discountNumber,
   } = useBookingContext();
   console.log(singleApartment);
 
   if (!singleApartment) return null;
 
-  const { title, reviews, bed, price, rating, image } = singleApartment;
+  const { name, reviews, bedrooms, price, rating, image } = singleApartment;
     const date = new Date();
   const options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
@@ -36,7 +28,7 @@ export default function BookingConfirm({ isOpen, setIsOpen }: any) {
     <Dialog  open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className=" " asChild></DialogTrigger>
       
-      <DialogContent className="sm:max-w-[662px] text-center p-10 close">
+      <DialogContent className="sm:max-w-[662px] text-center p-10 h-[90%] overflow-y-auto close">
         <h2 className=" text-headerColor font-semibold text-5xl">
           {" "}
           Congratulation!
@@ -48,9 +40,9 @@ export default function BookingConfirm({ isOpen, setIsOpen }: any) {
           We successfully received your payment!
         </p>
         <div className=" text-start bg-bgColor rounded-lg p-4">
-          <h4 className=" text-[22px] font-medium text-headerColor">{title}</h4>
+          <h4 className=" text-[22px] font-medium text-headerColor">{name}</h4>
           <ul className=" gap-2 text-grayColor1 text-sm mt-1 flex  border-b border-grayColor1/25 pb-3">
-            <li>{bed} King Bed</li>
+            <li>{bedrooms} King Bed</li>
             <li>•{totalDay} Night</li>
             <li>• Parking Service</li>
             <li>• Foods</li>
