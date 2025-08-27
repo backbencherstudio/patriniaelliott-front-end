@@ -28,6 +28,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "paraguay-moscow-up-you.trycloudflare.com",
       },
+      {
+        protocol: "https",
+        hostname: "backend.naamstay.com",
+      },
+      {
+        protocol: "https",
+        hostname: "naamstay.com",
+      },
     ],
   },
 };
