@@ -1,25 +1,12 @@
 "use client";
-import { useBookingContext } from "@/provider/BookingProvider";
+
 import { LucideCalendarDays } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaArrowRightLong, FaStar } from "react-icons/fa6";
 
 const BookingSummary = ({activeTab,setActiveTab}:any) => {
-  const {
-    singleApartment,
-    startDate,
-    endDate,
-    totalDay,
-    calculateTotal,
-    totalPrice,
-    discount,
-    discountNumber
-  } = useBookingContext();
-  // console.log("BookingSummary - singleApartment:", singleApartment);
-  // console.log("BookingSummary - startDate:", startDate);
-  // console.log("BookingSummary - endDate:", endDate);
-  // console.log("BookingSummary - selectedServices:", selectedServices);
+ 
   const [bookingData, setBookingData] = useState<any>()
   useEffect(()=>{
     const data = localStorage.getItem("bookingDetails")
