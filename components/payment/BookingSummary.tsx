@@ -2,30 +2,34 @@
 import { useBookingContext } from "@/provider/BookingProvider";
 import { LucideCalendarDays } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { FaArrowRightLong, FaStar } from "react-icons/fa6";
 
 const BookingSummary = ({activeTab,setActiveTab}:any) => {
   const {
     singleApartment,
-    selectedServices,
     startDate,
     endDate,
-    servicePrices,
-    carRent,
-    dinnerPrice,
-    totalPrice,
     totalDay,
     calculateTotal,
+    totalPrice,
     discount,
     discountNumber
   } = useBookingContext();
-  console.log("BookingSummary - singleApartment:", singleApartment);
-  console.log("BookingSummary - startDate:", startDate);
-  console.log("BookingSummary - endDate:", endDate);
-  console.log("BookingSummary - selectedServices:", selectedServices);
+  // console.log("BookingSummary - singleApartment:", singleApartment);
+  // console.log("BookingSummary - startDate:", startDate);
+  // console.log("BookingSummary - endDate:", endDate);
+  // console.log("BookingSummary - selectedServices:", selectedServices);
+  const [bookingData, setBookingData] = useState<any>()
+  useEffect(()=>{
+    const data = localStorage.getItem("bookingDetails")
+    setBookingData(JSON.parse(data))
+  },[])
 
+  console.log("bookingDetails",bookingData);
+  
   // Show loading state if no apartment data
-  if (!singleApartment) {
+  if (!bookingData) {
     return (
       <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
         <div className="text-center py-8">
@@ -36,7 +40,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
     );
   }
 
-  const { name, reviews, price, rating, address } = singleApartment;
+  const { name, reviews, price, rating, address } = bookingData?.apartment;
 
   return (
    
@@ -46,7 +50,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
       <div className="flex flex-col  md:flex-row items-center md:items-start gap-4">
         <div className=" w-[180px] h-[163px]">
           <img
-            src={ "/apartment.jpg"}
+            src={bookingData?.apartment ? bookingData?.apartment?.roomFiles[0] : "/empty.png"}
             alt={name ? name : ""}
             width={180}
             height={163}
@@ -72,7 +76,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
             />
             <p className="text-xs text-grayColor1 mt-1">
               Hosted by{" "}
-              <span className="font-semibold text-headerColor">Michalle</span>
+              <span className="font-semibold text-headerColor">{bookingData?.apartment?.user?.name}</span>
             </p>
           </div>
 
@@ -94,8 +98,8 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
               <div>
                 <p className="text-sm text-descriptionColor"> Check-in</p>
                 <p className=" text-base font-semibold text-headerColor">
-                  {startDate
-                    ? new Date(startDate).toDateString()
+                  {bookingData?.startDate
+                    ? new Date(bookingData?.startDate).toDateString()
                     : "Not selected"}
                 </p>
                 <p className="text-grayColor1 text-sm ">12:00 PM</p>
@@ -108,7 +112,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
               <div>
                 <p className="text-sm text-descriptionColor">Check-out</p>
                 <p className="text-base font-semibold text-headerColor">
-                  {endDate ? new Date(endDate).toDateString() : "Not selected"}
+                  {bookingData?.endDate ? new Date(bookingData?.endDate).toDateString() : "Not selected"}
                 </p>
                 <p className="text-grayColor1 text-sm  ">11:00 AM</p>
               </div>
@@ -138,85 +142,31 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
         <div className="space-y-3 text-base">
           <div className="flex justify-between">
             <span className=" text-descriptionColor">
-              ${price} × {totalDay} nights
+              ${price} × {bookingData?.totalDays} nights
             </span>
-            <span>${(price * totalDay).toFixed(2)}</span>
+            <span>${(price * bookingData?.totalDays)}</span>
           </div>
 
           {/* Example static discount - make dynamic later */}
           <div className="flex justify-between text-base text-headerColor">
-            <span className=" text-descriptionColor">{discountNumber}% campaign discount</span>
-            <span>- ${discount}</span>
+            <span className=" text-descriptionColor">{bookingData?.discountNumber}% campaign discount</span>
+            <span>- ${bookingData?.discount}</span>
           </div>
 
           <div className="flex text-base text-headerColor  justify-between">
             <span className=" text-descriptionColor">Booking Fees</span>
             <span>Free</span>
           </div>
-
-          {selectedServices.dailyHousekeeping && (
-            <div className="flex justify-between text-headerColor">
-              <span className="text-descriptionColor">
-                Daily housekeeping{" "}
+            {bookingData?.selectedExtraServices.map((service:any) => (
+          <div key={service.id} className="flex justify-between text-headerColor">
+              <span  className="text-descriptionColor">
+                {service.name}{" "}
                <span className="text-grayColor1 bg-secondaryColor/20 px-3 pb-[3px] py-[2px] leading-[100%] rounded-full text-sm">Extra</span>
               </span>
-              <span>${servicePrices?.dailyHousekeeping || 40}</span>
+              <span>${service.price}</span>
             </div>
-          )}
-
-     
-            <div className="flex text-base text-headerColor justify-between">
-              <span className=" !text-descriptionColor" >
-                Buffet Dinner{" "}
-               <span className="text-grayColor1 bg-secondaryColor/20 px-3 pb-[3px] py-[2px] leading-[100%] rounded-full text-sm">Extra</span>
-              </span>
-              <span>${dinnerPrice}</span>
-            </div>
-        
-          {selectedServices.breakfast && (
-            <div className="flex text-base text-headerColor justify-between">
-              <span className=" !text-descriptionColor">
-               Breakfast included{" "}
-                <span className="text-grayColor1 bg-secondaryColor/20 px-3 pb-[3px] py-[2px] leading-[100%] rounded-full text-sm">Extra</span>
-              </span>
-              <span>${servicePrices.breakfast || 0}</span>
-            </div>
-          )}
-          {selectedServices.groceryDelivery && (
-            <div className="flex text-base text-headerColor justify-between">
-              <span className=" !text-descriptionColor">
-               Grocery delivery{" "}
-                <span className="text-grayColor1 bg-secondaryColor/20 px-3 pb-[3px] py-[2px] leading-[100%] rounded-full text-sm">Extra</span>
-              </span>
-              <span>${servicePrices.groceryDelivery || 0}</span>
-            </div>
-          )}
-          {selectedServices.fullCleaning && (
-            <div className="flex text-base text-headerColor justify-between">
-              <span className=" !text-descriptionColor">
-              Chauffeur-driven car{" "}
-                <span className="text-grayColor1 bg-secondaryColor/20 px-3 pb-[3px] py-[2px] leading-[100%] rounded-full text-sm">Extra</span>
-              </span>
-              <span>${servicePrices.fullCleaning}</span>
-            </div>
-          )}
-          {selectedServices.chauffeur && (
-            <div className="flex text-base text-headerColor justify-between">
-              <span className=" !text-descriptionColor">
-               Full apartment cleaning{" "}
-                <span className="text-grayColor1 bg-secondaryColor/20 px-3 pb-[3px] py-[2px] leading-[100%] rounded-full text-sm">Extra</span>
-              </span>
-              <span>${servicePrices.chauffeur}</span>
-            </div>
-          )}
-         
-            <div className="flex text-base text-headerColor justify-between">
-              <span className=" !text-descriptionColor" >
-                Car Rental{" "}
-                <span className="text-grayColor1 bg-secondaryColor/20 px-3 pb-[3px] py-[2px] leading-[100%] rounded-full text-sm">Extra</span>
-              </span>
-              <span>${carRent}</span>
-            </div>
+            ))}
+          
           <div className="flex text-base text-headerColor justify-between">
             <span className=" !text-descriptionColor">Service fee</span>
             <span>$170</span>
@@ -225,7 +175,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
         {/* Total */}
         <div className="flex justify-between mt-4 text-base font-semibold text-black border-t pt-3">
           <span>Total</span>
-          <span>${calculateTotal().toFixed(2) -Number(discount)}</span>
+          <span>${bookingData?.totalPrice - Number(bookingData?.discount)}</span>
         </div>
       </div>
       {/* Proceed Button */}
