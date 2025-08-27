@@ -1,9 +1,9 @@
 "use client"
-import { featuresData } from "@/DemoAPI/featureData";
 import icon7 from "@/public/icon/ac.svg";
 import bar from "@/public/icon/bar.svg";
 import icon2 from "@/public/icon/bed.svg";
 import icon9 from "@/public/icon/car.svg";
+import charge from "@/public/icon/charge.svg";
 import icon5 from "@/public/icon/fitness.svg";
 import heating from "@/public/icon/heater.svg";
 import kitchen from "@/public/icon/kitchen.svg";
@@ -16,9 +16,8 @@ import icon10 from "@/public/icon/service.svg";
 import icon1 from "@/public/icon/tv.svg";
 import icon4 from "@/public/icon/wifi.svg";
 import Image from "next/image";
-import { useState } from "react";
 
-function HighLight({ aminate }) {
+function HighLight({ aminate, bedroom }) {
 
   return (
     <div>
@@ -48,7 +47,7 @@ function HighLight({ aminate }) {
             height={26}
             className=""
           />
-          <p className=" text-base text-descriptionColor">3 Bedrooms</p>
+          <p className=" text-base text-descriptionColor">{bedroom} Bedrooms</p>
         </div>
         {
           aminate?.general?.wifi && <div className=" flex items-center gap-4">
@@ -63,7 +62,7 @@ function HighLight({ aminate }) {
           </div>
         }
         {
-          aminate?.general?.wifi && <div className=" flex items-center gap-4">
+          aminate?.general?.heating && <div className=" flex items-center gap-4">
             <Image
               src={heating}
               alt="icon1"
@@ -72,6 +71,18 @@ function HighLight({ aminate }) {
               className=""
             />
             <p className=" text-base text-descriptionColor">Heating</p>
+          </div>
+        }
+        {
+          aminate?.general?.electric_vehicle_charging_station && <div className=" flex items-center gap-4">
+            <Image
+              src={charge}
+              alt="icon1"
+              width={26}
+              height={26}
+              className=""
+            />
+            <p className=" text-base text-descriptionColor">Charging Station</p>
           </div>
         }
         {
@@ -114,7 +125,7 @@ function HighLight({ aminate }) {
           </div>
         }
         {
-          aminate?.general?.minibar &&
+          aminate?.entertainment?.minibar &&
           <div className=" flex items-center gap-4">
             <Image
               src={bar}
@@ -123,7 +134,7 @@ function HighLight({ aminate }) {
               height={26}
               className=""
             />
-            <p className=" text-base text-descriptionColor">minibar</p>
+            <p className=" text-base text-descriptionColor">Minibar</p>
           </div>
         }
         {

@@ -55,7 +55,7 @@ const ApatmentTabs = ({ singleApartment }: any) => {
           <Overview overview={singleApartment?.description} />
         </TabsContent>
         <TabsContent value="highlights" className="pt-10 pb-8">
-          <HighLight aminate={singleApartment?.amenities} />
+          <HighLight aminate={singleApartment?.amenities} bedroom={singleApartment?.bedrooms}/>
         </TabsContent>
         <TabsContent value="map" className="pt-10 pb-8">
           <LocationOnMap />
