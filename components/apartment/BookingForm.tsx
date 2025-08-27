@@ -47,7 +47,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
     if (token) {
       setSingleApartment(singleApartments);
       handleBookNow();
-      router.push(type === "apartment" ? "/apartment/booking" : "/hotel/booking");
+      router.push(type === "apartment" ? `/apartment/${singleApartments?.id}/booking` : `/hotel/${singleApartments?.id}/booking`);
     } else {
       const currentUrl = window.location.pathname + window.location.search;
       router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);

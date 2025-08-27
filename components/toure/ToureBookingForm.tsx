@@ -31,13 +31,9 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
 
   } = useToureBookingContext();
 
-
-  // Set initial dates when component mounts
   useEffect(() => {
     const today = new Date();
     setStartDate(today);
-
-    // Calculate end date based on duration
     const durationDays = parseInt(duration) || 4; // Default to 4 if duration is not provided
     const endDate = new Date(today);
     endDate.setDate(today.getDate() + durationDays);
@@ -62,7 +58,7 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
        
        // If token exists, proceed to the booking page
        handleBookNow();
-       router.push("/toure/booking");
+       router.push(`/toure/${singlToureDetails?.id}/booking`);
      } else {
        // If token doesn't exist, redirect to login page with current page as a redirect
        const currentUrl = window.location.pathname + window.location.search;

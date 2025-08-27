@@ -52,7 +52,9 @@ function ApartmentImage({vendorPackage}:{vendorPackage:any}) {
                 onError={() => handleImageError(2)}
                 className=" w-full h-full object-cover"
               />
-              <div className=" absolute top-0 left-0 w-full h-full bg-black/50">
+              {
+                vendorPackage?.roomFiles.length > 3 && 
+                 <div className=" absolute top-0 left-0 w-full h-full bg-black/50">
                 <div className=" flex justify-center h-full items-center">
                   <button onClick={()=>setIsOpen(true)}  className="cursor-pointer flex flex-col items-center">
                     <svg
@@ -88,6 +90,8 @@ function ApartmentImage({vendorPackage}:{vendorPackage:any}) {
                   </button>
                 </div>
               </div>
+              }
+             
             </div>
           </div>
         </div>
