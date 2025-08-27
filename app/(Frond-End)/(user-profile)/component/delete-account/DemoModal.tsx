@@ -4,8 +4,10 @@ import {
     DialogContent
 } from "@/components/ui/dialog";
 import { useForm } from 'react-hook-form';
+import { MyProfileService } from '@/service/user/myprofile.service';
+import { useState } from 'react';
 
-export function DialogDemo({ onClose, showModal }: any) {
+export function DialogDemo({ onClose, showModal, email }: any) {
   const {
     register,
     handleSubmit,
@@ -17,14 +19,26 @@ export function DialogDemo({ onClose, showModal }: any) {
     }
   })
 
-  const onSubmit = (data: any) => {
-    console.log('Form data:', data);
-    
-    // Your data handling logic here
-    // For example, send the data to an API or perform any necessary actions.
+  const [submitting, setSubmitting] = useState(false);
 
-    // Close the modal after submitting the form
-    onClose(false);
+  const onSubmit = async (data: any) => {
+    try {
+      setSubmitting(true);
+      await MyProfileService.deleteAccount({
+        email: email || '',
+        password: data.password,
+        feedback: data.feedback,
+      });
+      onClose(false);
+      // Optionally redirect after deletion
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
+    } catch (e) {
+      // no-op; UI validations can be added later
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -92,9 +106,10 @@ export function DialogDemo({ onClose, showModal }: any) {
               </button>
               <button 
                 type="submit"
-                className="md:px-6 py-2.5 px-4 bg-[#fe5050] rounded-lg text-white text-lg font-medium font-['Inter'] hover:bg-[#e54646] transition-colors cursor-pointer"
+                disabled={submitting}
+                className="md:px-6 py-2.5 px-4 bg-[#fe5050] rounded-lg text-white text-lg font-medium font-['Inter'] hover:bg-[#e54646] transition-colors cursor-pointer disabled:opacity-60"
               >
-                Delete account now
+                {submitting ? 'Deleting...' : 'Delete account now'}
               </button>
             </div>
           </div>
