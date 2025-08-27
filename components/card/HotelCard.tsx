@@ -10,7 +10,7 @@ import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 const HotelCard = ({ hotel }: any) => {
-  const { id, name, type, reviews, amenities, bedrooms, bathrooms,roomFiles, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
+  const { id, name, type, reviews, amenities, bedrooms, bathrooms, roomFiles, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
   const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
 
   const getSlideSrc = (src: string, index: number) => {
@@ -29,50 +29,50 @@ const HotelCard = ({ hotel }: any) => {
     <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  md:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
-      {
-            roomFiles?.length >= 2 ?
-              <Swiper
-                slidesPerView={1}
-                loop={true}
-                speed={1000}
-                spaceBetween={20}
-                autoplay={{
-                  delay: 5000,
-                  disableOnInteraction: false,
-                }}
+        {
+          roomFiles?.length >= 2 ?
+            <Swiper
+              slidesPerView={1}
+              loop={true}
+              speed={1000}
+              spaceBetween={20}
+              autoplay={{
+                delay: 5000,
+                disableOnInteraction: false,
+              }}
 
-                modules={[Autoplay, Navigation, Pagination]}
-                pagination={{
-                  clickable: true,
-                  bulletClass: 'hero-bullet',
-                  bulletActiveClass: 'hero-bullet-active',
-                }}>
-                {
-                  roomFiles?.slice(0, 4).map((file: any, index: number) => (
-                    <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
-                      <Image
-                       src={getSlideSrc(file, index)}
-                        alt={name}
-                        width={400}
-                        height={200}
-                           onError={() => handleImageError(index)}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
-                      />
-                    </SwiperSlide>
-                  ))
-                }
-              </Swiper>
-              :
-              <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
-                <Image
-                  src={"/empty.png"}
-                  alt={name}
-                  width={400}
-                  height={200}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
-                />
-              </div>
-          }
+              modules={[Autoplay, Navigation, Pagination]}
+              pagination={{
+                clickable: true,
+                bulletClass: 'hero-bullet',
+                bulletActiveClass: 'hero-bullet-active',
+              }}>
+              {
+                roomFiles?.slice(0, 4).map((file: any, index: number) => (
+                  <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
+                    <Image
+                      src={getSlideSrc(file, index)}
+                      alt={name}
+                      width={400}
+                      height={200}
+                      onError={() => handleImageError(index)}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                    />
+                  </SwiperSlide>
+                ))
+              }
+            </Swiper>
+            :
+            <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
+              <Image
+                src={"/empty.png"}
+                alt={name}
+                width={400}
+                height={200}
+                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+              />
+            </div>
+        }
       </div>
 
       {/* Right - Hotel Info */}

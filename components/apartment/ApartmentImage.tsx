@@ -1,42 +1,60 @@
 "use client"
 import Image from 'next/image';
+import { useState } from 'react';
+import ImageModal from './ImageModal';
 
 function ApartmentImage({vendorPackage}:{vendorPackage:any}) {
     console.log("image",vendorPackage);
-    
+     const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
+     const [isOpen, setIsOpen] = useState(false);
+  const getSlideSrc = (src: string, index: number) => {
+    if (!src) return "/empty.png";
+    return failedIndices.has(index) ? "/empty.png" : src;
+  };
+
+  const handleImageError = (index: number) => {
+    setFailedIndices(prev => {
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
+  };
   return (
     <div>
       <div className="lg:grid grid-cols-6 gap-6">
           <div className=" col-span-4 h-auto lg:h-[536px] rounded-2xl overflow-hidden">
             <Image
-              src={ vendorPackage?.roomFiles ? vendorPackage?.roomFiles[0] : "/empty.png"}
+              src={getSlideSrc(vendorPackage?.roomFiles[0], 0)}
               alt={"image"}
               width={900}
               height={600}
+              onError={() => handleImageError(0)}
               className=" w-full h-full object-cover"
             />
           </div>
           <div className="  col-span-2 flex  lg:flex-col gap-3 mt-3 lg:mt-0 lg:gap-6 mb-12 md:mb-14 lg:mb-20">
             <div className=" lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={ vendorPackage?.roomFiles ? vendorPackage?.roomFiles[1] : "/empty.png"}
+                src={getSlideSrc(vendorPackage?.roomFiles[1], 1)}
                 alt={"image"}
                 width={900}
                 height={600}
+                onError={() => handleImageError(1)}
                 className=" w-full h-full object-cover"
               />
             </div>
             <div className=" relative lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={vendorPackage?.roomFiles ? vendorPackage?.roomFiles[2] : "/empty.png"}
+                src={getSlideSrc(vendorPackage?.roomFiles[2], 2)}
                 alt={"image"}
                 width={900}
                 height={600}
+                onError={() => handleImageError(2)}
                 className=" w-full h-full object-cover"
               />
               <div className=" absolute top-0 left-0 w-full h-full bg-black/50">
                 <div className=" flex justify-center h-full items-center">
-                  <button className="cursor-pointer flex flex-col items-center">
+                  <button onClick={()=>setIsOpen(true)}  className="cursor-pointer flex flex-col items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="50"
@@ -73,6 +91,7 @@ function ApartmentImage({vendorPackage}:{vendorPackage:any}) {
             </div>
           </div>
         </div>
+        {isOpen &&   <ImageModal images={vendorPackage?.roomFiles} isOpen={isOpen} setIsOpen={setIsOpen}/>}
     </div>
   )
 }
