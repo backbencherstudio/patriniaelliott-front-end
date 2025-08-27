@@ -29,7 +29,13 @@ export default function Navbar() {
   const [language, setLanguage] = useState<"en" | "bn">("en");
   const [menuOpen, setMenuOpen] = useState(false);
   const {token}=useToken()
-
+    const isActive = (href: string): boolean => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(href);
+  };
+ 
   
   return (
     <header className="bg-primaryColor py-4 ">
@@ -44,7 +50,7 @@ export default function Navbar() {
               href={item.slug}
               className={cn(
                 "hover:text-secondaryColor transition",
-                pathname === item.slug ? "text-secondaryColor" : "text-white"
+                isActive(item.slug) ? "text-secondaryColor" : "text-white"
               )}
             >
               {language === "en" ? item.en : item.bn}

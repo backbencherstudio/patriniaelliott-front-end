@@ -3,6 +3,7 @@
 import { Package } from "@/types/index";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { FaArrowRight, FaWifi } from "react-icons/fa6";
 import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
@@ -13,7 +14,20 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function AccommodationCard({ tour }: { tour: Package }) {
   const { id, name, type, reviews, roomFiles, amenities, bedrooms, bathrooms, cancellation_policy, breakfast_available, price, address, rating_summary } = tour
- 
+  const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
+
+  const getSlideSrc = (src: string, index: number) => {
+    if (!src) return "/empty.png";
+    return failedIndices.has(index) ? "/empty.png" : src;
+  };
+
+  const handleImageError = (index: number) => {
+    setFailedIndices(prev => {
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
+  };
 
   return (
     <div className="bg-white shadow-lg hover:-mt-2  transition-all duration-200 rounded-2xl hover:shadow-xl group overflow-hidden w-full">
@@ -25,6 +39,7 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
                 slidesPerView={1}
                 loop={true}
                 speed={1000}
+                spaceBetween={20}
                 autoplay={{
                   delay: 5000,
                   disableOnInteraction: false,
@@ -40,10 +55,11 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
                   roomFiles?.slice(0, 4).map((file: any, index: number) => (
                     <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
                       <Image
-                        src={file}
+                        src={getSlideSrc(file, index)}
                         alt={name}
                         width={400}
                         height={200}
+                        onError={() => handleImageError(index)}
                         className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
                       />
                     </SwiperSlide>

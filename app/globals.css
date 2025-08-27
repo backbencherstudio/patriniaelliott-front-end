@@ -235,8 +235,11 @@ h2.react-datepicker__current-month {
       border-radius: 4px;
  }
 .swiper-pagination-bullets{
-  display: flex !important;
-  justify-content: center !important;
+  position: absolute !important;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 8px !important;
+  z-index: 999;
 }
 
     .hero-bullet-active {

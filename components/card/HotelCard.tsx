@@ -2,24 +2,77 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { FaArrowRight, FaWifi } from "react-icons/fa6";
 import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 const HotelCard = ({ hotel }: any) => {
-  const { id, name, type, reviews, amenities, bedrooms, bathrooms, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
+  const { id, name, type, reviews, amenities, bedrooms, bathrooms, roomFiles, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
+  const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
 
+  const getSlideSrc = (src: string, index: number) => {
+    if (!src) return "/empty.png";
+    return failedIndices.has(index) ? "/empty.png" : src;
+  };
+
+  const handleImageError = (index: number) => {
+    setFailedIndices(prev => {
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
+  };
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  md:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
-        <Image
-          src={"/hotel/h5.jpg"}
-          alt={name}
-          width={400}
-          height={250}
-          className="w-full h-full object-cover rounded-xl"
-        />
+        {
+          roomFiles?.length >= 2 ?
+            <Swiper
+              slidesPerView={1}
+              loop={true}
+              speed={1000}
+              spaceBetween={20}
+              autoplay={{
+                delay: 5000,
+                disableOnInteraction: false,
+              }}
+
+              modules={[Autoplay, Navigation, Pagination]}
+              pagination={{
+                clickable: true,
+                bulletClass: 'hero-bullet',
+                bulletActiveClass: 'hero-bullet-active',
+              }}>
+              {
+                roomFiles?.slice(0, 4).map((file: any, index: number) => (
+                  <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
+                    <Image
+                      src={getSlideSrc(file, index)}
+                      alt={name}
+                      width={400}
+                      height={200}
+                      onError={() => handleImageError(index)}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                    />
+                  </SwiperSlide>
+                ))
+              }
+            </Swiper>
+            :
+            <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
+              <Image
+                src={"/empty.png"}
+                alt={name}
+                width={400}
+                height={200}
+                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+              />
+            </div>
+        }
       </div>
 
       {/* Right - Hotel Info */}
@@ -55,7 +108,7 @@ const HotelCard = ({ hotel }: any) => {
         </div>
 
         <div className="grid grid-cols-2 gap-4 w-[85%] items-center  text-descriptionColor text-sm mt-4 ">
-          {amenities?.TV && (
+          {amenities?.entertainment?.flat_screen_tv && (
             <div className="flex items-center gap-1 pr-3 ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +163,7 @@ const HotelCard = ({ hotel }: any) => {
             </svg>
             {bathrooms} Bath
           </div>
-          {amenities?.wifi && (
+          {amenities?.general?.wifi && (
             <div className="flex items-center gap-1  ">
               <FaWifi size={16} className=" text-secondaryColor" />
               Free WiFi
