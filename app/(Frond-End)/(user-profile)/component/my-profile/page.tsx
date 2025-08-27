@@ -1,12 +1,14 @@
 'use client'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Image from 'next/image';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from 'react-hook-form';
 import { LuPencilLine } from 'react-icons/lu';
 import './my-profile-select.css';
+import { useMyProfile } from '@/hooks/useMyProfile';
+import { toast, Toaster } from 'react-hot-toast';
 
 interface CustomDateInputProps {
   value?: string;
@@ -80,6 +82,37 @@ export default function MyProfile() {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Load authenticated user's profile and populate inputs
+  const { me, loading: meLoading, updateMe, fetchMe } = useMyProfile();
+
+  useEffect(() => {
+    if (!me) return;
+    // Normalize API shape -> form fields
+    setValue('firstName', me.first_name ?? me.name ?? '');
+    setValue('lastName', me.last_name ?? '');
+    setValue('displayName', me.display_name ?? '');
+    setValue('nationality', me.nationality ?? '');
+    setValue('email', me.email ?? '');
+    setValue('phone', me.phone_number ?? '');
+    setValue('gender', me.gender ?? '');
+    setValue('dateOfBirth', me.date_of_birth ? new Date(me.date_of_birth) : null);
+    setValue('country', me.country ?? '');
+    setValue('streetAddress', me.street_address ?? '');
+    setValue('aptSuite', me.apt_suite_unit ?? '');
+    setValue('city', me.city ?? '');
+    setValue('stateProvince', me.state ?? '');
+    setValue('zipCode', me.zip_code ?? '');
+    setValue('passportFirstName', me.passport_first_name ?? '');
+    setValue('passportLastName', me.passport_last_name ?? '');
+    setValue('issuingCountry', me.passport_issuing_country ?? '');
+    setValue('passportNumber', me.passport_number ?? '');
+    setValue('passportExpiryDate', me.passport_expiry_date ? new Date(me.passport_expiry_date) : null);
+    // avatar preview if available
+    if (me.avatar) {
+      setPreviewImage(me.avatar);
+    }
+  }, [me, setValue]);
+
   // Options for dropdowns
   const genderOptions = ['Female', 'Male', 'Non-binary', 'Prefer not to say'];
   const countryOptions = [
@@ -132,7 +165,7 @@ export default function MyProfile() {
     );
   };
 
-  // Custom input component for the date picker
+  // Custom input component for the date picker ()
   const CustomDateInput = React.forwardRef<HTMLDivElement, CustomDateInputProps>(
     ({ value, onClick, placeholder, icon }, ref) => (
       <div
@@ -150,14 +183,34 @@ export default function MyProfile() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      console.group('Form Submission Data');
-      console.log('Complete Form Data:', data);
-      console.groupEnd();
-      
-      alert('Profile updated successfully!');
+      const payload = {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        display_name: data.displayName,
+        nationality: data.nationality,
+        email: data.email,
+        phone_number: data.phone,
+        gender: data.gender || null,
+        date_of_birth: data.dateOfBirth ? data.dateOfBirth.toISOString().split('T')[0] : null,
+        country: data.country,
+        street_address: data.streetAddress,
+        apt_suite_unit: data.aptSuite,
+        city: data.city,
+        state: data.stateProvince,
+        zip_code: data.zipCode,
+        passport_first_name: data.passportFirstName,
+        passport_last_name: data.passportLastName,
+        passport_issuing_country: data.issuingCountry,
+        passport_number: data.passportNumber,
+        passport_expiry_date: data.passportExpiryDate ? data.passportExpiryDate.toISOString().split('T')[0] : null,
+      };
+
+      await updateMe(payload);
+      await fetchMe();
+      toast.success('Profile updated successfully!');
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('Failed to update profile. Please try again.');
+      toast.error('Failed to update profile. Please try again.');
     }
   };
 
@@ -166,6 +219,7 @@ export default function MyProfile() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col gap-6">
+      <Toaster position="top-right" />
       {/* Profile Header */}
       <div className="p-7 bg-white rounded-2xl flex justify-between items-center">
         <div className="flex flex-col gap-4">

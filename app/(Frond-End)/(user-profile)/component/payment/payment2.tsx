@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+import { toast, Toaster } from 'react-hot-toast'
 
 
 const paymentSchema = z.object({
@@ -48,7 +49,7 @@ const countryOptions = [
   { value: "US", label: "United States" },
   { value: "UK", label: "United Kingdom" },
   { value: "CA", label: "Canada" },
-  // Add more as needed
+  // Add moreee as needed
 ]
 
 export default function Payment2() {
@@ -81,14 +82,44 @@ const router = useRouter()
     return parts?.join(' ') || value
   }
 
-  const onSubmit = (data: PaymentFormValues) => {
-    // expiryDate is now a Date object!
-    console.log('Form submitted:', data)
-   router.push("/payment/card-list")
+  const onSubmit = async (data: PaymentFormValues) => {
+    try {
+      const month = (data.expiryDate as unknown as Date).getMonth() + 1
+      const year = (data.expiryDate as unknown as Date).getFullYear()
+      const countryLabel = countryOptions.find(c => c.value === data.country)?.label || data.country
+
+      const payload = {
+        card_number: data.cardNumber.replace(/\s/g, ''),
+        expiry_month: month,
+        expiry_year: year,
+        cvv: data.cvv,
+        billing_country: countryLabel.toLowerCase(),
+        billing_street_address: data.streetAddress,
+        billing_apt_suite_unit: data.aptSuite || null,
+        billing_city: data.city,
+        billing_state: data.state,
+        billing_zip_code: data.zipCode,
+      }
+
+      const { MyProfileService } = await import('../../../../../service/user/myprofile.service')
+      const res = await MyProfileService.addCard(payload)
+
+      const success = res?.success === true || res?.status === 200 || res?.status === 201 || res?.data?.success === true
+      if (success) {
+        router.push('/payment/card-list?added=1')
+      } else {
+        const message = res?.data?.message || 'Failed to save card'
+        toast.error(message)
+      }
+    } catch (error: any) {
+      const message = error?.response?.data?.message || error?.message || 'Failed to save card'
+      toast.error(message)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="p-6 bg-white rounded-xl flex flex-col gap-8">
+      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
       <h2 className="text-[#22262e] text-2xl font-medium">
         Add card details
       </h2>
