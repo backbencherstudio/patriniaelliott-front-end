@@ -638,8 +638,6 @@ export default function Page() {
                 </div>
               </div>
             </div>
-
-            {/* You can add a small summary card if needed */}
           </div>
         </div>
       </div>
