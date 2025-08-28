@@ -142,4 +142,5 @@ interface formDataType {
     }[];
     calendar_start_date: string;
     calendar_end_date: string;
+    total_bedroom : number
 }
