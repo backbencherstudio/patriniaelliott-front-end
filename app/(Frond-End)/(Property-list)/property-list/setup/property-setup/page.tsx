@@ -41,12 +41,7 @@ export default function page() {
     const [services, setServices] = useState([]);
     const [bedrooms, setBedRooms] = useState<
         { title: string; beds: bedTypes }[]
-    >([{
-        title: "Premium bedrooms",
-        beds: {
-            single_bed: 2
-        }
-    }]);
+    >([]);
 
 
     interface bedTypes {
@@ -87,6 +82,7 @@ export default function page() {
     const [propertyDescription, setPropertyDescription] = useState("")
     // Temporary state while adding/editing a bedroom
     const [newBedroomTitle, setNewBedroomTitle] = useState("");
+    const [totalBedRooms,setTotalBedRooms] = useState(0)
     const [newBedCounts, setNewBedCounts] = useState<bedTypes>({
         single_bed: 0,
         double_bed: 0,
@@ -96,6 +92,7 @@ export default function page() {
 
     const increaseNewBed = (type: string) => {
         setNewBedCounts((prev) => ({ ...prev, [type]: prev[type] + 1 }));
+        setTotalBedRooms(prev => prev+1)
     };
 
     const decreaseNewBed = (type: string) => {
@@ -103,6 +100,7 @@ export default function page() {
             ...prev,
             [type]: prev[type] > 0 ? prev[type] - 1 : 0,
         }));
+        setTotalBedRooms(prev => prev - 1);
     };
 
     const openEditDialog = (index: number) => {
@@ -159,6 +157,7 @@ export default function page() {
             extra_large_bed: 0,
         });
         setEditingIndex(null);
+        console.log("Total bedrooms : ",totalBedRooms)
     };
 
     const deleteBedroom = (index: number) => {
@@ -252,7 +251,7 @@ export default function page() {
             bedrooms: [...bedrooms],
             bathrooms: numberOfGuest,
             number_of_guest_allowed: numberOfBathRooms,
-
+            total_bedroom: totalBedRooms,
         })
 
         const updatedProperty = {
@@ -294,8 +293,8 @@ export default function page() {
             check_out_from: checkOut.from,
             check_out_untill: checkOut.until,
             bedrooms: [...bedrooms],
-            bathrooms: numberOfGuest,
-            number_of_guest_allowed: numberOfBathRooms,
+            bathrooms: numberOfBathRooms,
+            number_of_guest_allowed: numberOfGuest,
             extra_services: services
         };
         localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
