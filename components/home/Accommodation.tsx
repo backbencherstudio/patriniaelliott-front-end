@@ -61,7 +61,7 @@ function Accommodation() {
             {/* Swiper Carousel */}
             <Swiper
               slidesPerView={1}
-              loop={true}
+             loop={packageData?.length > 3}
               speed={1000}
               autoplay={false}
               breakpoints={{
