@@ -51,13 +51,13 @@ function HotelPage() {
         return params.toString();
     };
 
-    const endpoint = `/admin/vendor-package?${buildQueryParams()}`
+    const endpoint = `/application/packages/enhanced-search?${buildQueryParams()}`
     const { data, loading, error } = useFetchData(endpoint);
     console.log(data?.meta);
-    const totalPages = data?.meta?.totalPages
-    const packageData = data ? data?.data : []
+    const totalPages = data?.data?.pagination?.totalPages
+    const packageData = data ? data?.data?.packages : []
 
-    console.log("hello");
+    console.log("hello=====",totalPages);
     return (
         <div>
             <FilterHeader title="Hotel" data={packageData} />

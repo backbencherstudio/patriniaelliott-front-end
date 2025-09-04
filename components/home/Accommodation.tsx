@@ -4,17 +4,14 @@ import { useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-
 import useFetchData from "@/hooks/useFetchData";
 import Link from "next/link";
 import AccommodationCard from "../card/AccommodationCard";
 import CardSkeleton from "../card/CardSkeleton";
 import CustomButton from "../reusable/CustomButton";
 
-
 function Accommodation() {
   const [currentIndex, setCurrentIndex] = useState(1);
-
   const swiperRef = useRef<any>(null);
   const [activeTab, setActiveTab] = useState<'apartment' | 'hotel'>('apartment');
   const endpoint = `/admin/vendor-package?type=${activeTab}&limit=${10}&page=${1}`
@@ -61,7 +58,7 @@ function Accommodation() {
             {/* Swiper Carousel */}
             <Swiper
               slidesPerView={1}
-              loop={true}
+             loop={packageData?.length > 3}
               speed={1000}
               autoplay={false}
               breakpoints={{

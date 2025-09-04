@@ -11,7 +11,6 @@ import Rating from "../reusable/Rating";
 
 const ToureBookingForm = ({ singlToureDetails }: any) => {
   const {
-
     setSingleToure,
     startDate,
     setStartDate,
@@ -55,7 +54,6 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
      if (token) {
        // ✅ Ensure tour data is saved to localStorage before proceeding
        setSingleToure(singlToureDetails);
-       
        // If token exists, proceed to the booking page
        handleBookNow();
        router.push(`/toure/${singlToureDetails?.id}/booking`);

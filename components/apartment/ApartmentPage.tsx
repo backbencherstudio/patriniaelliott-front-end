@@ -25,37 +25,31 @@ function ApartmentPage() {
         .map(([, value]) => value);
 
     const itemsPerPage = 6
-
     // Build query parameters dynamically
     const buildQueryParams = () => {
         const params = new URLSearchParams();
-
         // Always include these parameters
         params.append('type', 'apartment');
         params.append('limit', itemsPerPage.toString());
         params.append('page', currentPage.toString());
-
         // Only add parameters that have values
         if (startDate) params.append('duration_start', startDate);
         if (endDate) params.append('duration_end', endDate);
         if (min) params.append('budget_start', min);
         if (max) params.append('budget_end', max);
-
         // Add each rating as a separate parameter
         if (ratings && ratings.length > 0) {
             ratings.forEach(rating => {
-                params.append('ratings', rating);
+                params.append('min_rating', rating);
             });
         }
-
         return params.toString();
     };
 
-    const endpoint = `/admin/vendor-package?${buildQueryParams()}`
+    const endpoint = `/application/packages/enhanced-search?${buildQueryParams()}`
     const { data, loading, error } = useFetchData(endpoint);
-    console.log(data?.meta);
-    const totalPages = data?.meta?.totalPages
-    const packageData = data ? data?.data : []
+    const totalPages = data?.data?.pagination?.totalPages
+    const packageData = data ? data?.data?.packages : []
 
     return (
         <div>

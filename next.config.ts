@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "paraguay-moscow-up-you.trycloudflare.com",
+        hostname: "confidentiality-run-completing-arms.trycloudflare.com",
       },
       {
         protocol: "https",

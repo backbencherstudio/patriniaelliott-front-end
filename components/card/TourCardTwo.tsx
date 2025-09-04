@@ -23,7 +23,7 @@ function TourCardTwo({tour}:any) {
     breakfast,
   } = tour;
   return (
-        <Link href={`/tour/${tourSlug}`} className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
+        <Link href={`/toure/${tourSlug}`} className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
         <Image
@@ -49,7 +49,7 @@ function TourCardTwo({tour}:any) {
                 </span>
           <div className="py-1">
             <Link
-              href={`/tour/${tourSlug}`}
+              href={`/toure/${tourSlug}`}
               className="text-xl font-semibold text-black mb-2"
             >
               {title}

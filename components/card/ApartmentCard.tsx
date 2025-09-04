@@ -24,6 +24,8 @@ const ApartmentCard = ({ hotel }: any) => {
       return next;
     });
   };
+  console.log("check",hotel);
+  
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  md:grid md:grid-cols-9 lg:grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
@@ -73,7 +75,7 @@ const ApartmentCard = ({ hotel }: any) => {
               </div>
           }
         {breakfast_available && (
-          <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1  rounded-full">
+          <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 z-10  rounded-full">
             Breakfast Included
           </span>
         )}

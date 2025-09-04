@@ -2,19 +2,22 @@
 
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useToken } from "@/hooks/useToken";
 import Mastercar from "@/public/icon/Mastercar.svg";
 import amex from "@/public/icon/amex.svg";
 import diners from "@/public/icon/diners-svgrep.svg";
 import jcb from "@/public/icon/jcb-svgrepo.svg";
 import unionpay from "@/public/icon/unionpay.svg";
 import visa from "@/public/icon/visa.svg";
+import { UserService } from "@/service/user/user.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import * as z from "zod";
-import BookingConfirm from "./BookingConfirm";
+import BookingFinalStep from "./BookingFinalStep";
 // Zod schema
 const paymentFormSchema = z.object({
   paymentMethod: z.enum(["card", "other"]),
@@ -45,14 +48,15 @@ const paymentFormSchema = z.object({
 
 type PaymentFormValues = z.infer<typeof paymentFormSchema>;
 
-export default function PaymentForm() {
+export default function PaymentForm({totalAmount}) {
   const [selectedMethod, setSelectedMethod] = useState<"card" | "other">(
     "card"
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
  const [isOpen , setIsOpen]=useState(false)
+ const {token} = useToken()
+ const [paymentID, setPaymentID] = useState("")
 
- 
   const form = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentFormSchema),
     defaultValues: {
@@ -65,10 +69,37 @@ export default function PaymentForm() {
     mode: "onChange",
   });
 
+
+  
   const onSubmit = async (data: PaymentFormValues) => {
     setIsSubmitting(true);
     console.log("Form submitted:", data);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const formattedData = {
+  booking_id: localStorage.getItem("bookingId"),
+  amount:totalAmount,
+  currency: "USD",
+  payment_method: "card",
+  card_details: {
+  card_number: data.cardNumber,
+    expiry_month: data.expiryDate.split("/")[0],
+    expiry_year: data.expiryDate.split("/")[1],
+    cvv: data.cvv,
+    cardholder_name: data.cardName
+  }
+}
+
+    try {
+      const response = await UserService?.createData(`/booking/payment/create-intent`,formattedData,token)
+      console.log("response",response?.data?.data?.payment_intent_id);
+      if (response?.data?.success) {
+        toast.success(response?.data?.message);
+        setPaymentID(response?.data?.data?.payment_intent_id)
+      } else {
+        toast.error(response?.data?.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
     setIsSubmitting(false);
     setIsOpen(true)
   };
@@ -293,7 +324,7 @@ export default function PaymentForm() {
       Cancellations must be made at least 24 hours before check-in to be eligible for a refund; cancellations after this deadline may result in a partial refund or no refund, depending on the provider’s policy.
       </div>
 
-      {isOpen && <BookingConfirm isOpen={isOpen} setIsOpen={setIsOpen}/>}
+      {isOpen && <BookingFinalStep paymentID={paymentID} isOpen={isOpen} setIsOpen={setIsOpen}/>}
     </div>
   );
 }

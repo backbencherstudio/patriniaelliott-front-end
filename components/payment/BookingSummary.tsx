@@ -5,15 +5,13 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaArrowRightLong, FaStar } from "react-icons/fa6";
 
-const BookingSummary = ({activeTab,setActiveTab}:any) => {
+const BookingSummary = ({activeTab,setActiveTab,setTotalAmount}:any) => {
  
   const [bookingData, setBookingData] = useState<any>()
   useEffect(()=>{
     const data = localStorage.getItem("bookingDetails")
     setBookingData(JSON.parse(data))
   },[])
-
-
   
   // Show loading state if no apartment data
   if (!bookingData) {
@@ -29,6 +27,8 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
 
   const { name, reviews, price, rating, address } = bookingData?.apartment;
  const serviceFee = 170;
+ const total = bookingData?.totalPrice +serviceFee - Number(bookingData?.discount)
+ setTotalAmount(total)
   return (
    
     <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
@@ -36,8 +36,8 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
              {/* Apartment Header */}
       <div className="flex flex-col  md:flex-row items-center md:items-start gap-4">
         <div className=" w-[180px] h-[163px]">
-          <img
-            src={bookingData?.apartment ? bookingData?.apartment?.roomFiles[0] : "/empty.png"}
+          <Image
+            src={bookingData?.apartment?.roomFiles ? bookingData?.apartment?.roomFiles[0] : "/empty.png"}
             alt={name ? name : ""}
             width={180}
             height={163}
@@ -162,7 +162,7 @@ const BookingSummary = ({activeTab,setActiveTab}:any) => {
         {/* Total */}
         <div className="flex justify-between mt-4 text-base font-semibold text-black border-t pt-3">
           <span>Total</span>
-          <span>${(bookingData?.totalPrice +serviceFee) - Number(bookingData?.discount)}</span>
+          <span>${total}</span>
         </div>
       </div>
       {/* Proceed Button */}

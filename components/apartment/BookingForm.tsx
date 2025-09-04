@@ -1,12 +1,14 @@
 "use client";
 import { useToken } from "@/hooks/useToken";
 import { useBookingContext } from "@/provider/BookingProvider";
+import { UserService } from "@/service/user/user.service";
 import { LucideCalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdDone } from "react-icons/md";
+import { toast } from "react-toastify";
 import Rating from "../reusable/Rating";
 
 const BookingForm = ({ singleApartments, type }: any) => {
@@ -27,7 +29,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
   const router = useRouter();
   const { token } = useToken();
   const { price, rating } = singleApartments;
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     setSingleApartment(singleApartments);
   }, [singleApartments, setSingleApartment]);
@@ -43,14 +45,44 @@ const BookingForm = ({ singleApartments, type }: any) => {
     }
   };
 
-  const handleBook = () => {
+  const handleBook = async() => {
+    setLoading(true);
+    const data = {
+  type: singleApartments?.type,
+  first_name: singleApartments?.user?.first_name,
+  last_name: "",
+  email: singleApartments?.user?.email,
+  booking_items: [
+    {
+      package_id: singleApartments?.id,
+      start_date: startDate?.toISOString() || "",
+      end_date: endDate?.toISOString() || "",
+      quantity: 1
+    }
+  ],
+ booking_travellers:[]
+}
     if (token) {
-      setSingleApartment(singleApartments);
-      handleBookNow();
-      router.push(type === "apartment" ? `/apartment/${singleApartments?.id}/booking` : `/hotel/${singleApartments?.id}/booking`);
+      try {
+        const response = await UserService?.createData(`/booking`,data,token)
+        console.log("response",response);
+        if (response?.data?.success) {
+          toast.success(response?.data?.message);
+           localStorage.setItem("bookingId", response?.data?.data?.booking?.id);
+           setSingleApartment(singleApartments);
+           handleBookNow();
+            router.push(type === "apartment" ? `/apartment/${singleApartments?.id}/booking` : `/hotel/${singleApartments?.id}/booking`);
+              setLoading(false);
+        }
+        } catch (error) {
+          console.log(error);
+          setLoading(false);
+      }
+      
     } else {
       const currentUrl = window.location.pathname + window.location.search;
       router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+      setLoading(false);
     }
   };
 
@@ -187,10 +219,10 @@ const BookingForm = ({ singleApartments, type }: any) => {
       {/* Book Now Button */}
       <button
         onClick={ handleBook}
-        disabled={totalDays === 0}
+        disabled={totalDays === 0 || loading}
         className="w-full py-3 bg-secondaryColor disabled:bg-grayColor1 disabled:cursor-not-allowed text-blackColor font-medium cursor-pointer rounded-full mt-6 text-base hover:bg-secondaryColor transition"
       >
-        Book Now
+       {loading ? "Loading..." : "Book Now"}
       </button>
     </div>
   );
