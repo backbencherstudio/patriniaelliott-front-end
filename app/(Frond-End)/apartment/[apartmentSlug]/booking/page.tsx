@@ -16,10 +16,9 @@ function Page() {
       const [singleApartment, setSingleApartment] = useState(null);
       const endpoint ="/auth/me"
       const {data,loading}= useFetchData(endpoint)
-      console.log(activeTab);
-      console.log("user data ============",guests);
 
-      
+
+      const [totalAmount, setTotalAmount] = useState(0)
       
   return (
     <div className="py-12 lg:py-20">
@@ -54,13 +53,13 @@ function Page() {
               <StepOne data={data?.data} guests={guests} setGuests={setGuests} />
             </TabsContent>
             <TabsContent value="step2">
-              <StepTwo />
+              <StepTwo totalAmount={totalAmount} />
             </TabsContent>
           </Tabs>
         </div>
 
         <div className="col-span-12 lg:col-span-5">
-          <BookingSummary activeTab={activeTab} setActiveTab={setActiveTab}/>
+          <BookingSummary setTotalAmount={setTotalAmount} activeTab={activeTab} setActiveTab={setActiveTab}/>
         </div>
       </div>
     </div>

@@ -64,14 +64,12 @@ newPassword: async (data) => {
   },
 
   getData: async (endpoint,token ) => {
-
     const _config = {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
       },
     };
-
     return await Fetch.get(`${endpoint}`, _config);
   },
 
@@ -88,7 +86,6 @@ newPassword: async (data) => {
   },
 // update form data 
   updateFormData: async (endpoint,data,token) => {
-
     const _config = {
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +98,6 @@ newPassword: async (data) => {
   },
   // create data
   createData: async (endpoint,data,token) => {    
-   
     const _config = {
       headers: {
         "Content-Type": "application/json",

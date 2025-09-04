@@ -51,9 +51,6 @@ function ApartmentPage() {
     const totalPages = data?.data?.pagination?.totalPages
     const packageData = data ? data?.data?.packages : []
 
-    console.log("totalPages",totalPages);
-
-
     return (
         <div>
             <FilterHeader title="Apartment" data={packageData} />
