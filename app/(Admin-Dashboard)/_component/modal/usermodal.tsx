@@ -14,7 +14,7 @@ interface UserModalProps {
 export default function Usermodal({  onClose, userData  }: UserModalProps) {
  
 
-console.log(userData);
+
 
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
