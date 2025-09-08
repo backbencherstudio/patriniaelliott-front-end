@@ -1,10 +1,10 @@
 "use client";
+import useFetchData from "@/hooks/useFetchData";
 import Image from "next/image";
 import React, { useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 import Usermodal from "../modal/usermodal";
 import StatCard from "./StatCard";
-import { StatusBadge } from "./StatusBadge";
 
 interface UserData {
   id: string;
@@ -209,25 +209,30 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
   const [selectedRole, setSelectedRole] = React.useState<
-    "All" | "Host" | "Guest"
+    "All" | "vendor" | "user"
   >("All");
+    const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+   const endpoint = selectedRole === "All" ? `/admin/user/all-users?limit=${itemsPerPage}&page=${currentPage}` : `/admin/user/all-users?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
+  const { data, loading, error } = useFetchData(endpoint);
+  const totalPages = data?.pagination?.totalPages || 0;
   const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
     "all"
   );
-  const [currentPage, setCurrentPage] = useState(1);
+console.log("check data",data?.data);
+
 
   const columns = [
-    { label: "User ID", accessor: "id" },
+    // { label: "User ID", accessor: "id" },
     { label: "User Name", accessor: "name" },
     { label: "Email", accessor: "email" },
-    { label: "Number", accessor: "phone" },
-    { label: "Role", accessor: "role" },
-    { label: "Join Date", accessor: "joinDate" },
-    {
-      label: "Status",
-      accessor: "status",
-      formatter: (_, row) => <StatusBadge status={row.status} />,
-    },
+    { label: "Number", accessor: "phone_number" },
+    { label: "Role", accessor: "type" },
+    { label: "Join Date", accessor: "created_at",
+      formatter: (value) => new Date(value).toLocaleDateString(),
+     },
+    
+    
   ];
   const handleDelete = (userId: string) => {
     setUsers((prev) => prev.filter((user) => user.id !== userId));
@@ -255,6 +260,8 @@ export default function Dashboard() {
     }
     return roleMatch && dateMatch;
   });
+
+  
   return (
     <div className="flex flex-col gap-5">
       {/* Overview */}
@@ -274,27 +281,7 @@ export default function Dashboard() {
       {isModalOpen && selectedUser && (
         <Usermodal
           onClose={handleCloseModal}
-          userData={{
-            name: selectedUser.name,
-            role: selectedUser.role,
-            id: selectedUser.id,
-            status: selectedUser.status,
-            profileImage: "/usericon/avatar.png",
-            verificationStatus: { status: "Pending verification", rating: 4.7 },
-            contact: {
-              email: selectedUser.email,
-              phone: selectedUser.phone,
-              address: "8 12 Victoria Road Barnsley, South Yorkshire S70 2BB",
-            },
-            bio: "Described by Queenstown House & Garden magazine...",
-            details: {
-              joinDate: selectedUser.joinDate,
-              gender: "Not specified",
-              dateOfBirth: "Not specified",
-              language: "English",
-              lastActive: new Date().toLocaleDateString(),
-            },
-          }}
+          userData={selectedUser}
         />
       )}
 
@@ -303,11 +290,11 @@ export default function Dashboard() {
         <div className="flex justify-between items-center gap-2 md:gap-4 mb-4">
           {/* Role Filters */}
           <div className="flex gap-2 whitespace-nowrap md:gap-4">
-            {["All", "Host", "Guest"].map((role) => (
+            {["All", "vendor", "user"].map((role) => (
               <button
                 key={role}
                 onClick={() =>
-                  setSelectedRole(role as "All" | "Host" | "Guest")
+                  setSelectedRole(role as "All" | "vendor" | "user")
                 }
                 className={`md:px-4 px-1 cursor-pointer text-sm md:text-base py-2 ${
                   selectedRole === role
@@ -315,7 +302,9 @@ export default function Dashboard() {
                     : "border-b text-[#777980]"
                 }`}
               >
-                {role === "All" ? "All users" : role}
+                {role === "All" && "All users"  }
+                {role === "vendor" && "Host"  }
+                {role === "user" && "Guest"  }
               </button>
             ))}
           </div>
@@ -347,11 +336,11 @@ export default function Dashboard() {
         <div>
           <DynamicTableWithPagination
             columns={columns}
-            data={filteredUsers}
+            data={data?.data}
             currentPage={currentPage}
             itemsPerPage={8}
-            loading={false}
-            totalPages={1}
+            loading={loading}
+            totalPages={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
             onView={(user) => handleViewDetails(user)}
             onDelete={(id) => handleDelete(id)}

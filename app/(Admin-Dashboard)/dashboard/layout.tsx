@@ -1,14 +1,15 @@
 import CustomToastContainer from "@/components/CustomToast/CustomToastContainer";
+import { UserService } from "@/service/user/user.service";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import AdminLayoutClient from "../_component/AdminLayoutClient";
-
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-
-
+export default async function AdminLayout({ children }: AdminLayoutProps) {
+  
   return (
           <div >
             <AdminLayoutClient>
@@ -17,6 +18,4 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </AdminLayoutClient>
           </div>
   );
-};
-
-export default AdminLayout;
+}
