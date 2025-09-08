@@ -1,8 +1,8 @@
 "use client";
 
 import { Loader } from "lucide-react";
-import Image from "next/image";
 import React from "react";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 
 interface ColumnConfig {
@@ -108,14 +108,10 @@ export default function DynamicTableWithPagination({
                       )}
                       {onDelete && (
                         
-                        <Image
-                        onClick={() => onDelete(row.id)}
-                        src="/dashboard/icon/delete.svg"
-                        alt="delete"
-                        width={16}
-                        height={16}
-                        className="cursor-pointer"
-                      />
+                        <button className="hover:text-redColor text-[#777980] transition-all cursor-pointer"  onClick={() => onDelete(row.id)}>
+                          <RiDeleteBin6Line
+                             size={18} className="" />
+                          </button>
                       )}
                     </td>
                   )}

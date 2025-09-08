@@ -1,7 +1,9 @@
 "use client";
-import useFetchData from "@/hooks/useFetchData";
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import DynamicTableWithPagination from "../common/DynamicTable";
 import Usermodal from "../modal/usermodal";
 import StatCard from "./StatCard";
@@ -208,18 +210,37 @@ export default function Dashboard() {
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
+  const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
+    "all"
+  );
+  const [data , setData] =useState<any>([]);
+  const {token} = useToken();
   const [selectedRole, setSelectedRole] = React.useState<
     "All" | "vendor" | "user"
   >("All");
     const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-   const endpoint = selectedRole === "All" ? `/admin/user/all-users?limit=${itemsPerPage}&page=${currentPage}` : `/admin/user/all-users?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
-  const { data, loading, error } = useFetchData(endpoint);
-  const totalPages = data?.pagination?.totalPages || 0;
-  const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
-    "all"
-  );
-console.log("check data",data?.data);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+
+    const fetchData = async()=>{
+    try {
+      const endpoint = selectedRole === "All" ? `/admin/user/all-users?limit=${itemsPerPage}&page=${currentPage}` : `/admin/user/all-users?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
+      setLoading(true);
+    const data = await UserService?.getData(endpoint,token);
+    setData(data?.data?.data || []);
+    setTotalPages(data?.data?.pagination?.totalPages || 0);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+    }
+   
+    fetchData()
+  }, [selectedRole, currentPage]);
+   
 
 
   const columns = [
@@ -234,8 +255,21 @@ console.log("check data",data?.data);
     
     
   ];
-  const handleDelete = (userId: string) => {
-    setUsers((prev) => prev.filter((user) => user.id !== userId));
+  const handleDelete = async(userId: string) => {
+
+  try {
+   const response = await UserService.deleteData(`/admin/user/${userId}`,token);
+   if (response?.data?.success) {
+    toast.success(response?.data?.message)
+    const updateUser = data.filter((item: any) => item.id !== userId)
+   setData(updateUser)
+    
+   }
+  } catch (error) {
+    console.log("error", error);
+    
+  }
+  
   };
   
   const handleViewDetails = (user: UserData) => {
@@ -336,10 +370,10 @@ console.log("check data",data?.data);
         <div>
           <DynamicTableWithPagination
             columns={columns}
-            data={data?.data}
+            data={data}
             currentPage={currentPage}
             itemsPerPage={8}
-            loading={loading}
+            loading={loading || !data}
             totalPages={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
             onView={(user) => handleViewDetails(user)}
