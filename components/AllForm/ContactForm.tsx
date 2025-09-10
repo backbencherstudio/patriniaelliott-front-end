@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { useToken } from "@/hooks/useToken"
+import { UserService } from "@/service/user/user.service"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "react-toastify"
 
 type FormValues = {
   fullName: string
@@ -18,13 +21,14 @@ type FormValues = {
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-
+  const {token} = useToken()
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm<FormValues>({
     defaultValues: {
       fullName: "",
@@ -36,10 +40,21 @@ export default function ContactForm() {
   })
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true)
-
+    const formData = {
+      full_name: data.fullName,
+      phone_number: data.phone,
+      email: data.email,
+      topic: data.topic,
+      message: data.message,
+    }
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Form submitted:", data)
+     const response =  await UserService?.createData(`/contact`,formData,token )
+      if(response?.data?.success){
+        toast.success(response?.data?.message)
+        reset()
+      }else{
+        toast.error(response?.data?.message)
+      }
       setIsSuccess(true)
       setTimeout(() => setIsSuccess(false), 3000)
     } catch (error) {
@@ -146,9 +161,7 @@ export default function ContactForm() {
               {isSubmitting ? "Sending..." : "Send Message"}
             </Button>
 
-            {isSuccess && (
-              <p className="text-green-500 text-base text-center">Your message has been sent successfully!</p>
-            )}
+
           </form>
         </div>
   )

@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "confidentiality-run-completing-arms.trycloudflare.com",
+        hostname: "released-gmc-ab-buttons.trycloudflare.com",
       },
       {
         protocol: "https",
