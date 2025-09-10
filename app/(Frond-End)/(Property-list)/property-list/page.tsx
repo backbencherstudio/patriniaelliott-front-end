@@ -18,7 +18,7 @@ function page() {
       ...listProperty,
       property_type: select
     };
-    localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
+    // localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
 
     router.push('/property-list/choose-apartment-type');
   };

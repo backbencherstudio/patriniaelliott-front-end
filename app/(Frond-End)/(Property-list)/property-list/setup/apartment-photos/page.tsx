@@ -2,171 +2,190 @@
 
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import toast, { Toaster } from "react-hot-toast";
 
 const HEADER_ITEMS = [
-    "Name and location",
-    "Property setup",
-    "Photos",
-    "Pricing",
-    "Calendar",
+  "Name and location",
+  "Property setup",
+  "Photos",
+  "Pricing",
+  "Calendar",
 ];
 
 export default function PropertyPhotosPage() {
-    const router = useRouter();
-    const { listProperty, updateListProperty } = usePropertyContext();
-    const [files, setFiles] = useState<File[]>([]);
-    const [isDragging, setIsDragging] = useState(false);
-    const [isSuggestionOpen, setIsSuggestionOpen] = useState(true);
+  const router = useRouter();
+  const { listProperty, updateListProperty } = usePropertyContext();
+  const [files, setFiles] = useState<File[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isSuggestionOpen, setIsSuggestionOpen] = useState(true);
 
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-        setIsDragging(false);
-    }, []);
+  // Clean up object URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      previewImages.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [previewImages]);
 
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop,
-        onDragEnter: () => setIsDragging(true),
-        onDragLeave: () => setIsDragging(false),
-        accept: {
-            'image/*': ['.jpeg', '.jpg', '.png', '.webp']
-        },
-        multiple: true, // Allow multiple images at a time
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (files.length + acceptedFiles.length > 12) {
+      toast.error("Maximum 12 images allowed");
+      return;
+    }
+    
+    setFiles(prevFiles => [...prevFiles, ...acceptedFiles]);
+    setPreviewImages(prev => [...prev, ...acceptedFiles.map(file => URL.createObjectURL(file))]);
+    setIsDragging(false);
+  }, [files.length]);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    onDragEnter: () => setIsDragging(true),
+    onDragLeave: () => setIsDragging(false),
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+    },
+    multiple: true,
+  });
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (files.length < 5) {
+      toast.error("Please upload at least 5 photos");
+      return;
+    }
+
+    updateListProperty({
+      photos: files
     });
 
-    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        updateListProperty({
-            photos: files
-        });
-
-        const updatedProperty = {
-            ...JSON.parse(localStorage.getItem("propertyData") || '{}'),
-            photos: files
-        };
-        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
-
-        router.push("/property-list/setup/apartment-pricing");
+    const updatedProperty = {
+      ...JSON.parse(localStorage.getItem("propertyData") || '{}'),
+      photos: files
     };
+    localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
 
-    const handleAddSingleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setFiles((prevFiles) => [...prevFiles, file]);
-        }
-    };
+    router.push("/property-list/setup/apartment-pricing");
+  };
 
-    const handleDeleteImage = (index: number) => {
-        setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-    };
+  const handleDeleteImage = (index: number) => {
+    // Clean up the object URL
+    URL.revokeObjectURL(previewImages[index]);
+    
+    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    setPreviewImages(prev => prev.filter((_, i) => i !== index));
+  };
 
-    return (
-        <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
-            <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
-                <div className="flex gap-6 w-full">
-                    {/* Main Form */}
-                    <form className="space-y-6 flex-1" onSubmit={handleFormSubmit}>
-                        <div className="space-y-6 bg-white p-6 rounded-lg">
-                            <div className="space-y-4">
-                                <h3 className="text-[#23262F] text-2xl font-medium">What does your place look like?</h3>
-                                <div>
-                                    <span className="text-[#070707] text-sm">Upload at least 5 photos of your property. </span>
-                                    <span className="text-[#777980] text-sm">
-                                        The more you upload, the more likely you are to get bookings. You can add more later.
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="space-y-6">
-                                {/* Dropzone */}
-                                <div
-                                    {...getRootProps()}
-                                    className={`border-2 border-dashed rounded-lg p-[48px] text-center cursor-pointer transition-colors ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-[#4A4C56] hover:border-gray-400'
-                                        }`}
-                                >
-                                    <input {...getInputProps()} />
-                                    <div className="flex flex-col items-center space-y-6">
-                                        {files.length === 0 ? (
-                                            <PhotoUploadIcon />
-                                        ) : (
-                                            <div
-                                                className={`grid 
-                                                ${files.length === 1 ? "grid-cols-1" :
-                                                        files.length === 2 ? "grid-cols-2" :
-                                                            files.length === 3 ? "grid-cols-3" : "grid-cols-4"
-                                                    } 
-                                                gap-2 w-full relative
-                                            `}>
-                                                {files.slice(0, 4).map((file, index) => (
-                                                    <div key={index} className="relative group">
-                                                        <img
-                                                            src={URL.createObjectURL(file)}
-                                                            alt={`Uploaded preview ${index + 1}`}
-                                                            className="w-full h-24 object-cover rounded-md"
-                                                            onLoad={() => URL.revokeObjectURL(file["path"])} // Clean up memory
-                                                        />
-                                                        <button
-                                                            type="button"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleDeleteImage(index);
-                                                            }}
-                                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
-                                                        >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                                                <path d="M10.9742 10.1673C11.1974 10.3905 11.1974 10.7524 10.9742 10.9756C10.863 11.0868 10.7167 11.1431 10.5704 11.1431C10.4242 11.1431 10.2779 11.0875 10.1667 10.9756L5.99952 6.80845L1.83236 10.9756C1.72113 11.0868 1.57487 11.1431 1.4286 11.1431C1.28233 11.1431 1.13606 11.0875 1.02483 10.9756C0.801619 10.7524 0.801619 10.3905 1.02483 10.1673L5.19199 6.0002L1.02483 1.83313C0.801619 1.60992 0.801619 1.24804 1.02483 1.02483C1.24805 0.80162 1.60991 0.80162 1.83313 1.02483L6.00029 5.19194L10.1674 1.02483C10.3906 0.80162 10.7525 0.80162 10.9757 1.02483C11.1989 1.24804 11.1989 1.60992 10.9757 1.83313L6.80857 6.0002L10.9742 10.1673Z" fill="white" />
-                                                            </svg>
-                                                        </button>
-                                                        {index === 3 && files.length > 4 && (
-                                                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-white text-4xl font-light rounded-md">
-                                                                +{files.length - 4}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        <div className="space-y-3 flex flex-col items-center">
-                                            <p className="text-[#23262F] text-xl font-medium">
-                                                Drag and drop your photos here
-                                            </p>
-                                            <div className="flex items-center space-x-2 text-[#4A4C56] text-sm">
-                                                <span>Or</span>
-                                            </div>
-                                            <UploadButton onClick={() => document.getElementById("file-upload")?.click()} />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Upload single image */}
-                                <input
-                                    id="file-upload"
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={handleAddSingleImage}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Navigation Buttons */}
-                        <div className="flex justify-between w-full space-x-3 px-4">
-                            <BackButton onClick={() => router.back()} />
-                            <SubmitButton />
-                        </div>
-                    </form>
-
-                    {/* Suggestion Sidebar */}
-                    <PhotoTipsSuggestion
-                        isOpen={isSuggestionOpen}
-                        onClose={() => setIsSuggestionOpen(prev => !prev)}
-                    />
+  return (
+    <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
+        <Toaster position="top-right"/>
+      <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
+        <div className="flex gap-6 w-full">
+          {/* Main Form */}
+          <form className="space-y-6 flex-1" onSubmit={handleFormSubmit}>
+            <div className="space-y-6 bg-white p-6 rounded-lg">
+              <div className="space-y-4">
+                <h3 className="text-[#23262F] text-2xl font-medium">What does your place look like?</h3>
+                <div>
+                  <span className="text-[#070707] text-sm">Upload at least 5 photos of your property. </span>
+                  <span className="text-[#777980] text-sm">
+                    The more you upload, the more likely you are to get bookings. You can add more later.
+                  </span>
                 </div>
+              </div>
+
+              <div className="space-y-6">
+                {/* Dropzone */}
+                <div
+                  {...getRootProps()}
+                  className={`border-2 border-dashed rounded-lg p-[48px] text-center cursor-pointer transition-colors ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-[#4A4C56] hover:border-gray-400'
+                    }`}
+                >
+                  <input {...getInputProps()} />
+                  <div className="flex flex-col items-center space-y-6">
+                    {files.length === 0 ? (
+                      <PhotoUploadIcon />
+                    ) : (
+                      <div
+                        className={`grid 
+                        ${files.length === 1 ? "grid-cols-1" :
+                            files.length === 2 ? "grid-cols-2" :
+                              files.length === 3 ? "grid-cols-3" : "grid-cols-4"
+                          } 
+                        gap-2 w-full relative
+                      `}>
+                        {previewImages.slice(0, 4).map((preview, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={preview}
+                              alt={`Uploaded preview ${index + 1}`}
+                              className="w-full h-24 object-cover rounded-md"
+                            />
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteImage(index);
+                              }}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M10.9742 10.1673C11.1974 10.3905 11.1974 10.7524 10.9742 10.9756C10.863 11.0868 10.7167 11.1431 10.5704 11.1431C10.4242 11.1431 10.2779 11.0875 10.1667 10.9756L5.99952 6.80845L1.83236 10.9756C1.72113 11.0868 1.57487 11.1431 1.4286 11.1431C1.28233 11.1431 1.13606 11.0875 1.02483 10.9756C0.801619 10.7524 0.801619 10.3905 1.02483 10.1673L5.19199 6.0002L1.02483 1.83313C0.801619 1.60992 0.801619 1.24804 1.02483 1.02483C1.24805 0.80162 1.60991 0.80162 1.83313 1.02483L6.00029 5.19194L10.1674 1.02483C10.3906 0.80162 10.7525 0.80162 10.9757 1.02483C11.1989 1.24804 11.1989 1.60992 10.9757 1.83313L6.80857 6.0002L10.9742 10.1673Z" fill="white" />
+                              </svg>
+                            </button>
+                            {index === 3 && files.length > 4 && (
+                              <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-white text-4xl font-light rounded-md">
+                                +{files.length - 4}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="space-y-3 flex flex-col items-center">
+                      <p className="text-[#23262F] text-xl font-medium">
+                        Drag and drop your photos here
+                      </p>
+                      <div className="flex items-center space-x-2 text-[#4A4C56] text-sm">
+                        <span>Or</span>
+                      </div>
+                      <UploadButton onClick={() => document.getElementById("file-upload")?.click()} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Upload single image */}
+                {/* <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  multiple
+                  onChange={handleAddSingleImage}
+                /> */}
+              </div>
             </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between w-full space-x-3 px-4">
+              <BackButton onClick={() => router.back()} />
+              <SubmitButton />
+            </div>
+          </form>
+
+          {/* Suggestion Sidebar */}
+          <PhotoTipsSuggestion
+            isOpen={isSuggestionOpen}
+            onClose={() => setIsSuggestionOpen(prev => !prev)}
+          />
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 // Extracted Components for better readability

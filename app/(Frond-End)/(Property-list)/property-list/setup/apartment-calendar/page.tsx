@@ -131,15 +131,13 @@ export default function Page() {
       calendar_end_date: toISODate(endDate),
     });
 
-    const fd = new FormData();
-
-    // robust parse
-    let propertyData: any = {};
-    try {
-      propertyData = JSON.parse(localStorage.getItem("propertyData") || "{}");
-    } catch {
-      propertyData = {};
+    const propertyData = {
+      ...listProperty,
+      calendar_start_date: toISODate(startDate),
+      calendar_end_date: toISODate(endDate),
     }
+
+    const fd = new FormData();
 
     const amenities = {
       general: propertyData?.general ?? [],
@@ -161,8 +159,11 @@ export default function Page() {
     fd.append("name", String(propertyData?.name ?? ""));
     fd.append("description", String(propertyData?.about_property ?? ""));
     fd.append("price", String(propertyData?.price_per_night ?? "0"));
-    fd.append("type", String(propertyData?.property_type ?? ""));
-    fd.append("room_photos", JSON.stringify(propertyData?.photos ?? []));
+    fd.append("type", String(propertyData?.type ?? ""));
+    // fd.append("room_photos", JSON.stringify(propertyData?.photos ?? []));
+    propertyData?.photos?.forEach(photo=>{
+      fd.append('room_photos',photo);
+    })
     fd.append("amenities", JSON.stringify(amenities));
     fd.append("extra_services", JSON.stringify(propertyData?.extra_services ?? []));
     fd.append("country", String(propertyData?.country ?? ""));
@@ -189,7 +190,6 @@ export default function Page() {
     fd.append("calendar_end_date", toISODate(endDate));
 
     const endpoint = "/admin/vendor-package";
-
     try {
       const res = await UserService?.createPropertyData(endpoint, fd, token);
       if (res?.data?.success === true) {
@@ -292,13 +292,11 @@ export default function Page() {
                     return (
                       <div
                         key={day.toISOString()}
-                        className={`w-[14.28%] aspect-square px-4 py-2 text-center ${
-                          idx === 0 ? "border-l" : ""
-                        } ${
-                          idx >= Math.max(daysInMonth.length - 7, 0)
+                        className={`w-[14.28%] aspect-square px-4 py-2 text-center ${idx === 0 ? "border-l" : ""
+                          } ${idx >= Math.max(daysInMonth.length - 7, 0)
                             ? "border-b"
                             : ""
-                        } border-r border-t border-[#DCE4E8] bg-white text-[10px] lg:text-sm text-[#1E1E1E] flex flex-col justify-between select-none relative`}
+                          } border-r border-t border-[#DCE4E8] bg-white text-[10px] lg:text-sm text-[#1E1E1E] flex flex-col justify-between select-none relative`}
                       >
                         {/* Date number */}
                         <span className="w-full flex items-center justify-end rounded-full text-[#1E1E1E]">
@@ -331,9 +329,8 @@ export default function Page() {
                           </div>
                         ) : beforeWindow ? (
                           <div
-                            className={`h-[25px] sm:h-[33px] w-full bg-[#FE5050] absolute top-1/2 -translate-y-1/2 left-0 flex items-center justify-center text-white font-medium text-[10px] lg:text-sm ${
-                              idx === 0 ? "rounded-l-full" : ""
-                            }`}
+                            className={`h-[25px] sm:h-[33px] w-full bg-[#FE5050] absolute top-1/2 -translate-y-1/2 left-0 flex items-center justify-center text-white font-medium text-[10px] lg:text-sm ${idx === 0 ? "rounded-l-full" : ""
+                              }`}
                           >
                             {idx === 0 ? "Closed" : ""}
                           </div>
@@ -439,11 +436,10 @@ export default function Page() {
                     />
                     <label
                       htmlFor="licenses"
-                      className={`select-none w-[24px] h-[24px] ${
-                        !licenses
-                          ? "border-[#777980]"
-                          : "border-[#D6AE29] bg-[#D6AE29]"
-                      } border-[2px] rounded-[6px] flex items-center justify-center`}
+                      className={`select-none w-[24px] h-[24px] ${!licenses
+                        ? "border-[#777980]"
+                        : "border-[#D6AE29] bg-[#D6AE29]"
+                        } border-[2px] rounded-[6px] flex items-center justify-center`}
                     >
                       {licenses && (
                         <svg
@@ -500,11 +496,10 @@ export default function Page() {
                     />
                     <label
                       htmlFor="termsPolicy"
-                      className={`select-none w-[24px] h-[24px] ${
-                        !termsPolicy
-                          ? "border-[#777980]"
-                          : "border-[#D6AE29] bg-[#D6AE29]"
-                      } border-[2px] rounded-[6px] flex items-center justify-center`}
+                      className={`select-none w-[24px] h-[24px] ${!termsPolicy
+                        ? "border-[#777980]"
+                        : "border-[#D6AE29] bg-[#D6AE29]"
+                        } border-[2px] rounded-[6px] flex items-center justify-center`}
                     >
                       {termsPolicy && (
                         <svg

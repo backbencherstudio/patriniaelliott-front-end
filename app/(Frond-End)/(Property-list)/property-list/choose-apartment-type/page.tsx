@@ -15,7 +15,6 @@ export default function page() {
             isMultiple: selectedApartmentType === 'one' ? false : true
         })
 
-
         const updatedProperty = {
             ...JSON.parse(localStorage.getItem("propertyData")),
             isMultiple: selectedApartmentType === 'one' ? false : true
