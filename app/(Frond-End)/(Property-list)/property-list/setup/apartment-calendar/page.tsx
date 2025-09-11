@@ -170,7 +170,7 @@ export default function Page() {
     fd.append("city", String(propertyData?.city ?? ""));
     fd.append("address", String(propertyData?.street ?? ""));
     fd.append("postal_code", String(propertyData?.zip_code ?? ""));
-    fd.append("bedrooms", String(propertyData?.bedrooms ?? "0")); // fixed
+    fd.append("bedrooms", JSON.stringify(propertyData?.bedrooms ?? "0")); // fixed
     fd.append("bathrooms", String(propertyData?.bathrooms ?? "0"));
     fd.append(
       "max_capacity",
