@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import Header from "./common/Header";
 import Sidebar from "./common/Sidebar";
 
@@ -15,7 +15,7 @@ function AdminLayoutClient({ children }) {
         <Header onMenuClick={openSidebar} sidebarOpen={sidebarOpen} />
       </div>
 
-      <div className="max-w-[1380px] mx-auto">
+      <div className="max-w-[1480px] mx-auto">
         <div
           className={`fixed w-[300px] mt-4 transition-transform duration-300 ease-in-out z-20 lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-[400px]"}`}
         >

@@ -5,26 +5,26 @@ import { UserService } from "@/service/user/user.service";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-function BookingAction({ status, onView, onOptimisticUpdate }: any) {
+function ListingApproveAction({ status, onView, onOptimisticUpdate }: any) {
   const {token}=useToken()
   const [loading, setLoading]= useState(false)
   
-  const handleAccept = async() => {
+  const handleApprove = async() => {
     setLoading(true)
     
     // Optimistic update - immediately update UI
-    onOptimisticUpdate?.(status?.id, "approved", "paid");
+    onOptimisticUpdate?.(status?.id, "approved", "approved");
     
     try {
-      const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"approved"},token)
+      const res = await UserService.updateData(`/admin/listing-management/approve-property/${status?.id}`,{status:"approved"},token)
       console.log("accept",res);
       
       if(res.data.success){
-        toast.success(res.data.message || "Booking approved successfully")
+        toast.success(res.data.message || "Listing approved successfully")
         // Refresh data to ensure consistency
       
       }else{
-        toast.error(res.data.message || "Booking approved failed")
+        toast.error(res.data.message || "Listing approved failed")
         // Revert optimistic update on failure
         onOptimisticUpdate?.(status?.id, status?.status ,status?.payment_status);
       }
@@ -43,13 +43,13 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
     // Optimistic update - immediately update UI
     onOptimisticUpdate?.(status?.id, "cancel", "cancel");
     try {
-      const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"cancel"},token)
+      const res = await UserService.updateData(`/admin/listing-management/reject-property/${status?.id}`,{status:"cancel"},token)
       console.log("reject",res);
       
       if(res.data.success){
-        toast.success(res.data.message || "Booking rejected successfully")
+        toast.success(res.data.message || "Listing rejected successfully")
       }else{
-        toast.error(res.data.message || "Booking rejected failed")
+        toast.error(res.data.message || "Listing rejected failed")
         // Revert optimistic update on failure
         onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
       }
@@ -74,7 +74,7 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
       ) : (
         <div className="flex gap-1">
           <button 
-            onClick={handleAccept} 
+            onClick={handleApprove} 
             disabled={loading}
             className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px] disabled:opacity-50"
           >
@@ -133,4 +133,5 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
   );
 }
 
-export default BookingAction;
+export default ListingApproveAction;
+

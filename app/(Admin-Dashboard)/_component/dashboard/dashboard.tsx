@@ -126,7 +126,7 @@ export default function Dashboard() {
       )}
 
       {/* Table Section */}
-      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-lg mx-auto">
+      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-xl mx-auto">
         <div className="flex justify-between items-center gap-2 md:gap-4 mb-4">
           {/* Role Filters */}
           <div className="flex gap-2 whitespace-nowrap md:gap-4">
