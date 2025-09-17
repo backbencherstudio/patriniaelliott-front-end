@@ -48,7 +48,7 @@ export default function page() {
 
 
     return (
-        <div className="py-30 flex items-center justify-center bg-[#F6F7F7]">
+        <div className="py-15 md:py-30 flex items-center justify-center bg-[#F6F7F7]">
             <div className="bg-white rounded-[24px] p-6 space-y-[32px]">
                 <h3 className="text-[#23262F] text-lg sm:text-2xl font-medium">How many apartment are you listing?</h3>
                 <div className="flex flex-col md:flex-row gap-6">

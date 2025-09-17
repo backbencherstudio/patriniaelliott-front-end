@@ -39,7 +39,7 @@ export default function Navbar() {
     const currentIndex = steps?.indexOf(currentStep || steps[0]);
 
     return (
-        <div className="w-full flex justify-center bg-[#F6F7F7] py-[48px] px-1">
+        <div className="w-full flex justify-center bg-[#F6F7F7] md:py-[48px] px-1">
             <div className="w-full max-w-[1320px]">
                 <ul className="hidden md:flex w-full justify-between">
                     {steps.map((step, index) => {

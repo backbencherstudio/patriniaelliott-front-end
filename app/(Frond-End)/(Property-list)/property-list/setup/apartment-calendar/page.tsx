@@ -141,6 +141,7 @@ export default function Page() {
       calendar_end_date: toISODate(endDate),
     }
 
+    console.log("Property data : ",propertyData)
     const fd = new FormData();
 
     const amenities = {
