@@ -40,6 +40,13 @@ export default function Page() {
     }
 
 
+    useEffect(()=>{
+        if(!listProperty?.type){
+            router?.push('/property-list')
+        }
+    },[])
+
+
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="pb-15 px-4 max-w-[1320px] w-full space-y-[48px]">

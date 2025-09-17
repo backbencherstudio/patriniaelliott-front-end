@@ -35,9 +35,13 @@ export default function page() {
     }
 
     useEffect(()=>{
-        if(listProperty?.type === 'Tour'){
+        if(!listProperty?.type){
+            router.push('/property-list')
+        }
+        else if(listProperty?.type === 'Tour'){
             setSelectedApartmentType('one day')
         }else{
+            console.log("Type : ",listProperty?.type)
             setSelectedApartmentType('one')
         }
     },[])

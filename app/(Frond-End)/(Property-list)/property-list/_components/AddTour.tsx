@@ -218,6 +218,12 @@ const AddTour = () => {
     router.push("/property-list/setup/apartment-calendar");
   };
 
+  useEffect(()=>{
+    if(!listProperty?.type){
+      router?.push('/property-list')
+    }
+  },[])
+
   return (
     <div className="flex flex-col gap-4">
       <Toaster position="top-right" />

@@ -95,10 +95,12 @@ export default function Page() {
   // hydrate price from localStorage (safe parse)
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("propertyData");
-      if (!raw) return;
-      const parsed = JSON.parse(raw) || {};
-      const nightly = Number(parsed?.price_per_night ?? 0);
+      let nightly = listProperty?.price_per_night
+      if(listProperty?.type === "Tour"){
+        nightly = listProperty?.tour_plan?.price
+      }else{
+        nightly = listProperty?.price_per_night
+      }
       setPrice(Number.isFinite(nightly) ? nightly : 0);
     } catch {
       setPrice(0);

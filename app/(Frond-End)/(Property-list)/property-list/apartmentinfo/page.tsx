@@ -28,6 +28,12 @@ export default function page() {
 
     const data = searchParams.get('data');
 
+    useEffect(()=>{
+        if(!listProperty?.type){
+            router.push('/property-list')
+        }
+    },[])
+
     return (
         <div className="py-30 flex items-center justify-center bg-[#F6F7F7]">
             <div className="space-y-6">
