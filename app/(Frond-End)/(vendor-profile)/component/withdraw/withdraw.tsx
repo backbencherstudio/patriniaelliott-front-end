@@ -1,13 +1,13 @@
 'use client'
+import { useVendorApi } from '@/hooks/useVendorApi'
+import { VendorService } from '@/service/vendor/vendor.service'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import DynamicTableWithPagination from '../../../../(Admin-Dashboard)/_component/common/DynamicTable'
 import RequestPopup from './requestmodal'
 import ViewModal from './viewmodal'
 import WithdrawAction from './WithdrawAction'
 import { WithdrawStatusBadge } from './WithdrawStatusBadge'
-import { useVendorApi } from '@/hooks/useVendorApi'
-import { VendorService } from '@/service/vendor/vendor.service'
 
 interface WithdrawData {
   date: string;
@@ -159,6 +159,12 @@ export default function Withdraw() {
       formatter: (_, row) => <WithdrawStatusBadge status={row.status} />
     },
     {
+      label: "Type",
+      accessor: "status",
+      width: "200px",
+      formatter: (_, row) => <WithdrawStatusBadge status={row.status} />
+    },
+    {
       label: "Action",
       accessor: "transactionId",
       width: "200px",
@@ -211,7 +217,7 @@ export default function Withdraw() {
           </div>
         </div>
 
-        <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-lg mx-auto">
+        <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
             <div className="flex flex-wrap gap-2 md:gap-4">
               {['All history', 'Successful', 'Pending', 'Canceled'].map((tab) => (

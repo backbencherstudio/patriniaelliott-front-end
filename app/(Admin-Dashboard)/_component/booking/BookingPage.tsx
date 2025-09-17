@@ -87,35 +87,35 @@ export default function BookingPage() {
   
   const columns = [
     {
-      label: "Booking ID", accessor: "id", formatter: (_, __, index) => <TableId currentPage={currentPage} itemsPerPage={itemsPerPage} index={index} />
+      label: "Booking ID", width:"100px", accessor: "id", formatter: (_, __, index) => <TableId currentPage={currentPage} itemsPerPage={itemsPerPage} index={index} />
     },
     { label: "Name", 
-      accessor: "name", 
+      accessor: "name", width:"140px",
       formatter: (_, row) => <div >{row?.user?.name}</div> 
     },
     { label: "Service", 
-      accessor: "type" 
+      accessor: "type" ,width:"120px"
     },
     {
       label: "Payment", 
-      accessor: "status",
+      accessor: "status",width:"120px",
       formatter: (_, row) => <BookingPymentStatuse status={row.payment_status} />,
     },
     { label: "Check-In", 
-      accessor: "booking_items", 
+      accessor: "booking_items",width:"120px", 
       formatter: (_, row) => <DateCheck date={row?.booking_items[0].start_date} /> 
     },
     { label: "Check-Out", 
-      accessor: "checkOut", 
+      accessor: "checkOut",width:"120px", 
       formatter: (_, row) => <DateCheck date={row?.booking_items[0].end_date} /> 
     },
     {
       label: "Price", 
-      accessor: "total_amount",
+      accessor: "total_amount",width:"100px",
       formatter: (value) => `$${value}`,
     },
     { label: "Action", 
-      accessor: "status", 
+      accessor: "status",width:"100px", 
       formatter: (_, row) => <BookingAction 
         onView={handleViewDetails} 
         status={row} 
@@ -125,6 +125,7 @@ export default function BookingPage() {
     {
       label: "Status",
       accessor: "status",
+      width:"120px",
       formatter: (_, row) => <BokingStatuse status={row.status} />,
     },
   ];
@@ -141,6 +142,7 @@ export default function BookingPage() {
     }
     return booking;
   });
+  ;
 
   return (
     <div className="flex flex-col gap-5">
@@ -152,7 +154,7 @@ export default function BookingPage() {
         </p>
       </div>
       {/* Table Section */}
-      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-lg mx-auto">
+      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-xl mx-auto">
         <div className="md:flex justify-between items-center gap-2 md:gap-4 mb-4">
           {/* Role Filters */}
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">

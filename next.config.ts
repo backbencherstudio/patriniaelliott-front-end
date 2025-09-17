@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "released-gmc-ab-buttons.trycloudflare.com",
+        hostname: "hd-priest-angels-hope.trycloudflare.com",
       },
       {
         protocol: "https",

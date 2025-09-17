@@ -4,9 +4,14 @@ import React, { useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
 import { listingData } from "@/DemoAPI/ListingData";
+import useFetchData from "@/hooks/useFetchData";
+import dayjs from "dayjs";
+import jsPDF from "jspdf";
+import autoTable from 'jspdf-autotable';
 import EditPropertyDialog from "./EditPropertyDialog";
 import EditTourDialog from "./EditTourDialog";
 import ListingAction from "./ListingAction";
+import ListingApproveAction from "./ListingApproveAction";
 import ListingPropartyCard from "./ListingPropartyCard";
 import ListingStatuse from "./ListingStatuse";
 import ListingToureCard from "./ListingToureCard";
@@ -21,7 +26,13 @@ export default function ListingPage() {
   const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
     "all"
   );
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  // Normalize role for API (lowercase)
+  const apiRole = selectedRole.toLowerCase();
+  const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}`;
+  const { data, loading, error } = useFetchData(endpoint);
+  const totalPages = data?.pagination?.total_pages || 0;
 
   const handleViewDetails = (user: any) => {
     setSelectedData(user);
@@ -33,20 +44,31 @@ export default function ListingPage() {
   };
 
   const columns = [
-    { label: "User ID", accessor: "userId" },
-    { label: "Property name", accessor: "propertyName" },
-    { label: "Type (Property/Tour)", accessor: "type" },
-    { label: "Location", accessor: "location" },
+    { label: "User ID", accessor: "displayId", width:"100px" },
+    { label: "Property name", accessor: "name", },
+    { label: "Type (Property/Tour)", accessor: "type" , width:"160px",},
+    { label: "Location", accessor: "location",  },
     {
       label: "Price (per night)",
       accessor: "price",
+     
       formatter: (value) => `$${value}`,
     },
-    { label: "Join Date", accessor: "joinDate" },
+    { label: "Join Date", accessor: "joinDate" ,
+      
+      formatter: (value) => value ? dayjs(value).format("YYYY-MM-DD") : "-",
+    },
     {
       label: "Status",
       accessor: "status",
+    
       formatter: (_, row) => <ListingStatuse status={row.status} />,
+    },
+    {
+      label: "Approval",
+      accessor: "status",
+    
+      formatter: (_, row) => <ListingApproveAction status={row} />,
     },
     {
       label: "Action",
@@ -61,21 +83,37 @@ export default function ListingPage() {
     },
   ];
 
-  console.log(selectedData);
 
-  const filteredUsers = listingData.filter((user) => {
-    const roleMatch = selectedRole === "All" || user.type === selectedRole;
-    let dateMatch = true;
+  // Prefer API data; fallback to demo data
+  const listingItems = (data?.data && data.data.length ? data.data : []);
 
-    if (dateRange !== "all") {
-      const joinDate = new Date(user.joinDate.split("/").reverse().join("-"));
-      const today = new Date();
-      const cutoffDate = new Date(today);
-      cutoffDate.setDate(today.getDate() - parseInt(dateRange));
-      dateMatch = joinDate >= cutoffDate;
-    }
-    return roleMatch && dateMatch;
-  });
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Property Listings", 14, 15);
+
+    const tableColumn = columns
+      .filter((col) => col.label !== "Action" && col.label !== "Status")
+      .map((col) => col.label);
+
+    const tableRows = listingItems.map((item: any) => [
+      item.id || item.userId || "-",
+      item.propertyName || item.name || item.property?.name || "-",
+      item.type || item.category || "-",
+      item.location?.city || item.location?.name || item.location || "-",
+      `$${item.price ?? item.price_per_night ?? item.base_price ?? 0}`,
+      item.joinDate || (item.created_at ? dayjs(item.created_at).format("YYYY-MM-DD") : "-")
+    ]);
+
+    (autoTable as any)(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [0, 104, 239] },
+    });
+
+    doc.save("property_listings.pdf");
+  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -89,7 +127,7 @@ export default function ListingPage() {
         </p>
       </div>
       {/* Table Section */}
-      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-lg mx-auto">
+      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-xl mx-auto">
         <div className="md:flex justify-between items-center gap-2 md:gap-4 mb-4">
           {/* Role Filters */}
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">
@@ -115,7 +153,7 @@ export default function ListingPage() {
           {/* Date Range Dropdown */}
           <div className=" mt-4 md:mt-0 justify-end flex gap-2">
             <div>
-              <button className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">
+              <button onClick={handleExportPDF} className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">
                 Export as PDF
               </button>
             </div>
@@ -154,12 +192,12 @@ export default function ListingPage() {
         {/* Table */}
         <div>
           <DynamicTableWithPagination
+            data={listingItems}
             columns={columns}
-            loading={false}
-            totalPages={1}
-            data={filteredUsers}
             currentPage={currentPage}
-            itemsPerPage={10}
+            loading={loading}
+            totalPages={totalPages || 0}
+            itemsPerPage={itemsPerPage}
             onPageChange={(page) => setCurrentPage(page)}
           />
         </div>
@@ -167,8 +205,8 @@ export default function ListingPage() {
       <div>
         {isModalOpen &&
           selectedData &&
-          (selectedData.type === "Apartment" ||
-            selectedData.type === "Hotel") && (
+          (selectedData.type === "apartment" ||
+            selectedData.type === "hotel") && (
             <ListingPropartyCard
               open={isModalOpen}
               data={selectedData}

@@ -6,9 +6,15 @@ interface UserData {
     phone: string;
     role: string;
     joinDate: string;
-    status: 'approved' | 'pending' | 'cancele';
+    status: 'succeeded' | 'pending' | 'cancele' | 'approved';
   }
   export const statusStyles = {
+    succeeded: {
+      bg: 'bg-[#38c976]/10',
+      border: 'outline-[#abefc6]',
+      text: 'text-[#067647]',
+      icon: '/dashboard/icon/tik.svg'
+    },
     approved: {
       bg: 'bg-[#38c976]/10',
       border: 'outline-[#abefc6]',
@@ -32,17 +38,17 @@ interface UserData {
 function BokingStatuse({ status }: { status: UserData['status'] }) {
     const style = statusStyles[status];
   return (
-    <div className={`px-1  py-1.5 ${style.bg} rounded-2xl  outline-1 outline-offset-[-1px] ${style.border} flex justify-center items-center gap-1`}>
+    <div className={`px-1  py-1.5 ${style?.bg} rounded-2xl  outline-1 outline-offset-[-1px] ${style?.border} flex justify-center items-center gap-1`}>
       <div className="w-3 h-3 relative overflow-hidden">
         <Image
-          src={style.icon} 
+          src={style?.icon || "/dashboard/icon/tik.svg"} 
           alt={status} 
           width={12} 
           height={12} 
-          className={style.text}
+          className={style?.text}
         />
       </div>
-      <div className={`text-center justify-start ${style.text} text-xs font-normal font-['Inter'] leading-3`}>
+      <div className={`text-center justify-start ${style?.text} text-xs font-normal font-['Inter'] leading-3`}>
         {status}
       </div>
     </div>

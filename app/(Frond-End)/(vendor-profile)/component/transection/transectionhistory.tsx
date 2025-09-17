@@ -227,7 +227,7 @@ export default function TransectionHistory() {
       </div>
 
       {/* Table Section */}
-      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-lg mx-auto">
+      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
           <div className="flex flex-wrap gap-2 md:gap-4">
             {['All transactions', 'Bookings', 'Refunds'].map((tab) => (

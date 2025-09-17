@@ -15,6 +15,7 @@ function Page() {
   ]);
       const endpoint ="/auth/me"
       const {data,loading}= useFetchData(endpoint)
+      const [totalAmount, setTotalAmount] = useState(0)
   return (
     <div className="py-12 lg:py-20">
       <div className="container grid grid-cols-12 gap-7">
@@ -54,7 +55,7 @@ function Page() {
         </div>
 
         <div className="col-span-12 lg:col-span-5">
-          <BookingSummary activeTab={activeTab} setActiveTab={setActiveTab}/>
+          <BookingSummary activeTab={activeTab} setActiveTab={setActiveTab} setTotalAmount={setTotalAmount}/>
         </div>
       </div>
     </div>

@@ -91,7 +91,7 @@ export default function AdminRollTable() {
         <InviteTeamMembers />
       </div>
       {/* Table Section */}
-      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-lg mx-auto">
+      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-xl mx-auto">
         <div>
           <DynamicTableTwo
             columns={columns}
