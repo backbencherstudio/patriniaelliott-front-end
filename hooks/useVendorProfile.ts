@@ -1,91 +1,56 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useVendorApi } from './useVendorApi';
+import { useCallback, useEffect, useState } from 'react';
 import { VendorService } from '@/service/vendor/vendor.service';
-import { VendorProfile } from '@/types/vendor.types';
+
+type VendorResponse = {
+  success?: boolean;
+  data?: any;
+};
 
 export const useVendorProfile = () => {
-  const [profile, setProfile] = useState<VendorProfile | null>(null);
-  const { loading, error, handleApiCall, clearError, token } = useVendorApi();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [vendorProfile, setVendorProfile] = useState<any | null>(null);
 
-  const fetchProfile = useCallback(async () => {
+  const fetchVendorProfile = useCallback(async (vendorId: string) => {
     try {
-      if (!token) {
-        console.warn('No token available, skipping profile fetch');
-        return { success: false, data: null, message: 'Authentication required' };
-      }
-      
-      const result = await handleApiCall(VendorService.getVendorProfileWithCookie, null);
-      if (result.data) {
-        setProfile(result.data);
-      }
-      return result;
-    } catch (err) {
-      console.error('Failed to fetch profile:', err);
-      throw err;
+      setLoading(true);
+      setError(null);
+      const res: VendorResponse = await VendorService.getVendorProfileWithCookie(vendorId);
+      const data = (res as any)?.data ?? res;
+      setVendorProfile(data?.data ?? data ?? null);
+      return res;
+    } catch (e: any) {
+      setError(e?.message || 'Failed to load vendor profile');
+      throw e;
+    } finally {
+      setLoading(false);
     }
-  }, [handleApiCall, token]);
+  }, []);
 
-  const updateProfile = useCallback(async (data: Partial<VendorProfile>) => {
+  const updateVendorProfile = useCallback(async (vendorId: string, payload: any) => {
     try {
-      if (!token) {
-        console.warn('No token available, skipping profile update');
-        return { success: false, data: null, message: 'Authentication required' };
-      }
-      
-      const result = await handleApiCall(VendorService.updateVendorProfileWithCookie, null, data);
-      if (result.data) {
-        setProfile(prev => prev ? { ...prev, ...result.data } : result.data);
-      }
-      return result;
-    } catch (err) {
-      console.error('Failed to update profile:', err);
-      throw err;
+      setLoading(true);
+      setError(null);
+      const res = await VendorService.updateVendorProfileWithCookie(vendorId, payload);
+      // Optimistically merge
+      const updated = (res as any)?.data ?? res;
+      const merged = updated?.data ?? updated;
+      if (merged) setVendorProfile((prev) => ({ ...(prev || {}), ...merged }));
+      return res;
+    } catch (e: any) {
+      setError(e?.message || 'Failed to update vendor profile');
+      throw e;
+    } finally {
+      setLoading(false);
     }
-  }, [handleApiCall, token]);
+  }, []);
 
-  const updateProfileWithImage = useCallback(async (data: FormData) => {
-    try {
-      if (!token) {
-        console.warn('No token available, skipping profile update with image');
-        return { success: false, data: null, message: 'Authentication required' };
-      }
-      
-      const result = await handleApiCall(VendorService.updateVendorProfileFormData, null, data);
-      if (result.data) {
-        setProfile(prev => prev ? { ...prev, ...result.data } : result.data);
-      }
-      return result;
-    } catch (err) {
-      console.error('Failed to update profile with image:', err);
-      throw err;
-    }
-  }, [handleApiCall, token]);
-
-  useEffect(() => {
-    // Only fetch profile if we have a token
-    if (token) {
-      fetchProfile();
-    } else {
-      console.log('No token available, profile fetch skipped');
-      setProfile(null);
-    }
-  }, [fetchProfile, token]);
-
-  // Initialize with empty data if no token
-  useEffect(() => {
-    if (!token) {
-      console.log('No token available, profile fetch skipped');
-      setProfile(null);
-    }
-  }, [token]);
-
-  return {
-    profile,
-    loading,
-    error,
-    fetchProfile,
-    updateProfile,
-    updateProfileWithImage,
-    clearError,
+  return { 
+    vendorProfile, 
+    loading, 
+    error, 
+    fetchVendorProfile, 
+    updateVendorProfile,
+    setError 
   };
-}; 
+};
