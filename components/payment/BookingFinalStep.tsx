@@ -7,11 +7,15 @@ import { toast } from "react-toastify";
 import BookingConfirm from "./BookingConfirm";
 export default function BookingFinalStep({ isOpen, setIsOpen, paymentID }: any) {
 const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+const [responseData , setResponseData]= useState()
+const [isLoading, setIsLoading] = useState(false);
 const {token} = useToken()
 const handleConfirm = async() => {
  try {
+    setIsLoading(true);
     const endpoint = `/booking/payment/confirm/${paymentID}`
     const response = await UserService.createData(endpoint,{},token)
+   setResponseData(response?.data?.data)
     console.log("response",response);
     if(response?.data?.success){
         toast.success(response?.data?.data?.message);
@@ -21,8 +25,12 @@ const handleConfirm = async() => {
     }
  } catch (error) {
     console.log(error);
+ } finally {
+    setIsLoading(false);
  }
 }
+  console.log(responseData);
+
   return (
     <div>
 
@@ -34,11 +42,12 @@ const handleConfirm = async() => {
         <div className="flex items-center justify-between py-2 ">
           
           <button onClick={()=>setIsOpen(false)} className="bg-redColor cursor-pointer hover:shadow-md transition-all hover:shadow-redColor/20 text-whiteColor px-4 py-2 rounded-full">Cancel</button>
-          <button onClick={handleConfirm} className="bg-primaryColor cursor-pointer hover:shadow-md transition-all hover:shadow-primaryColor/20 text-whiteColor px-4 py-2 rounded-full">Confirm Booking</button>
+          <button disabled={isLoading} onClick={handleConfirm} className="bg-primaryColor disabled:cursor-not-allowed cursor-pointer hover:shadow-md transition-all disabled:bg-grayColor1 hover:shadow-primaryColor/20 text-whiteColor px-4 py-2 rounded-full">{isLoading ? "Loading..." : "Confirm Booking"} </button>
+          
         </div>
       </DialogContent>
     </Dialog>
-    {isConfirmOpen && <BookingConfirm isOpen={isConfirmOpen} setIsOpen={setIsConfirmOpen}/>}
+      {isConfirmOpen && <BookingConfirm isOpen={isConfirmOpen} setIsOpen={setIsConfirmOpen} responseData={responseData} />}
     </div>
   );
 }

@@ -1,12 +1,11 @@
 'use client';
 
-import HotelCard from "@/components/card/HotelCard";
-import FilterHeader from "@/components/filter/FilterHeader";
-import PaginationPage from "@/components/reusable/PaginationPage";
 import useFetchData from "@/hooks/useFetchData";
 import { useSearchParams } from "next/navigation";
 import { useState } from 'react';
+import PaginationPage from "../reusable/PaginationPage";
 import BigCardSkleton from "../apartment/BigCardSkleton";
+import HotelCard from "../card/HotelCard";
 
 
 
@@ -51,16 +50,16 @@ function HotelPage() {
         return params.toString();
     };
 
-    const endpoint = `/application/packages/enhanced-search?${buildQueryParams()}`
+    const endpoint = `/application/packages?${buildQueryParams()}`
     const { data, loading, error } = useFetchData(endpoint);
-    console.log(data?.meta);
-    const totalPages = data?.data?.pagination?.totalPages
-    const packageData = data ? data?.data?.packages : []
+    const totalPages = data?.meta?.totalPages
+    const packageData = data ? data?.data : []
 
     console.log("hello=====",totalPages);
+    console.log("hello=====", packageData);
     return (
         <div>
-            <FilterHeader title="Hotel" data={packageData} />
+            {/* <FilterHeader title="Hotel" data={packageData} /> */}
 
             <div className="">
                 {loading ? <div className="grid grid-cols-1 gap-5 pb-10">
