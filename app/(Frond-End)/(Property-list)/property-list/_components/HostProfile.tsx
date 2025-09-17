@@ -7,26 +7,22 @@ import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import country from '@/public/toure/countries.json'
 
+
 const regions = [
-    { code: 'AF', name: 'Africa' },
-    { code: 'AS', name: 'Asia' },
-    { code: 'EU', name: 'Europe' },
-    { code: 'NA', name: 'North America' },
-    { code: 'SA', name: 'South America' },
-    { code: 'OC', name: 'Oceania' },
-    { code: 'AN', name: 'Antarctica' }
+  { code: 'AF', name: 'Africa' },
+  { code: 'AS', name: 'Asia' },
+  { code: 'EU', name: 'Europe' },
+  { code: 'NA', name: 'North America' },
+  { code: 'SA', name: 'South America' },
+  { code: 'OC', name: 'Oceania' },
+  { code: 'AN', name: 'Antarctica' }
 ];
 
-type countryType = {
-    name: string;
-    code: string;
-    region: string;
-}
 
-export default function Page() {
+export default function page() {
     const router = useRouter();
+    const [countries,setCountries] = useState(country)
     const { listProperty, updateListProperty } = usePropertyContext();
-    const [countries, setCountries] = useState<countryType[]>(country.country);
     const [selectedRegion, setSelectedRegion] = useState('');
     const [selectedCountry, setSelectedCountry] = useState('');
     const [mapSrc, setMapSrc] = useState(
@@ -76,7 +72,7 @@ export default function Page() {
             zip_code: formElements.zipcode.value,
             city: formElements.city.value,
             country: selectedCountry
-        });
+        })
 
         const updatedProperty = {
             ...JSON.parse(localStorage.getItem("propertyData")),
@@ -105,12 +101,8 @@ export default function Page() {
         setSelectedCountry(e.currentTarget.value);
     }
 
-    useEffect(() => {
-        if (selectedRegion) {
-            setCountries(country.country.filter((c: countryType) => c.region === selectedRegion));
-        }
-    }, [selectedRegion]);
 
+    // const [hostSuggestion,setHostSuggestion] = useState([{title:"Can I make changes to my host profile later?",body:[""]}])
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
@@ -144,8 +136,6 @@ export default function Page() {
                                         <textarea name="propertyintro" required id="propertyintro" disabled={!hostProperty} placeholder="Enter property intro" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none"></textarea>
                                     </div>
                                 </div>
-
-                                {/* Host Info */}
                                 <div className="flex gap-2">
                                     <input type="checkbox" name="host" id="host" className="hidden" onChange={() => setAboutHost(prev => !prev)} />
                                     <label htmlFor="host" className={`select-none w-[24px] h-[24px] ${!aboutHost ? "border" : ""} border-[#D6AE29] rounded-[6px] bg-green-50 flex items-center justify-center`}>
@@ -165,14 +155,22 @@ export default function Page() {
                                     <label htmlFor="hostabout" className="text-[#070707]">About the host</label>
                                     <textarea disabled={!aboutHost} name="hostabout" id="hostabout" placeholder="Write about the host" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" />
                                 </div>
+                                <div className="flex gap-2">
+                                    <input type="checkbox" name="neighborhood" id="neighborhood" className="hidden" onChange={() => setHostNeighborhood(prev => !prev)} />
+                                    <label htmlFor="neighborhood" className={`select-none w-[24px] h-[24px] ${!hostNeighborhood ? "border" : ""} border-[#D6AE29] rounded-[6px] bg-green-50 flex items-center justify-center`}>
+                                        {hostNeighborhood && <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                                            <rect x="1.25" y="1.25" width="19.5" height="19.5" rx="3.75" fill="#D6AE29" />
+                                            <rect x="1.25" y="1.25" width="19.5" height="19.5" rx="3.75" stroke="#D6AE29" strokeWidth="1.5" />
+                                            <path d="M16.25 7.0625L9.03125 14.2812L5.75 11" stroke="#070707" strokeWidth="1.95" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>}
+                                    </label>
+                                    <h3 className="text-[#070707]">The Neighborhood</h3>
+                                </div>
                             </div>
-
                             <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block">
                                 <PropertySuggestion title="Can I make changes to my host profile later?" body="If you're not ready to add all these details right now, that's okay. You can always change your host profile on the Extranet after completing registration." isList={false} />
                             </div>
                         </div>
-
-                        {/* Location and Address Fields */}
                         <div className="flex w-full gap-6">
                             <div className="space-y-5 flex-1">
                                 <div className="bg-white rounded-[16px] p-6 space-y-5">
@@ -187,7 +185,7 @@ export default function Page() {
                                             sure that the address is correct — it's difficult to make changes to this
                                             later.
                                         </p>
-                                        <Dropdownmenu data={regions} handleSelect={handleRegionChange} selectedData={selectedRegion} title="Country/Region" showTitle={true} />
+                                        <Dropdownmenu data={regions} handleSelect={(e: React.FormEvent<HTMLFormElement>) => handleRegionChange(e)} selectedData={selectedRegion} title="Country/Region" showTitle={true} />
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="street" className="text-[#070707]">Street name and house number</label>
@@ -222,8 +220,6 @@ export default function Page() {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Submit Buttons */}
                                 <div className="flex justify-between w-full space-x-3 px-4">
                                     <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
                                     <button type="submit" className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer">Continue</button>

@@ -131,6 +131,8 @@ export default function Page() {
       calendar_end_date: toISODate(endDate),
     });
 
+    console.log("Form data : ",listProperty);
+
     const propertyData = {
       ...listProperty,
       calendar_start_date: toISODate(startDate),
@@ -217,7 +219,7 @@ export default function Page() {
 
   return (
     <div className="flex justify-center items-center bg-[#F6F7F7] w-full overflow-hidden">
-      <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
+      <div className="pb-15 px-4 max-w-[1320px] w-full space-y-[48px]">
         <Toaster />
 
         <div className="flex flex-col-reverse md:flex-row gap-6 items-center md:items-start">
