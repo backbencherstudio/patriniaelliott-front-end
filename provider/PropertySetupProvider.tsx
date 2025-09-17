@@ -71,6 +71,38 @@ interface entertainmentType {
     sauna: boolean;
 }
 
+
+type tripType={
+    title: string;
+    description: string;
+    time: number;
+    ticket: string;
+}
+
+
+type tripPlanType={
+    tripPlan: tripType[];
+    images: File[];
+    id: string | null;
+    day: number;
+}
+
+
+type tourType={
+    title: string;
+    description: string;
+    tourImages: File[];
+    meetingPoint: string;
+    tripPlan: tripPlanType[];
+    destination: string;
+    duration: number;
+    durationType: string;
+    price: number;
+    cancellation_policy: string[];
+    extra_service: string[];
+    language: string[];
+}
+
 interface parkingType {
     cost: number;
     available: boolean;
@@ -97,6 +129,7 @@ interface standardRatePlanType {
 interface formDataType {
     type?: string;
     isMultiple?: boolean;
+    tourType?: string;
     name?: string;
     about_property?: string;
     host_name?: string;
@@ -142,5 +175,6 @@ interface formDataType {
     }[];
     calendar_start_date: string;
     calendar_end_date: string;
-    total_bedroom : number
+    total_bedroom : number;
+    tour_plan: tourType;
 }

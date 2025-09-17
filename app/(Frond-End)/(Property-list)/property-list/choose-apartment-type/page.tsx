@@ -2,27 +2,49 @@
 
 import Image from "next/image"
 import coverImage from "@/public/vendor/apartment-cover.jpg"
+import tourCoverImage from '@/public/toure/image-3.png'
 import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
+import oneDayTour from '@/public/toure/tour.png'
+import weekTour from '@/public/toure/mountain.png'
+import longTour from '@/public/toure/tourism.png'
 
 export default function page() {
     const router = useRouter();
     const { listProperty, updateListProperty } = usePropertyContext();
     const [selectedApartmentType, setSelectedApartmentType] = useState("one");
     const handleNextPage = () => {
-        updateListProperty({
-            isMultiple: selectedApartmentType === 'one' ? false : true
-        })
+        if (listProperty?.type === "Tour") {
+            updateListProperty({
+                tourType: selectedApartmentType
+            })
+        } else {
+            updateListProperty({
+                isMultiple: selectedApartmentType === 'one' ? false : true
+            })
+        }
 
-        const updatedProperty = {
-            ...JSON.parse(localStorage.getItem("propertyData")),
-            isMultiple: selectedApartmentType === 'one' ? false : true
-        };
-        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
+        // const updatedProperty = {
+        //     ...JSON.parse(localStorage.getItem("propertyData")),
+        //     isMultiple: selectedApartmentType === 'one' ? false : true
+        // };
+        // localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
 
         router.push(`/property-list/apartmentinfo?data=${selectedApartmentType}`);
     }
+
+    useEffect(()=>{
+        if(!listProperty?.type){
+            router.push('/property-list')
+        }
+        else if(listProperty?.type === 'Tour'){
+            setSelectedApartmentType('one day')
+        }else{
+            console.log("Type : ",listProperty?.type)
+            setSelectedApartmentType('one')
+        }
+    },[])
 
 
     return (
@@ -31,9 +53,24 @@ export default function page() {
                 <h3 className="text-[#23262F] text-lg sm:text-2xl font-medium">How many apartment are you listing?</h3>
                 <div className="flex flex-col md:flex-row gap-6">
                     <div>
-                        <Image src={coverImage} alt="Apartment cover photo" className="w-full min-w-[300px] max-w-[500px] h-full max-h-[290px] rounded-[16px]" />
+                        <Image width={500} height={500} src={listProperty?.type === 'Tour' ? tourCoverImage : coverImage} alt="Apartment cover photo" className="w-full min-w-[300px] max-w-[500px] h-full max-h-[290px] rounded-[16px]" />
                     </div>
-                    <div className="p-6 flex flex-col justify-between">
+                    <div className="p-6 flex flex-col justify-between gap-4">
+                        {(listProperty?.type === 'Tour') ?<div className="space-y-2">
+                            <div className={`flex items-center gap-6 p-6 border ${selectedApartmentType === "one day" ? "border-[#D6AE29]" : "border-[#fff]"} hover:border-[#D6AE29] rounded-[12px] cursor-pointer`} onClick={() => setSelectedApartmentType("one day")}>
+                                <Image src={oneDayTour} width={500} height={500} alt="Tour icon" className="w-[32px] h-auto object-cover"/>
+                                <h3 className="text-[#070707] text-lg sm:text-xl font-medium text-nowrap">Day tour</h3>
+                            </div>
+                            <div className={`flex items-center gap-6 p-6 border ${selectedApartmentType === "one week" ? "border-[#D6AE29]" : "border-[#fff]"} hover:border-[#D6AE29] duration-300 rounded-[12px] cursor-pointer`} onClick={() => setSelectedApartmentType("one week")}>
+                                <Image alt="Tour icon" width={500} height={500} src={weekTour} className="w-[32px] h-auto object-cover"/>
+                                <h3 className="text-[#070707] text-lg sm:text-xl font-medium text-nowrap">Week tour</h3>
+                            </div>
+                            <div className={`flex items-center gap-6 p-6 border ${selectedApartmentType === "long" ? "border-[#D6AE29]" : "border-[#fff]"} hover:border-[#D6AE29] duration-300 rounded-[12px] cursor-pointer`} onClick={() => setSelectedApartmentType("long")}>
+                                <Image alt="Tour icon" width={500} height={500} src={longTour} className="w-[32px] h-auto object-cover"/>
+                                <h3 className="text-[#070707] text-lg sm:text-xl font-medium text-nowrap">Long tour</h3>
+                            </div>
+                        </div>
+                        :
                         <div className="space-y-2">
                             <div className={`flex items-center gap-6 p-6 border ${selectedApartmentType === "one" ? "border-[#D6AE29]" : "border-[#fff]"} hover:border-[#D6AE29] rounded-[12px] cursor-pointer`} onClick={() => setSelectedApartmentType("one")}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
@@ -54,7 +91,7 @@ export default function page() {
                                 </svg>
                                 <h3 className="text-[#070707] text-lg sm:text-xl font-medium">Multiple apartments</h3>
                             </div>
-                        </div>
+                        </div>}
                         <div className="flex justify-end" onClick={handleNextPage}>
                             <button className="text-[#0068EF] border border-[#0068EF] px-[32px] py-3 rounded-[8px] cursor-pointer font-medium text-sm sm:text-base">Continue</button>
                         </div>
