@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
+import tourIcon from '@/public/toure/travel-agency.png'
+import Image from 'next/image';
 
 
 function page() {
@@ -33,8 +35,21 @@ function page() {
           </div>
           <p className="text-[#4A4C56] text-[12px] sm:text-base">To get started, select the type of property you want to list.</p>
         </div>
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="border border-[#D6AE29] rounded-[12px] p-6 space-y-6 flex flex-col items-center justify-between text-center bg-[#fff]">
+            <div>
+              <Image src={tourIcon} alt='Tour icon' width={500} height={500} className='h-[48px] w-[48px] object-cover'/>
+            </div>
+            <div className="space-y-3">
+              <h3 className="text-[#070707] font-medium text-xl">Tour</h3>
+              <div className="text-[#777980]">
+                <p>Tour's like City tours, </p>
+                <p>Adventure tours, Study tours, etc.</p>
+              </div>
+            </div>
+            <div className="hover:bg-[#D6AE29] border-[#D6AE29] border px-4 py-3 w-full rounded-[8px] text-[#070707] font-medium cursor-pointer duration-300" onClick={() => handleSelection("Tour")}>List your tour</div>
+          </div>
+          <div className="rounded-[12px] p-6 space-y-6 flex flex-col items-center justify-between text-center bg-[#fff]">
             <div>
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                 <path d="M44.25 20.1563V15.0937L24 7.5L3.75 15.0937V20.1562H6.28127V45.4687H3.75V48H44.25V45.4687H41.7187V20.1563H44.25ZM26.5312 20.1563H34.125V27.75H26.5312V20.1563ZM13.875 20.1563H21.4688V27.75H13.875V20.1563ZM13.875 32.8125H21.4688V40.4063H13.875V32.8125ZM26.5312 45.4688V32.8125H34.125V45.4688H26.5312Z" fill="#D6AE29" />
