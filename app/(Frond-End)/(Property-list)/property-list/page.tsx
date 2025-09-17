@@ -26,7 +26,7 @@ function page() {
   };
 
   return (
-    <div className="py-30 flex items-center justify-center bg-[#F6F7F7] px-4">
+    <div className="py-15 md:py-30 flex items-center justify-center bg-[#F6F7F7] px-4">
       <div className="space-y-[32px]">
         <div className="space-y-4 text-center">
           <div className="text-[#23262F] text-lg sm:text-2xl font-medium text-center">

@@ -35,7 +35,7 @@ export default function page() {
     },[])
 
     return (
-        <div className="py-30 flex items-center justify-center bg-[#F6F7F7]">
+        <div className="py-15 md:py-30 flex items-center justify-center bg-[#F6F7F7]">
             <div className="space-y-6">
                 <div className="space-y-[32px] bg-white p-6 rounded-[24px]">
                     <div className="space-y-3 flex flex-col lg:flex-row space-x-3">
