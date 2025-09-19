@@ -23,6 +23,7 @@ export default function Payment1() {
   const [cards, setCards] = useState<Card[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [deletingCardId, setDeletingCardId] = useState<string | null>(null)
   const { token } = useToken()
   const { me } = useMyProfile()
 
@@ -68,6 +69,15 @@ export default function Payment1() {
     window.addEventListener('focus', handleFocus)
     return () => window.removeEventListener('focus', handleFocus)
   }, [token, me])
+
+  // Auto refresh on component mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchCards()
+    }, 500) // Small delay to ensure component is fully mounted
+    
+    return () => clearTimeout(timer)
+  }, [])
 
   const getCardBrandIcon = (brand: string) => {
     switch (brand.toLowerCase()) {
@@ -122,20 +132,27 @@ export default function Payment1() {
     return `${formattedMonth}/${formattedYear}`
   }
 
-  const handleDeleteCard = async (cardId: string) => {
-    if (!confirm('Are you sure you want to delete this card?')) return
-    
+  const handleDeleteCard = async (card: Card) => {
     try {
-      const response = await MyProfileService.deleteCard(cardId)
+      setDeletingCardId(card.id)
+      
+      // Use the Stripe payment method ID for deletion
+      const response = await MyProfileService.deleteCard(card.stripe_payment_method_id)
       
       if (response?.data?.success) {
-        setCards(prev => prev.filter(card => card.id !== cardId))
+        setCards(prev => prev.filter(c => c.id !== card.id))
         toast.success('Card deleted successfully')
+        // Refresh the component after successful deletion
+        setTimeout(() => {
+          fetchCards()
+        }, 500)
       } else {
-        toast.error('Failed to delete card')
+        toast.error(response?.data?.message || 'Failed to delete card')
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete card')
+    } finally {
+      setDeletingCardId(null)
     }
   }
 
@@ -204,13 +221,18 @@ export default function Payment1() {
                       )}
                     </div>
                     <button 
-                      onClick={() => handleDeleteCard(card.id)}
-                      className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-colors"
+                      onClick={() => handleDeleteCard(card)}
+                      className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-colors disabled:opacity-50"
                       title="Delete card"
+                      disabled={deletingCardId === card.id}
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                      </svg>
+                      {deletingCardId === card.id ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      ) : (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                      )}
                     </button>
                   </div>
 
