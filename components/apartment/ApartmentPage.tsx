@@ -46,10 +46,10 @@ function ApartmentPage() {
         return params.toString();
     };
 
-    const endpoint = `/application/packages/enhanced-search?${buildQueryParams()}`
+    const endpoint = `/application/packages?${buildQueryParams()}`
     const { data, loading, error } = useFetchData(endpoint);
-    const totalPages = data?.data?.pagination?.totalPages
-    const packageData = data ? data?.data?.packages : []
+    const totalPages = data?.meta?.totalPages
+    const packageData = data ? data?.data : []
 
     return (
         <div>

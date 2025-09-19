@@ -1,6 +1,6 @@
 // server base url
 export const URL =
-  process.env.NEXT_PUBLIC_API_ENDPOINT || "https://hd-priest-angels-hope.trycloudflare.com";
+  process.env.NEXT_PUBLIC_API_ENDPOINT || "https://warming-prisoners-lodging-outcomes.trycloudflare.com";
 // app config
 export const AppConfig = () => ({
   app: {

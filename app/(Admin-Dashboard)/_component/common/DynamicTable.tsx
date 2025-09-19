@@ -59,28 +59,36 @@ export default function DynamicTableWithPagination({
   return (
     <div>
     
-      <div className="overflow-x-auto  xl:overflow-x-hidden">
-        <table className="min-w-[1000px] w-full text-left">
+      <div className="overflow-x-auto  ">
+        <table className="min-w-[1080px] w-full text-left table-fixed">
+          <colgroup>
+            {columns.map((col, index) => (
+              <col key={index} style={{ width: col.width ? col.width : "auto" }} />
+            ))}
+            {(onView || onDelete) && (
+              <col style={{ width: "120px" }} />
+            )}
+          </colgroup>
           <thead className="bg-neutral-50">
             <tr>
               {columns.map((col, index) => (
                 <th 
                   key={index} 
-                  className="px-4 py-3 text-sm font-medium text-[#4a4c56]"
-                  style={{ width: col.width }}
+                  className="px-3 py-3 text-sm font-medium text-[#4a4c56] whitespace-nowrap"
+                  style={{ width: col.width ? col.width : "auto" }}
                 >
                   {col.label}
                 </th>
               ))}
               {(onView || onDelete) && (
-                <th className="px-4 py-3 text-sm font-medium text-[#4a4c56]">Action</th>
+                <th className="px-3 py-3 text-sm font-medium text-[#4a4c56]">Action</th>
               )}
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={columns.length + 1} className="px-4 py-10 text-center text-[#777980] text-sm">
+                <td colSpan={columns.length + 1} className="px-3 py-10 text-center text-[#777980] text-sm">
                 <span className="flex items-center justify-center  gap-2"><Loader size={17} className="text-primaryColor"/> Loading...</span> 
                 </td>
               </tr>
@@ -90,14 +98,14 @@ export default function DynamicTableWithPagination({
                   {columns.map((col, idx) => (
                     <td 
                       key={idx} 
-                      className="px-4 py-3 text-sm text-[#777980]"
-                      style={{ width: col.width }}
+                      className="px-2 py-3 text-sm text-[#777980] whitespace-normal break-words"
+                      style={{ width: col.width ? col.width : "auto", wordBreak: 'break-word' as any }}
                     >
                       {col.formatter ? col.formatter(row[col.accessor], row, i) : row[col.accessor]}
                     </td>
                   ))}
                   {(onView || onDelete) && (
-                    <td className="px-4 py-3 flex gap-4">
+                    <td className="px-2 py-3 flex gap-4">
                       {onView && (
                         <span
                           className="text-sm underline text-[#777980] hover:text-[#0068ef] cursor-pointer"

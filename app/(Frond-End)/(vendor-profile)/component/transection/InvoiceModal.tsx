@@ -14,7 +14,7 @@ export default function InvoiceModal({ open, onClose, transaction }) {
       format: 'a4',
     });
 
-    // Header
+    // Headerr
     doc.setFontSize(18);
     doc.setTextColor('#22262e');
     doc.text('Invoice ID', 40, 50);

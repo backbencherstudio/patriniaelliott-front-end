@@ -5,7 +5,7 @@ import Image from "next/image";
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast, Toaster } from 'react-hot-toast';
-import { useVendorProfile } from '@/hooks/useVendorProfile';
+import { useVendorProfile } from '../../../../../hooks/useVendorProfile';
 
 const vendorTypeOptions = [
   { value: "Property Manager", label: "Property Manager" },
@@ -47,7 +47,6 @@ export default function Profile() {
       firstName: '',
       email: '',
       phoneNumber: '',
-      // password: '',
       address: '',
       businessWebsite: '',
       vendorType: '',
@@ -59,65 +58,50 @@ export default function Profile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use the vendor profile hook
-  const { vendorProfile, loading, error, fetchVendorProfile, updateVendorProfile, setError } = useVendorProfile();
+  const vendorId = "cmfpdolh7000djvc4bvgxv91z"; // Updated to match API response
+  const { vendorData, loading, error, fetchVendorData, updateVendorData } = useVendorProfile(vendorId);
 
-  // Fetch vendor data on component mount
+  // Populate form when vendor data is loaded
   useEffect(() => {
-    const fetchVendorData = async () => {
-      try {
-        // For demo purposes, using a hardcoded vendor ID
-        // In production, this should come from user context or route params
-        const vendorId = "cmesdf2m3006jjvtszxdplblc";
-        
-        console.log('Fetching vendor data...');
-        await fetchVendorProfile(vendorId);
-      } catch (error: any) {
-        console.error('Error fetching vendor data:', error);
-        // Error is already handled by the hook
-      }
-    };
-
-    fetchVendorData();
-  }, [fetchVendorProfile]);
-
-  // Watch for vendorProfile changes and populate form
-  useEffect(() => {
-    if (vendorProfile) {
-      console.log('Vendor profile loaded, populating form:', vendorProfile);
-      
-      // Populate form with vendor data
-      const firstName = vendorProfile.first_name || vendorProfile.name || '';
-      const email = vendorProfile.email || '';
-      const phoneNumber = vendorProfile.phone_number || '';
-      const address = vendorProfile.address || vendorProfile.VendorVerification?.address || '';
-      const businessWebsite = vendorProfile.VendorVerification?.business_website || '';
-      const vendorType = vendorProfile.VendorVerification?.vendor_type || '';
-      const taxId = vendorProfile.VendorVerification?.TIN || '';
-      
-      console.log('Setting form values:', {
-        firstName,
-        email,
-        phoneNumber,
-        businessWebsite,
-        vendorType,
-        taxId
-      });
-      
-      setValue('firstName', firstName);
-      setValue('email', email);
-      setValue('phoneNumber', phoneNumber);
-      setValue('address', address);
-      setValue('businessWebsite', businessWebsite);
-      setValue('vendorType', vendorType);
-      setValue('taxId', taxId);
-      
-      console.log('Form populated with vendor data successfully');
-    }
-  }, [vendorProfile, setValue]);
+    if (!vendorData) return;
+    
+    console.log('Vendor data loaded, populating form:', vendorData);
+    
+    // Populate form with vendor data
+    const firstName = vendorData.first_name || vendorData.name || '';
+    const email = vendorData.email || '';
+    const phoneNumber = vendorData.phone_number || '';
+    
+    // Business Details - get from VendorVerification
+    const address = vendorData.VendorVerification?.address || vendorData.address || '';
+    const businessWebsite = vendorData.VendorVerification?.business_website || '';
+    const vendorType = vendorData.VendorVerification?.vendor_type || '';
+    const taxId = vendorData.VendorVerification?.TIN || '';
+    
+    console.log('Setting form values:', {
+      firstName,
+      email,
+      phoneNumber,
+      address,
+      businessWebsite,
+      vendorType,
+      taxId
+    });
+    
+    setValue('firstName', firstName);
+    setValue('email', email);
+    setValue('phoneNumber', phoneNumber);
+    setValue('address', address);
+    setValue('businessWebsite', businessWebsite);
+    setValue('vendorType', vendorType);
+    setValue('taxId', taxId);
+    
+    console.log('Form populated with vendor data successfully');
+  }, [vendorData, setValue]);
 
   const onSubmit = async (data: FormData) => {
     try {
-      if (!vendorProfile?.id) {
+      if (!vendorData?.id) {
         console.error('No vendor ID available');
         return;
       }
@@ -138,18 +122,15 @@ export default function Profile() {
       console.log('Updating vendor profile with data:', updateData);
 
       // Update vendor profile using the hook
-      await updateVendorProfile(vendorProfile.id, updateData);
+      await updateVendorData(updateData);
       
       setIsEditing(false);
-      setError(null);
-      
-      // Show success toast
       toast.success('Profile updated successfully!');
       
-      console.log('Profile update successful');
+      console.log('Profile updated successfully');
     } catch (error: any) {
       console.error('Error updating profile:', error);
-      // Error is already handled by the hook
+      toast.error('Failed to update profile. Please try again.');
     }
   };
 
@@ -189,37 +170,37 @@ export default function Profile() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="text-lg text-red-600 mb-4">{error}</div>
-                  <div className="flex gap-3 justify-center">
-          {isAuthError ? (
-            <>
+          <div className="flex gap-3 justify-center">
+            {isAuthError ? (
+              <>
+                <button
+                  onClick={() => window.location.href = '/auth/login'}
+                  className="bg-blueColor text-white px-4 py-2 rounded-lg hover:bg-[#0051bc] transition-colors"
+                >
+                  Go to Login
+                </button>
+                <button
+                  onClick={() => {
+                    // Clear any stale tokens and reload
+                    document.cookie.split(";").forEach(function(c) { 
+                      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                    });
+                    window.location.reload();
+                  }}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  Clear Cookies & Retry
+                </button>
+              </>
+            ) : (
               <button
-                onClick={() => window.location.href = '/auth/login'}
+                onClick={() => fetchVendorData()}
                 className="bg-blueColor text-white px-4 py-2 rounded-lg hover:bg-[#0051bc] transition-colors"
               >
-                Go to Login
+                Retry
               </button>
-              <button
-                onClick={() => {
-                  // Clear any stale tokens and reload
-                  document.cookie.split(";").forEach(function(c) { 
-                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
-                  });
-                  window.location.reload();
-                }}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-              >
-                Clear Cookies & Retry
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-blueColor text-white px-4 py-2 rounded-lg hover:bg-[#0051bc] transition-colors"
-            >
-              Retry
-            </button>
-          )}
-        </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -292,23 +273,10 @@ export default function Profile() {
               </button>
             </div>
           </div>
-          {error && (
-            <div className="w-full md:w-[632px] px-4 py-3 bg-red-50 border border-red-200 rounded-xl flex gap-1.5 mt-4">
-              <img
-                src="/vendor/error.svg"
-                alt="Error icon"
-                className="w-4 h-4"
-              />
-              <div className="flex-1 text-sm text-red-600">
-                {error}
-              </div>
-            </div>
-          )}
-
         </div>
       </div>
 
-      <form key={`${vendorProfile?.id || 'loading'}-${JSON.stringify(vendorProfile)}`} onSubmit={handleSubmit(onSubmit)} className="w-full">
+      <form key={`${vendorData?.id || 'loading'}-${JSON.stringify(vendorData)}`} onSubmit={handleSubmit(onSubmit)} className="w-full">
         <div className="p-4 md:p-6 bg-white rounded-xl flex flex-col gap-6 my-10 w-full ">
           <div className="flex flex-col md:flex-row justify-between items-start gap-4">
             <div className="text-2xl font-medium text-[#22262e]">Personal Information</div>
@@ -317,19 +285,18 @@ export default function Profile() {
                 type="button"
                 onClick={() => {
                   setIsEditing(true);
-                  setError(null);
                   
                   // Force form to re-populate with current data
-                  if (vendorProfile) {
-                    console.log('Edit button clicked, populating form with:', vendorProfile);
+                  if (vendorData) {
+                    console.log('Edit button clicked, populating form with:', vendorData);
                     
-                    const firstName = vendorProfile.first_name || vendorProfile.name || '';
-                    const email = vendorProfile.email || '';
-                    const phoneNumber = vendorProfile.phone_number || '';
-                    const address = vendorProfile.address || vendorProfile.VendorVerification?.address || '';
-                    const businessWebsite = vendorProfile.VendorVerification?.business_website || '';
-                    const vendorType = vendorProfile.VendorVerification?.vendor_type || '';
-                    const taxId = vendorProfile.VendorVerification?.TIN || '';
+                    const firstName = vendorData.first_name || vendorData.name || '';
+                    const email = vendorData.email || '';
+                    const phoneNumber = vendorData.phone_number || '';
+                    const address = vendorData.address || vendorData.VendorVerification?.address || '';
+                    const businessWebsite = vendorData.VendorVerification?.business_website || '';
+                    const vendorType = vendorData.VendorVerification?.vendor_type || '';
+                    const taxId = vendorData.VendorVerification?.TIN || '';
                     
                     setValue('firstName', firstName);
                     setValue('email', email);
@@ -363,10 +330,10 @@ export default function Profile() {
                     {...register('firstName')}
                     className="w-full text-sm bg-transparent outline-none"
                     placeholder="Enter your first name"
-                    defaultValue={vendorProfile?.first_name || vendorProfile?.name || ''}
+                    defaultValue={vendorData?.first_name || vendorData?.name || ''}
                   />
                 ) : (
-                  <div className="text-sm text-[#777980]">{vendorProfile?.first_name || vendorProfile?.name || 'Enter your first name'}</div>
+                  <div className="text-sm text-[#777980]">{vendorData?.first_name || vendorData?.name || 'Enter your first name'}</div>
                 )}
               </div>
             </div>
@@ -380,10 +347,10 @@ export default function Profile() {
                     type="email"
                     className="w-full text-sm bg-transparent outline-none"
                     placeholder="Enter your email address"
-                    defaultValue={vendorProfile?.email || ''}
+                    defaultValue={vendorData?.email || ''}
                   />
                 ) : (
-                  <div className="text-sm text-[#777980]">{vendorProfile?.email || 'Enter your email address'}</div>
+                  <div className="text-sm text-[#777980]">{vendorData?.email || 'Enter your email address'}</div>
                 )}
               </div>
             </div>
@@ -396,10 +363,10 @@ export default function Profile() {
                     {...register('phoneNumber')}
                     className="w-full text-sm bg-transparent outline-none"
                     placeholder="Enter your phone number"
-                    defaultValue={vendorProfile?.phone_number || ''}
+                    defaultValue={vendorData?.phone_number || ''}
                   />
                 ) : (
-                  <div className="text-sm text-[#777980]">{vendorProfile?.phone_number || 'Enter your phone number'}</div>
+                  <div className="text-sm text-[#777980]">{vendorData?.phone_number || 'Enter your phone number'}</div>
                 )}
               </div>
             </div>
@@ -424,7 +391,7 @@ export default function Profile() {
                       />
                     ) : (
                       <div className="flex-1 text-sm text-[#777980]">
-                        {vendorProfile?.address || vendorProfile?.VendorVerification?.address || 'Enter your address'}
+                        {vendorData?.address || vendorData?.VendorVerification?.address || 'Enter your address'}
                       </div>
                     )}
                   </div>
@@ -443,10 +410,10 @@ export default function Profile() {
                       type="text"
                       className="flex-1 text-sm bg-transparent outline-none"
                       placeholder="Enter business website"
-                      defaultValue={vendorProfile?.VendorVerification?.business_website || ''}
+                      defaultValue={vendorData?.VendorVerification?.business_website || ''}
                     />
                   ) : (
-                    <div className="flex-1 text-sm text-[#777980]">{vendorProfile?.VendorVerification?.business_website || 'Enter business website'}</div>
+                    <div className="flex-1 text-sm text-[#777980]">{vendorData?.VendorVerification?.business_website || 'Enter business website'}</div>
                   )}
                 </div>
               </div>
@@ -474,7 +441,7 @@ export default function Profile() {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <div className="text-sm text-[#777980]">{vendorProfile?.VendorVerification?.vendor_type || watch('vendorType') || 'Select vendor type'}</div>
+                    <div className="text-sm text-[#777980]">{vendorData?.VendorVerification?.vendor_type || watch('vendorType') || 'Select vendor type'}</div>
                   )}
                 </div>
               </div>
@@ -488,10 +455,10 @@ export default function Profile() {
                       type="text"
                       className="flex-1 text-sm bg-transparent outline-none"
                       placeholder="Enter business tax ID"
-                      defaultValue={vendorProfile?.VendorVerification?.TIN || ''}
+                      defaultValue={vendorData?.VendorVerification?.TIN || ''}
                     />
                   ) : (
-                    <div className="flex-1 text-sm text-[#777980]">{vendorProfile?.VendorVerification?.TIN || 'Enter business tax ID'}</div>
+                    <div className="flex-1 text-sm text-[#777980]">{vendorData?.VendorVerification?.TIN || 'Enter business tax ID'}</div>
                   )}
                 </div>
               </div>
@@ -505,19 +472,18 @@ export default function Profile() {
               type="button"
                               onClick={() => {
                   setIsEditing(false);
-                  setError(null);
                   
                   // Reset form to original vendor data
-                  if (vendorProfile) {
-                    console.log('Cancel button clicked, resetting form to:', vendorProfile);
+                  if (vendorData) {
+                    console.log('Cancel button clicked, resetting form to:', vendorData);
                     
-                    const firstName = vendorProfile.first_name || vendorProfile.name || '';
-                    const email = vendorProfile.email || '';
-                    const phoneNumber = vendorProfile.phone_number || '';
-                    const address = vendorProfile.address || vendorProfile.VendorVerification?.address || '';
-                    const businessWebsite = vendorProfile.VendorVerification?.business_website || '';
-                    const vendorType = vendorProfile.VendorVerification?.vendor_type || '';
-                    const taxId = vendorProfile.VendorVerification?.TIN || '';
+                    const firstName = vendorData.first_name || vendorData.name || '';
+                    const email = vendorData.email || '';
+                    const phoneNumber = vendorData.phone_number || '';
+                    const address = vendorData.address || vendorData.VendorVerification?.address || '';
+                    const businessWebsite = vendorData.VendorVerification?.business_website || '';
+                    const vendorType = vendorData.VendorVerification?.vendor_type || '';
+                    const taxId = vendorData.VendorVerification?.TIN || '';
                     
                     setValue('firstName', firstName);
                     setValue('email', email);

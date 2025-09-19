@@ -9,8 +9,9 @@ function ListingAction({ onView, data,onEdit }: any) {
   return (
     <div className="relative">
       <Popover>
-        <PopoverTrigger>
-          <HiOutlineDotsHorizontal className="cursor-pointer text-gray-600 hover:text-gray-800" />
+        <PopoverTrigger className='px-4'>
+          <HiOutlineDotsHorizontal className="cursor-pointer text-center
+           text-gray-600 hover:text-gray-800 text-xl" />
         </PopoverTrigger>
         <PopoverContent className="w-[180px] relative top-1 -left-16 p-2 bg-white shadow-lg rounded-lg border border-gray-100">
         <div className='absolute w-4 h-4 z-0 transform  rotate-45 right-4 -top-2 border-t border-l border-gray-100 bg-whiteColor'>

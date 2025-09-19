@@ -155,6 +155,9 @@ export const VendorService = {
   getVendorProfileWithCookie: async (vendorId: string, context: any = null) => {
     const userToken = CookieHelper.get({ key: "tourAccessToken", context });
     
+    console.log('🔑 Token check:', userToken ? 'Token found' : 'No token');
+    console.log('🆔 Vendor ID:', vendorId);
+    
     if (!userToken) {
       throw new Error("Authentication token not found. Please login again.");
     }
@@ -166,7 +169,15 @@ export const VendorService = {
       },
     };
 
-    return await Fetch.get(`/vendor-user-verification/vendor/${vendorId}`, _config);
+    const endpoint = `/vendor-user-verification/vendor/${vendorId}`;
+    console.log('🌐 API Endpoint:', endpoint);
+    console.log('📤 Request config:', _config);
+    console.log('🔗 Full URL will be:', `${process.env.NEXT_PUBLIC_API_ENDPOINT || "https://honors-whale-even-inspiration.trycloudflare.com"}/api${endpoint}`);
+
+    const response = await Fetch.get(endpoint, _config);
+    console.log('📥 Response received:', response);
+    
+    return response;
   },
 
   // Update vendor profile using token from cookie

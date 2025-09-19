@@ -174,7 +174,7 @@ export default function PaymentPage() {
         </div>
       </div>
       {/* Table Section */}
-      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-lg mx-auto">
+      <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-xl mx-auto">
         <div className="md:flex justify-between items-center gap-2 md:gap-4 mb-4">
           {/* Role Filters */}
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">

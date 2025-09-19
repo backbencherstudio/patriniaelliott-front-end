@@ -1,22 +1,12 @@
 "use client";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useBookingContext } from "@/provider/BookingProvider";
 import complete from "@/public/auth/completeicon.png";
+import jsPDF from "jspdf";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa6";
-export default function BookingConfirm({ isOpen, setIsOpen }: any) {
-  const {
-    singleApartment,
-    totalPrice,
-    totalDay,
-    discount,
-  } = useBookingContext();
-  console.log(singleApartment);
+export default function BookingConfirm({ isOpen, setIsOpen, responseData }: any) {
 
-  if (!singleApartment) return null;
-
-  const { name, reviews, bedrooms, price, rating, image } = singleApartment;
-    const date = new Date();
+  const date = new Date();
   const options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
     month: "short",
@@ -24,80 +14,175 @@ export default function BookingConfirm({ isOpen, setIsOpen }: any) {
   };
 
   const formattedDate = date.toLocaleDateString("en-GB", options);
-  return (
-    <Dialog  open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger className=" " asChild></DialogTrigger>
+
+  const generatePDF = async () => {
+    try {
+      // Create a new PDF document
+      const pdf = new jsPDF('p', 'mm', 'a4');
       
+      // Set up the PDF content
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const margin = 20;
+      const contentWidth = pageWidth - (margin * 2);
+      
+      let yPosition = margin;
+      
+      // Add title
+      pdf.setFontSize(24);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Congratulation!', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 20;
+      
+      // Add success message
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('We successfully received your payment!', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 30;
+      
+      // Add package details
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(responseData?.package?.name || 'Package Name', margin, yPosition);
+      yPosition += 15;
+      
+      // Add amenities
+      if (responseData?.package?.amenities) {
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        const amenities = responseData.package.amenities.join(' • ');
+        pdf.text(amenities, margin, yPosition);
+        yPosition += 15;
+      }
+      
+      // Add host information
+      pdf.setFontSize(10);
+      pdf.text('Hosted by', margin, yPosition);
+      yPosition += 8;
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(responseData?.package?.host?.name || 'Host Name', margin, yPosition);
+      yPosition += 8;
+      
+      // Add rating
+      if (responseData?.feedback?.rating) {
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(`Rating: ${responseData.feedback.rating} (${responseData.feedback.review_count || 0} reviews)`, margin, yPosition);
+        yPosition += 20;
+      }
+      
+      // Add booking details section
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Booking Details', margin, yPosition);
+      yPosition += 15;
+      
+      // Add booking information
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      
+      const bookingDetails = [
+        ['Booking code:', responseData?.booking?.invoice_number || 'N/A'],
+        ['Package type:', responseData?.booking?.type || 'N/A'],
+        ['Date:', formattedDate],
+        ['Total:', `$${responseData?.booking?.total_amount || '0'}`],
+        ['Payment method:', 'Card']
+      ];
+      
+      bookingDetails.forEach(([label, value]) => {
+        pdf.text(label, margin, yPosition);
+        pdf.text(value, pageWidth - margin - pdf.getTextWidth(value), yPosition);
+        yPosition += 8;
+      });
+      
+      // Save the PDF
+      pdf.save(`booking-invoice-${responseData?.booking?.invoice_number || 'invoice'}.pdf`);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('PDF generation failed. Please try again.');
+    }
+  };
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger className=" " asChild></DialogTrigger>
+
       <DialogContent className="sm:max-w-[662px] text-center p-10 h-[90%] overflow-y-auto close">
-        <h2 className=" text-headerColor font-semibold text-5xl">
-          {" "}
-          Congratulation!
-        </h2>
-        <div className="flex justify-center">
-          <Image src={complete} width={182} height={182} alt="complete" />
-        </div>
-        <p className=" text-base text-grayColor1">
-          We successfully received your payment!
-        </p>
-        <div className=" text-start bg-bgColor rounded-lg p-4">
-          <h4 className=" text-[22px] font-medium text-headerColor">{name}</h4>
-          <ul className=" gap-2 text-grayColor1 text-sm mt-1 flex  border-b border-grayColor1/25 pb-3">
-            <li>{bedrooms} King Bed</li>
-            <li>•{totalDay} Night</li>
-            <li>• Parking Service</li>
-            <li>• Foods</li>
-          </ul>
-          <div className=" flex justify-between items-end ">
-            <div className=" mt-4">
-              <p className="text-sm text-grayColor1 mt-1">Hosted by </p>
-              <div className="flex items-center gap-2 mt-1">
-                <Image
-                  src="/profile.png"
-                  alt="hosted"
-                  width={24}
-                  height={24}
-                  className=" rounded-full"
-                />
-                <h5 className="text-sm font-semibold text-headerColor ">
-                  Michalle
-                </h5>
+        <div className="bg-white p-8 rounded-lg">
+          <h2 className=" text-headerColor font-semibold text-5xl">
+            {" "}
+            Congratulation!
+          </h2>
+          <div className="flex justify-center">
+            <Image src={complete} width={182} height={182} alt="complete" />
+          </div>
+          <p className=" text-base text-grayColor1">
+            We successfully received your payment!
+          </p>
+          <div className=" text-start bg-bgColor rounded-lg p-4">
+            <h4 className=" text-[22px] font-medium text-headerColor">{responseData?.package?.name}</h4>
+            <ul className=" gap-2 text-grayColor1 text-sm mt-1 flex  border-b border-grayColor1/25 pb-3">
+              {responseData?.package?.amenities?.map((item) => (
+                <li key={item}>•{item}</li>
+              ))}
+            </ul>
+            <div className=" flex justify-between items-end ">
+              <div className=" mt-4">
+                <p className="text-sm text-grayColor1 mt-1">Hosted by </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <Image
+                    src={responseData?.package?.host?.avatar ? responseData?.host?.package?.avatar : "/profile.png"}
+                    alt="hosted"
+                    width={24}
+                    height={24}
+                    className=" rounded-full"
+                  />
+                  <h5 className="text-sm font-semibold text-headerColor ">
+                    {responseData?.package?.host?.name}
+                  </h5>
+                </div>
+              </div>
+              <div>
+                <p className="flex items-center gap-1 text-sm text-headerColor mt-2">
+                  <FaStar size={18} className="text-yellow-400" /> {responseData?.feedback?.rating || 0}{" "}
+                  <span className="text-grayColor1">
+                    ({responseData?.feedback?.review_count || 0} reviews)
+                  </span>
+                </p>
               </div>
             </div>
-            <div>
-              <p className="flex items-center gap-1 text-sm text-headerColor mt-2">
-                <FaStar size={18} className="text-yellow-400" /> {rating || 0}{" "}
-                <span className="text-grayColor1">
-                  ({reviews || 0} reviews)
-                </span>
-              </p>
+          </div>
+
+          <div className=" text-start bg-bgColor/80 rounded-lg p-4">
+            <h3 className=" text-2xl font-medium text-headerColor">Booking details</h3>
+            <div className=" space-y-3">
+              <div className=" text-sm text-grayColor1 flex justify-between">
+                <p>Booking code:</p><p>{responseData?.booking?.invoice_number}</p>
+              </div>
+              <div className=" text-sm text-grayColor1 flex justify-between">
+                <p>package type:</p><p>{responseData?.booking?.type}</p>
+              </div>
+              <div className=" text-sm text-grayColor1 flex justify-between">
+                <p>Date:</p><p>{formattedDate}</p>
+              </div>
+              <div className=" text-sm text-grayColor1 flex justify-between">
+                <p>Total:</p><p>${responseData?.booking?.total_amount}</p>
+              </div>
+              <div className=" text-sm text-grayColor1 flex justify-between">
+                <p>Payment method:</p><p> card</p>
+              </div>
             </div>
           </div>
         </div>
-
-        <div className=" text-start bg-bgColor/80 rounded-lg p-4">
-            <h3 className=" text-2xl font-medium text-headerColor">Booking details</h3>
-            <div className=" space-y-3">
-                <div className=" text-sm text-grayColor1 flex justify-between">
-                    <p>Booking code:</p><p>#021954455</p>
-                </div>
-                <div className=" text-sm text-grayColor1 flex justify-between">
-                    <p>Date:</p><p>{formattedDate}</p>
-                </div>
-                <div className=" text-sm text-grayColor1 flex justify-between">
-                    <p>Total:</p><p>${totalPrice- discount}</p>
-                </div>
-                <div className=" text-sm text-grayColor1 flex justify-between">
-                    <p>Payment method:</p><p>Debit card</p>
-                </div>
-            </div>
-        </div>
         <div className=" flex gap-5">
-            <button className="w-full  bg-secondaryColor cursor-pointer text-headerColor font-medium  py-3 px-4 rounded-full text-base">
-        Download Invoice
-      </button>
-            <button onClick={()=>setIsOpen(false)} className="w-full text-redColor  border border-redColor cursor-pointer  font-medium  py-3 px-4 rounded-full text-base">
-       Cancel
-      </button>
+          <button 
+            onClick={generatePDF}
+            className="w-full  bg-secondaryColor cursor-pointer text-headerColor font-medium  py-3 px-4 rounded-full text-base"
+          >
+            Download Invoice
+          </button>
+          <button onClick={() => setIsOpen(false)} className="w-full text-redColor  border border-redColor cursor-pointer  font-medium  py-3 px-4 rounded-full text-base">
+            Cancel
+          </button>
         </div>
       </DialogContent>
     </Dialog>

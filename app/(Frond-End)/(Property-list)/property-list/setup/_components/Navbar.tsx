@@ -1,8 +1,10 @@
 'use client'
 
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
 
-const steps = [
+const propertySteps = [
     "Name and location",
     "Property setup",
     "Photos",
@@ -10,16 +12,34 @@ const steps = [
     "Calendar",
 ]
 
+const tourSteps=[
+    'Tour host',
+    'Tour setup',
+    'Calendar'
+]
+
 export default function Navbar() {
+    const {listProperty} = usePropertyContext();
     const currentPath = usePathname();
+    const [steps,setSteps] = useState(['']);
+
+
+
+    useEffect(()=>{
+        if(listProperty?.type === 'Tour'){
+            setSteps([...tourSteps])
+        }else{
+            setSteps([...propertySteps])
+        }
+    },[])
     
     // Extract the current step from the path
-    const currentStep = steps.find(step => currentPath.toLowerCase().includes(step.toLowerCase().replace(/\s+/g, '-')))
+    const currentStep = steps?.find(step => currentPath.toLowerCase().includes(step.toLowerCase().replace(/\s+/g, '-')))
     
-    const currentIndex = steps.indexOf(currentStep || steps[0]);
+    const currentIndex = steps?.indexOf(currentStep || steps[0]);
 
     return (
-        <div className="w-full flex justify-center bg-[#F6F7F7] pt-[48px]">
+        <div className="w-full flex justify-center bg-[#F6F7F7] md:py-[48px] px-1">
             <div className="w-full max-w-[1320px]">
                 <ul className="hidden md:flex w-full justify-between">
                     {steps.map((step, index) => {

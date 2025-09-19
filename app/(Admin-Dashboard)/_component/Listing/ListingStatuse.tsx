@@ -16,7 +16,7 @@ interface UserData {
       text: 'text-[#067647]',
       icon: '/dashboard/icon/tik.svg'
     },
-    Booked: {
+    Pending: {
       bg: 'bg-[#ffa23a]/10',
       border: 'outline-[#ffa23a]',
       text: 'text-[#ffa23a]',
@@ -36,17 +36,17 @@ function ListingStatuse({ status }: { status: UserData['status'] }) {
 
     
   return (
-    <div className={`pl-1.5 pr-2 py-1.5 ${style.bg} rounded-2xl  outline-1 outline-offset-[-1px] ${style.border} flex justify-center items-center gap-1`}>
+    <div className={`pl-1.5 pr-2 py-1.5 ${style?.bg} rounded-2xl  outline-1 outline-offset-[-1px] ${style?.border} flex justify-center items-center gap-1`}>
      <div className="w-3 h-3 relative overflow-hidden">
              <Image
-               src={style.icon} 
+               src={style?.icon} 
                alt={status} 
                width={12} 
                height={12} 
-               className={style.text}
+               className={style?.text}
              />
            </div>
-      <div className={`text-center justify-start ${style.text} text-xs font-normal font-['Inter'] leading-3`}>
+      <div className={`text-center justify-start ${style?.text} text-xs font-normal font-['Inter'] leading-3`}>
          {status }
        
       </div>

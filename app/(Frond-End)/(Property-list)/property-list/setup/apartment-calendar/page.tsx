@@ -95,10 +95,12 @@ export default function Page() {
   // hydrate price from localStorage (safe parse)
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("propertyData");
-      if (!raw) return;
-      const parsed = JSON.parse(raw) || {};
-      const nightly = Number(parsed?.price_per_night ?? 0);
+      let nightly = listProperty?.price_per_night
+      if(listProperty?.type === "Tour"){
+        nightly = listProperty?.tour_plan?.price
+      }else{
+        nightly = listProperty?.price_per_night
+      }
       setPrice(Number.isFinite(nightly) ? nightly : 0);
     } catch {
       setPrice(0);
@@ -131,12 +133,15 @@ export default function Page() {
       calendar_end_date: toISODate(endDate),
     });
 
+    console.log("Form data : ",listProperty);
+
     const propertyData = {
       ...listProperty,
       calendar_start_date: toISODate(startDate),
       calendar_end_date: toISODate(endDate),
     }
 
+    console.log("Property data : ",propertyData)
     const fd = new FormData();
 
     const amenities = {
@@ -217,7 +222,7 @@ export default function Page() {
 
   return (
     <div className="flex justify-center items-center bg-[#F6F7F7] w-full overflow-hidden">
-      <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
+      <div className="pb-15 px-4 max-w-[1320px] w-full space-y-[48px]">
         <Toaster />
 
         <div className="flex flex-col-reverse md:flex-row gap-6 items-center md:items-start">
