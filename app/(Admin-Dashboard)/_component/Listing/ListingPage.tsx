@@ -3,7 +3,6 @@ import Image from "next/image";
 import React, { useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
-import { listingData } from "@/DemoAPI/ListingData";
 import useFetchData from "@/hooks/useFetchData";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
@@ -46,8 +45,8 @@ export default function ListingPage() {
   const columns = [
     { label: "User ID", accessor: "displayId", width:"100px" },
     { label: "Property name", accessor: "name", },
-    { label: "Type (Property/Tour)", accessor: "type" , width:"160px",},
-    { label: "Location", accessor: "location",  },
+    { label: "Type (Property/Tour)", accessor: "type" , width:"170px",},
+    { label: "Location", accessor: "location",  width:"150px", },
     {
       label: "Price (per night)",
       accessor: "price",
@@ -61,13 +60,12 @@ export default function ListingPage() {
     {
       label: "Status",
       accessor: "status",
-    
+   
       formatter: (_, row) => <ListingStatuse status={row.status} />,
     },
     {
       label: "Approval",
       accessor: "status",
-    
       formatter: (_, row) => <ListingApproveAction status={row} />,
     },
     {

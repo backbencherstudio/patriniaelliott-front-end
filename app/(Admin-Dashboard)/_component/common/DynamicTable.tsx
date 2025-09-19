@@ -108,7 +108,7 @@ export default function DynamicTableWithPagination({
                     <td className="px-2 py-3 flex gap-4">
                       {onView && (
                         <span
-                          className="text-sm underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
+                          className="text-sm underline text-nowrap text-[#777980] hover:text-[#0068ef] cursor-pointer"
                           onClick={() => onView(row)}
                         >
                           View details

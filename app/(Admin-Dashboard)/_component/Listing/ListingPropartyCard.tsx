@@ -2,8 +2,8 @@
 
 import TotalReviewStats from "@/components/reusable/TotalReviewStats";
 import {
-    Dialog,
-    DialogContent,
+  Dialog,
+  DialogContent,
 } from "@/components/ui/dialog";
 import Image from "next/image";
 
@@ -18,6 +18,8 @@ const ListingPropartyCard = ({
   setIsModalOpen,
   data,
 } :any) => {
+
+  console.log("data",data);
   return (
     <Dialog open={open} onOpenChange={setIsModalOpen}>
      
@@ -30,7 +32,7 @@ const ListingPropartyCard = ({
           {/* Left - Image */}
           <div className="h-[250px]  md:h-full">
             <Image
-              src={data?.image}
+              src={data?.imageUrl ? data?.imageUrl : "/public/hotel/h1.jpg"}
               alt="Room"
               width={500}
               height={500}
