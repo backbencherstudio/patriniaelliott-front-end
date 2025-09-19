@@ -120,9 +120,7 @@ export default function ReviewPage() {
           Check up on your latest reservations and history.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          
             <TotalReview/>
-            
             <FeedbackChart/>
             <SatisfactionCard/>
          {/* <SatisfactionCard/> */}
