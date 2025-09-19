@@ -71,7 +71,9 @@ export default function Profile() {
     const firstName = vendorData.first_name || vendorData.name || '';
     const email = vendorData.email || '';
     const phoneNumber = vendorData.phone_number || '';
-    const address = vendorData.address || vendorData.VendorVerification?.address || '';
+    
+    // Business Details - get from VendorVerification
+    const address = vendorData.VendorVerification?.address || vendorData.address || '';
     const businessWebsite = vendorData.VendorVerification?.business_website || '';
     const vendorType = vendorData.VendorVerification?.vendor_type || '';
     const taxId = vendorData.VendorVerification?.TIN || '';
@@ -291,7 +293,9 @@ export default function Profile() {
                     const firstName = vendorData.first_name || vendorData.name || '';
                     const email = vendorData.email || '';
                     const phoneNumber = vendorData.phone_number || '';
-                    const address = vendorData.address || vendorData.VendorVerification?.address || '';
+                    
+                    // Business Details - get from VendorVerification
+                    const address = vendorData.VendorVerification?.address || vendorData.address || '';
                     const businessWebsite = vendorData.VendorVerification?.business_website || '';
                     const vendorType = vendorData.VendorVerification?.vendor_type || '';
                     const taxId = vendorData.VendorVerification?.TIN || '';
@@ -478,7 +482,9 @@ export default function Profile() {
                     const firstName = vendorData.first_name || vendorData.name || '';
                     const email = vendorData.email || '';
                     const phoneNumber = vendorData.phone_number || '';
-                    const address = vendorData.address || vendorData.VendorVerification?.address || '';
+                    
+                    // Business Details - get from VendorVerification
+                    const address = vendorData.VendorVerification?.address || vendorData.address || '';
                     const businessWebsite = vendorData.VendorVerification?.business_website || '';
                     const vendorType = vendorData.VendorVerification?.vendor_type || '';
                     const taxId = vendorData.VendorVerification?.TIN || '';

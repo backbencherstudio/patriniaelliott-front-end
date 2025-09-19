@@ -20,6 +20,7 @@ export const useVendorProfile = (vendorId: string) => {
       console.log('📡 API Response:', res);
       const data = (res as any)?.data ?? res;
       console.log('📊 Processed data:', data);
+      console.log('🏢 VendorVerification data:', data?.VendorVerification);
       setVendorData(data?.data ?? data ?? null);
       console.log('✅ Vendor data set:', data?.data ?? data ?? null);
       return res;
