@@ -448,13 +448,22 @@ const AddTour = () => {
                     )}
                   </div>
                   {showExtraService && (
-                    <input
+                    <div className="flex gap-4">
+                      <input
                       type="text"
                       value={extraService}
                       placeholder="Enter extra service"
                       onChange={(e) => setExtraService(e.target.value)}
                       className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
                     />
+                    <input
+                      type="number"
+                      value={extraService}
+                      placeholder="Enter price"
+                      onChange={(e) => setExtraService(e.target.value)}
+                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600 max-w-[150px]"
+                    />
+                    </div>
                   )}
                   {showExtraService && (
                     <div className="space-x-3">

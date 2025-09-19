@@ -252,52 +252,8 @@ export default function page() {
             bathrooms: numberOfGuest,
             number_of_guest_allowed: numberOfBathRooms,
             total_bedroom: totalBedRooms,
-        })
-
-        const updatedProperty = {
-            ...JSON.parse(localStorage.getItem("propertyData")),
-            name: propertyName,
-            general: {
-                wifi: guestGeneral.free_wifi,
-                air_conditioning: guestGeneral.air_condition,
-                heating: guestGeneral.heating,
-                electric_vehicle_charging_station: guestGeneral.ev_charging
-            },
-            cooking_cleaning: {
-                kitchen: guestCooking.kitchen,
-                kitchenette: guestCooking.kitchenette,
-                washing_machine: guestCooking.washing_machine
-            },
-            entertainment: {
-                flat_screen_tv: guestEntertainment.flat_tv,
-                swimming_pool: guestEntertainment.pool,
-                minibar: guestEntertainment.minibar,
-                sauna: guestEntertainment.sauna
-            },
-            breakfast_available: guestFood.breakfast === "yes",
-            parking: {
-                available: guestParking.isavailable === "yes_free" || guestParking.isavailable === "yes_paid",
-                reserveParkingSpot: guestParking.reservation === "yes",
-                parkingType: guestParking.parkingtype === 'public',
-                cost: guestParking.price,
-                type: guestParking.reservation === "yes_free" ? "free" : "paid"
-            },
-            house_rules: {
-                no_smoking: houseRules.smoking,
-                no_pets: houseRules.pets,
-                no_children: houseRules.children,
-                parties_allowed: houseRules.events
-            },
-            check_in_from: checkIn.from,
-            check_in_untill: checkIn.until,
-            check_out_from: checkOut.from,
-            check_out_untill: checkOut.until,
-            bedrooms: [...bedrooms],
-            bathrooms: numberOfBathRooms,
-            number_of_guest_allowed: numberOfGuest,
             extra_services: services
-        };
-        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
+        })
 
         router.push("/property-list/setup/apartment-photos")
     }
