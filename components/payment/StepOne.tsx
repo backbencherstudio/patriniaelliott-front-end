@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import { BiEditAlt } from "react-icons/bi";
-import { CiCirclePlus } from "react-icons/ci";
 export default function StepOne({data,guests,setGuests}:{data?:any,guests:any,setGuests:any}) {
   const handleAddGuest = () => {
     setGuests((prev) => [
@@ -15,6 +14,8 @@ export default function StepOne({data,guests,setGuests}:{data?:any,guests:any,se
     updated[index][field] = value;
     setGuests(updated);
   };
+
+  
 
   return (
     <div className="mt-12 space-y-6">
@@ -53,7 +54,7 @@ export default function StepOne({data,guests,setGuests}:{data?:any,guests:any,se
         </button>
       </div>
 
-      {guests.map((guest, index) => (
+      {/* {guests.map((guest, index) => (
         <div>
           <h3 className="font-semibold text-xl text-headerColor mb-2">
             Guest {index + 1}
@@ -130,15 +131,15 @@ export default function StepOne({data,guests,setGuests}:{data?:any,guests:any,se
             </div>
           </div>
         </div>
-      ))}
-      <div className="justify-end flex">
+      ))} */}
+      {/* <div className="justify-end flex">
         <button
           className="text-blueColor flex items-center gap-2  text-lg  cursor-pointer"
           onClick={handleAddGuest}
         >
           <CiCirclePlus /> Add new guest (optional)
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }
