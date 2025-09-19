@@ -5,7 +5,7 @@ import Image from "next/image";
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast, Toaster } from 'react-hot-toast';
-import { VendorService } from '../../../../../service/vendor/vendor.service';
+import { useVendorProfile } from '../../../../../hooks/useVendorProfile';
 
 const vendorTypeOptions = [
   { value: "Property Manager", label: "Property Manager" },
@@ -42,15 +42,11 @@ interface VendorData {
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
-  const [vendorData, setVendorData] = useState<VendorData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     defaultValues: {
       firstName: '',
       email: '',
       phoneNumber: '',
-      // password: '',
       address: '',
       businessWebsite: '',
       vendorType: '',
@@ -61,135 +57,50 @@ export default function Profile() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch vendor data on component mount
+  // Use the vendor profile hook
+  const vendorId = "cmfpdolh7000djvc4bvgxv91z"; // Updated to match API response
+  const { vendorData, loading, error, fetchVendorData, updateVendorData } = useVendorProfile(vendorId);
+
+  // Populate form when vendor data is loaded
   useEffect(() => {
-    const fetchVendorData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Check if user is authenticated
-        const authToken = VendorService.getAuthToken();
-        if (!authToken) {
-          setError('You are not logged in. Please login to view your profile.');
-          setLoading(false);
-          return;
-        }
-
-        // For demo purposes, using a hardcoded vendor ID
-        // In production, this should come from user context or route params
-        const vendorId = "cmdl7t1xm0000jvmw6x6iufmt";
-        
-        console.log('Fetching vendor data with token:', authToken ? 'Token exists' : 'No token');
-        
-        // You can pass token here if you have it, or use the cookie method
-        const response = await VendorService.getVendorProfileWithCookie(vendorId);
-        
-        if (response.data) {
-          console.log('API Response Data:', response.data);
-          
-          // The API response structure is: response.data.data (nested data)
-          const actualData = response.data.data || response.data;
-          console.log('Actual data to use:', actualData);
-          
-          setVendorData(actualData);
-          
-          // Populate form with fetched data - using the correct data structure
-          const firstName = actualData.first_name || actualData.name || '';
-          const email = actualData.email || '';
-          const phoneNumber = actualData.phone_number || '';
-          const address = actualData.address || actualData.VendorVerification?.address || '';
-          const businessWebsite = actualData.VendorVerification?.business_website || '';
-          const vendorType = actualData.VendorVerification?.vendor_type || '';
-          const taxId = actualData.VendorVerification?.TIN || '';
-          
-          console.log('Extracted values:', {
-            firstName,
-            email,
-            phoneNumber,
-            businessWebsite,
-            vendorType,
-            taxId
-          });
-          
-          // Set form values
-          setValue('firstName', firstName);
-          setValue('email', email);
-          setValue('phoneNumber', phoneNumber);
-          setValue('address', address);
-          setValue('businessWebsite', businessWebsite);
-          setValue('vendorType', vendorType);
-          setValue('taxId', taxId);
-          
-          console.log('Form values set successfully');
-        }
-      } catch (error: any) {
-        console.error('Error fetching vendor data:', error);
-        
-        // Handle specific error types
-        if (error.message?.includes('Authentication token not found')) {
-          setError('You are not logged in. Please login to view your profile.');
-        } else if (error.response?.status === 401) {
-          setError('Your session has expired. Please login again.');
-        } else if (error.response?.status === 404) {
-          setError('Vendor profile not found. Please contact support.');
-        } else {
-          setError('Failed to load profile data. Please try again later.');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVendorData();
-  }, [setValue]);
-
-  // Watch for vendorData changes and populate form
-  useEffect(() => {
-    if (vendorData) {
-      console.log('Vendor data changed, populating form:', vendorData);
-      
-      // Populate form with vendor data
-      const firstName = vendorData.first_name || vendorData.name || '';
-      const email = vendorData.email || '';
-      const phoneNumber = vendorData.phone_number || '';
-      const address = vendorData.address || vendorData.VendorVerification?.address || '';
-      const businessWebsite = vendorData.VendorVerification?.business_website || '';
-      const vendorType = vendorData.VendorVerification?.vendor_type || '';
-      const taxId = vendorData.VendorVerification?.TIN || '';
-      
-      console.log('Setting form values:', {
-        firstName,
-        email,
-        phoneNumber,
-        businessWebsite,
-        vendorType,
-        taxId
-      });
-      
-      setValue('firstName', firstName);
-      setValue('email', email);
-      setValue('phoneNumber', phoneNumber);
-      setValue('address', address);
-      setValue('businessWebsite', businessWebsite);
-      setValue('vendorType', vendorType);
-      setValue('taxId', taxId);
-      
-      console.log('Form populated with vendor data successfully');
-    }
+    if (!vendorData) return;
+    
+    console.log('Vendor data loaded, populating form:', vendorData);
+    
+    // Populate form with vendor data
+    const firstName = vendorData.first_name || vendorData.name || '';
+    const email = vendorData.email || '';
+    const phoneNumber = vendorData.phone_number || '';
+    const address = vendorData.address || vendorData.VendorVerification?.address || '';
+    const businessWebsite = vendorData.VendorVerification?.business_website || '';
+    const vendorType = vendorData.VendorVerification?.vendor_type || '';
+    const taxId = vendorData.VendorVerification?.TIN || '';
+    
+    console.log('Setting form values:', {
+      firstName,
+      email,
+      phoneNumber,
+      address,
+      businessWebsite,
+      vendorType,
+      taxId
+    });
+    
+    setValue('firstName', firstName);
+    setValue('email', email);
+    setValue('phoneNumber', phoneNumber);
+    setValue('address', address);
+    setValue('businessWebsite', businessWebsite);
+    setValue('vendorType', vendorType);
+    setValue('taxId', taxId);
+    
+    console.log('Form populated with vendor data successfully');
   }, [vendorData, setValue]);
 
   const onSubmit = async (data: FormData) => {
     try {
       if (!vendorData?.id) {
         console.error('No vendor ID available');
-        return;
-      }
-
-      // Check authentication before update
-      const authToken = VendorService.getAuthToken();
-      if (!authToken) {
-        setError('You are not logged in. Please login to update your profile.');
         return;
       }
 
@@ -207,84 +118,17 @@ export default function Profile() {
       };
 
       console.log('Updating vendor profile with data:', updateData);
-      console.log('Form data includes address:', data.address);
 
-      // Update vendor profile
-      const response = await VendorService.updateVendorProfileWithCookie(
-        vendorData.id,
-        updateData
-      );
-
-      console.log('API Response received:', response);
-      console.log('Response type:', typeof response);
-      console.log('Response keys:', Object.keys(response || {}));
-      console.log('Response.data:', response?.data);
-      console.log('Response.status:', response?.status);
-      console.log('Response.statusText:', response?.statusText);
-      console.log('Response.ok:', response?.ok);
-      console.log('Response.success:', response?.success);
-
-      // Check for successful response - handle different possible response structures
-      const isSuccess = response?.success === true || 
-                       response?.status === 200 || 
-                       response?.status === 201 ||
-                       (response?.data && response?.data?.success === true) ||
-                       (response?.statusText === 'OK' && response?.ok === true) ||
-                       (response?.data && response?.data?.status === 200) ||
-                       (response?.data && response?.data?.status === 201);
-
-      console.log('Success check result:', isSuccess);
-      console.log('Response.success === true:', response?.success === true);
-      console.log('Response.status === 200:', response?.status === 200);
-      console.log('Response.status === 201:', response?.status === 201);
-      console.log('Response.data?.success === true:', response?.data?.success === true);
-      console.log('Response.statusText === OK:', response?.statusText === 'OK');
-      console.log('Response.ok === true:', response?.ok === true);
-      console.log('Response.data?.status === 200:', response?.data?.status === 200);
-      console.log('Response.data?.status === 201:', response?.data?.status === 201);
-
-      if (isSuccess) {
-        console.log('Profile update successful, updating local state');
-        
-        // Update local state
-        setVendorData(prev => prev ? {
-          ...prev,
-          first_name: data.firstName,
-          email: data.email,
-          phone_number: data.phoneNumber,
-          address: data.address,
-          VendorVerification: {
-            ...prev.VendorVerification,
-            business_website: data.businessWebsite,
-            vendor_type: data.vendorType,
-            TIN: data.taxId,
-          }
-        } : null);
-        
-        setIsEditing(false);
-        setError(null);
-        
-        // Show success toast instead of success message
-        toast.success('Profile updated successfully!');
-        
-        console.log('Local state updated and form reset');
-      } else {
-        console.error('Profile update failed. Response:', response);
-        setError('Failed to update profile. Please try again.');
-      }
+      // Update vendor profile using the hook
+      await updateVendorData(updateData);
+      
+      setIsEditing(false);
+      toast.success('Profile updated successfully!');
+      
+      console.log('Profile updated successfully');
     } catch (error: any) {
       console.error('Error updating profile:', error);
-      
-      // Handle specific error types
-      if (error.message?.includes('Authentication token not found')) {
-        setError('You are not logged in. Please login to update your profile.');
-      } else if (error.response?.status === 401) {
-        setError('Your session has expired. Please login again.');
-      } else if (error.response?.status === 403) {
-        setError('You do not have permission to update this profile.');
-      } else {
-        setError('Failed to update profile. Please try again.');
-      }
+      toast.error('Failed to update profile. Please try again.');
     }
   };
 
@@ -324,37 +168,37 @@ export default function Profile() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="text-lg text-red-600 mb-4">{error}</div>
-                  <div className="flex gap-3 justify-center">
-          {isAuthError ? (
-            <>
+          <div className="flex gap-3 justify-center">
+            {isAuthError ? (
+              <>
+                <button
+                  onClick={() => window.location.href = '/auth/login'}
+                  className="bg-blueColor text-white px-4 py-2 rounded-lg hover:bg-[#0051bc] transition-colors"
+                >
+                  Go to Login
+                </button>
+                <button
+                  onClick={() => {
+                    // Clear any stale tokens and reload
+                    document.cookie.split(";").forEach(function(c) { 
+                      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                    });
+                    window.location.reload();
+                  }}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  Clear Cookies & Retry
+                </button>
+              </>
+            ) : (
               <button
-                onClick={() => window.location.href = '/auth/login'}
+                onClick={() => fetchVendorData()}
                 className="bg-blueColor text-white px-4 py-2 rounded-lg hover:bg-[#0051bc] transition-colors"
               >
-                Go to Login
+                Retry
               </button>
-              <button
-                onClick={() => {
-                  // Clear any stale tokens and reload
-                  document.cookie.split(";").forEach(function(c) { 
-                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
-                  });
-                  window.location.reload();
-                }}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-              >
-                Clear Cookies & Retry
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-blueColor text-white px-4 py-2 rounded-lg hover:bg-[#0051bc] transition-colors"
-            >
-              Retry
-            </button>
-          )}
-        </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -427,19 +271,6 @@ export default function Profile() {
               </button>
             </div>
           </div>
-          {error && (
-            <div className="w-full md:w-[632px] px-4 py-3 bg-red-50 border border-red-200 rounded-xl flex gap-1.5 mt-4">
-              <img
-                src="/vendor/error.svg"
-                alt="Error icon"
-                className="w-4 h-4"
-              />
-              <div className="flex-1 text-sm text-red-600">
-                {error}
-              </div>
-            </div>
-          )}
-
         </div>
       </div>
 
@@ -452,7 +283,6 @@ export default function Profile() {
                 type="button"
                 onClick={() => {
                   setIsEditing(true);
-                  setError(null);
                   
                   // Force form to re-populate with current data
                   if (vendorData) {
@@ -640,7 +470,6 @@ export default function Profile() {
               type="button"
                               onClick={() => {
                   setIsEditing(false);
-                  setError(null);
                   
                   // Reset form to original vendor data
                   if (vendorData) {
