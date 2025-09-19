@@ -74,6 +74,24 @@ export const MyProfileService = {
     return await Fetch.post("/user-profile/card", data, config);
   },
 
+  // GET /user-profile/cards/{customer_id} → get all payment cards for the authenticated user
+  getCards: async (customerId: string, context: any = null) => {
+    const config = buildAuthHeader(context);
+    if (!config) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+    return await Fetch.get(`/user-profile/cards/${customerId}`, config);
+  },
+
+  // DELETE /user-profile/cards/{card_id} → delete a payment card
+  deleteCard: async (cardId: string, context: any = null) => {
+    const config = buildAuthHeader(context);
+    if (!config) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+    return await Fetch.delete(`/user-profile/cards/${cardId}`, config);
+  },
+
   // DELETE /user-profile/delete → permanently delete authenticated user account
   deleteAccount: async (
     data: { email: string; password: string; feedback?: string },
