@@ -5,7 +5,7 @@ import { UserService } from "@/service/user/user.service";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-function ListingApproveAction({ status, onView, onOptimisticUpdate }: any) {
+function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewDetails }: any) {
   const {token}=useToken()
   const [loading, setLoading]= useState(false)
   
@@ -67,7 +67,7 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate }: any) {
       {status?.status == "approved" || status?.status == "cancel" || status?.status == "succeeded" ? (
         <span
           className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
-          onClick={() => onView(status)}
+          onClick={() => handleViewDetails(status)}
         >
           View details
         </span>

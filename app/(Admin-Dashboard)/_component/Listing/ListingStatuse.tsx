@@ -10,7 +10,7 @@ interface UserData {
     status: 'Available' | 'Booked' | 'Canceled';
   }
   export const statusStyles = {
-    Available: {
+    approved: {
       bg: 'bg-[#38c976]/10',
       border: 'outline-[#abefc6]',
       text: 'text-[#067647]',
@@ -22,7 +22,7 @@ interface UserData {
       text: 'text-[#ffa23a]',
       icon: '/dashboard/icon/loading.svg'
     },
-    Cancel: {
+    cancel: {
       bg: 'bg-[#fe5050]/10',
       border: 'outline-[#fe5050]',
       text: 'text-[#fe5050]',
@@ -46,7 +46,7 @@ function ListingStatuse({ status }: { status: UserData['status'] }) {
                className={style?.text}
              />
            </div>
-      <div className={`text-center justify-start ${style?.text} text-xs font-normal font-['Inter'] leading-3`}>
+      <div className={`text-center justify-start capitalize ${style?.text} text-xs font-normal font-['Inter'] leading-3`}>
          {status }
        
       </div>

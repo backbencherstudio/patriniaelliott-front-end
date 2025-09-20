@@ -75,7 +75,7 @@ export default function ListingPage() {
     {
       label: "Approval",
       accessor: "status",
-      formatter: (_, row) => <ListingApproveAction status={row} />,
+      formatter: (_, row) => <ListingApproveAction status={row}  handleViewDetails={handleViewDetails} />,
     },
     {
       label: "Action",
@@ -103,10 +103,11 @@ const handleDelete = async(id: any) => {
   }
   } catch (error) {
     console.log("error",error);
-    
   }
-  
 };
+
+console.log(isEdit);
+
 
   // Prefer API data; fallback to demo data
   const listingItems = (data?.data && data.data.length ? data.data : []);
@@ -239,11 +240,13 @@ const handleDelete = async(id: any) => {
           )}
         {isEdit &&
           selectedData &&
-          (selectedData.type === "Apartment" ||
-            selectedData.type === "Hotel") && (
+          (selectedData.type === "apartment" ||
+            selectedData.type === "hotel") && (
             <EditPropertyDialog
               open={isEdit}
               data={selectedData}
+              listingData={lisntingData}
+              setListingData={setListingData}
               onOpenChange={setIsEdit}
             />
           )}
