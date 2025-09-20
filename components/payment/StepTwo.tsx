@@ -16,7 +16,7 @@ export default function StepTwo({totalAmount ,data}:any) {
   const [paymentID, setPaymentID] = useState("")
   const [paymentMethodId, setPaymentMethodId] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {data:cardData}= useFetchData(`/user-profile/cards/${customerId}`)
+  const {data:cardData, loading}= useFetchData(`/user-profile/cards/${customerId}`)
    const cvc = "****"
    const pathname = usePathname()
      const handlePayment = async (item) => {
@@ -51,7 +51,47 @@ export default function StepTwo({totalAmount ,data}:any) {
         <Link href="/payment" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gap-2 bg-primaryColor hover:bg-primaryColor/90 transition-colors"> <FaPlus/> Add New Card</Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
-        {cardData?.data && cardData?.data?.length > 0 ? (
+        {loading ? (
+          // Skeleton Loading
+          Array.from({ length: 2 }).map((_, index) => (
+            <div key={index} className="w-full">
+              <div className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
+                {/* Card Skeleton */}
+                <div className="bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg h-48 mb-4 relative overflow-hidden">
+                  {/* Card Content Skeleton */}
+                  <div className="absolute inset-0 p-6 flex flex-col justify-between">
+                    {/* Top Section */}
+                    <div className="flex justify-between items-start">
+                      <div className="h-4 bg-gray-300 rounded w-16"></div>
+                      <div className="h-6 bg-gray-300 rounded w-12"></div>
+                    </div>
+                    
+                    {/* Middle Section */}
+                    <div className="space-y-3">
+                      <div className="h-6 bg-gray-300 rounded w-32"></div>
+                      <div className="h-4 bg-gray-300 rounded w-24"></div>
+                    </div>
+                    
+                    {/* Bottom Section */}
+                    <div className="flex justify-between items-end">
+                      <div className="space-y-2">
+                        <div className="h-3 bg-gray-300 rounded w-20"></div>
+                        <div className="h-3 bg-gray-300 rounded w-16"></div>
+                      </div>
+                      <div className="h-4 bg-gray-300 rounded w-8"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Card Info Skeleton */}
+                <div className="space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : cardData?.data && cardData?.data?.length > 0 ? (
           cardData?.data?.map((item:any)=>(
             <div onClick={()=>!isSubmitting && handlePayment(item)} id="PaymentForm" className={`w-full cursor-pointer relative ${isSubmitting ? 'opacity-50 pointer-events-none' : ''}`} key={item?.id}>
             <Cards
