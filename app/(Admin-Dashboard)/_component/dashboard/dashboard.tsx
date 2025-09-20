@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import DynamicTableWithPagination from "../common/DynamicTable";
 import Usermodal from "../modal/usermodal";
-import StatCard from "./StatCard";
+import StateSection from "./StateSection";
 
 interface UserData {
   id: string;
@@ -18,12 +18,7 @@ interface UserData {
   status: "Active" | "Inactive" | "Banned";
 }
 
-const stats = [
-  { title: "All Users", count: 200, iconPath: "/dashboard/icon/all.svg" },
-  { title: "Admin", count: 6, iconPath: "/dashboard/icon/admin.svg" },
-  { title: "Total Host", count: 40, iconPath: "/dashboard/icon/host.svg" },
-  { title: "Total Guest", count: 60, iconPath: "/dashboard/icon/guest.svg" },
-];
+
 export default function Dashboard() {
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -100,8 +95,6 @@ setEditLoading(true)
     setSelectedUser(null);
   };
 
-
-
   return (
     <div className="flex flex-col gap-5">
       {/* Overview */}
@@ -110,11 +103,7 @@ setEditLoading(true)
         <p className="text-base text-[#777980] mb-4">
           View list of total customer and hosts
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, index) => (
-            <StatCard key={index} {...stat} />
-          ))}
-        </div>
+        <StateSection/>
       </div>
 
       {/* Modal */}
