@@ -11,18 +11,15 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewD
   
   const handleApprove = async() => {
     setLoading(true)
-    
     // Optimistic update - immediately update UI
     onOptimisticUpdate?.(status?.id, "approved", "approved");
     
     try {
       const res = await UserService.updateData(`/admin/listing-management/approve-property/${status?.id}`,{status:"approved"},token)
-      console.log("accept",res);
       
       if(res.data.success){
         toast.success(res.data.message || "Listing approved successfully")
         // Refresh data to ensure consistency
-      
       }else{
         toast.error(res.data.message || "Listing approved failed")
         // Revert optimistic update on failure
@@ -39,12 +36,10 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewD
   
   const handleReject = async() => {
     setLoading(true)
-    
     // Optimistic update - immediately update UI
     onOptimisticUpdate?.(status?.id, "cancel", "cancel");
     try {
       const res = await UserService.updateData(`/admin/listing-management/reject-property/${status?.id}`,{status:"cancel"},token)
-      console.log("reject",res);
       
       if(res.data.success){
         toast.success(res.data.message || "Listing rejected successfully")

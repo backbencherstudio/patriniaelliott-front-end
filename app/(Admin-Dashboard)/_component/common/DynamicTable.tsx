@@ -23,7 +23,7 @@ interface DynamicTableProps {
   onView?: (row: any) => void;
   onDelete?: (id: any) => void;
   noDataMessage?: string;
-  
+    editLoading?:boolean;
 }
 
 export default function DynamicTableWithPagination({
@@ -37,6 +37,7 @@ export default function DynamicTableWithPagination({
   onView,
   onDelete,
   noDataMessage = "No data found.",
+  editLoading,
 }: DynamicTableProps) {
   
 
@@ -116,9 +117,9 @@ export default function DynamicTableWithPagination({
                       )}
                       {onDelete && (
                         
-                        <button className="hover:text-redColor text-[#777980] transition-all cursor-pointer"  onClick={() => onDelete(row.id)}>
-                          <RiDeleteBin6Line
-                             size={18} className="" />
+                        <button disabled={editLoading} className="hover:text-redColor text-[#777980] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"  onClick={() => onDelete(row.id)}>
+                          {editLoading ? <Loader size={18} className="text-primaryColor" /> : <RiDeleteBin6Line
+                             size={18} className="" />}
                           </button>
                       )}
                     </td>

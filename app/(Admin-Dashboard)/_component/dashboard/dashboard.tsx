@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
+   const [editLoading,setEditLoading]=useState(false)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -71,18 +72,20 @@ export default function Dashboard() {
 
   ];
   const handleDelete = async (userId: string) => {
-
+setEditLoading(true)
     try {
       const response = await UserService.deleteData(`/admin/user/${userId}`, token);
       if (response?.data?.success) {
         toast.success(response?.data?.message)
         const updateUser = data.filter((item: any) => item.id !== userId)
         setData(updateUser)
-
+         setEditLoading(false)
       }
     } catch (error) {
       console.log("error", error);
-
+      setEditLoading(false)
+    }finally{
+      setEditLoading(false)
     }
 
   };
@@ -180,6 +183,7 @@ export default function Dashboard() {
             onPageChange={(page) => setCurrentPage(page)}
             onView={(user) => handleViewDetails(user)}
             onDelete={(id) => handleDelete(id)}
+            editLoading={editLoading}
           />
         </div>
       </div>

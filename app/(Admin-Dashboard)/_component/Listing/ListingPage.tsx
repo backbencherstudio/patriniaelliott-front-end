@@ -36,6 +36,7 @@ export default function ListingPage() {
   const apiRole = selectedRole.toLowerCase();
   const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}`;
   const { data, loading, error } = useFetchData(endpoint);
+  const [editLoading,setEditLoading]=useState(false)
   const totalPages = data?.pagination?.total_pages || 0;
   useEffect(()=>{
     if (data?.data) {
@@ -85,24 +86,29 @@ export default function ListingPage() {
           onEdit={handleEdite}
           onView={handleViewDetails}
           onDelete={handleDelete}
+          editLoading={editLoading}
           data={row}
         />
       ),
     },
   ];
 const handleDelete = async(id: any) => {
-  console.log(id);
+setEditLoading(true)
   try {
     const response = await UserService.deleteData(`/admin/listing-management/${id}`,token);
     
   if (response?.data?.success) {
     toast.success(response?.data?.message);
     setListingData((prev) => prev.filter((item) => item.id !== id));
+    setEditLoading(false)
   } else {
     toast.error(response?.data?.message);
   }
   } catch (error) {
     console.log("error",error);
+    setEditLoading(false)
+  }finally{
+    setEditLoading(false)
   }
 };
 

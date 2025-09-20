@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { BiEditAlt } from "react-icons/bi";
 import { toast } from "react-toastify";
@@ -16,6 +17,7 @@ export default function EditPropertyDialog({data,
 
   console.log(data);
   const  {token}=useToken()
+  const [loading,setLoading]=useState(false)
   const { register, handleSubmit, reset, control } = useForm({
     defaultValues: {
       description: data?.description || "description",
@@ -31,6 +33,7 @@ export default function EditPropertyDialog({data,
       ...formData,
       status: parseInt(formData.status) // Convert "0" or "1" to 0 or 1
     };
+    setLoading(true)
   try {
      const response = await UserService.updateData(`/admin/listing-management/${data?.id}`,submitData,token);
      console.log(response);
@@ -55,6 +58,7 @@ export default function EditPropertyDialog({data,
          });
          setListingData(updatedData);
        }
+        setLoading(false)
        reset();
       }else{
       toast.error(response?.data?.message);
@@ -62,7 +66,10 @@ export default function EditPropertyDialog({data,
   } catch (error) {
     toast.error("Something went wrong");
     console.log(error?.message);
+     setLoading(false)
     
+  }finally{
+    setLoading(false)
   }
     
   };
@@ -99,7 +106,7 @@ export default function EditPropertyDialog({data,
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="w-full border border-grayColor1/80 rounded-md text-base py-2 px-2 lg:py-3 lg:px-3">
+                  <SelectTrigger className="w-full !h-12 border border-grayColor1/80 rounded-md text-base py-2 px-2 lg:py-3 lg:px-3">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -112,8 +119,8 @@ export default function EditPropertyDialog({data,
           </div>
 
           <div className="pt-4 flex justify-end">
-            <button type="submit" className="bg-primaryColor cursor-pointer text-white px-6 py-2 rounded-md">
-              Save Changes
+            <button type="submit" disabled={loading} className="bg-primaryColor disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-white px-6 py-2 rounded-md">
+            {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

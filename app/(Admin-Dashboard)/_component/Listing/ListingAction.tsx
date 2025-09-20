@@ -5,7 +5,7 @@ import { FaRegEdit } from 'react-icons/fa';
 import { FiEye } from 'react-icons/fi';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 
-function ListingAction({ onView, data,onEdit,onDelete }: any) {
+function ListingAction({ onView, data,onEdit,onDelete ,editLoading }: any) {
   return (
     <div className="relative">
       <Popover>
@@ -17,40 +17,48 @@ function ListingAction({ onView, data,onEdit,onDelete }: any) {
         <div className='absolute w-4 h-4 z-0 transform  rotate-45 right-4 -top-2 border-t border-l border-gray-100 bg-whiteColor'>
         </div>
         <ul className="text-sm text-gray-700">
-  <li
+          <li>
+  <button
     onClick={() => onView(data)}
-    className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer 
+    className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
                border-l-2 border-transparent 
                hover:text-blackColor hover:border-secondaryColor hover:bg-secondaryColor/20 
                transition-all duration-100 ease-in-out"
   >
     <FiEye className="transition-colors duration-100 group-hover:text-secondaryColor" />
     View Details
+  </button>
   </li>
+  <li>
 
-  <li
+  <button
      onClick={() => onEdit(data)}
-    className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer 
+    
+    className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
                border-l-2 border-transparent 
                hover:text-blackColor hover:border-secondaryColor hover:bg-secondaryColor/20 
                transition-all duration-100 ease-in-out"
   >
-    <FaRegEdit className="transition-colors duration-100 group-hover:text-secondaryColor" />
+    <FaRegEdit className="transition-colors duration-100 group-hover:text-secondaryColor disabled:opacity-50 disabled:cursor-not-allowed" />
     Edit
-  </li>
+  </button>
+</li>
+<li>
 
-  <li
+  <button
+   disabled={editLoading}
     onClick={() => onDelete(data?.id)}
-    className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer 
+    className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
                border-l-2 border-transparent 
                hover:text-blackColor hover:border-secondaryColor hover:bg-secondaryColor/20 
                transition-all duration-100 ease-in-out"
   >
     <Trash2
       size={14}
-      className="transition-colors duration-100 group-hover:text-secondaryColor"
+      className="transition-colors duration-100 group-hover:text-secondaryColor disabled:opacity-50 disabled:cursor-not-allowed"
     />
     Delete
+  </button>
   </li>
 </ul>
 
