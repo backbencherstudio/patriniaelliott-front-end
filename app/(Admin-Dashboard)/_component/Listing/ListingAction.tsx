@@ -5,7 +5,7 @@ import { FaRegEdit } from 'react-icons/fa';
 import { FiEye } from 'react-icons/fi';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 
-function ListingAction({ onView, data,onEdit }: any) {
+function ListingAction({ onView, data,onEdit,onDelete }: any) {
   return (
     <div className="relative">
       <Popover>
@@ -40,9 +40,7 @@ function ListingAction({ onView, data,onEdit }: any) {
   </li>
 
   <li
-    onClick={() => {
-      // Add delete logic here
-    }}
+    onClick={() => onDelete(data?.id)}
     className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer 
                border-l-2 border-transparent 
                hover:text-blackColor hover:border-secondaryColor hover:bg-secondaryColor/20 

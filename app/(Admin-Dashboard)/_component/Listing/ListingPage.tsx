@@ -1,12 +1,15 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
 import useFetchData from "@/hooks/useFetchData";
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
+import { toast } from "react-toastify";
 import EditPropertyDialog from "./EditPropertyDialog";
 import EditTourDialog from "./EditTourDialog";
 import ListingAction from "./ListingAction";
@@ -27,12 +30,18 @@ export default function ListingPage() {
   );
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [lisntingData, setListingData]=useState<any>([]);
+  const {token} = useToken();
   // Normalize role for API (lowercase)
   const apiRole = selectedRole.toLowerCase();
   const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}`;
   const { data, loading, error } = useFetchData(endpoint);
   const totalPages = data?.pagination?.total_pages || 0;
-
+  useEffect(()=>{
+    if (data?.data) {
+      setListingData(data?.data);
+    }
+  },[data])
   const handleViewDetails = (user: any) => {
     setSelectedData(user);
     setIsModalOpen(true);
@@ -75,12 +84,29 @@ export default function ListingPage() {
         <ListingAction
           onEdit={handleEdite}
           onView={handleViewDetails}
+          onDelete={handleDelete}
           data={row}
         />
       ),
     },
   ];
-
+const handleDelete = async(id: any) => {
+  console.log(id);
+  try {
+    const response = await UserService.deleteData(`/admin/listing-management/${id}`,token);
+    
+  if (response?.data?.success) {
+    toast.success(response?.data?.message);
+    setListingData((prev) => prev.filter((item) => item.id !== id));
+  } else {
+    toast.error(response?.data?.message);
+  }
+  } catch (error) {
+    console.log("error",error);
+    
+  }
+  
+};
 
   // Prefer API data; fallback to demo data
   const listingItems = (data?.data && data.data.length ? data.data : []);
@@ -190,7 +216,7 @@ export default function ListingPage() {
         {/* Table */}
         <div>
           <DynamicTableWithPagination
-            data={listingItems}
+            data={lisntingData}
             columns={columns}
             currentPage={currentPage}
             loading={loading}
