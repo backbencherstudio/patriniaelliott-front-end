@@ -245,3 +245,8 @@ h2.react-datepicker__current-month {
     .hero-bullet-active {
       background-color: var(--secondaryColor) !important;
     }
+.rccs {
+    perspective: 1000px;
+    width: 290px;
+     margin: 0 !important; 
+}

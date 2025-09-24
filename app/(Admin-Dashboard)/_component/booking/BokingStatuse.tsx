@@ -21,7 +21,7 @@ interface UserData {
       text: 'text-[#067647]',
       icon: '/dashboard/icon/tik.svg'
     },
-    pending: {
+    Pending: {
       bg: 'bg-[#ffa23a]/10',
       border: 'outline-[#ffa23a]',
       text: 'text-[#ffa23a]',
@@ -35,21 +35,23 @@ interface UserData {
     }
   };
 
-function BokingStatuse({ status }: { status: UserData['status'] }) {
-    const style = statusStyles[status];
+function BokingStatuse({ status }: any) {
+  console.log(status);
+  
+    const style = statusStyles[status.text];
   return (
     <div className={`px-1  py-1.5 ${style?.bg} rounded-2xl  outline-1 outline-offset-[-1px] ${style?.border} flex justify-center items-center gap-1`}>
       <div className="w-3 h-3 relative overflow-hidden">
         <Image
           src={style?.icon || "/dashboard/icon/tik.svg"} 
-          alt={status} 
+          alt={status.text} 
           width={12} 
           height={12} 
           className={style?.text}
         />
       </div>
       <div className={`text-center justify-start ${style?.text} text-xs font-normal font-['Inter'] leading-3`}>
-        {status}
+        {status.text}
       </div>
     </div>
   )

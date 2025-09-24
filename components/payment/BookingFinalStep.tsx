@@ -5,7 +5,7 @@ import { UserService } from "@/service/user/user.service";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import BookingConfirm from "./BookingConfirm";
-export default function BookingFinalStep({ isOpen, setIsOpen, paymentID }: any) {
+export default function BookingFinalStep({ isOpen, setIsOpen, paymentID,paymentMethodId }: any) {
 const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 const [responseData , setResponseData]= useState()
 const [isLoading, setIsLoading] = useState(false);
@@ -14,14 +14,17 @@ const handleConfirm = async() => {
  try {
     setIsLoading(true);
     const endpoint = `/booking/payment/confirm/${paymentID}`
-    const response = await UserService.createData(endpoint,{},token)
+    const payload = {payment_method_id:paymentMethodId }
+    const response = await UserService.createData(endpoint,payload,token)
+
    setResponseData(response?.data?.data)
-    console.log("response",response);
+
     if(response?.data?.success){
         toast.success(response?.data?.data?.message);
         setIsConfirmOpen(true)
+        setIsOpen(false)
     }else{
-        toast.error(response?.data?.data?.message);
+        toast.error(response?.response?.data?.message);
     }
  } catch (error) {
     console.log(error);
@@ -29,7 +32,7 @@ const handleConfirm = async() => {
     setIsLoading(false);
  }
 }
-  console.log(responseData);
+ 
 
   return (
     <div>

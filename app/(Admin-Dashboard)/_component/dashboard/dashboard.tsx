@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import DynamicTableWithPagination from "../common/DynamicTable";
 import Usermodal from "../modal/usermodal";
-import StatCard from "./StatCard";
+import StateSection from "./StateSection";
 
 interface UserData {
   id: string;
@@ -18,78 +18,73 @@ interface UserData {
   status: "Active" | "Inactive" | "Banned";
 }
 
-const stats = [
-  { title: "All Users", count: 200, iconPath: "/dashboard/icon/all.svg" },
-  { title: "Admin", count: 6, iconPath: "/dashboard/icon/admin.svg" },
-  { title: "Total Host", count: 40, iconPath: "/dashboard/icon/host.svg" },
-  { title: "Total Guest", count: 60, iconPath: "/dashboard/icon/guest.svg" },
-];
+
 export default function Dashboard() {
-  
+
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
   const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
     "all"
   );
-  const [data , setData] =useState<any>([]);
-  const {token} = useToken();
+  const [data, setData] = useState<any>([]);
+  const { token } = useToken();
   const [selectedRole, setSelectedRole] = React.useState<
     "All" | "vendor" | "user"
   >("All");
-    const itemsPerPage = 10;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
+   const [editLoading,setEditLoading]=useState(false)
   useEffect(() => {
-
-    const fetchData = async()=>{
-    try {
-      const endpoint = selectedRole === "All" ? `/admin/user/all-users?limit=${itemsPerPage}&page=${currentPage}` : `/admin/user/all-users?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
-      setLoading(true);
-    const data = await UserService?.getData(endpoint,token);
-    setData(data?.data?.data || []);
-    setTotalPages(data?.data?.pagination?.totalPages || 0);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+    const fetchData = async () => {
+      try {
+        const endpoint = selectedRole === "All" ? `/admin/user/all-users?limit=${itemsPerPage}&page=${currentPage}` : `/admin/user/all-users?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
+        setLoading(true);
+        const data = await UserService?.getData(endpoint, token);
+        setData(data?.data?.data || []);
+        setTotalPages(data?.data?.pagination?.totalPages || 0);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     }
-    }
-   
     fetchData()
   }, [selectedRole, currentPage]);
-   
-
 
   const columns = [
     // { label: "User ID", accessor: "id" },
-    { label: "User Name", accessor: "name" },
-    { label: "Email", accessor: "email" },
-    { label: "Number", accessor: "phone_number" },
-    { label: "Role", accessor: "type" },
-    { label: "Join Date", accessor: "created_at",
+    { label: "User Name", accessor: "name" ,width : "130px"},
+    { label: "Email", accessor: "email" ,width : "220px" },
+    { label: "Number", accessor: "phone_number" ,width : "180px"},
+    { label: "Role", accessor: "type" ,width : "100px"},
+    {
+      label: "Join Date", accessor: "created_at",width : "150px",
       formatter: (value) => new Date(value).toLocaleDateString(),
-     },
-    
-    
-  ];
-  const handleDelete = async(userId: string) => {
+    },
 
-  try {
-   const response = await UserService.deleteData(`/admin/user/${userId}`,token);
-   if (response?.data?.success) {
-    toast.success(response?.data?.message)
-    const updateUser = data.filter((item: any) => item.id !== userId)
-   setData(updateUser)
-    
-   }
-  } catch (error) {
-    console.log("error", error);
-    
-  }
-  
+
+  ];
+  const handleDelete = async (userId: string) => {
+setEditLoading(true)
+    try {
+      const response = await UserService.deleteData(`/admin/user/${userId}`, token);
+      if (response?.data?.success) {
+        toast.success(response?.data?.message)
+        const updateUser = data.filter((item: any) => item.id !== userId)
+        setData(updateUser)
+         setEditLoading(false)
+      }
+    } catch (error) {
+      console.log("error", error);
+      setEditLoading(false)
+    }finally{
+      setEditLoading(false)
+    }
+
   };
-  
+
   const handleViewDetails = (user: UserData) => {
     setSelectedUser(user);
     setIsModalOpen(true);
@@ -100,8 +95,6 @@ export default function Dashboard() {
     setSelectedUser(null);
   };
 
-
-  
   return (
     <div className="flex flex-col gap-5">
       {/* Overview */}
@@ -110,11 +103,7 @@ export default function Dashboard() {
         <p className="text-base text-[#777980] mb-4">
           View list of total customer and hosts
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, index) => (
-            <StatCard key={index} {...stat} />
-          ))}
-        </div>
+        <StateSection/>
       </div>
 
       {/* Modal */}
@@ -136,15 +125,14 @@ export default function Dashboard() {
                 onClick={() =>
                   setSelectedRole(role as "All" | "vendor" | "user")
                 }
-                className={`md:px-4 px-1 cursor-pointer text-sm md:text-base py-2 ${
-                  selectedRole === role
+                className={`md:px-4 px-1 cursor-pointer text-sm md:text-base py-2 ${selectedRole === role
                     ? "border-b-2 border-[#d6ae29] text-[#070707]"
                     : "border-b text-[#777980]"
-                }`}
+                  }`}
               >
-                {role === "All" && "All users"  }
-                {role === "vendor" && "Host"  }
-                {role === "user" && "Guest"  }
+                {role === "All" && "All users"}
+                {role === "vendor" && "Host"}
+                {role === "user" && "Guest"}
               </button>
             ))}
           </div>
@@ -184,6 +172,7 @@ export default function Dashboard() {
             onPageChange={(page) => setCurrentPage(page)}
             onView={(user) => handleViewDetails(user)}
             onDelete={(id) => handleDelete(id)}
+            editLoading={editLoading}
           />
         </div>
       </div>

@@ -1,10 +1,9 @@
-
-function PaymentAction({ status, onView,onAccept }: any) {
+function PaymentAction({ status, onView,onAccept,onCancel }: any) {
 
   
     return (
       <div>
-        {status?.status == "Available" || status?.status == "Cancel" ? (
+        {status?.status == "succeeded" || status?.status == "cancel" ? (
           <span
             className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
             onClick={() => onView(status)}
@@ -35,7 +34,7 @@ function PaymentAction({ status, onView,onAccept }: any) {
                 />
               </svg>
             </button>
-            <button  className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]">
+            <button onClick={()=>onCancel(status)}  className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="17"

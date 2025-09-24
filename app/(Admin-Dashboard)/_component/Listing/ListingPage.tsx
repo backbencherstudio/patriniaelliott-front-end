@@ -1,13 +1,15 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
-import { listingData } from "@/DemoAPI/ListingData";
 import useFetchData from "@/hooks/useFetchData";
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
+import { toast } from "react-toastify";
 import EditPropertyDialog from "./EditPropertyDialog";
 import EditTourDialog from "./EditTourDialog";
 import ListingAction from "./ListingAction";
@@ -28,12 +30,19 @@ export default function ListingPage() {
   );
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [lisntingData, setListingData]=useState<any>([]);
+  const {token} = useToken();
   // Normalize role for API (lowercase)
   const apiRole = selectedRole.toLowerCase();
   const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}`;
   const { data, loading, error } = useFetchData(endpoint);
+  const [editLoading,setEditLoading]=useState(false)
   const totalPages = data?.pagination?.total_pages || 0;
-
+  useEffect(()=>{
+    if (data?.data) {
+      setListingData(data?.data);
+    }
+  },[data])
   const handleViewDetails = (user: any) => {
     setSelectedData(user);
     setIsModalOpen(true);
@@ -46,8 +55,8 @@ export default function ListingPage() {
   const columns = [
     { label: "User ID", accessor: "displayId", width:"100px" },
     { label: "Property name", accessor: "name", },
-    { label: "Type (Property/Tour)", accessor: "type" , width:"160px",},
-    { label: "Location", accessor: "location",  },
+    { label: "Type (Property/Tour)", accessor: "type" , width:"170px",},
+    { label: "Location", accessor: "location",  width:"150px", },
     {
       label: "Price (per night)",
       accessor: "price",
@@ -61,14 +70,13 @@ export default function ListingPage() {
     {
       label: "Status",
       accessor: "status",
-    
+   
       formatter: (_, row) => <ListingStatuse status={row.status} />,
     },
     {
       label: "Approval",
       accessor: "status",
-    
-      formatter: (_, row) => <ListingApproveAction status={row} />,
+      formatter: (_, row) => <ListingApproveAction status={row}  handleViewDetails={handleViewDetails} />,
     },
     {
       label: "Action",
@@ -77,11 +85,34 @@ export default function ListingPage() {
         <ListingAction
           onEdit={handleEdite}
           onView={handleViewDetails}
+          onDelete={handleDelete}
+          editLoading={editLoading}
           data={row}
         />
       ),
     },
   ];
+const handleDelete = async(id: any) => {
+setEditLoading(true)
+  try {
+    const response = await UserService.deleteData(`/admin/listing-management/${id}`,token);
+    
+  if (response?.data?.success) {
+    toast.success(response?.data?.message);
+    setListingData((prev) => prev.filter((item) => item.id !== id));
+    setEditLoading(false)
+  } else {
+    toast.error(response?.data?.message);
+  }
+  } catch (error) {
+    console.log("error",error);
+    setEditLoading(false)
+  }finally{
+    setEditLoading(false)
+  }
+};
+
+console.log(isEdit);
 
 
   // Prefer API data; fallback to demo data
@@ -192,7 +223,7 @@ export default function ListingPage() {
         {/* Table */}
         <div>
           <DynamicTableWithPagination
-            data={listingItems}
+            data={lisntingData}
             columns={columns}
             currentPage={currentPage}
             loading={loading}
@@ -215,11 +246,13 @@ export default function ListingPage() {
           )}
         {isEdit &&
           selectedData &&
-          (selectedData.type === "Apartment" ||
-            selectedData.type === "Hotel") && (
+          (selectedData.type === "apartment" ||
+            selectedData.type === "hotel") && (
             <EditPropertyDialog
               open={isEdit}
               data={selectedData}
+              listingData={lisntingData}
+              setListingData={setListingData}
               onOpenChange={setIsEdit}
             />
           )}
