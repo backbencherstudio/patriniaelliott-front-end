@@ -30,7 +30,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "warranty-humanities-integration-tramadol.trycloudflare.com",
+        hostname: "fellow-lone-provisions-decided.trycloudflare.com",
       },
       {
         protocol: "https",

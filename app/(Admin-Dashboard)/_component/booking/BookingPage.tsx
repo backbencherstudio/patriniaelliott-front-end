@@ -126,7 +126,7 @@ export default function BookingPage() {
       label: "Status",
       accessor: "status",
       width:"120px",
-      formatter: (_, row) => <BokingStatuse status={row.status} />,
+      formatter: (value, row) => <BokingStatuse status={value} />,
     },
   ];
   
