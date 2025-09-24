@@ -10,7 +10,7 @@ import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 const HotelCard = ({ hotel }: any) => {
-  const { id, name, type, reviews, amenities, bedrooms, bathrooms, roomFiles, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
+  const { id, name, type, reviews, amenities,total_bedrooms, bedrooms, bathrooms, roomFiles, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
   const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
 
   const getSlideSrc = (src: string, index: number) => {
@@ -132,7 +132,7 @@ const HotelCard = ({ hotel }: any) => {
           )}{" "}
           <div className="flex items-center gap-1  ">
             <IoBedOutline className=" text-secondaryColor" size={18} />
-            {bedrooms} Bed
+            {total_bedrooms} Bed
           </div>
           <div className="flex items-center gap-1  ">
             <svg

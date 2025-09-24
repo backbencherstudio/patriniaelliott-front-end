@@ -2,38 +2,75 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa6";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 function TourCardTwo({tour}:any) {
-      const {
-    image,
-    location,
-    title,
-    rating,
-    price,
-    tv,
-    bed,
-    bath,
-    duration,
-    groupSize,
-    wifi,
-    tourSlug,
-    cancellation,
-    apartmentSlug,
-    breakfast,
-  } = tour;
+      const [failedIndice, setFailedIndice] = useState<Set<number>>(new Set());
+    const getSlideSrc = (src: string, index: number) => {
+        if (!src) return "/empty.png";
+        return failedIndice.has(index) ? "/empty.png" : src;
+    };
+
+    const handleImageError = (index: number) => {
+        setFailedIndice(prev => {
+            const next = new Set(prev);
+            next.add(index);
+            return next;
+        });
+    };
   return (
-        <Link href={`/toure/${tourSlug}`} className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
+        <Link href={`/toure/${tour?.id}`} className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  lg:grid grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
-        <Image
-          src={image}
-          alt={title}
-          width={400}
-          height={250}
-          className="w-full h-full object-cover rounded-xl"
-        />
-        {breakfast && (
+        {
+                        tour?.package_files?.length >= 2 ?
+                            <Swiper
+                                slidesPerView={1}
+                                loop={true}
+                                speed={1000}
+                                spaceBetween={20}
+                                autoplay={{
+                                    delay: 5000,
+                                    disableOnInteraction: false,
+                                }}
+
+                                modules={[Autoplay, Navigation, Pagination]}
+                                pagination={{
+                                    clickable: true,
+                                    bulletClass: 'hero-bullet',
+                                    bulletActiveClass: 'hero-bullet-active',
+                                }}>
+                                {
+                                    tour?.package_files?.length > 0 &&
+                                    tour?.package_files?.slice(0, 4).map((file: any, index: number) => (
+                                        <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
+                                            <Image
+                                                src={getSlideSrc(file?.file_url, index)}
+                                                alt={tour?.name}
+                                                width={400}
+                                                height={200}
+                                                onError={() => handleImageError(index)}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                                            />
+                                        </SwiperSlide>
+                                    ))
+                                }
+                            </Swiper>
+                            :
+                            <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
+                                <Image
+                                    src={"/Accommodation/a1.png"}
+                                    alt={tour?.name}
+                                    width={400}
+                                    height={200}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                                />
+                            </div>
+                    }
+        {tour?.breakfast && (
           <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1  rounded-full">
             Breakfast Included
           </span>
@@ -49,21 +86,21 @@ function TourCardTwo({tour}:any) {
                 </span>
           <div className="py-1">
             <Link
-              href={`/toure/${tourSlug}`}
+              href={`/toure/${tour?.id}`}
               className="text-xl font-semibold text-black mb-2"
             >
-              {title}
+              {tour?.name}
             </Link>
           </div>
 
           <div className="flex gap-2 items-center">
-            <span className="text-headerColor text-sm">{rating}</span>
+            <span className="text-headerColor text-sm">{tour?.rating_summary?.averageRating}</span>
             <div className="flex gap-1">
               {Array.from({ length: 5 }, (_, i) => (
                 <FaStar
                   key={i}
                   className={
-                    i < Math.round(rating) ? "text-yellow-400" : "text-gray-300"
+                    i < Math.round(tour?.rating_summary?.averageRating) ? "text-yellow-400" : "text-gray-300"
                   }
                 />
               ))}
@@ -73,7 +110,7 @@ function TourCardTwo({tour}:any) {
         {/* Free Cancellation */}
         <div className="flex items-center gap-2 text-sm text-[#0068EF] border-b pb-2 border-secondaryColor/20">
           Free cancellation{" "}
-          <span className="text-xs text-gray-400">({cancellation})</span>
+          <span className="text-xs text-gray-400">({tour?.cancellation_policy})</span>
         </div>
   <div className="flex  text-xs text-gray-600 mt-2 mb-4">
                     <div className="flex items-center gap-2 border-r border-grayColor1/30 pr-8">
@@ -90,7 +127,7 @@ function TourCardTwo({tour}:any) {
                         </svg>
                         <div >
                             <h3 className=' text-sm font-medium text-descriptionColor'>Duration</h3>
-                            <span>{duration} Days</span>
+                            <span>{tour?.duration} {tour?.duration_type}</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 pl-8">
@@ -99,7 +136,7 @@ function TourCardTwo({tour}:any) {
                             <path d="M4.69044 5.92988C2.96783 5.92988 1.56641 7.3313 1.56641 9.05391C1.56636 10.7765 2.96783 12.1779 4.69044 12.1779C6.413 12.1779 7.81447 10.7765 7.81447 9.05391C7.81447 7.3313 6.41305 5.92988 4.69044 5.92988ZM4.69039 10.7717C3.74319 10.7717 2.97261 10.0011 2.97261 9.05391C2.97261 8.10671 3.74319 7.33613 4.69039 7.33613C5.63759 7.33613 6.40817 8.10671 6.40817 9.05391C6.40817 10.0011 5.63759 10.7717 4.69039 10.7717ZM12.0001 2.0498C9.69875 2.0498 7.82647 3.92209 7.82647 6.22346C7.82647 8.52484 9.69875 10.3971 12.0001 10.3971C14.3015 10.3971 16.1738 8.52484 16.1738 6.22346C16.1738 3.92213 14.3015 2.0498 12.0001 2.0498ZM12.0001 8.99087C10.4742 8.99087 9.23272 7.74943 9.23272 6.22346C9.23272 4.69754 10.4742 3.45605 12.0001 3.45605C13.5261 3.45605 14.7675 4.69749 14.7675 6.22346C14.7675 7.74943 13.5261 8.99087 12.0001 8.99087ZM19.3098 5.92988C17.5872 5.92988 16.1858 7.3313 16.1858 9.05391C16.1858 10.7765 17.5872 12.1779 19.3098 12.1779C21.0324 12.1779 22.4338 10.7765 22.4338 9.05391C22.4338 7.3313 21.0324 5.92988 19.3098 5.92988ZM19.3098 10.7717C18.3627 10.7717 17.592 10.0011 17.592 9.05391C17.5921 8.10671 18.3627 7.33613 19.3098 7.33613C20.257 7.33613 21.0276 8.10671 21.0276 9.05391C21.0276 10.0011 20.257 10.7717 19.3098 10.7717Z" fill="#D6AE29" />
                         </svg><div >
                             <h3 className=' text-sm font-medium text-descriptionColor'>Group Size</h3>
-                            <span>{groupSize} Pepole</span>
+                            <span>{tour?.groupSize} Pepole</span>
                         </div>
 
                     </div>
@@ -111,12 +148,12 @@ function TourCardTwo({tour}:any) {
         <div>
           <p className="text-sm  text-descriptionColor mb-1">Starting from</p>
           <h5 className="text-[32px] font-semibold text-primaryColor">
-            ${price}
+            ${tour?.price}
           </h5>
           <p className="text-sm text-gray-500">per night</p>
         </div>
         <Link
-          href={`/toure/${tourSlug}`}
+          href={`/toure/${tour?.id}`}
           className="bg-secondaryColor mt-4 lg:mt-0 font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-full cursor-pointer text-blackColor transition-colors"
         >
           Check Details <FaArrowRight />

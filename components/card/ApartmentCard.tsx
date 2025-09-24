@@ -9,7 +9,7 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 const ApartmentCard = ({ hotel }: any) => {
-  const { id, name, type, reviews, amenities, package_room_types, roomFiles, rating_summary, bedrooms, bathrooms, cancellation_policy, breakfast_available, price, address } = hotel;
+  const { id, name, type, reviews, amenities,total_bedrooms, package_room_types, roomFiles, rating_summary, bedrooms, bathrooms, cancellation_policy, breakfast_available, price, address } = hotel;
   const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
 
   const getSlideSrc = (src: string, index: number) => {
@@ -138,7 +138,7 @@ const ApartmentCard = ({ hotel }: any) => {
           )}{" "}
           <div className="flex items-center gap-1  ">
             <IoBedOutline className=" text-secondaryColor" size={18} />
-            {bedrooms} Bed
+            {total_bedrooms} Bed
           </div>
           <div className="flex items-center gap-1  ">
             <svg
