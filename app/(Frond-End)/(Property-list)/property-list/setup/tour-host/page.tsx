@@ -4,12 +4,15 @@ import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
+import { MyProfileService } from "@/service/user/myprofile.service";
+import toast from "react-hot-toast";
 
 
 export default function Page() {
     const router = useRouter();
     const { listProperty, updateListProperty } = usePropertyContext();
     const [formData, setFormData] = useState({});
+    const [user, setUser] = useState(null);
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -44,7 +47,26 @@ export default function Page() {
         if(!listProperty?.type){
             router?.push('/property-list')
         }
-    },[])
+    },[]) 
+    
+    
+    const getUser = async () => {
+        try {
+            const res = await MyProfileService.getMe();
+            const data = (res as any)?.data ?? res;
+            setUser(data?.data ?? data ?? null);
+            return res;
+        } catch (e: any) {
+            toast.error(e?.message || 'Failed to load profile');
+            throw e;
+        }
+    };
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+
 
 
     return (
@@ -75,12 +97,12 @@ export default function Page() {
 
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostname" className="text-[#070707]">Host name</label>
-                                    <input type="text" required name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
+                                    <input type="text" value={user?.name} required name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
                                 </div>
                                 
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="email" className="text-[#070707]">Host email</label>
-                                    <input type="email" required name="email" id="email" placeholder="Enter host email" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
+                                    <input type="email" value={user?.email} required name="email" id="email" placeholder="Enter host email" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
                                 </div>
 
                                 <div className="flex flex-col gap-2">

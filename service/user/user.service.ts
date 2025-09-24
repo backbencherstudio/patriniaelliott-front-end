@@ -49,10 +49,8 @@ newPassword: async (data) => {
     CookieHelper.destroy({ key: "tourAccessToken", context });
   },
   // get user details
-  getUserDetails: async ({ token = "", context = null }) => {
-    // const userToken = CookieHelper.get({ key: "token", context });
-    const userToken = token;
-
+  getUserDetails: async (context = null ) => {
+    const userToken = CookieHelper.get({ key: "token", context });
     const _config = {
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +58,7 @@ newPassword: async (data) => {
       },
     };
 
-    return await Fetch.get(`/user/me`, _config);
+    return await Fetch.get(`/auth/me`, _config);
   },
 
   getData: async (endpoint,token ) => {

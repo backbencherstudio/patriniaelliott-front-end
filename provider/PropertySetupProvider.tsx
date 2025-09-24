@@ -94,7 +94,8 @@ type tourType={
     tourImages: File[];
     meetingPoint: string;
     tripPlan: tripPlanType[];
-    destination: string;
+    country: string;
+    city: string;
     duration: number;
     durationType: string;
     price: number;
