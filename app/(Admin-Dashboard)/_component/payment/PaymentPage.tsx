@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
 import {
@@ -10,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { listingData } from "@/DemoAPI/ListingData";
+import useFetchData from "@/hooks/useFetchData";
+import dayjs from "dayjs";
 import CancelRefundDetails from "./CancelRefundDetails";
 import ConfirmRefundDetails from "./ConfirmRefundDetails";
 import PaymentAction from "./PaymentAction";
@@ -22,16 +23,28 @@ export default function PaymentPage() {
   const [isModalOpen, setIsModalOpen] = useState<any>(false);
   const [isEdit, setIsEdit] = useState<any>(false);
   const [cancel, setCancel] = useState<any>(false);
+  const [paymentData, setPaymentData] = useState<any>([]);
+  const [paymentHistory, setPaymentHistory] = useState<any>();
   const [payment, setPayment] = useState<
     "all" | "PayPal" | "Credit Card" | "Stripe"
   >("all");
   const [selectedData, setSelectedData] = useState<any | null>(null);
   const [selectedRole, setSelectedRole] = useState<
-    "All" | "Booking" | "Refunds"
-  >("All");
+    "all" | "order" | "refund"
+  >("all");
   const [dateRange, setDateRange] = useState<"all" | "7" | "15" | "30">("all");
   const [currentPage, setCurrentPage] = useState(1);
-
+  const itemsPerPage = 10;
+ const endpoint = `/dashboard/payments/transactions?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`;
+  const { data, loading, error } = useFetchData(endpoint);
+  const totalPages = data?.data?.transactions?.pagination?.totalPages || 0;
+  
+  useEffect(()=>{
+    if (data?.data) {
+        setPaymentData(data?.data?.transactions?.data);
+        setPaymentHistory(data?.data?.statistics);
+    }
+  },[data])
   const handleViewDetails = (user: any) => {
     setSelectedData(user);
     setIsModalOpen(true);
@@ -40,17 +53,20 @@ export default function PaymentPage() {
     setSelectedData(user);
     setCancel(true);
   };
+  const handleCancel = (user: any) => {
+    setSelectedData(user);
+    setCancel(true);
+  };
   const columns = [
-    { label: "Booking ID", accessor: "userId" },
-    { label: "Guest Name", accessor: "name" },
-    { label: "Transaction Type", accessor: "transactionType" },
-
+    { label: "Booking ID", accessor: "booking_id" },
+    { label: "Guest Name", accessor: "user",formatter: (value) => `${value?.name}` },
+    { label: "Transaction Type", accessor: "type" },
     {
       label: "Amount",
-      accessor: "price",
+      accessor: "amount",
       formatter: (value) => `$${value}`,
     },
-    { label: "Payment Method", accessor: "pymentMethod" },
+    { label: "Payment Method", accessor: "provider" },
     {
       label: "Status",
       accessor: "status",
@@ -60,17 +76,17 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} status={row} />
+        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleCancel} status={row} />
       ),
     },
   ];
   const Bookcolumns = [
-    { label: "Date", accessor: "joinDate" },
-    { label: "Booking ID", accessor: "userId" },
-    { label: "Guest Name", accessor: "name" },
+    { label: "Date", accessor: "created_at",formatter: (value) => `${value ? dayjs(value).format("YYYY-MM-DD") : "-"}` },
+    { label: "Booking ID", accessor: "booking_id" },
+    { label: "Guest Name", accessor: "user",formatter: (value) => `${value?.name}` },
     {
       label: "Amount",
-      accessor: "price",
+      accessor: "amount",
       formatter: (value) => `$${value}`,
     },
     {
@@ -78,23 +94,23 @@ export default function PaymentPage() {
       accessor: "status",
       formatter: (_, row) => <PaymentStatuse status={row.status} />,
     },
-    { label: "Payment Method", accessor: "pymentMethod" },
+    { label: "Payment Method", accessor: "provider" },
     {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} status={row} />
+        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleCancel} status={row} />
       ),
     },
   ];
   const Refundcolumns = [
-    { label: "Booking ID", accessor: "userId" ,width:"100px" },
+    { label: "Booking ID", accessor: "booking_id" ,width:"100px" },
     { label: "Reason", accessor: "reason" },
-    { label: "Guest Name", accessor: "name" },
-    { label: "Request date", accessor: "joinDate" },
+    { label: "Guest Name", accessor: "user",formatter: (value) => `${value?.name}` },
+    { label: "Request date", accessor: "created_at",formatter: (value) => `${value ? dayjs(value).format("YYYY-MM-DD") : "-"}` },
     {
       label: "Refund amount",
-      accessor: "price",
+      accessor: "amount",
       formatter: (value) => `$${value}`,
     },
 
@@ -111,50 +127,35 @@ export default function PaymentPage() {
       ),
     },
   ];
+  console.log(paymentHistory);
+  
   const stats = [
     {
       title: "Total Bookings",
-      value: "150 transactions",
+      value: `${paymentHistory?.total_bookings} transactions`,
       icon: "/dashboard/icon/all.svg",
       color: "#C9A634",
     },
     {
       title: "Total Commission",
-      value: "$5000",
+      value: `$${paymentHistory?.total_commission}`,
       icon: "/dashboard/icon/commission.svg",
       color: "#C9A634",
     },
     {
       title: "Total Withdrawal",
-      value: "$27000",
+      value: `$${paymentHistory?.total_withdraw}`,
       icon: "/dashboard/icon/withdrawal.svg",
       color: "#C9A634",
     },
     {
       title: "Refunds Issued",
-      value: "$990",
+      value: `$${paymentHistory?.total_refund}`,
       icon: "/dashboard/icon/refunds.svg",
       color: "#C9A634",
     },
   ];
 
-  const filteredUsers = listingData.filter((user) => {
-    const roleMatch =
-      selectedRole === "All" ||
-      user.transactionType === selectedRole ||
-      user?.pymentMethod == selectedRole;
-    const paymentMatch = payment === "all" || user.pymentMethod === payment;
-    let dateMatch = true;
-
-    if (dateRange !== "all") {
-      const joinDate = new Date(user.joinDate.split("/").reverse().join("-"));
-      const today = new Date();
-      const cutoffDate = new Date(today);
-      cutoffDate.setDate(today.getDate() - parseInt(dateRange));
-      dateMatch = joinDate >= cutoffDate;
-    }
-    return roleMatch && dateMatch && paymentMatch;
-  });
 
   
   return (
@@ -178,11 +179,11 @@ export default function PaymentPage() {
         <div className="md:flex justify-between items-center gap-2 md:gap-4 mb-4">
           {/* Role Filters */}
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">
-            {["All", "Booking", "Refunds"].map((role) => (
+            {["all", "order", "refund"].map((role) => (
               <button
                 key={role}
                 onClick={() =>
-                  setSelectedRole(role as "All" | "Booking" | "Refunds")
+                  setSelectedRole(role as "all" | "order" | "refund")
                 }
                 className={`md:px-4 px-1 cursor-pointer text-sm md:text-base py-2 ${
                   selectedRole === role
@@ -190,7 +191,7 @@ export default function PaymentPage() {
                     : "border-b text-[#777980]"
                 }`}
               >
-                {role === "All" ? "All transaction" : role}
+                {role === "all" ? "All transaction" : role}
               </button>
             ))}
           </div>
@@ -252,48 +253,46 @@ export default function PaymentPage() {
 
         {/* Table */}
         <div>
-          {selectedRole === "All" && (
+          {selectedRole === "all" && (
             <DynamicTableWithPagination
               columns={columns}
-              loading={false}
-              totalPages={1}
-              data={filteredUsers}
+              totalPages={totalPages}
+              data={paymentData}
               currentPage={currentPage}
-              itemsPerPage={8}
+              itemsPerPage={itemsPerPage}
+              loading={loading}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
-          {selectedRole === "Booking" && (
+          {selectedRole === "order" && (
             <DynamicTableWithPagination
               columns={Bookcolumns}
-              loading={false}
-              totalPages={1}
-              data={filteredUsers}
+              totalPages={totalPages}
+              data={paymentData}
               currentPage={currentPage}
-              itemsPerPage={8}
+              itemsPerPage={itemsPerPage}
+              loading={loading}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
-          {selectedRole === "Refunds" && (
+          {selectedRole === "refund" && (
             <DynamicTableWithPagination
               columns={Refundcolumns}
-              loading={false}
-              totalPages={1}
-              data={filteredUsers}
+              totalPages={totalPages}
+              data={paymentData}
               currentPage={currentPage}
-              itemsPerPage={8}
+              itemsPerPage={itemsPerPage}
+              loading={loading}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
         </div>
-
-    
       </div>
 
       <div>
       {isModalOpen &&
           selectedData &&
-          (selectedData.status === "Cancel") && (
+          (selectedData.status === "cancel") && (
             <CancelRefundDetails
               open={isModalOpen}
               data={selectedData}
@@ -302,7 +301,7 @@ export default function PaymentPage() {
           )}
       {isModalOpen &&
           selectedData &&
-          (selectedData.status === "Available") && (
+          (selectedData.status === "succeeded") && (
             <ConfirmRefundDetails
               open={isModalOpen}
               data={selectedData}

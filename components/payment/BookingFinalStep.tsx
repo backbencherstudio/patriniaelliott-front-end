@@ -22,6 +22,7 @@ const handleConfirm = async() => {
     if(response?.data?.success){
         toast.success(response?.data?.data?.message);
         setIsConfirmOpen(true)
+        setIsOpen(false)
     }else{
         toast.error(response?.response?.data?.message);
     }
@@ -31,7 +32,7 @@ const handleConfirm = async() => {
     setIsLoading(false);
  }
 }
-  console.log(responseData);
+ 
 
   return (
     <div>

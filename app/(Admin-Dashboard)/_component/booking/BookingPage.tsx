@@ -98,16 +98,16 @@ export default function BookingPage() {
     },
     {
       label: "Payment", 
-      accessor: "status",width:"120px",
-      formatter: (_, row) => <BookingPymentStatuse status={row.payment_status} />,
+      accessor: "payment",width:"120px",
+      formatter: (value, row) => <BookingPymentStatuse status={value?.status} />,
     },
     { label: "Check-In", 
-      accessor: "booking_items",width:"120px", 
-      formatter: (_, row) => <DateCheck date={row?.booking_items[0].start_date} /> 
+      accessor: "check_in",width:"120px", 
+      formatter: (value, row) => <DateCheck date={value} /> 
     },
     { label: "Check-Out", 
-      accessor: "checkOut",width:"120px", 
-      formatter: (_, row) => <DateCheck date={row?.booking_items[0].end_date} /> 
+      accessor: "check_out",width:"120px", 
+      formatter: (value, row) => <DateCheck date={value} /> 
     },
     {
       label: "Price", 
@@ -116,7 +116,7 @@ export default function BookingPage() {
     },
     { label: "Action", 
       accessor: "status",width:"100px", 
-      formatter: (_, row) => <BookingAction 
+      formatter: (value, row) => <BookingAction 
         onView={handleViewDetails} 
         status={row} 
         onOptimisticUpdate={handleOptimisticUpdate}
