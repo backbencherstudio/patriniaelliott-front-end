@@ -14,6 +14,8 @@ import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import languages from '@/public/toure/languages.json'
+import Dropdownmenu from "@/components/reusable/Dropdownmenu";
+import country from '@/public/toure/countries.json'
 
 const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -87,6 +89,22 @@ const getSelectedOptions = (languages, selectedLanguages) => {
   );
 };
 
+const regions = [
+  { code: 'AF', name: 'Africa' },
+  { code: 'AS', name: 'Asia' },
+  { code: 'EU', name: 'Europe' },
+  { code: 'NA', name: 'North America' },
+  { code: 'SA', name: 'South America' },
+  { code: 'OC', name: 'Oceania' },
+  { code: 'AN', name: 'Antarctica' }
+];
+
+type countryType = {
+  name: string;
+  code: string;
+  region: string;
+}
+
 
 const AddTour = () => {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
@@ -102,8 +120,10 @@ const AddTour = () => {
       cancellation_policy_id: "",
       package_category: "",
       duration: "",
+      city: ''
     },
   });
+  const [countries, setCountries] = useState<countryType[]>(country.country);
   const { listProperty, updateListProperty } = usePropertyContext();
   const router = useRouter();
   const [isDragging, setIsDragging] = useState(false);
@@ -136,8 +156,14 @@ const AddTour = () => {
   const [selectedLanguages, setSelectedLanguages] = useState([]); // [{id}]
   const [cancelPolicy, setCancelPolicy] = useState("");
   const [cancellationPolicies, setCancellationPolicies] = useState([]);
-  const [extraService, setExtraService] = useState("");
+  const [extraService, setExtraService] = useState({
+    name: "",
+    price: ""
+  });
+
   const [extraServices, setExtraServices] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
 
   const previewsRef = useRef(new Set());
 
@@ -169,9 +195,9 @@ const AddTour = () => {
 
   // Handle Extra Services
   const handleExtraServices = () => {
-    if (extraService === "") return;
+    if (extraService.name === "") return;
     setExtraServices((prev) => [...prev, extraService]);
-    setExtraService("");
+    setExtraService({ name: '', price: '0' });
     setShowExtraService(false);
   };
 
@@ -194,13 +220,24 @@ const AddTour = () => {
       return;
     }
 
+    if (!selectedCountry) {
+      toast.error('Please select a country.');
+      return;
+    }
+
+    if (!selectedRegion) {
+      toast.error('Please select a region');
+      return;
+    }
+
     const tourData = {
       title: data?.name,
       description: data?.description,
       tourImages: images,
       meetingPoint: selectedMeetingPoint,
       tripPlan: tourPlan,
-      destination: data?.destination,
+      country: countries?.filter(ct => ct.code === selectedCountry)?.[0]?.name,
+      city: data?.city,
       duration: data?.duration,
       durationType: data?.duration_type,
       price: data?.price,
@@ -218,11 +255,27 @@ const AddTour = () => {
     router.push("/property-list/setup/apartment-calendar");
   };
 
-  useEffect(()=>{
-    if(!listProperty?.type){
+  const handleRegionChange = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSelectedRegion(e.currentTarget.value);
+  }
+
+  const handleCountryChange = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSelectedCountry(e.currentTarget.value);
+  }
+
+  useEffect(() => {
+    if (!listProperty?.type) {
       router?.push('/property-list')
     }
-  },[])
+  }, [])
+
+  useEffect(() => {
+    if (selectedRegion) {
+      setCountries(country.country.filter((c: countryType) => c.region === selectedRegion));
+    }
+  }, [selectedRegion]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -319,15 +372,24 @@ const AddTour = () => {
                   <label className="block text-[#444] text-base font-medium mb-4">
                     Destination
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Enter destination"
-                    {...register("destination", { required: "Destination is required" })}
-                    className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                    aria-invalid={!!errors.description}
-                  />
-                  {errors.destination && (
-                    <p className="text-red-500 text-xs mt-1">{errors.destination.message}</p>
+                  <div className="space-y-3">
+                    <Dropdownmenu data={regions} handleSelect={handleRegionChange} selectedData={selectedRegion} title="Country/Region" showTitle={true} />
+                  </div>
+                  <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
+                  <div>
+                    <label className="block text-[#444] text-base font-medium mb-4">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter cancellation policy"
+                      onChange={(e) => setCancelPolicy(e.target.value)}
+                      {...register("city", { required: "Enter name of the city." })}
+                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                    />
+                  </div>
+                  {errors.city && (
+                    <p className="text-red-500 text-xs mt-1">{errors.city.message}</p>
                   )}
                 </div>
                 {/* Duration + Type */}
@@ -450,19 +512,25 @@ const AddTour = () => {
                   {showExtraService && (
                     <div className="flex gap-4">
                       <input
-                      type="text"
-                      value={extraService}
-                      placeholder="Enter extra service"
-                      onChange={(e) => setExtraService(e.target.value)}
-                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                    />
-                    <input
-                      type="number"
-                      value={extraService}
-                      placeholder="Enter price"
-                      onChange={(e) => setExtraService(e.target.value)}
-                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600 max-w-[150px]"
-                    />
+                        type="text"
+                        value={extraService.name}
+                        placeholder="Enter extra service"
+                        onChange={(e) =>
+                          setExtraService((prev) => ({ ...prev, name: e.target.value }))
+                        }
+                        className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                      />
+
+                      <input
+                        type="text"
+                        value={extraService.price}
+                        placeholder="Enter price"
+                        onChange={(e) =>
+                          setExtraService((prev) => ({ ...prev, price: e.target.value }))
+                        }
+                        className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600 max-w-[150px]"
+                      />
+
                     </div>
                   )}
                   {showExtraService && (
@@ -488,7 +556,7 @@ const AddTour = () => {
                   )}
                   <ul className="list-disc pl-4">
                     {extraServices.map((service, index) => (
-                      <li key={index}>{service}</li>
+                      <li key={index}>{service.name} {service?.price}</li>
                     ))}
                   </ul>
                 </div>

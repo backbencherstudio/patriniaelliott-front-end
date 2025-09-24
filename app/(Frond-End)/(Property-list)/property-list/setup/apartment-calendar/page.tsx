@@ -96,9 +96,9 @@ export default function Page() {
   useEffect(() => {
     try {
       let nightly = listProperty?.price_per_night
-      if(listProperty?.type === "Tour"){
+      if (listProperty?.type === "Tour") {
         nightly = listProperty?.tour_plan?.price
-      }else{
+      } else {
         nightly = listProperty?.price_per_night
       }
       setPrice(Number.isFinite(nightly) ? nightly : 0);
@@ -133,7 +133,7 @@ export default function Page() {
       calendar_end_date: toISODate(endDate),
     });
 
-    console.log("Form data : ",listProperty);
+    console.log("Form data : ", listProperty);
 
     const propertyData = {
       ...listProperty,
@@ -141,7 +141,7 @@ export default function Page() {
       calendar_end_date: toISODate(endDate),
     }
 
-    console.log("Property data : ",propertyData)
+    console.log("Property data : ", propertyData)
     const fd = new FormData();
 
     const amenities = {
@@ -160,47 +160,78 @@ export default function Page() {
       until: propertyData?.check_out_untill ?? "",
     };
 
-    // append with safe string conversions
-    fd.append("name", String(propertyData?.name ?? ""));
-    fd.append("description", String(propertyData?.about_property ?? ""));
-    fd.append("price", String(propertyData?.price_per_night ?? "0"));
-    fd.append("type", String(propertyData?.type ?? ""));
-    // fd.append("room_photos", JSON.stringify(propertyData?.photos ?? []));
-    propertyData?.photos?.forEach(photo=>{
-      fd.append('room_photos',photo);
-    })
-    fd.append("amenities", JSON.stringify(amenities));
-    fd.append("extra_services", JSON.stringify(propertyData?.extra_services ?? []));
-    fd.append("country", String(propertyData?.country ?? ""));
-    fd.append("city", String(propertyData?.city ?? ""));
-    fd.append("address", String(propertyData?.street ?? ""));
-    fd.append("postal_code", String(propertyData?.zip_code ?? ""));
-    fd.append("bedrooms", JSON.stringify(propertyData?.bedrooms ?? "0")); // fixed
-    fd.append("bathrooms", String(propertyData?.bathrooms ?? "0"));
-    fd.append(
-      "max_capacity",
-      propertyData?.max_guests ? String(Number(propertyData.max_guests)) : "1"
-    );
-    fd.append("check_in", JSON.stringify(check_in));
-    fd.append("check_out", JSON.stringify(check_out));
-    fd.append(
-      "breakfast_available",
-      String(Boolean(propertyData?.breakfast_available))
-    );
-    fd.append(
-      "max_guests",
-      propertyData?.max_guests ? String(Number(propertyData.max_guests)) : "1"
-    );
-    fd.append("calendar_start_date", toISODate(startDate));
-    fd.append("calendar_end_date", toISODate(endDate));
+    if (propertyData?.type === 'Tour') {
+      fd.append('name', String(propertyData?.tour_plan?.title ?? ''))
+      fd.append('description', String(propertyData?.tour_plan?.description ?? ''));
+      fd.append('price', String(propertyData?.tour_plan?.price ?? ""));
+      fd.append('type', String(propertyData?.type ?? ''));
+      fd.append('tour_type', String(propertyData?.tourType ?? ''));
+      fd.append('meting_points', String(propertyData?.tour_plan?.meetingPoint ?? ''));
+      fd.append('language', JSON.stringify(propertyData?.tour_plan?.language));
+      fd.append('cancellation_policy', JSON.stringify(propertyData?.tour_plan?.cancellation_policy));
+      fd.append('trip_plans', JSON.stringify(propertyData?.tour_plan?.tripPlan?.[0]?.tripPlan));
+      fd.append('extra_services', JSON.stringify(propertyData?.tour_plan?.extra_service));
+      propertyData?.tour_plan?.tourImages?.forEach(img =>
+        fd.append('package_files', img)
+      )
+      propertyData?.tour_plan?.tripPlan?.[0]?.images?.forEach(img =>
+        fd.append('trip_plans_images', img)
+      )
+      fd.append("calendar_start_date", toISODate(startDate));
+      fd.append("calendar_end_date", toISODate(endDate));
+      fd.append('duration', String(propertyData?.tour_plan?.duration));
+      fd.append('duration_type', String(propertyData?.tour_plan?.durationType));
+      fd.append('country', String(propertyData?.tour_plan?.country));
+      fd.append('city', String(propertyData?.tour_plan?.city));
+    } else {
+      // append with safe string conversions
+      fd.append("name", String(propertyData?.name ?? ""));
+      fd.append("description", String(propertyData?.about_property ?? ""));
+      fd.append("price", String(propertyData?.price_per_night ?? "0"));
+      fd.append("type", String(propertyData?.type ?? ""));
+      // fd.append("room_photos", JSON.stringify(propertyData?.photos ?? []));
+      propertyData?.photos?.forEach(photo => {
+        fd.append('room_photos', photo);
+      })
+      fd.append("amenities", JSON.stringify(amenities));
+      fd.append("extra_services", JSON.stringify(propertyData?.extra_services ?? []));
+      fd.append("country", String(propertyData?.country ?? ""));
+      fd.append("city", String(propertyData?.city ?? ""));
+      fd.append("address", String(propertyData?.street ?? ""));
+      fd.append("postal_code", String(propertyData?.zip_code ?? ""));
+      fd.append("bedrooms", JSON.stringify(propertyData?.bedrooms ?? "0")); // fixed
+      fd.append("bathrooms", String(propertyData?.bathrooms ?? "0"));
+      fd.append(
+        "max_capacity",
+        propertyData?.max_guests ? String(Number(propertyData.max_guests)) : "1"
+      );
+      fd.append("check_in", JSON.stringify(check_in));
+      fd.append("check_out", JSON.stringify(check_out));
+      fd.append(
+        "breakfast_available",
+        String(Boolean(propertyData?.breakfast_available))
+      );
+      fd.append(
+        "max_guests",
+        propertyData?.max_guests ? String(Number(propertyData.max_guests)) : "1"
+      );
+      fd.append("calendar_start_date", toISODate(startDate));
+      fd.append("calendar_end_date", toISODate(endDate));
+    }
 
     const endpoint = "/admin/vendor-package";
     try {
       const res = await UserService?.createPropertyData(endpoint, fd, token);
       if (res?.data?.success === true) {
-        toast.success("Property setup completed.");
+        if (propertyData?.type === 'Tour') {
+          toast.success("Tour setup completed.");
+        } else {
+          toast.success("Property setup completed.");
+        }
         localStorage.removeItem("propertyData");
-        router.push("/property-list");
+        setTimeout(() => {
+          router.push("/property-list");
+        }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");
       }

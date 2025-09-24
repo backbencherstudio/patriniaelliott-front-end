@@ -6,6 +6,10 @@ import Dropdownmenu from "@/components/reusable/Dropdownmenu";
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import country from '@/public/toure/countries.json'
+import { UserService } from "@/service/user/user.service";
+import { CookieHelper } from "@/helper/cookie.helper";
+import { MyProfileService } from "@/service/user/myprofile.service";
+import toast from "react-hot-toast";
 
 const regions = [
     { code: 'AF', name: 'Africa' },
@@ -37,6 +41,7 @@ export default function Page() {
     const [aboutHost, setAboutHost] = useState(false);
     const [hostNeighborhood, setHostNeighborhood] = useState(false)
     const [formData, setFormData] = useState({});
+    const [user, setUser] = useState(null);
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -111,6 +116,22 @@ export default function Page() {
         }
     }, [selectedRegion]);
 
+    const getUser = async () => {
+        try {
+            const res = await MyProfileService.getMe();
+            const data = (res as any)?.data ?? res;
+            setUser(data?.data ?? data ?? null);
+            return res;
+        } catch (e: any) {
+            toast.error(e?.message || 'Failed to load profile');
+            throw e;
+        }
+    };
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
@@ -159,7 +180,7 @@ export default function Page() {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostname" className="text-[#070707]">Host name</label>
-                                    <input type="text" required disabled={!aboutHost} name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
+                                    <input type="text"value={user?.name} required disabled={!aboutHost} name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostabout" className="text-[#070707]">About the host</label>
@@ -179,7 +200,7 @@ export default function Page() {
                                     <h3>What’s the name and location of your place?</h3>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="email" className="text-[#070707]">Email address</label>
-                                        <input type="email" required name="email" id="email" className="border border-[#E9E9EA] text-[#777980] rounded-[8px] p-4 outline-none" />
+                                        <input type="email" value={user?.email} required name="email" id="email" className="border border-[#E9E9EA] text-[#777980] rounded-[8px] p-4 outline-none" />
                                     </div>
                                     <div className="space-y-3">
                                         <p className="text-[#777980] text-sm">
@@ -189,6 +210,11 @@ export default function Page() {
                                         </p>
                                         <Dropdownmenu data={regions} handleSelect={handleRegionChange} selectedData={selectedRegion} title="Country/Region" showTitle={true} />
                                     </div>
+                                    <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
+                                    <div className="flex flex-col gap-2">
+                                        <label htmlFor="city" className="text-[#070707]">City</label>
+                                        <input type="text" required name="city" id="city" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
+                                    </div>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="street" className="text-[#070707]">Street name and house number</label>
                                         <input type="text" required name="street" id="street" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
@@ -197,11 +223,6 @@ export default function Page() {
                                         <label htmlFor="zipcode" className="text-[#070707]">Zip code</label>
                                         <input type="text" required name="zipcode" id="zipcode" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
                                     </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="city" className="text-[#070707]">City</label>
-                                        <input type="text" required name="city" id="city" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
-                                    </div>
-                                    <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
                                     <h3 className="text-[#23262F] font-medium text-2xl">Pin the location of your property</h3>
                                     <div className="space-y-3">
                                         <p className="text-[#777980] text-sm">
