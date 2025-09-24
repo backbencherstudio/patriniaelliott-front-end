@@ -87,10 +87,10 @@ export default function BookingPage() {
   
   const columns = [
     {
-      label: "Booking ID", width:"100px", accessor: "id", formatter: (_, __, index) => <TableId currentPage={currentPage} itemsPerPage={itemsPerPage} index={index} />
+      label: "Booking ID", width:"100px", accessor: "booking_id", 
     },
     { label: "Name", 
-      accessor: "name", width:"140px",
+      accessor: "original_data", width:"140px",
       formatter: (_, row) => <div >{row?.user?.name}</div> 
     },
     { label: "Service", 
