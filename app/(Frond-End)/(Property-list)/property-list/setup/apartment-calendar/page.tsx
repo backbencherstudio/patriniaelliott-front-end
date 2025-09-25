@@ -168,7 +168,7 @@ export default function Page() {
       fd.append('tour_type', String(propertyData?.tourType ?? ''));
       fd.append('meting_points', String(propertyData?.tour_plan?.meetingPoint ?? ''));
       fd.append('language', JSON.stringify(propertyData?.tour_plan?.language));
-      fd.append('cancellation_policy', JSON.stringify(propertyData?.tour_plan?.cancellation_policy));
+      // fd.append('cancellation_policy', JSON.stringify(propertyData?.tour_plan?.cancellation_policy));
       fd.append('trip_plans', JSON.stringify(propertyData?.tour_plan?.tripPlan?.[0]?.tripPlan));
       fd.append('extra_services', JSON.stringify(propertyData?.tour_plan?.extra_service));
       propertyData?.tour_plan?.tourImages?.forEach(img =>

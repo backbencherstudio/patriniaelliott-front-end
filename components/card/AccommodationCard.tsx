@@ -121,13 +121,13 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
               TV
             </div>
           }
-          {
+          {/* {
             total_bedrooms &&
             <div className="flex items-center gap-1 px-3 border-r border-[#D2D2D5]">
               <IoBedOutline className=" text-secondaryColor" size={18} />
               {total_bedrooms} Bed
             </div>
-          }
+          } */}
           <div className="flex items-center gap-1 px-3 border-r border-[#D2D2D5]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
