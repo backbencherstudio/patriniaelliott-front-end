@@ -22,104 +22,8 @@ interface PropertyRequest {
   bathrooms: number;
 }
 
-const propertyRequests: PropertyRequest[] = [
-  {
-    id: 'PR001',
-    propertyName: 'Luxury Downtown Apartment',
-    propertyType: 'Apartment',
-    location: 'New York, NY',
-    submittedDate: '15-05-25',
-    status: 'Pending',
-    price: '$150/night',
-    guestCapacity: 4,
-    bedrooms: 2,
-    bathrooms: 2
-  },
-  {
-    id: 'PR002',
-    propertyName: 'Cozy Mountain Cabin',
-    propertyType: 'House',
-    location: 'Aspen, CO',
-    submittedDate: '14-05-25',
-    status: 'Approved',
-    price: '$200/night',
-    guestCapacity: 6,
-    bedrooms: 3,
-    bathrooms: 2
-  },
-  {
-    id: 'PR003',
-    propertyName: 'Beachfront Villa',
-    propertyType: 'Villa',
-    location: 'Miami, FL',
-    submittedDate: '12-05-25',
-    status: 'Pending',
-    price: '$300/night',
-    guestCapacity: 8,
-    bedrooms: 4,
-    bathrooms: 3
-  },
-  {
-    id: 'PR004',
-    propertyName: 'City Center Studio',
-    propertyType: 'Studio',
-    location: 'San Francisco, CA',
-    submittedDate: '10-05-25',
-    status: 'Approved',
-    price: '$120/night',
-    guestCapacity: 2,
-    bedrooms: 1,
-    bathrooms: 1
-  },
-  {
-    id: 'PR005',
-    propertyName: 'Historic Townhouse',
-    propertyType: 'Townhouse',
-    location: 'Boston, MA',
-    submittedDate: '08-05-25',
-    status: 'Pending',
-    price: '$180/night',
-    guestCapacity: 5,
-    bedrooms: 2,
-    bathrooms: 2
-  },
-  {
-    id: 'PR006',
-    propertyName: 'Modern Loft Space',
-    propertyType: 'Loft',
-    location: 'Chicago, IL',
-    submittedDate: '07-05-25',
-    status: 'Approved',
-    price: '$160/night',
-    guestCapacity: 3,
-    bedrooms: 1,
-    bathrooms: 1
-  },
-  {
-    id: 'PR007',
-    propertyName: 'Riverside Cottage',
-    propertyType: 'Cottage',
-    location: 'Portland, OR',
-    submittedDate: '06-05-25',
-    status: 'Pending',
-    price: '$140/night',
-    guestCapacity: 4,
-    bedrooms: 2,
-    bathrooms: 1
-  },
-  {
-    id: 'PR008',
-    propertyName: 'Penthouse Suite',
-    propertyType: 'Penthouse',
-    location: 'Los Angeles, CA',
-    submittedDate: '05-05-25',
-    status: 'Approved',
-    price: '$400/night',
-    guestCapacity: 6,
-    bedrooms: 3,
-    bathrooms: 3
-  }
-];
+// server data only
+const propertyRequests: PropertyRequest[] = [];
 
 export default function PendingRequest() {
   const [activeTab, setActiveTab] = useState<'All Properties' | 'Pending' | 'Approved'>('All Properties')
@@ -127,6 +31,8 @@ export default function PendingRequest() {
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [packages, setPackages] = useState<PropertyRequest[]>(propertyRequests)
+  const [totalPages, setTotalPages] = useState<number>(1)
+  const [totalCount, setTotalCount] = useState<number>(0)
   const [editOpen, setEditOpen] = useState(false)
   const [editingRaw, setEditingRaw] = useState<any>(null)
 
@@ -134,9 +40,9 @@ export default function PendingRequest() {
   const apiListRef = (global as any).prApiListRef || { current: [] as any[] }
   ;(global as any).prApiListRef = apiListRef
 
-  const reload = async () => {
+  const reload = async (page: number = 1) => {
       try {
-        const res: any = await handleApiCall(VendorService.getVendorPackages)
+        const res: any = await handleApiCall(VendorService.getVendorPackages, { page, limit: 5 })
         const list = (res?.data?.data || res?.data || res) as any[]
         apiListRef.current = list || []
         const mapped: PropertyRequest[] = (list || []).map((item: any) => ({
@@ -152,8 +58,19 @@ export default function PendingRequest() {
           bathrooms: item.bathrooms || 0,
         }))
         setPackages(mapped)
+        // derive total count from multiple possible shapes
+        const meta = res?.data?.meta || res?.meta
+        const headersTotal = res?.headers?.['x-total-count'] || res?.headers?.['X-Total-Count']
+        const rootTotal = res?.data?.total ?? res?.total ?? res?.data?.count ?? res?.count
+        const itemCount = meta?.total ?? meta?.itemCount ?? rootTotal ?? headersTotal
+        const total = Number(itemCount ?? mapped.length)
+        setTotalCount(isNaN(total) ? mapped.length : total)
+        const pages = Math.max(1, Math.ceil((isNaN(total) ? mapped.length : total) / 5))
+        setTotalPages(pages)
       } catch (e) {
-        // keep demo data on error
+        setPackages([])
+        setTotalPages(1)
+        setTotalCount(0)
       }
   }
 
@@ -257,6 +174,7 @@ export default function PendingRequest() {
       {/* Table Section */}
       <div className="w-full bg-white rounded-xl p-3 md:p-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+          <div className="text-sm text-[#777980]">Total items: <span className="text-[#070707] font-medium">{totalCount}</span></div>
           <div className="flex flex-wrap gap-2 md:gap-4">
             {['All Properties', 'Pending', 'Approved'].map((tab) => (
               <button
@@ -314,14 +232,14 @@ export default function PendingRequest() {
 
         <div className="overflow-x-auto">
           <DynamicTableWithPagination
-            loading={false}
-            totalPages={1}
+            loading={loading}
+            totalPages={totalPages}
             columns={columns}
             data={filteredProperties}
             currentPage={currentPage}
-            itemsPerPage={10}
-            onPageChange={(page) => setCurrentPage(page)}
-            noDataMessage="No property requests found."
+            itemsPerPage={5}
+            onPageChange={(page) => { setCurrentPage(page); reload(page); }}
+            noDataMessage="No data found."
           />
         </div>
       </div>
