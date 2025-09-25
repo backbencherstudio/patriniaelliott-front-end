@@ -1,12 +1,14 @@
 "use client";
 import { useToken } from "@/hooks/useToken";
 import { useToureBookingContext } from "@/provider/TourBookingProvider";
+import { UserService } from "@/service/user/user.service";
 import { LucideCalendarDays, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FiMinus, FiPlus } from "react-icons/fi";
+import { toast } from "react-toastify";
 import Rating from "../reusable/Rating";
 
 const ToureBookingForm = ({ singlToureDetails }: any) => {
@@ -26,44 +28,96 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
     travelprice,
     setTravelPrice,
     discount,
-    travelCount, setTravelCount
-
+    travelCount, 
+    setTravelCount
   } = useToureBookingContext();
 
-  useEffect(() => {
-    const today = new Date();
-    setStartDate(today);
-    const durationDays = parseInt(duration) || 4; // Default to 4 if duration is not provided
-    const endDate = new Date(today);
-    endDate.setDate(today.getDate() + durationDays);
-    setEndDate(endDate);
-  }, [setStartDate, setEndDate]);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Fix: useEffect এ state update করা
-  useEffect(() => {
-    setSingleToure(singlToureDetails);
-  }, [singlToureDetails, setSingleToure]);
-
-  const router = useRouter()
-  const { token } = useToken()
+  const router = useRouter();
+  const { token } = useToken();
   const { title, cancellation, duration, reviews, price, rating, image, location } =
     singlToureDetails;
-  setTravelPrice(price * travelCount)
-     const handleBook = () => {
 
-     if (token) {
-       // ✅ Ensure tour data is saved to localStorage before proceeding
-       setSingleToure(singlToureDetails);
-       // If token exists, proceed to the booking page
-       handleBookNow();
-       router.push(`/toure/${singlToureDetails?.id}/booking`);
-     } else {
-       // If token doesn't exist, redirect to login page with current page as a redirect
-       const currentUrl = window.location.pathname + window.location.search;
-       router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
-     }
+  // Initialize dates only once when component mounts
+  useEffect(() => {
+    if (!startDate) {
+      const today = new Date();
+      setStartDate(today);
+      const durationDays = parseInt(singlToureDetails?.duration) || 4;
+      const endDate = new Date(today);
+      endDate.setDate(today.getDate() + durationDays);
+      setEndDate(endDate);
+    }
+  }, []); // Empty dependency array - only run once
 
-   };
+  // Auto-update end date when start date changes
+  useEffect(() => {
+    if (startDate && singlToureDetails?.duration) {
+      const durationDays = parseInt(singlToureDetails.duration);
+      const newEndDate = new Date(startDate);
+      newEndDate.setDate(startDate.getDate() + durationDays);
+      setEndDate(newEndDate);
+    }
+  }, [startDate, singlToureDetails?.duration, setEndDate]);
+
+  // Update single tour data when it changes
+  useEffect(() => {
+    if (singlToureDetails) {
+      setSingleToure(singlToureDetails);
+    }
+  }, [singlToureDetails?.id]); // Only depend on tour ID, not the entire object
+
+  // Update travel price when travel count or price changes
+  useEffect(() => {
+    if (price && travelCount) {
+      setTravelPrice(price * travelCount);
+    }
+  }, [price, travelCount, setTravelPrice]); // Now safe to include setTravelPrice since it's memoized
+
+  const handleBook = async () => {
+    setLoading(true);
+    
+    const bookingData = {
+      type: "tour",
+      first_name: singlToureDetails?.user?.first_name || "",
+      last_name: "",
+      email: singlToureDetails?.user?.email || "",
+      booking_items: [
+        {
+          package_id: singlToureDetails?.id,
+          start_date: startDate?.toISOString() || "",
+          end_date: endDate?.toISOString() || "",
+          quantity: travelCount
+        }
+      ],
+      booking_travellers: []
+    };
+
+    if (token) {
+      try {
+        const response = await UserService?.createData(`/booking`, bookingData, token);
+        console.log("response", response);
+        
+        if (response?.data?.success) {
+          toast.success(response?.data?.message);
+          localStorage.setItem("bookingId", response?.data?.data?.booking?.id);
+          setSingleToure(singlToureDetails);
+          handleBookNow();
+          router.push(`/toure/${singlToureDetails?.id}/booking`);
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Booking failed. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      const currentUrl = window.location.pathname + window.location.search;
+      router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+      setLoading(false);
+    }
+  };
   return (
     <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
       <div className="text-center border-b border-grayColor1/20 pb-3">
@@ -80,84 +134,96 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
         <p className="text-xs text-grayColor1">Starting Form</p>
         <div className="flex items-center">
           <h5 className="text-2xl lg:text-[32px] font-semibold text-headerColor">
-            ${price}
+            ${singlToureDetails?.price}
           </h5>
           <span className="text-sm text-headerColor">/per person</span>
         </div>
       </div>
       <div>
         <div className="flex gap-2 items-center">
-          <span className="text-headerColor text-sm">{rating}</span>
+          <span className="text-headerColor text-sm">{singlToureDetails?.rating_summary?.averageRating}</span>
           <div className="flex gap-1">
-            <Rating rating={rating} />
+            <Rating rating={singlToureDetails?.rating_summary?.averageRating} />
           </div>
         </div>
 
       </div>
       <div>
-        <p className="text-grayColor1 text-base"><span className="text-headerColor font-medium">{totalDay} Nights</span> in {location} Tour Package</p>
+        <p className="text-grayColor1 text-base"><span className="text-headerColor font-medium">{singlToureDetails?.duration} Days
+          {/* {singlToureDetails?.duration_type} */}
+          
+          </span> in {singlToureDetails?.city} Tour Package</p>
         <div className="flex mt-1 items-center gap-2 text-base text-[#0068EF] ">
           Cancellation Policy{" "}
-          <span className="text-sm text-gray-400">({cancellation})</span>
+          <span className="text-sm text-gray-400">(24 hours)</span>
         </div>
       </div>
 
-      {/* Start Date */}
-      <div
-        className="flex cursor-pointer items-center justify-between border border-secondaryColor rounded-md p-2"
-        onClick={() => {
-          const input = document.getElementById("start-date-picker");
-          input?.click();
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Start date"
-          value={startDate ? startDate.toLocaleDateString() : ""}
-          readOnly
-          className="border-0 outline-none text-gray-700 text-sm w-full"
-        />
-        <DatePicker
-          id="start-date-picker"
-          selected={startDate}
-          onChange={setStartDate}
-          placeholderText="Select a date"
-          className="hidden"
-        />
-        <LucideCalendarDays className="text-secondaryColor" />
-      </div>
+      {/* Date Selection Container */}
+      <div className="flex border border-secondaryColor rounded-lg overflow-hidden">
+        {/* Check-in Date */}
+        <div
+          className="flex-1 cursor-pointer p-4 border-r border-gray-200 hover:bg-gray-50 transition-colors"
+          onClick={() => {
+            const input = document.getElementById("start-date-picker");
+            input?.click();
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-secondaryColor rounded-full flex items-center justify-center flex-shrink-0">
+              <LucideCalendarDays className="text-white text-sm" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-600 mb-1">Check-in</p>
+              <p className="text-base font-semibold text-gray-900">
+                {startDate ? startDate.toLocaleDateString('en-US', { 
+                  month: 'short', 
+                  day: 'numeric', 
+                  year: 'numeric' 
+                }) : "Select date"}
+              </p>
+              <p className="text-sm text-gray-500">12:00 PM</p>
+            </div>
+          </div>
+          <DatePicker
+            id="start-date-picker"
+            selected={startDate}
+            onChange={setStartDate}
+            placeholderText="Select a date"
+            className="hidden"
+          />
+        </div>
 
-      {/* End Date */}
-      <div
-        className="flex items-center cursor-pointer justify-between border border-secondaryColor rounded-md p-2"
-        onClick={() => {
-          const input = document.getElementById("end-date-picker");
-          input?.click();
-        }}
-      >
-        <input
-          type="text"
-          value={endDate ? endDate.toLocaleDateString() : ""}
-          placeholder="End date"
-          readOnly
-          className="border-0 outline-none text-gray-700 text-sm w-full"
-        />
-        <DatePicker
-          id="end-date-picker"
-          selected={endDate}
-          onChange={setEndDate}
-          placeholderText="Select a date"
-          className="hidden"
-        />
-        <LucideCalendarDays className="text-secondaryColor" />
+        {/* Check-out Date - Auto calculated */}
+        <div className="flex-1 p-4 bg-gray-50 border-l border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
+              <LucideCalendarDays className="text-white text-sm" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-600 mb-1">Check-out</p>
+              <p className="text-base font-semibold text-gray-900">
+                {endDate ? endDate.toLocaleDateString('en-US', { 
+                  month: 'short', 
+                  day: 'numeric', 
+                  year: 'numeric' 
+                }) : "Auto calculated"}
+              </p>
+              <p className="text-sm text-gray-500">11:00 AM</p>
+              <p className="text-xs text-gray-400 mt-1">
+                Auto: {singlToureDetails?.duration} {singlToureDetails?.duration_type} after check-in
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className=" flex justify-between text-sm py-2 px-4 rounded-md border border-secondaryColor">
         <span className=" text-grayColor1">Add your traveler</span>
         <div className=" flex items-center  gap-3">
-          <button onClick={() => setTravelCount((prev) => prev == 0 ? 0 : prev - 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiMinus /></button>
+          <button onClick={() => setTravelCount(travelCount === 0 ? 0 : travelCount - 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiMinus /></button>
           <p>{travelCount}</p>
-          <button onClick={() => setTravelCount((prev) => prev + 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiPlus /></button>
+          <button onClick={() => setTravelCount(travelCount + 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiPlus /></button>
         </div>
 
       </div>
@@ -199,9 +265,10 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
       {/* Book Now Button */}
       <button
         onClick={handleBook}
-        className="w-full py-3 bg-secondaryColor text-blackColor font-medium cursor-pointer rounded-full mt-6 text-base hover:bg-secondaryColor transition"
+        disabled={loading || travelCount === 0}
+        className="w-full py-3 bg-secondaryColor disabled:bg-grayColor1 disabled:cursor-not-allowed text-blackColor font-medium cursor-pointer rounded-full mt-6 text-base hover:bg-secondaryColor transition"
       >
-        Book Now
+        {loading ? "Loading..." : "Book Now"}
       </button>
     </div>
   );

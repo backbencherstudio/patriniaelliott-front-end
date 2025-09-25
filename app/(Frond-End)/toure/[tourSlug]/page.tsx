@@ -1,3 +1,5 @@
+import ToureBookingForm from "@/components/toure/ToureBookingForm";
+import ToureHeader from "@/components/toure/ToureHeader";
 import ToureTabs from "@/components/toure/ToureTabs";
 import TourImage from "@/components/toure/TourImage";
 import { toursData } from "@/DemoAPI/toureData";
@@ -6,7 +8,7 @@ import { UserService } from "@/service/user/user.service";
 import { ChevronRight } from "lucide-react";
 import { cookies } from "next/headers";
 
-async function HotelDetailsPage(props: {
+async function BookingDetailsPage(props: {
   params: Promise<{ tourSlug: string }>;
 }) {
   const params = await props.params;
@@ -27,8 +29,8 @@ async function HotelDetailsPage(props: {
 
   }
 const singletour = vendorPackage ? vendorPackage : {}
-console.log(singletour);
-console.log(singletour?.package_files);
+// console.log(singletour);
+// console.log(singletour?.package_files);
 
   return (
     <div>
@@ -42,15 +44,15 @@ console.log(singletour?.package_files);
           </span>
         </div>
         <div>
-          {/* <ToureHeader singleApartment={singleHotel} /> */}
+          <ToureHeader singletour={singletour} />
         </div>
         <TourImage vendorPackage={vendorPackage}/>
         <div className="lg:grid grid-cols-6 gap-8 pb-20">
           <div className=" col-span-4 ">
-            <ToureTabs />
+            <ToureTabs vendorPackage={vendorPackage} />
           </div>
           <div className=" col-span-2">
-            {/* <ToureBookingForm singlToureDetails={singleHotel} /> */}
+            <ToureBookingForm singlToureDetails={vendorPackage} />
           </div>
         </div>
       </div>
@@ -59,4 +61,4 @@ console.log(singletour?.package_files);
   );
 }
 
-export default HotelDetailsPage;
+export default BookingDetailsPage;

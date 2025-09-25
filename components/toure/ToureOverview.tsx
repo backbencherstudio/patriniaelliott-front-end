@@ -1,24 +1,20 @@
 
-function ToureOverview() {
+function ToureOverview({vendorPackage}) {
   return (
     <div className="mb-8">
       <h3 className="text-2xl lg:text-[32px] font-medium text-blackColor leading-[126%]">
         Overview
       </h3>
       <p className=" text-lg font-normal text-grayColor1 leading-[150%] mt-3">
-        Bali is a paradise that promises breathtaking scenery, rich cultural
-        heritage, and unforgettable experiences. From serene beaches and ancient
-        temples to majestic waterfalls hidden in lush landscapes, Bali has
-        something for every traveler. This guide takes you through the must-see
-        spots in Bali for an adventure you'll treasure forever.
+        {vendorPackage?.description}
+
       </p>
-      <p className=" text-lg font-normal text-grayColor1 leading-[150%] mt-3">
-        Bali is a paradise that promises breathtaking scenery, rich cultural
-        heritage, and unforgettable experiences. From serene beaches and ancient
-        temples to majestic waterfalls hidden in lush landscapes, Bali has
-        something for every traveler. This guide takes you through the must-see
-        spots in Bali for an adventure you'll treasure forever.
-      </p>
+     <div>
+      <div className="mt-4">
+        <h2 className="text-lg  font-semibold text-headerColor leading-[150%]">Meet Point: <span className=" font-medium text-grayColor1">{vendorPackage?.meting_points}</span></h2>
+      </div>
+      
+     </div>
     </div>
   );
 }

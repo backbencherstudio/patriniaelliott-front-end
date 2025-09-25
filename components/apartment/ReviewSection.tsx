@@ -156,8 +156,6 @@ const ReviewSection = ({ singleApartment }) => {
     }
   }, [reviewStats, totalReviews, averageRating]);
 
-  console.log("test============", reviewList);
-
   if (reviewLoading) return <Loader />
   return (
     <div>
