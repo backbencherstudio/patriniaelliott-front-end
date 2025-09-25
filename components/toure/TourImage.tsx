@@ -5,7 +5,7 @@ import ImageModal from '../apartment/ImageModal';
 
 
 function TourImage({vendorPackage}:{vendorPackage:any}) {
-    console.log("image",vendorPackage);
+    console.log("image",vendorPackage?.package_files[0]?.file_url);
      const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
      const [isOpen, setIsOpen] = useState(false);
   const getSlideSrc = (src: string, index: number) => {
@@ -25,7 +25,7 @@ function TourImage({vendorPackage}:{vendorPackage:any}) {
       <div className="lg:grid grid-cols-6 gap-6">
           <div className=" col-span-4 h-auto lg:h-[536px] rounded-2xl overflow-hidden">
             <Image
-              src={getSlideSrc(vendorPackage?.package_files[0], 0)}
+              src={getSlideSrc(vendorPackage?.package_files[0]?.file_url, 0)}
               alt={"image"}
               width={900}
               height={600}
@@ -36,7 +36,7 @@ function TourImage({vendorPackage}:{vendorPackage:any}) {
           <div className="  col-span-2 flex  lg:flex-col gap-3 mt-3 lg:mt-0 lg:gap-6 mb-12 md:mb-14 lg:mb-20">
             <div className=" lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={getSlideSrc(vendorPackage?.package_files[1], 1)}
+                src={getSlideSrc(vendorPackage?.package_files[1]?.file_url, 1)}
                 alt={"image"}
                 width={900}
                 height={600}
@@ -46,7 +46,7 @@ function TourImage({vendorPackage}:{vendorPackage:any}) {
             </div>
             <div className=" relative lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={getSlideSrc(vendorPackage?.package_files[2], 2)}
+                src={getSlideSrc(vendorPackage?.package_files[2]?.file_url, 2)}
                 alt={"image"}
                 width={900}
                 height={600}

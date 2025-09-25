@@ -110,7 +110,7 @@ function TourCardTwo({tour}:any) {
         {/* Free Cancellation */}
         <div className="flex items-center gap-2 text-sm text-[#0068EF] border-b pb-2 border-secondaryColor/20">
           Free cancellation{" "}
-          <span className="text-xs text-gray-400">({tour?.cancellation_policy})</span>
+          <span className="text-xs text-gray-400">(24 hours)</span>
         </div>
   <div className="flex  text-xs text-gray-600 mt-2 mb-4">
                     <div className="flex items-center gap-2 border-r border-grayColor1/30 pr-8">

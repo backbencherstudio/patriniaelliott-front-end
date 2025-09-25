@@ -1,4 +1,5 @@
 import ToureTabs from "@/components/toure/ToureTabs";
+import TourImage from "@/components/toure/TourImage";
 import { toursData } from "@/DemoAPI/toureData";
 import { UserService } from "@/service/user/user.service";
 
@@ -43,7 +44,7 @@ console.log(singletour?.package_files);
         <div>
           {/* <ToureHeader singleApartment={singleHotel} /> */}
         </div>
-        {/* <TourImage vendorPackage={vendorPackage}/> */}
+        <TourImage vendorPackage={vendorPackage}/>
         <div className="lg:grid grid-cols-6 gap-8 pb-20">
           <div className=" col-span-4 ">
             <ToureTabs />

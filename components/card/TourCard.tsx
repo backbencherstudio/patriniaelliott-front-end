@@ -88,7 +88,7 @@ export default function TourCard({ tour }: any) {
                 </div>
 
                 <span className="absolute z-20 top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                    Breakfast Included
+                  {tour?.breakfast_available && "Breakfast Included" }
                 </span>
                 <span className="absolute bottom-6 z-20 left-6 flex items-center bg-white text-gray-700 text-xs px-2 py-1 rounded-full shadow">
                     <FaMapMarkerAlt className="mr-1" /> {tour?.city}
@@ -110,7 +110,7 @@ export default function TourCard({ tour }: any) {
                     ))}
 
                 </div>
-                <p className="text-sm text-[#0068EF]">Free cancellation <span className='text-grayColor1 text-xs'>({tour?.cancellation_policy})</span></p>
+                <p className="text-sm text-[#0068EF]">Free cancellation <span className='text-grayColor1 text-xs'>(24 hours)</span></p>
 
                 <div className="flex  text-xs text-gray-600 mt-2 mb-4">
                     <div className="flex items-center gap-2 border-r border-grayColor1/30 pr-8">
@@ -127,7 +127,7 @@ export default function TourCard({ tour }: any) {
                         </svg>
                         <div >
                             <h3 className=' text-sm font-medium text-descriptionColor'>Duration</h3>
-                            <span>{tour?.duration} {tour?.duration_unit}</span>
+                            <span>{tour?.duration} {tour?.duration_type}</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 pl-8">
