@@ -34,7 +34,7 @@ function MenuDropDown({setMenuOpen,data}:any) {
                 >
                   <div className="md:w-[46px] md:h-[46px] w-8 h-8 relative rounded-full bg-white/10 border border-white/10">
                     <Image
-                      src="/usericon/avatar.png"
+                      src="/profile.png"
                       alt="User Avatar"
                       fill
                       className="object-cover rounded-full"
@@ -46,7 +46,7 @@ function MenuDropDown({setMenuOpen,data}:any) {
                   <div className="pb-3 border-b border-[#e9e9ea] flex items-center gap-2.5 w-full">
                     <div className="w-8 h-8 relative rounded-full">
                       <Image
-                        src={data?.avatar_url || "/usericon/avatar.png"}
+                        src={data?.avatar_url || "/profile.png"}
                         alt="User Avatar"
                         fill
                         className="rounded-full"
@@ -60,7 +60,7 @@ function MenuDropDown({setMenuOpen,data}:any) {
                     <Link href="/my-account" className="w-full flex items-center gap-2.5">
                         <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                           <Image
-                            src={data?.avatar_url || "/usericon/avatar.png"}
+                            src={data?.avatar_url || "/profile.png"}
                             alt="My Account"
                             width={16}
                             height={16}
