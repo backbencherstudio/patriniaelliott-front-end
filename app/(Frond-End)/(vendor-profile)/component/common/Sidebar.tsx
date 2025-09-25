@@ -22,6 +22,7 @@ interface SidebarProps {
 const navItems: NavItem[] = [
   { icon: '/vendor/profileinfo.svg', label: 'Add Profile Information', href: '/profile-info', isActive: true },
   // { icon: '/vendor/verification.svg', label: 'Vendor Verification', href: '/vendor-verification' },
+  { icon: '/vendor/pending.svg', label: 'Pending Request', href: '/pending-request' },
   { icon: '/vendor/payment.svg', label: 'Payment Method', href: '/payment-method' },
   { icon: '/vendor/transection.svg', label: 'Transection History', href: '/transection-history' },
   { icon: '/vendor/withdraw.svg', label: 'Withdraw Balance', href: '/withdraw-balance' },

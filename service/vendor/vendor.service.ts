@@ -382,4 +382,41 @@ export const VendorService = {
 
     return await Fetch.get("/vendor/verification/status", _config);
   },
+
+  // Vendor Packages (Pending/Approved)
+  getVendorPackages: async (params: any = {}, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "tourAccessToken", context });
+    
+    if (!userToken) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+
+    const queryString = Object.keys(params).length
+      ? `?${new URLSearchParams(params).toString()}`
+      : '';
+
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+
+    // Mirrors Insomnia path: /api/admin/vendor-package
+    return await Fetch.get(`/admin/vendor-package${queryString}`, _config);
+  },
+
+  updateVendorPackage: async (id: string, data: any, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "tourAccessToken", context });
+    if (!userToken) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+    return await Fetch.put(`/admin/vendor-package/${id}`, data, _config);
+  },
 };

@@ -223,7 +223,7 @@ export default function MyProfile() {
       {/* Profile Header */}
       <div className="p-7 bg-white rounded-2xl flex justify-between items-center">
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl font-medium">Elisabeth Sarah</h2>
+          <h2 className="text-2xl font-medium">{me?.first_name} {me?.last_name}</h2>
           <p className="text-gray-500">Update your info and find out how it's used.</p>
         </div>
         <div className="relative">

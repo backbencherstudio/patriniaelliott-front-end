@@ -1,0 +1,342 @@
+'use client'
+import DynamicTableWithPagination from '@/app/(Admin-Dashboard)/_component/common/DynamicTable'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import PendingRequestAction from './PendingRequestAction'
+import PendingRequestStatCard from './PendingRequestStatCard'
+import PendingRequestStatus from './PendingRequestStatus'
+import PendingRequestEditModal from './PendingRequestEditModal'
+import { useVendorApi } from '@/hooks/useVendorApi'
+import { VendorService } from '@/service/vendor/vendor.service'
+
+interface PropertyRequest {
+  id: string;
+  propertyName: string;
+  propertyType: string;
+  location: string;
+  submittedDate: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  price: string;
+  guestCapacity: number;
+  bedrooms: number;
+  bathrooms: number;
+}
+
+const propertyRequests: PropertyRequest[] = [
+  {
+    id: 'PR001',
+    propertyName: 'Luxury Downtown Apartment',
+    propertyType: 'Apartment',
+    location: 'New York, NY',
+    submittedDate: '15-05-25',
+    status: 'Pending',
+    price: '$150/night',
+    guestCapacity: 4,
+    bedrooms: 2,
+    bathrooms: 2
+  },
+  {
+    id: 'PR002',
+    propertyName: 'Cozy Mountain Cabin',
+    propertyType: 'House',
+    location: 'Aspen, CO',
+    submittedDate: '14-05-25',
+    status: 'Approved',
+    price: '$200/night',
+    guestCapacity: 6,
+    bedrooms: 3,
+    bathrooms: 2
+  },
+  {
+    id: 'PR003',
+    propertyName: 'Beachfront Villa',
+    propertyType: 'Villa',
+    location: 'Miami, FL',
+    submittedDate: '12-05-25',
+    status: 'Pending',
+    price: '$300/night',
+    guestCapacity: 8,
+    bedrooms: 4,
+    bathrooms: 3
+  },
+  {
+    id: 'PR004',
+    propertyName: 'City Center Studio',
+    propertyType: 'Studio',
+    location: 'San Francisco, CA',
+    submittedDate: '10-05-25',
+    status: 'Approved',
+    price: '$120/night',
+    guestCapacity: 2,
+    bedrooms: 1,
+    bathrooms: 1
+  },
+  {
+    id: 'PR005',
+    propertyName: 'Historic Townhouse',
+    propertyType: 'Townhouse',
+    location: 'Boston, MA',
+    submittedDate: '08-05-25',
+    status: 'Pending',
+    price: '$180/night',
+    guestCapacity: 5,
+    bedrooms: 2,
+    bathrooms: 2
+  },
+  {
+    id: 'PR006',
+    propertyName: 'Modern Loft Space',
+    propertyType: 'Loft',
+    location: 'Chicago, IL',
+    submittedDate: '07-05-25',
+    status: 'Approved',
+    price: '$160/night',
+    guestCapacity: 3,
+    bedrooms: 1,
+    bathrooms: 1
+  },
+  {
+    id: 'PR007',
+    propertyName: 'Riverside Cottage',
+    propertyType: 'Cottage',
+    location: 'Portland, OR',
+    submittedDate: '06-05-25',
+    status: 'Pending',
+    price: '$140/night',
+    guestCapacity: 4,
+    bedrooms: 2,
+    bathrooms: 1
+  },
+  {
+    id: 'PR008',
+    propertyName: 'Penthouse Suite',
+    propertyType: 'Penthouse',
+    location: 'Los Angeles, CA',
+    submittedDate: '05-05-25',
+    status: 'Approved',
+    price: '$400/night',
+    guestCapacity: 6,
+    bedrooms: 3,
+    bathrooms: 3
+  }
+];
+
+export default function PendingRequest() {
+  const [activeTab, setActiveTab] = useState<'All Properties' | 'Pending' | 'Approved'>('All Properties')
+  const [selectedDateRange, setSelectedDateRange] = useState<'all' | '7' | '15' | '30'>('all')
+  const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [packages, setPackages] = useState<PropertyRequest[]>(propertyRequests)
+  const [editOpen, setEditOpen] = useState(false)
+  const [editingRaw, setEditingRaw] = useState<any>(null)
+
+  const { loading, error, handleApiCall, clearError } = useVendorApi()
+  const apiListRef = (global as any).prApiListRef || { current: [] as any[] }
+  ;(global as any).prApiListRef = apiListRef
+
+  const reload = async () => {
+      try {
+        const res: any = await handleApiCall(VendorService.getVendorPackages)
+        const list = (res?.data?.data || res?.data || res) as any[]
+        apiListRef.current = list || []
+        const mapped: PropertyRequest[] = (list || []).map((item: any) => ({
+          id: item.id,
+          propertyName: item.name,
+          propertyType: item.type,
+          location: `${item.city || ''}${item.city && item.country ? ', ' : ''}${item.country || ''}` || item.address || '',
+          submittedDate: (item.created_at || '').slice(8,10)+'-'+(item.created_at || '').slice(5,7)+'-'+(item.created_at || '').slice(2,4),
+          status: item.status === 1 ? 'Pending' : 'Approved',
+          price: item.price ? `$${item.price}` : '-',
+          guestCapacity: item.max_guests || item.max_capacity || 0,
+          bedrooms: item.total_bedrooms || 0,
+          bathrooms: item.bathrooms || 0,
+        }))
+        setPackages(mapped)
+      } catch (e) {
+        // keep demo data on error
+      }
+  }
+
+  useEffect(() => { reload() }, [handleApiCall])
+
+  const dateRanges = [
+    { value: 'all', label: 'All Time' },
+    { value: '7', label: 'Last 7 days' },
+    { value: '15', label: 'Last 15 days' },
+    { value: '30', label: 'Last 30 days' }
+  ]
+
+  const filteredProperties = packages.filter((property) => {
+    const statusMatch = activeTab === 'All Properties' ||
+      (activeTab === 'Pending' && property.status === 'Pending') ||
+      (activeTab === 'Approved' && property.status === 'Approved');
+
+    let dateMatch = true;
+    if (selectedDateRange !== 'all') {
+      const [day, month, year] = property.submittedDate.split('-').map(num => parseInt(num));
+      const propertyDate = new Date(2000 + year, month - 1, day);
+      const today = new Date();
+      const cutoffDate = new Date(today);
+      cutoffDate.setDate(today.getDate() - parseInt(selectedDateRange));
+      dateMatch = propertyDate >= cutoffDate;
+    }
+
+    return statusMatch && dateMatch;
+  });
+
+  const stats = [
+    { title: "Total Properties", count: packages.length, iconPath: "/vendor/tik.svg" },
+    { title: "Pending Approval", count: packages.filter(p => p.status === 'Pending').length, iconPath: "/vendor/pending.svg" },
+    { title: "Approved Properties", count: packages.filter(p => p.status === 'Approved').length, iconPath: "/vendor/check.svg" },
+    { title: "Total Revenue", count: "$12,500", iconPath: "/vendor/totalearn.svg" },
+  ];
+
+  const columns = [
+    { label: 'Property Name', accessor: 'propertyName', width: '200px' },
+    { label: 'Type', accessor: 'propertyType', width: '120px' },
+    { label: 'Location', accessor: 'location', width: '150px' },
+    { label: 'Price', accessor: 'price', width: '120px' },
+    { label: 'Capacity', accessor: 'guestCapacity', width: '100px' },
+    { label: 'Bedrooms', accessor: 'bedrooms', width: '100px' },
+    { label: 'Bathrooms', accessor: 'bathrooms', width: '100px' },
+    { label: 'Submitted Date', accessor: 'submittedDate', width: '140px' },
+    {
+      label: 'Status',
+      accessor: 'status',
+      width: '120px',
+      formatter: (value: string) => <PendingRequestStatus status={value} />
+    },
+    {
+      label: 'Action',
+      accessor: 'action',
+      width: '150px',
+      formatter: (_: any, row: any) => (
+        <PendingRequestAction
+          onEdit={() => handleEdit(row)}
+          onDelete={() => handleDelete(row.id)}
+          property={row}
+        />
+      )
+    }
+  ];
+
+  const handleEdit = (property: PropertyRequest) => {
+    const raw = (apiListRef.current || []).find((x: any)=> x.id === property.id) || null
+    setEditingRaw(raw)
+    setEditOpen(true)
+  };
+
+  const handleDelete = (propertyId: string) => {
+    console.log('Delete property:', propertyId);
+    // Add delete functionality here
+  };
+
+  return (
+    <div className="w-full mx-auto max-w-[1036px] md:min-w-[1036px] flex flex-col gap-5 px-2 sm:px-4">
+      {/* Overview */}
+      <div className="w-full bg-white rounded-xl p-4">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div className="">
+            <h2 className="text-2xl font-medium text-[#22262e] mb-1">Pending Request</h2>
+            <p className="text-base text-[#777980]">
+              Manage your property listing requests and track their approval status.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="w-full bg-white rounded-xl p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {stats.map((stat, index) => (
+            <PendingRequestStatCard key={index} {...stat} />
+          ))}
+        </div>
+      </div>
+
+      {/* Table Section */}
+      <div className="w-full bg-white rounded-xl p-3 md:p-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+          <div className="flex flex-wrap gap-2 md:gap-4">
+            {['All Properties', 'Pending', 'Approved'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab as typeof activeTab)}
+                className={`px-2 md:px-4 py-2 border-b-2 cursor-pointer text-sm md:text-base ${activeTab === tab
+                  ? 'border-[#d6ae29] text-[#070707]'
+                  : 'border-[#f3f3f4] text-[#777980]'
+                  }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          <div className="relative w-full md:w-auto">
+            <div
+              onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
+              className="px-3 py-1.5 rounded border border-[#0068ef] flex items-center gap-3 cursor-pointer hover:bg-[#f5f5f5] justify-center md:justify-start"
+            >
+              <Image
+                src="/vendor/date.svg"
+                alt="Calendar"
+                width={14}
+                height={14}
+              />
+              <span className="text-[#0068ef] text-sm">
+                {dateRanges.find(range => range.value === selectedDateRange)?.label}
+              </span>
+              <Image
+                src="/vendor/down.svg"
+                alt="Dropdown"
+                width={14}
+                height={14}
+              />
+            </div>
+
+            {isDateDropdownOpen && (
+              <div className="absolute top-full left-0 md:right-0 mt-1 bg-white rounded-lg shadow-lg border py-1 z-10 w-auto md:w-auto">
+                {dateRanges.map((range) => (
+                  <div
+                    key={range.value}
+                    onClick={() => {
+                      setSelectedDateRange(range.value as 'all' | '7' | '15' | '30');
+                      setIsDateDropdownOpen(false);
+                    }}
+                    className="px-4 py-2 hover:bg-[#f5f5f5] cursor-pointer text-sm text-[#4a4c56]"
+                  >
+                    {range.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <DynamicTableWithPagination
+            loading={false}
+            totalPages={1}
+            columns={columns}
+            data={filteredProperties}
+            currentPage={currentPage}
+            itemsPerPage={10}
+            onPageChange={(page) => setCurrentPage(page)}
+            noDataMessage="No property requests found."
+          />
+        </div>
+      </div>
+
+      <PendingRequestEditModal
+        open={editOpen}
+        onClose={setEditOpen}
+        data={editingRaw}
+        onSave={async (id, payload) => {
+          await handleApiCall(VendorService.updateVendorPackage, id, payload)
+          setEditOpen(false)
+          // refresh list
+          await reload()
+        }}
+      />
+    </div>
+  )
+}
