@@ -17,6 +17,7 @@ function Page() {
       const endpoint ="/auth/me"
       const {data,loading}= useFetchData(endpoint)
 
+console.log("check user data",data);
 
       const [totalAmount, setTotalAmount] = useState(0)
       
@@ -53,7 +54,7 @@ function Page() {
               <StepOne data={data?.data} guests={guests} setGuests={setGuests} />
             </TabsContent>
             <TabsContent value="step2">
-              <StepTwo data={data?.data} totalAmount={totalAmount} />
+                <StepTwo  totalAmount={totalAmount} />
             </TabsContent>
           </Tabs>
         </div>

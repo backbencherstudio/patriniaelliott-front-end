@@ -1,151 +1,240 @@
 "use client"
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-// Create the context
-const ToureBookingContext = createContext(null);
+// Types
+interface TourBookingContextType {
+  singleToure: any;
+  setSingleToure: (toure: any) => void;
+  startDate: Date | null;
+  setStartDate: (date: Date | null) => void;
+  endDate: Date | null;
+  setEndDate: (date: Date | null) => void;
+  travelprice: number;
+  setTravelPrice: (price: number) => void;
+  travelCount: number;
+  setTravelCount: (count: number) => void;
+  totalDay: number;
+  totalPrice: number;
+  servicefee: number;
+  discount: number;
+  discountNumber: number;
+  calculateTotal: () => number;
+  handleBookNow: () => void;
+  bookingData: any;
+}
 
-// LocalStorage keys
+// Constants
 const STORAGE_KEYS = {
   SINGLE_TOURE: 'toure_booking_single_toure',
   TRAVEL_PRICE: 'toure_booking_travel_price',
   START_DATE: 'toure_booking_start_date',
   END_DATE: 'toure_booking_end_date',
   TRAVEL_COUNT: 'toure_booking_travel_count'
-};
+} as const;
 
-// Helper functions for localStorage
-const getFromStorage = (key, defaultValue) => {
+const SERVICE_FEE = 40;
+const DISCOUNT_PERCENTAGE = 10;
+
+// Helper functions
+const getFromStorage = (key: string, defaultValue: any) => {
   if (typeof window === 'undefined') return defaultValue;
+  
   try {
     const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultValue;
+    if (!item || item === 'undefined' || item === 'null') {
+      return defaultValue;
+    }
+    return JSON.parse(item);
   } catch (error) {
     console.error(`Error reading from localStorage: ${key}`, error);
+    localStorage.removeItem(key);
     return defaultValue;
   }
 };
 
-const setToStorage = (key, value) => {
+const setToStorage = (key: string, value: any) => {
   if (typeof window === 'undefined') return;
+  
   try {
+    if (value === undefined || value === null) {
+      localStorage.removeItem(key);
+      return;
+    }
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.error(`Error writing to localStorage: ${key}`, error);
   }
 };
 
-// Create a provider component
-export const ToureBookingProvider = ({ children }) => {
+// Context
+const ToureBookingContext = createContext<TourBookingContextType | null>(null);
+
+// Provider Component
+export const ToureBookingProvider = ({ children }: { children: React.ReactNode }) => {
+  // Clean up invalid localStorage data on mount
+  if (typeof window !== 'undefined') {
+    Object.values(STORAGE_KEYS).forEach(key => {
+      const item = localStorage.getItem(key);
+      if (item === 'undefined' || item === 'null') {
+        localStorage.removeItem(key);
+      }
+    });
+  }
+
+  // State
   const [singleToure, setSingleToure] = useState(() =>
     getFromStorage(STORAGE_KEYS.SINGLE_TOURE, null)
   );
   const [travelprice, setTravelPrice] = useState(() =>
     getFromStorage(STORAGE_KEYS.TRAVEL_PRICE, 0)
   );
-  const [startDate, setStartDate] = useState<any>(() => {
+  const [startDate, setStartDate] = useState<Date | null>(() => {
     const stored = getFromStorage(STORAGE_KEYS.START_DATE, null);
     return stored ? new Date(stored) : null;
   });
-  const [endDate, setEndDate] = useState<any>(() => {
+  const [endDate, setEndDate] = useState<Date | null>(() => {
     const stored = getFromStorage(STORAGE_KEYS.END_DATE, null);
     return stored ? new Date(stored) : null;
   });
-  const [bookingData, setBookingData] = useState(null);
   const [travelCount, setTravelCount] = useState(() =>
     getFromStorage(STORAGE_KEYS.TRAVEL_COUNT, 1)
   );
-  const totalDay = startDate && endDate ? (endDate - startDate) / (1000 * 3600 * 24) : 0;
-  const servicefee = 40;
+  const [bookingData, setBookingData] = useState(null);
 
-  // Wrapper functions with localStorage persistence
-  const handleSetSingleToure = (toure) => {
+  // Hydrate from a single localStorage object (idea from BookingProvider)
+  useEffect(() => {
+    const stored = getFromStorage("tourBookingDetails", null);
+    if (stored) {
+      if (stored.toure) {
+        setSingleToure(stored.toure);
+      }
+      if (stored.startDate) {
+        setStartDate(new Date(stored.startDate));
+      }
+      if (stored.endDate) {
+        setEndDate(new Date(stored.endDate));
+      }
+      if (typeof stored.travelprice === 'number') {
+        setTravelPrice(stored.travelprice);
+      }
+      if (typeof stored.travelCount === 'number') {
+        setTravelCount(stored.travelCount);
+      }
+      setBookingData(stored);
+    }
+  }, []);
+
+  // Computed values
+  const totalDay = useMemo(() => {
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24)));
+  }, [startDate, endDate]);
+
+  const calculateTotal = useCallback(() => {
+    return travelprice + SERVICE_FEE;
+  }, [travelprice]);
+
+  const totalPrice = calculateTotal();
+  const discount = useMemo(() => 
+    Number(((totalPrice * DISCOUNT_PERCENTAGE) / 100).toFixed(2)), 
+    [totalPrice]
+  );
+
+  // Memoized handlers
+  const handleSetSingleToure = useCallback((toure: any) => {
     setSingleToure(toure);
     setToStorage(STORAGE_KEYS.SINGLE_TOURE, toure);
-  };
+  }, []);
 
-  const handleSetTravelPrice = (price) => {
+  const handleSetTravelPrice = useCallback((price: number) => {
     setTravelPrice(price);
     setToStorage(STORAGE_KEYS.TRAVEL_PRICE, price);
-  };
+  }, []);
 
-  const handleSetStartDate = (date) => {
+  const handleSetStartDate = useCallback((date: Date | null) => {
     setStartDate(date);
     if (date) {
       setToStorage(STORAGE_KEYS.START_DATE, date.toISOString());
     }
-  };
+  }, []);
 
-  const handleSetEndDate = (date) => {
+  const handleSetEndDate = useCallback((date: Date | null) => {
     setEndDate(date);
     if (date) {
       setToStorage(STORAGE_KEYS.END_DATE, date.toISOString());
     }
-  };
+  }, []);
 
-  const handleSetTravelCount = (count) => {
+  const handleSetTravelCount = useCallback((count: number) => {
     setTravelCount(count);
     setToStorage(STORAGE_KEYS.TRAVEL_COUNT, count);
-  };
+  }, []);
 
-  // Update travel price when singleToure changes
-  const updateTravelPrice = (price) => {
-    if (price) {
-      handleSetTravelPrice(Number(price));
-    }
-  };
-  
-  const calculateTotal = () => {
-    return travelprice + servicefee;
-  };
-
-  const totalPrice = calculateTotal();
-  const discountNumber = 10;
-  const percentage = discountNumber / 100;
-  const discount = Number((totalPrice * percentage).toFixed(2));
-
-  const handleBookNow = () => {
+  const handleBookNow = useCallback(() => {
     const bookingDetails = {
       toure: singleToure,
       startDate,
       endDate,
-      servicefee,
+      servicefee: SERVICE_FEE,
       totalPrice,
       discount
     };
     setBookingData(bookingDetails);
-    console.log("toure confirmed:", bookingDetails);
-  };
+  }, [singleToure, startDate, endDate, totalPrice, discount]);
+
+  // Context value
+  const contextValue = useMemo(() => ({
+    singleToure,
+    setSingleToure: handleSetSingleToure,
+    startDate,
+    setStartDate: handleSetStartDate,
+    endDate,
+    setEndDate: handleSetEndDate,
+    travelprice,
+    setTravelPrice: handleSetTravelPrice,
+    travelCount,
+    setTravelCount: handleSetTravelCount,
+    totalDay,
+    totalPrice,
+    servicefee: SERVICE_FEE,
+    discount,
+    discountNumber: DISCOUNT_PERCENTAGE,
+    calculateTotal,
+    handleBookNow,
+    bookingData
+  }), [
+    singleToure,
+    handleSetSingleToure,
+    startDate,
+    handleSetStartDate,
+    endDate,
+    handleSetEndDate,
+    travelprice,
+    handleSetTravelPrice,
+    travelCount,
+    handleSetTravelCount,
+    totalDay,
+    totalPrice,
+    discount,
+    calculateTotal,
+    handleBookNow,
+    bookingData
+  ]);
 
   return (
-    <ToureBookingContext.Provider
-      value={{
-        singleToure,
-        setSingleToure: handleSetSingleToure,
-        startDate,
-        setStartDate: handleSetStartDate,
-        endDate,
-        travelprice,
-        setTravelPrice: handleSetTravelPrice,
-        updateTravelPrice,
-        setEndDate: handleSetEndDate,
-        servicefee,
-        totalDay,
-        totalPrice,
-        calculateTotal,
-        handleBookNow,
-        bookingData,
-        discountNumber,
-        discount,
-        travelCount, 
-        setTravelCount: handleSetTravelCount
-      }}
-    >
+    <ToureBookingContext.Provider value={contextValue}>
       {children}
     </ToureBookingContext.Provider>
   );
 };
 
-// Custom hook to use the BookingContext
+// Custom hook
 export const useToureBookingContext = () => {
-  return useContext(ToureBookingContext);
+  const context = useContext(ToureBookingContext);
+  if (!context) {
+    throw new Error('useToureBookingContext must be used within a ToureBookingProvider');
+  }
+  return context;
 };

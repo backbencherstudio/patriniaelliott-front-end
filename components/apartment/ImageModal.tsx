@@ -25,7 +25,7 @@ function ImageModal({images,isOpen,setIsOpen}:{images:any,isOpen:boolean,setIsOp
             {images.map((image:any,index:number)=>(
                 <div key={index}>
                     <Image
-                      src={getSlideSrc(image, index)}
+                      src={getSlideSrc(image?.file_url, index)}
                       alt={`image ${index}`}
                       width={400}
                       height={200}

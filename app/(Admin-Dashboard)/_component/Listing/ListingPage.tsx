@@ -37,7 +37,7 @@ export default function ListingPage() {
   const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}`;
   const { data, loading, error } = useFetchData(endpoint);
   const [editLoading,setEditLoading]=useState(false)
-  const totalPages = data?.pagination?.total_pages || 0;
+  const totalPages = data?.pagination?.totalPages || 0;
   useEffect(()=>{
     if (data?.data) {
       setListingData(data?.data);

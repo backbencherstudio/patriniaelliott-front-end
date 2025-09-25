@@ -19,7 +19,7 @@ interface DayDetails {
   accommodation: string;
 }
 
-function TourItinerary() {
+function TourItinerary({vendorPackage}) {
   const [openItems, setOpenItems] = useState<string[]>(["item-0", "item-1"]);
 
   const itineraryData: DayDetails[] = [
