@@ -12,7 +12,7 @@ import { IoIosArrowDown } from "react-icons/io";
 
 import { cn } from "@/lib/utils";
 import { UserService } from "@/service/user/user.service";
-function MenuDropDown(setMenuOpen:any) {
+function MenuDropDown({setMenuOpen,data}:any) {
       const pathname = usePathname();
       const hanldeLogout =async()=>{
          try {
@@ -46,21 +46,21 @@ function MenuDropDown(setMenuOpen:any) {
                   <div className="pb-3 border-b border-[#e9e9ea] flex items-center gap-2.5 w-full">
                     <div className="w-8 h-8 relative rounded-full">
                       <Image
-                        src="/usericon/avatar.png"
+                        src={data?.avatar_url || "/usericon/avatar.png"}
                         alt="User Avatar"
                         fill
                         className="rounded-full"
                       />
                       <div className="w-8 h-8 left-0 top-0 absolute opacity-10 rounded-full border border-black" />
                     </div>
-                    <div className="text-[#070707] text-base">elisabeth_sarah@gmail.com</div>
+                    <div className="text-[#070707] text-base">{data?.email}</div>
                   </div>
                   <div className="flex flex-col gap-1.5 mt-1 w-full">
                       <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
                     <Link href="/my-account" className="w-full flex items-center gap-2.5">
                         <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                           <Image
-                            src="/usericon/user.svg"
+                            src={data?.avatar_url || "/usericon/avatar.png"}
                             alt="My Account"
                             width={16}
                             height={16}
@@ -72,11 +72,11 @@ function MenuDropDown(setMenuOpen:any) {
                         )}>My Account</div>
                     </Link>
                       </DropdownMenuItem>
-                        <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
-                    <Link  onClick={() => setMenuOpen(false)} href="/property-list" className="w-full flex items-center gap-2.5">
+                        {/* <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
+            <Link  onClick={() => setMenuOpen(false)} href="/property-list" className="w-full flex items-center gap-2.5">
                           <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                             <Image
-                              src="/usericon/date.svg"
+                              src="/usericon/date.png"
                               alt="My Booking"
                               width={16}
                               height={16}
@@ -86,8 +86,8 @@ function MenuDropDown(setMenuOpen:any) {
                             "text-base",
                             pathname === "/property-list" ? "text-[#d6ae29]" : "text-[#070707]"
                           )}>List Your Property</div>
-                      </Link>
-                        </DropdownMenuItem>
+                      </Link> 
+                        </DropdownMenuItem> */}
                       <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10 w-full focus:bg-transparent">
                     <Link href="/apartment-history" className="w-full flex items-center gap-2.5">
                         <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">

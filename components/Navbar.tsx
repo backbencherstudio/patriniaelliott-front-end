@@ -12,21 +12,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import useFetchData from "@/hooks/useFetchData";
 import { useToken } from "@/hooks/useToken";
 import { cn } from "@/lib/utils";
 import MenuDropDown from "./MenuDropDown";
 
 const menuItems = [
-  { en: "Home", bn: "হোম", slug: "/" },
-  { en: "Apartment", bn: "অ্যাপার্টমেন্ট", slug: "/apartments" },
-  { en: "Hotel", bn: "হোটেল", slug: "/hotels" },
-  { en: "Tours", bn: "ট্যুর", slug: "/tours" },
-  { en: "Contact Us", bn: "যোগাযোগ", slug: "/contact" },
+  { en: "Home", slug: "/" },
+  { en: "Apartment", slug: "/apartments" },
+  { en: "Hotel", slug: "/hotels" },
+  { en: "Tours",  slug: "/tours" },
+  { en: "Contact Us",  slug: "/contact" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [language, setLanguage] = useState<"en" | "bn">("en");
+  const [language, setLanguage] = useState<"en">("en");
   const [menuOpen, setMenuOpen] = useState(false);
   const {token}=useToken()
     const isActive = (href: string): boolean => {
@@ -35,7 +36,9 @@ export default function Navbar() {
     }
     return pathname.startsWith(href);
   };
- 
+  const endpoint ="/auth/me"
+      const {data,loading}= useFetchData(endpoint)
+  console.log("check data",data);
   
   return (
     <header className="bg-primaryColor py-4 ">
@@ -53,7 +56,7 @@ export default function Navbar() {
                 isActive(item.slug) ? "text-secondaryColor" : "text-white"
               )}
             >
-              {language === "en" ? item.en : item.bn}
+              {language === "en" ? item.en : item.en}
             </Link>
           ))}
         </nav>
@@ -66,8 +69,8 @@ export default function Navbar() {
               <DropdownMenuItem onClick={() => setLanguage("en")}>
                 English
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage("bn")}>
-                বাংলা
+              <DropdownMenuItem >
+                  German
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -75,15 +78,21 @@ export default function Navbar() {
           {token ? (
             <>
               <Link
-                href="/profile-info"
+                href="/property-list"
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
               >
-                Become a Vendor
+                List your proparty
               </Link>
-             <MenuDropDown setMenuOpen={setMenuOpen}/>
+             <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data}/>
             </>
           ) : (
             <>
+            <Link
+                href={token ? "/property-list" : "/login"}
+                className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
+              >
+                List your proparty
+              </Link>
               <Link href="/login" className="text-white text-base">
                 Login
               </Link>
@@ -156,7 +165,7 @@ export default function Navbar() {
               )}
               onClick={() => setMenuOpen(false)}
             >
-              {language === "en" ? item.en : item.bn}
+              {language === "en" ? item.en : item.en}
             </Link>
           ))}
           {/* Language Dropdown (Mobile) */}
@@ -164,26 +173,26 @@ export default function Navbar() {
             <BsGlobe2 className="text-white" />
             <select
               value={language}
-              onChange={(e) => setLanguage(e.target.value as "en" | "bn")}
+              onChange={(e) => setLanguage(e.target.value as "en" )}
               className="bg-transparent outline-none text-white"
             >
               <option value="en" className="text-black">English</option>
-              <option value="bn" className="text-black">বাংলা</option>
+              <option value="ger" className="text-black">German</option>
             </select>
           </div>
           {/* Auth Buttons */}
-          <div className="mt-4 flex flex-col gap-3">
-            {token && (
+          <div className="mt-4 flex flex-col text-center gap-3">
+            
               <>
                 <Link
-                  href="/profile-info"
+                  href={token ? "/property-list" : "/login"}
                   onClick={() => setMenuOpen(false)}
                   className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
                 >
-                  Become a Vendor
+                  List your proparty
                 </Link>      
               </>
-            ) }
+           
           </div>
         </div>
       </div>
