@@ -1,20 +1,20 @@
 import Image from "next/image";
 
-function ReviewAction({ status, onView, onDelete }: any) {
+function ReviewAction({ status, onView, onDelete, data }: any) {
   return (
     <div>
-      {status?.status == "Approved" || status?.status == "Rejected" ? (
+      {status?.text == "Approved" || status?.text == "Rejected" ? (
         <div className=" flex justify-center items-center gap-3">
           <span
             className="text-xs whitespace-nowrap underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
-            onClick={() => onView(status)}
+            onClick={() => onView(data)}
           >
             View details
           </span>{" "}
           <button>
             {" "}
             <Image
-              onClick={() => onDelete(status.id)}
+              onClick={() => onDelete(data.id)}
               src="/dashboard/icon/delete.svg"
               alt="delete"
               width={16}
@@ -48,7 +48,7 @@ function ReviewAction({ status, onView, onDelete }: any) {
             </svg>
           </button>
           <button
-            onClick={() => onDelete(status)}
+            onClick={() => onDelete(data.id)}
             className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]"
           >
             <svg

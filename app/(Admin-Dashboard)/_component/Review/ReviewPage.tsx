@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { reviewData } from "@/DemoAPI/reviewData";
+import useFetchData from "@/hooks/useFetchData";
 import { FaRegStar } from "react-icons/fa";
 import DynamicTableTwo from "../common/DynamicTableTwo";
 import FeedbackChart from "./FeedbackChart";
@@ -18,6 +19,7 @@ import ReviewDetails from "./ReviewDetails";
 import ReviewStatuse from "./ReviewStatuse";
 import SatisfactionCard from "./SatisfactionCard";
 import TotalReview from "./TotalReview";
+import DynamicTableWithPagination from "../common/DynamicTable";
 
 
 export default function ReviewPage() {
@@ -36,23 +38,28 @@ export default function ReviewPage() {
   };
   const handleDelete = (user: any) => {
     setSelectedData(user);
-    
   };
+  const endpoint = `/admin/reviews?page=${currentPage}&limit=${10}`
+const {data,loading} = useFetchData(endpoint)
+
+console.log(data);
+
+
   const columns = [
-    { label: "User Name", accessor: "userName", width:"168px" ,
-      formatter: (_, row) => (
+    { label: "User Name", accessor: "user", width:"168px" ,
+      formatter: (value, row) => (
         <div className=" flex gap-2 items-center"><div className=" w-6 h-6 rounded-full overflow-hidden ">
-           <Image src={row?.userImage} alt={row?.userName} width={24} height={24} />
-           </div> <span className="text-headerColor text-xs">{row.userName}</span> </div>
+           <Image src={row?.avatar} alt={row?.name} width={24} height={24} />
+           </div> <span className="text-headerColor text-xs">{value?.name}</span> </div>
       ),
     },
     { label: "Reservation", accessor: "reservation" ,width:"238px",
-      formatter: (_, row) => (
+      formatter: (value, row) => (
         <div className=" flex gap-2 items-center"><div className=" w-17 h-10 rounded-md overflow-hidden ">
-           <Image src={row?.propertyImage} alt={row?.userName} width={68} height={40} />
+           <Image src={value?.package_image} alt={value?.name} width={68} height={40} />
            </div><div>
-           <p className="text-headerColor font-medium text-xs">{row.reservation}</p>
-           <p className=" text-xs mt-1">{row?.roomStatus}</p>
+           <p className="text-headerColor font-medium text-xs">{value?.package_name}</p>
+           <p className=" text-xs mt-1">{row?.package_type}</p>
             </div> </div>
       ),
     },
@@ -61,52 +68,35 @@ export default function ReviewPage() {
       label: "Review",
       accessor: "review",
       width:"214px",
-      formatter: (_, row) => (
+      formatter: (value, row) => (
         <div className=" flex items-center">
          
-           <p className=" text-xs text-headerColor">{row?.review}</p>
+           <p className=" text-xs text-headerColor">{value?.comment}</p>
             </div> 
       ),
      
     },
-    { label: "Rating", accessor: "rating" , width:"80px",
-      formatter: (_, row) => (
-        <div className=" flex gap-1 text-xs text-headerColor items-center"><FaRegStar className=" text-base text-yellow-400" /> {row.rating}</div>
+    { label: "Rating", accessor: "review" , width:"80px",
+      formatter: (value, row) => (
+        <div className=" flex gap-1 text-xs text-headerColor items-center"><FaRegStar className=" text-base text-yellow-400" /> {value.rating}</div>
       ),
     },
     {
       label: "Status",
       accessor: "status",
       width:"134px",
-      formatter: (_, row) => <ReviewStatuse status={row.status} />,
+      formatter: (value, row) => <ReviewStatuse status={value?.text} />,
     },
     {
       label: "Action",
       accessor: "status",
       width:"125px",
-      formatter: (_, row) => (
-        <ReviewAction onView={handleViewDetails}  onDelete={handleDelete}  status={row} />
+      formatter: (value, row) => (
+        <ReviewAction onView={handleViewDetails}  onDelete={handleDelete}  status={value} data={row} />
       ),
     },
   ];
  
-
-  const filteredUsers = reviewData.filter((user) => {
-    const roleMatch =
-      selectedRole === "All" ||
-      user.status === selectedRole 
-    
-    let dateMatch = true;
-
-    if (dateRange !== "all") {
-      const joinDate = new Date(user.joinDate.split("/").reverse().join("-"));
-      const today = new Date();
-      const cutoffDate = new Date(today);
-      cutoffDate.setDate(today.getDate() - parseInt(dateRange));
-      dateMatch = joinDate >= cutoffDate;
-    }
-    return roleMatch && dateMatch ;
-  });
 
   
   return (
@@ -184,13 +174,15 @@ export default function ReviewPage() {
         {/* Table */}
         <div>
           {selectedRole  && (
-            <DynamicTableTwo
-              columns={columns}
-              data={filteredUsers}
-              currentPage={currentPage}
-              itemsPerPage={5}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
+            <DynamicTableWithPagination
+            data={data?.data}
+            columns={columns}
+            currentPage={currentPage}
+            loading={loading}
+            totalPages={data?.pagination?.total_pages || 0}
+            itemsPerPage={10}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
           )}
          
         </div>
