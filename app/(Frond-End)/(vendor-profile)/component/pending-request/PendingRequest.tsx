@@ -8,6 +8,7 @@ import PendingRequestStatus from './PendingRequestStatus'
 import PendingRequestEditModal from './PendingRequestEditModal'
 import { useVendorApi } from '@/hooks/useVendorApi'
 import { VendorService } from '@/service/vendor/vendor.service'
+import ConfirmDeleteModal from '../common/ConfirmDeleteModal'
 
 interface PropertyRequest {
   id: string;
@@ -35,6 +36,8 @@ export default function PendingRequest() {
   const [totalCount, setTotalCount] = useState<number>(0)
   const [editOpen, setEditOpen] = useState(false)
   const [editingRaw, setEditingRaw] = useState<any>(null)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const { loading, error, handleApiCall, clearError } = useVendorApi()
   const apiListRef = (global as any).prApiListRef || { current: [] as any[] }
@@ -144,8 +147,8 @@ export default function PendingRequest() {
   };
 
   const handleDelete = (propertyId: string) => {
-    console.log('Delete property:', propertyId);
-    // Add delete functionality here
+    setDeletingId(propertyId)
+    setDeleteOpen(true)
   };
 
   return (
@@ -253,6 +256,20 @@ export default function PendingRequest() {
           setEditOpen(false)
           // refresh list
           await reload()
+        }}
+      />
+
+      <ConfirmDeleteModal
+        open={deleteOpen}
+        onClose={setDeleteOpen}
+        title="Delete package"
+        message="Are you sure you want to delete this package? This action cannot be undone."
+        onConfirm={async ()=>{
+          if (!deletingId) return
+          await handleApiCall(VendorService.deleteVendorPackage, deletingId)
+          setDeleteOpen(false)
+          setDeletingId(null)
+          await reload(currentPage)
         }}
       />
     </div>
