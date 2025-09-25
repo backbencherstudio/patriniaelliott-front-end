@@ -37,10 +37,10 @@ const [data, setData] = useState(null);
     fetchData(); 
   }, [endpoint, token]);
 
-  
+  const filterData = data?.data && data?.data?.length > 0 ? data?.data : []
   return (
     <div className="pb-10 lg:pb-20">
-      <FilterHeader title="Tour" data={toursData}/>
+      <FilterHeader title="Tour" data={filterData}/>
       <TureAllPackage data={data?.data} pagination={pagination} loading={loading} error={error} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
     </div>
   );
