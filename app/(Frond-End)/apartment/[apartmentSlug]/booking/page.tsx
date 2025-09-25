@@ -30,7 +30,7 @@ function Page() {
             details <ChevronRight className="w-4 h-4 text-[#737373]" /> <span className=" text-headerColor">Booking</span> 
           </span>
         </div>
-        <div className="col-span-12 lg:col-span-7">
+        <div className="col-span-12 lg:col-span-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className=" ">
             <TabsList className="flex gap-3 lg:space-x-2 border-b border-grayColor1/20 rounded-none   bg-whiteColor shadow-none pb-3 max-w-[250px] ">
               <TabsTrigger
@@ -53,7 +53,7 @@ function Page() {
               <StepOne data={data?.data} guests={guests} setGuests={setGuests} />
             </TabsContent>
             <TabsContent value="step2">
-              <StepTwo totalAmount={totalAmount} />
+              <StepTwo data={data?.data} totalAmount={totalAmount} />
             </TabsContent>
           </Tabs>
         </div>

@@ -1,8 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { FaMapMarkerAlt, FaStar } from 'react-icons/fa';
-import { FaArrowRight } from 'react-icons/fa6';
+import { useState } from 'react';
+import { FaArrowRight, FaMapMarkerAlt, FaStar } from 'react-icons/fa';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 type TourCardProps = {
     image: string;
@@ -17,36 +19,76 @@ type TourCardProps = {
     price: string;
 };
 
-export default function TourCard({
-    image,
-    location,
-    tag,
-    type,
-    title,
-    rating,
-    cancellation,
-    duration,
-    groupSize,
-    price,
-}: TourCardProps) {
+export default function TourCard({tour}:any) {
+    console.log(tour);
+    const [failedIndice, setFailedIndice] = useState<Set<number>>(new Set());
+      const getSlideSrc = (src: string, index: number) => {
+    if (!src) return "/empty.png";
+    return failedIndice.has(index) ? "/empty.png" : src;
+  };
+
+  const handleImageError = (index: number) => {
+    setFailedIndice(prev => {
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
+  };
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full ">
             <div className="relative">
                 <div className=' p-3'>
-                    <Image
-                        src={image}
-                        alt={title}
-                        width={500}
-                        height={250}
-                        className="w-full h-full object-cover"
-                    />
+                     {
+            tour?.roomFiles?.length >= 2 ?
+              <Swiper
+                slidesPerView={1}
+                loop={true}
+                speed={1000}
+                spaceBetween={20}
+                autoplay={{
+                  delay: 5000,
+                  disableOnInteraction: false,
+                }}
+
+                modules={[Autoplay, Navigation, Pagination]}
+                pagination={{
+                  clickable: true,
+                  bulletClass: 'hero-bullet',
+                  bulletActiveClass: 'hero-bullet-active',
+                }}>
+                {
+                  tour?.roomFiles?.slice(0, 4).map((file: any, index: number) => (
+                    <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
+                      <Image
+                        src={getSlideSrc(file, index)}
+                        alt={tour?.name}
+                        width={400}
+                        height={200}
+                        onError={() => handleImageError(index)}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                      />
+                    </SwiperSlide>
+                  ))
+                }
+              </Swiper>
+              :
+              <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
+                <Image
+                  src={"/Accommodation/a1.png"}
+                  alt={tour?.name}
+                  width={400}
+                  height={200}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                />
+              </div>
+          }
                 </div>
 
                 <span className="absolute top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                    {tag}
+                   Hotel + All inclusive
                 </span>
                 <span className="absolute bottom-6 left-6 flex items-center bg-white text-gray-700 text-xs px-2 py-1 rounded-full shadow">
-                    <FaMapMarkerAlt className="mr-1" /> {location}
+                    <FaMapMarkerAlt className="mr-1" /> {tour?.location}
                 </span>
             </div>
 
@@ -55,17 +97,17 @@ export default function TourCard({
                    Hotel + All inclusive
                 </span>
                 <h3 className="font-medium mt-3 text-[22px] text-blackColor leading-[130%]">
-                    {title}
+                    {tour?.name}
                 </h3>
 
                 <div className="flex items-center gap-1 text-yellow-500 text-sm">
-                    <span className="text-headerColor  text-sm">{rating}</span>
+                    <span className="text-headerColor  text-sm">{tour?.rating_summary?.averageRating}</span>
                     {Array.from({ length: 5 }, (_, i) => (
-                        <FaStar key={i} className={i < rating ? 'text-yellow-400' : 'text-[#A7B6CC]'} />
+                        <FaStar key={i} className={i < tour?.rating_summary?.averageRating ? 'text-yellow-400' : 'text-[#A7B6CC]'} />
                     ))}
 
                 </div>
-                <p className="text-sm text-[#0068EF]">Free cancellation <span className='text-grayColor1 text-xs'>({cancellation})</span></p>
+                <p className="text-sm text-[#0068EF]">Free cancellation <span className='text-grayColor1 text-xs'>({tour?.cancellation_policy})</span></p>
 
                 <div className="flex  text-xs text-gray-600 mt-2 mb-4">
                     <div className="flex items-center gap-2 border-r border-grayColor1/30 pr-8">
@@ -82,7 +124,7 @@ export default function TourCard({
                         </svg>
                         <div >
                             <h3 className=' text-sm font-medium text-descriptionColor'>Duration</h3>
-                            <span>{duration} Days</span>
+                            <span>{tour?.duration} {tour?.duration_unit}</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 pl-8">
@@ -91,7 +133,7 @@ export default function TourCard({
                             <path d="M4.69044 5.92988C2.96783 5.92988 1.56641 7.3313 1.56641 9.05391C1.56636 10.7765 2.96783 12.1779 4.69044 12.1779C6.413 12.1779 7.81447 10.7765 7.81447 9.05391C7.81447 7.3313 6.41305 5.92988 4.69044 5.92988ZM4.69039 10.7717C3.74319 10.7717 2.97261 10.0011 2.97261 9.05391C2.97261 8.10671 3.74319 7.33613 4.69039 7.33613C5.63759 7.33613 6.40817 8.10671 6.40817 9.05391C6.40817 10.0011 5.63759 10.7717 4.69039 10.7717ZM12.0001 2.0498C9.69875 2.0498 7.82647 3.92209 7.82647 6.22346C7.82647 8.52484 9.69875 10.3971 12.0001 10.3971C14.3015 10.3971 16.1738 8.52484 16.1738 6.22346C16.1738 3.92213 14.3015 2.0498 12.0001 2.0498ZM12.0001 8.99087C10.4742 8.99087 9.23272 7.74943 9.23272 6.22346C9.23272 4.69754 10.4742 3.45605 12.0001 3.45605C13.5261 3.45605 14.7675 4.69749 14.7675 6.22346C14.7675 7.74943 13.5261 8.99087 12.0001 8.99087ZM19.3098 5.92988C17.5872 5.92988 16.1858 7.3313 16.1858 9.05391C16.1858 10.7765 17.5872 12.1779 19.3098 12.1779C21.0324 12.1779 22.4338 10.7765 22.4338 9.05391C22.4338 7.3313 21.0324 5.92988 19.3098 5.92988ZM19.3098 10.7717C18.3627 10.7717 17.592 10.0011 17.592 9.05391C17.5921 8.10671 18.3627 7.33613 19.3098 7.33613C20.257 7.33613 21.0276 8.10671 21.0276 9.05391C21.0276 10.0011 20.257 10.7717 19.3098 10.7717Z" fill="#D6AE29" />
                         </svg><div >
                             <h3 className=' text-sm font-medium text-descriptionColor'>Group Size</h3>
-                            <span>{groupSize} Pepole</span>
+                            <span>{tour?.max_capacity} Pepole</span>
                         </div>
 
                     </div>
@@ -101,7 +143,7 @@ export default function TourCard({
                         <p className="text-grayColor1 text-sm font-semibold">
                             Starting From<br />
                         </p>
-                        <p className="text-xl text-primaryColor capitalize font-medium">${price}/person</p>
+                        <p className="text-xl text-primaryColor capitalize font-medium">${tour?.price}/person</p>
                     </div>
                     <button className="lg:text-[22px] text-base gap-1 flex lg:gap-3 items-center font-medium border border-secondaryColor text-secondaryColor px-3 lg:px-4 py-2 rounded-full hover:text-blackColor cursor-pointer hover:bg-secondaryColor transition">
                         Check Details <FaArrowRight/>

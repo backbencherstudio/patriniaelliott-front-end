@@ -1,10 +1,10 @@
 declare global {
-    interface Window {
-      katex: typeof import("katex");
-    }
+  interface Window {
+    katex: typeof import("katex");
   }
+}
 
-  type User = {
+type User = {
   id: string;
   name: string;
   email: string;
@@ -31,6 +31,7 @@ type PackageFile = {
 export type Package = {
   id: string;
   created_at: string;
+  total_bedrooms: number;
   updated_at: string;
   deleted_at: string | null;
   status: number;

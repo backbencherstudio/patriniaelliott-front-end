@@ -87,10 +87,10 @@ export default function BookingPage() {
   
   const columns = [
     {
-      label: "Booking ID", width:"100px", accessor: "id", formatter: (_, __, index) => <TableId currentPage={currentPage} itemsPerPage={itemsPerPage} index={index} />
+      label: "Booking ID", width:"100px", accessor: "booking_id", 
     },
     { label: "Name", 
-      accessor: "name", width:"140px",
+      accessor: "original_data", width:"140px",
       formatter: (_, row) => <div >{row?.user?.name}</div> 
     },
     { label: "Service", 
@@ -98,16 +98,16 @@ export default function BookingPage() {
     },
     {
       label: "Payment", 
-      accessor: "status",width:"120px",
-      formatter: (_, row) => <BookingPymentStatuse status={row.payment_status} />,
+      accessor: "payment",width:"120px",
+      formatter: (value, row) => <BookingPymentStatuse status={value?.status} />,
     },
     { label: "Check-In", 
-      accessor: "booking_items",width:"120px", 
-      formatter: (_, row) => <DateCheck date={row?.booking_items[0].start_date} /> 
+      accessor: "check_in",width:"120px", 
+      formatter: (value, row) => <DateCheck date={value} /> 
     },
     { label: "Check-Out", 
-      accessor: "checkOut",width:"120px", 
-      formatter: (_, row) => <DateCheck date={row?.booking_items[0].end_date} /> 
+      accessor: "check_out",width:"120px", 
+      formatter: (value, row) => <DateCheck date={value} /> 
     },
     {
       label: "Price", 
@@ -116,7 +116,7 @@ export default function BookingPage() {
     },
     { label: "Action", 
       accessor: "status",width:"100px", 
-      formatter: (_, row) => <BookingAction 
+      formatter: (value, row) => <BookingAction 
         onView={handleViewDetails} 
         status={row} 
         onOptimisticUpdate={handleOptimisticUpdate}
@@ -126,7 +126,7 @@ export default function BookingPage() {
       label: "Status",
       accessor: "status",
       width:"120px",
-      formatter: (_, row) => <BokingStatuse status={row.status} />,
+      formatter: (value, row) => <BokingStatuse status={value} />,
     },
   ];
   

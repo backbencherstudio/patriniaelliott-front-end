@@ -26,7 +26,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "hd-priest-angels-hope.trycloudflare.com",
+        hostname: "fellow-lone-provisions-decided.trycloudflare.com",
+      },
+      {
+        protocol: "https",
+        hostname: "fellow-lone-provisions-decided.trycloudflare.com",
       },
       {
         protocol: "https",

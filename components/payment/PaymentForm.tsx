@@ -324,7 +324,7 @@ export default function PaymentForm({ totalAmount }) {
         Cancellations must be made at least 24 hours before check-in to be eligible for a refund; cancellations after this deadline may result in a partial refund or no refund, depending on the provider’s policy.
       </div>
 
-      {isOpen && <BookingFinalStep paymentID={paymentID} isOpen={isOpen} setIsOpen={setIsOpen} />}
+    
     </div>
   );
 }

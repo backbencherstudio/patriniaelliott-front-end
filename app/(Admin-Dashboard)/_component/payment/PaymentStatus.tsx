@@ -7,22 +7,22 @@ interface UserData {
     phone: string;
     role: string;
     joinDate: string;
-    status: 'Available' | 'Booked' | 'Cancel';
+    status: "succeeded" | 'pending' | 'cancel';
   }
   export const statusStyles = {
-    Available: {
+    succeeded: {
       bg: 'bg-[#38c976]/10',
       border: 'outline-[#abefc6]',
       text: 'text-[#067647]',
       icon: '/dashboard/icon/tik.svg'
     },
-    Booked: {
+    pending: {
       bg: 'bg-[#ffa23a]/10',
       border: 'outline-[#ffa23a]',
       text: 'text-[#ffa23a]',
       icon: '/dashboard/icon/loading.svg'
     },
-    Cancel: {
+    cancel: {
       bg: 'bg-[#fe5050]/10',
       border: 'outline-[#fe5050]',
       text: 'text-[#fe5050]',
@@ -36,20 +36,20 @@ function PaymentStatuse({ status }: { status: UserData['status'] }) {
 
     
   return (
-    <div className={`pl-1.5 pr-2 py-1.5 ${style.bg ? style.bg  :''} rounded-2xl  outline-1 outline-offset-[-1px] ${style.border ? style.border :""} flex justify-center items-center gap-1`}>
+    <div className={`pl-1.5 pr-2 py-1.5 ${style?.bg ? style.bg  :''} rounded-2xl  outline-1 outline-offset-[-1px] ${style?.border ? style.border :""} flex justify-center items-center gap-1`}>
      <div className="w-3 h-3 relative overflow-hidden">
              <Image
-               src={style.icon} 
+               src={style?.icon} 
                alt={status} 
                width={12} 
                height={12} 
-               className={style.text}
+               className={style?.text}
              />
            </div>
-      <div className={`text-center justify-start ${style.text} text-xs font-normal font-['Inter'] leading-3`}>
-         {status == "Available" && "Complete" }
-         {status == "Booked" && "Pending" }
-         {status == "Cancel" && "Cancel" }
+      <div className={`text-center justify-start ${style?.text} text-xs font-normal font-['Inter'] leading-3`}>
+         {status == "succeeded" && "Complete" }
+         {status == "pending" && "Pending" }
+         {status == "cancel" && "Cancel" }
        
       </div>
     </div>
