@@ -88,6 +88,12 @@ type tripPlanType={
 }
 
 
+type package_policy_type={
+    title:string;
+    description:string;
+}
+
+
 type tourType={
     title: string;
     description: string;
@@ -99,7 +105,10 @@ type tourType={
     duration: number;
     durationType: string;
     price: number;
-    cancellation_policy: string[];
+    discount:number;
+    service_fee:number;
+    policy_description:string;
+    package_policies: package_policy_type[];
     extra_service: string[];
     language: string[];
 }

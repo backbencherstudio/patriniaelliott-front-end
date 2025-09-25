@@ -120,7 +120,15 @@ const AddTour = () => {
       cancellation_policy_id: "",
       package_category: "",
       duration: "",
-      city: ''
+      city: '',
+      service_fee: '',
+      discount: '',
+      policy_description: '',
+      transportation:'',
+      meals:'',
+      guide:'',
+      addOns:'',
+      cancellation_policy:''
     },
   });
   const [countries, setCountries] = useState<countryType[]>(country.country);
@@ -133,7 +141,6 @@ const AddTour = () => {
   const [destinations, setDestinations] = useState([]);
   const [images, setImages] = useState([]);
   const [travellerTypes, setTravellerTypes] = useState([]);
-  const [showCancellation, setShowCancellation] = useState(false);
   const [showExtraService, setShowExtraService] = useState(false);
   const [tourPlan, setTourPlan] = useState([
     {
@@ -155,7 +162,6 @@ const AddTour = () => {
   const [selectedDestinations, setSelectedDestinations] = useState(""); // [{id}]
   const [selectedLanguages, setSelectedLanguages] = useState([]); // [{id}]
   const [cancelPolicy, setCancelPolicy] = useState("");
-  const [cancellationPolicies, setCancellationPolicies] = useState([]);
   const [extraService, setExtraService] = useState({
     name: "",
     price: ""
@@ -201,14 +207,6 @@ const AddTour = () => {
     setShowExtraService(false);
   };
 
-  // Handle Cancellation Policies
-  const handleCancellationPolicies = () => {
-    if (cancelPolicy === "") return;
-    setCancellationPolicies((prev) => [...prev, cancelPolicy]);
-    setCancelPolicy("");
-    setShowCancellation(false);
-  };
-
   // Handle Form Submission
   const onSubmit = async (data) => {
     // Validate media minimums
@@ -239,11 +237,35 @@ const AddTour = () => {
       country: countries?.filter(ct => ct.code === selectedCountry)?.[0]?.name,
       city: data?.city,
       duration: data?.duration,
-      durationType: data?.duration_type,
+      durationType: "days",
       price: data?.price,
-      cancellation_policy: cancellationPolicies,
       extra_service: extraServices,
       language: selectedLanguages,
+      discount: Number(data?.discount),
+      service_fee: Number(data?.service_fee),
+      policy_description: data?.policy_description,
+      package_policies:[
+        {
+          title:'transportation',
+          description: data?.transportation
+        },
+        {
+          title:'meals',
+          description: data?.meals
+        },
+        {
+          title:'guide_tours',
+          description: data?.guide
+        },
+        {
+          title:'add_ons',
+          description: data?.addOns
+        },
+        {
+          title:'cancellation_policy',
+          description: data?.cancellation_policy
+        }
+      ]
     };
 
     console.log(tourData);
@@ -265,11 +287,11 @@ const AddTour = () => {
     setSelectedCountry(e.currentTarget.value);
   }
 
-  useEffect(() => {
-    if (!listProperty?.type) {
-      router?.push('/property-list')
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (!listProperty?.type) {
+  //     router?.push('/property-list')
+  //   }
+  // }, [])
 
   useEffect(() => {
     if (selectedRegion) {
@@ -354,6 +376,87 @@ const AddTour = () => {
                 />
               </div>
 
+              <div className="space-y-2 border p-4 rounded-md">
+                <label className="text-2xl block font-semibold text-[#080613]">
+                  Policies
+                </label>
+                <textarea
+                  className="w-full border p-2 rounded-sm resize-none h-[100px] outline-none"
+                  placeholder="Policy description"
+                  {...register('policy_description',{required:"Enter policy description"})}
+                ></textarea>
+                <div>
+                  <label className="block text-gray-500 text-base font-medium mb-2">
+                    Transportation
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border p-2 rounded-sm outline-none"
+                    placeholder="Enter transportation policies"
+                    {...register('transportation',{required:'Enter transportation policy'})}
+                  />
+                  {errors.transportation && (
+                  <p className="text-red-500 text-xs mt-1">{errors.transportation.message}</p>
+                )}
+                </div>
+                <div>
+                  <label className="block text-gray-500 text-base font-medium mb-2">
+                    Meals
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border p-2 rounded-sm outline-none"
+                    placeholder="Enter meals policies"
+                    {...register('meals',{required:'Enter meals policy'})}
+                  />
+                  {errors.meals && (
+                  <p className="text-red-500 text-xs mt-1">{errors.meals.message}</p>
+                )}
+                </div>
+                <div>
+                  <label className="block text-gray-500 text-base font-medium mb-2">
+                    Guided Tours
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border p-2 rounded-sm outline-none"
+                    placeholder="Enter guided tours policies"
+                    {...register('guide',{required:'Enter guide policy'})}
+                  />
+                  {errors.guide && (
+                  <p className="text-red-500 text-xs mt-1">{errors.guide.message}</p>
+                )}
+                </div>
+                <div>
+                  <label className="block text-gray-500 text-base font-medium mb-2">
+                    Add-Ons
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border p-2 rounded-sm outline-none"
+                    placeholder="Enter add-ons policies"
+                    {...register('addOns',{required:'Enter add-ons policy'})}
+                  />
+                  {errors.addOns && (
+                  <p className="text-red-500 text-xs mt-1">{errors.addOns.message}</p>
+                )}
+                </div>
+                <div>
+                  <label className="block text-gray-500 text-base font-medium mb-2">
+                    Cancellation policy
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border p-2 rounded-sm outline-none"
+                    placeholder="Enter cancellation policies"
+                    {...register('cancellation_policy',{required:'Enter cancellation policy'})}
+                  />
+                  {errors.cancellation_policy && (
+                  <p className="text-red-500 text-xs mt-1">{errors.cancellation_policy.message}</p>
+                )}
+                </div>
+              </div>
+
               {/* Trip Plan */}
               <div className="flex flex-col gap-4">
                 <h3 className="text-2xl font-semibold text-[#080613]">Trip Plan</h3>
@@ -368,8 +471,8 @@ const AddTour = () => {
             {/* RIGHT */}
             <div className="p-4 bg-[#FDEFEA] rounded-2xl h-fit mt-4 md:mt-0">
               <div className="flex flex-col gap-4">
-                <div className="flex-1">
-                  <label className="block text-[#444] text-base font-medium mb-4">
+                <div className="flex-1 border p-2 rounded-md">
+                  <label className="block text-[#444] text-xl font-medium mb-4">
                     Destination
                   </label>
                   <div className="space-y-3">
@@ -410,7 +513,7 @@ const AddTour = () => {
                       <p className="text-red-500 text-xs mt-1">{errors.duration.message}</p>
                     )}
                   </div>
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <label className="block text-gray-500 text-base font-medium mb-4">
                       Duration Type
                     </label>
@@ -426,7 +529,7 @@ const AddTour = () => {
                     {errors.duration_type && (
                       <p className="text-red-500 text-xs mt-1">{errors.duration_type.message}</p>
                     )}
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Price */}
@@ -444,8 +547,35 @@ const AddTour = () => {
                   )}
                 </div>
 
+                <div className="space-y-2">
+                  <label className="block text-[#444] text-base font-medium">Discount (%)</label>
+                  <input
+                    type="text"
+                    placeholder="Discount"
+                    {...register("discount", { required: true })}
+                    className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                    aria-invalid={!!errors.discount}
+                  />
+                  {errors.discount && (
+                    <p className="text-red-500 text-xs mt-1">{`${errors.discount.message}`}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-[#444] text-base font-medium">Service fee ($)</label>
+                  <input
+                    type="text"
+                    placeholder="Service fee"
+                    {...register("service_fee", { required: true })}
+                    className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                    aria-invalid={!!errors.service_fee}
+                  />
+                  {errors.service_fee && (
+                    <p className="text-red-500 text-xs mt-1">{`${errors.service_fee.message}`}</p>
+                  )}
+                </div>
+
                 {/* Cancellation Policy */}
-                <div className="space-y-3">
+                {/* <div className="space-y-3">
                   <div className="flex md:flex-col lg:flex-row items-center gap-4 justify-between">
                     <label className="block text-[#444] text-base font-medium">Cancellation Policy</label>
                     {!showCancellation && (
@@ -493,10 +623,10 @@ const AddTour = () => {
                       <li key={index}>{policy}</li>
                     ))}
                   </ul>
-                </div>
+                </div> */}
 
                 {/* Extra Services */}
-                <div className="space-y-3">
+                <div className="space-y-3 border p-2 rounded-md">
                   <div className="flex md:flex-col items-center gap-4 justify-between">
                     <label className="block text-[#444] text-base font-medium">Extra Services</label>
                     {!showExtraService && (
