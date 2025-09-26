@@ -40,6 +40,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "naamstay.com",
       },
+      {
+        protocol: "https",
+        hostname: "fellow-lone-provisions-decided.trycloudflare.com",
+      },
     ],
   },
 };

@@ -41,9 +41,10 @@ export default function ReviewPage() {
   };
   const endpoint = `/admin/reviews?page=${currentPage}&limit=${10}`
 const {data,loading} = useFetchData(endpoint)
+ const {data:reviewData,loading:reviewLoading} = useFetchData(`/admin/reviews/statistics`)
 
-console.log(data);
-
+ console.log("reviewData",reviewData);
+ 
 
   const columns = [
     { label: "User Name", accessor: "user", width:"168px" ,

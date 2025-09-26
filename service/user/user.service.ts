@@ -105,6 +105,16 @@ newPassword: async (data) => {
 
     return await Fetch.post(`${endpoint}`, data, _config);
   },
+  createStatuseChange: async (endpoint,token) => {    
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    };
+
+    return await Fetch.post(`${endpoint}`, {}, _config);
+  },
   createPropertyData: async (endpoint,data,token) => {    
     const _config = {
       headers: {

@@ -2,7 +2,7 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 
-function ImageModal({images,isOpen,setIsOpen}:{images:any,isOpen:boolean,setIsOpen:any}) {
+function ToureImage({images,isOpen,setIsOpen}:{images:any,isOpen:boolean,setIsOpen:any}) {
      const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
 
   const getSlideSrc = (src: string, index: number) => {
@@ -25,7 +25,7 @@ function ImageModal({images,isOpen,setIsOpen}:{images:any,isOpen:boolean,setIsOp
             {images.map((image:any,index:number)=>(
                 <div key={index}>
                     <Image
-                      src={getSlideSrc(image, index)}
+                      src={getSlideSrc(image?.file_url, index)}
                       alt={`image ${index}`}
                       width={400}
                       height={200}
@@ -41,4 +41,4 @@ function ImageModal({images,isOpen,setIsOpen}:{images:any,isOpen:boolean,setIsOp
   )
 }
 
-export default ImageModal
+export default ToureImage

@@ -65,7 +65,6 @@ const BookingForm = ({ singleApartments, type }: any) => {
     if (token) {
       try {
         const response = await UserService?.createData(`/booking`,data,token)
-        console.log("response",response);
         if (response?.data?.success) {
           toast.success(response?.data?.message);
            localStorage.setItem("bookingId", response?.data?.data?.booking?.id);
@@ -73,10 +72,15 @@ const BookingForm = ({ singleApartments, type }: any) => {
            handleBookNow();
             router.push(type === "apartment" ? `/apartment/${singleApartments?.id}/booking` : `/hotel/${singleApartments?.id}/booking`);
               setLoading(false);
+        }else{
+          toast.error(response?.response?.data?.message?.message);
         }
         } catch (error) {
           console.log(error);
+          toast.error(error?.response?.data?.message?.message);
           setLoading(false);
+      }finally{
+        setLoading(false);
       }
       
     } else {

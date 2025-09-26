@@ -15,7 +15,7 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewD
     onOptimisticUpdate?.(status?.id, "approved", "approved");
     
     try {
-      const res = await UserService.updateData(`/admin/listing-management/approve-property/${status?.id}`,{status:"approved"},token)
+      const res = await UserService.createStatuseChange(`/admin/listing-management/${status?.id}/approve`,token)
       
       if(res.data.success){
         toast.success(res.data.message || "Listing approved successfully")
@@ -27,6 +27,7 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewD
       }
     } catch (error) {
       toast.error("Something went wrong")
+       console.log("check error",error);
       // Revert optimistic update on error
       onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
     } finally {
@@ -39,7 +40,7 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewD
     // Optimistic update - immediately update UI
     onOptimisticUpdate?.(status?.id, "cancel", "cancel");
     try {
-      const res = await UserService.updateData(`/admin/listing-management/reject-property/${status?.id}`,{status:"cancel"},token)
+      const res = await UserService.createStatuseChange(`/admin/listing-management/${status?.id}/reject`,token)
       
       if(res.data.success){
         toast.success(res.data.message || "Listing rejected successfully")
@@ -49,7 +50,9 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewD
         onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
       }
     } catch (error) {
-      toast.error("Something went wrong")
+      toast.error(error?.message || "Something went wrong")
+      console.log("check error",error);
+      
       // Revert optimistic update on error
       onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
     } finally {

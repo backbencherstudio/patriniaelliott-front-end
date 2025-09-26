@@ -110,8 +110,8 @@ export default function BookingPage() {
     },
     {
       label: "Price", 
-      accessor: "total_amount",width:"100px",
-      formatter: (value) => `$${value}`,
+      accessor: "amount",width:"100px",
+      formatter: (value) => `${value}`,
     },
     { label: "Action", 
       accessor: "status",width:"100px", 
