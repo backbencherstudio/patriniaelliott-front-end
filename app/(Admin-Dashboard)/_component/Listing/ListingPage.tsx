@@ -57,6 +57,9 @@ export default function ListingPage() {
     setIsEdit(true);
   };
 
+  const handleOptimisticUpdate = (id: any, status: any, payment_status: any) => {
+    setListingData((prev) => prev.map((item: any) => item.id === id ? { ...item, status : status } : item));
+  };
 
   const columns = [
     { label: "User ID", accessor: "displayId", width:"100px" },
@@ -82,7 +85,7 @@ export default function ListingPage() {
     {
       label: "Approval",
       accessor: "status",
-      formatter: (_, row) => <ListingApproveAction status={row}  handleViewDetails={handleViewDetails} />,
+      formatter: (_, row) => <ListingApproveAction status={row} onOptimisticUpdate={handleOptimisticUpdate} handleViewDetails={handleViewDetails} />,
     },
     {
       label: "Action",
@@ -117,9 +120,6 @@ setEditLoading(true)
     setEditLoading(false)
   }
 };
-
-console.log(isEdit);
-
 
   // Prefer API data; fallback to demo data
   const listingItems = (data?.data && data.data.length ? data.data : []);
