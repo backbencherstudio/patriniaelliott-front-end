@@ -13,7 +13,7 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
     setLoading(true)
     
     // Optimistic update - immediately update UI
-    onOptimisticUpdate?.(status?.id, "approved", "paid");
+    
     
     try {
       const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"approved"},token)
@@ -22,7 +22,7 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
       if(res.data.success){
         toast.success(res.data.message || "Booking approved successfully")
         // Refresh data to ensure consistency
-      
+      onOptimisticUpdate?.(status?.id, "Confirmed", "Full Paid");
       }else{
         toast.error(res.data.message || "Booking approved failed")
         // Revert optimistic update on failure
@@ -64,7 +64,7 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
   
   return (
     <div>
-      {status?.status == "approved" || status?.status == "cancel" || status?.status == "succeeded" ? (
+      {status?.status?.text == "Confirmed" || status?.status?.text == "cancel"  ? (
         <span
           className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
           onClick={() => onView(status)}
