@@ -26,12 +26,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "fellow-lone-provisions-decided.trycloudflare.com",
+        hostname: "terrorist-palm-consequences-concepts.trycloudflare.com",
       },
-      {
-        protocol: "https",
-        hostname: "fellow-lone-provisions-decided.trycloudflare.com",
-      },
+      // {
+      //   protocol: "https",
+      //   hostname: "fellow-lone-provisions-decided.trycloudflare.com",
+      // },
       {
         protocol: "https",
         hostname: "backend.naamstay.com",
