@@ -7,10 +7,16 @@ interface UserData {
     phone: string;
     role: string;
     joinDate: string;
-    status: "succeeded" | 'pending' | 'cancel';
+    status: "succeeded" | "approved" |'pending' | 'cancel';
   }
   export const statusStyles = {
     succeeded: {
+      bg: 'bg-[#38c976]/10',
+      border: 'outline-[#abefc6]',
+      text: 'text-[#067647]',
+      icon: '/dashboard/icon/tik.svg'
+    },
+    approved: {
       bg: 'bg-[#38c976]/10',
       border: 'outline-[#abefc6]',
       text: 'text-[#067647]',
@@ -48,8 +54,10 @@ function PaymentStatuse({ status }: { status: UserData['status'] }) {
            </div>
       <div className={`text-center justify-start ${style?.text} text-xs font-normal font-['Inter'] leading-3`}>
          {status == "succeeded" && "Complete" }
+         {status == "approved" && "approved" }
          {status == "pending" && "Pending" }
          {status == "cancel" && "Cancel" }
+ 
        
       </div>
     </div>

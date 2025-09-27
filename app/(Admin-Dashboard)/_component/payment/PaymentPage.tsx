@@ -18,11 +18,13 @@ import PaymentAction from "./PaymentAction";
 import PaymentStatCard from "./PaymentStateCard";
 import PaymentStatuse from "./PaymentStatus";
 import RefundConfirmation from "./RefundConfirmation";
+import CancelRefund from "./CancelRefund";
 
 export default function PaymentPage() {
   const [isModalOpen, setIsModalOpen] = useState<any>(false);
   const [isEdit, setIsEdit] = useState<any>(false);
   const [cancel, setCancel] = useState<any>(false);
+  const [cancelRefund, setCancelRefund] = useState<any>(false);
   const [paymentData, setPaymentData] = useState<any>([]);
   const [paymentHistory, setPaymentHistory] = useState<any>();
   const [payment, setPayment] = useState<
@@ -54,8 +56,11 @@ export default function PaymentPage() {
     setCancel(true);
   };
   const handleCancel = (user: any) => {
-    setSelectedData(user);
-    setCancel(true);
+      setSelectedData(user);
+    setCancelRefund(true);
+  };
+  const handleOptimisticUpdate = (id: any, status: any) => {
+    setPaymentData((prev) => prev.map((item: any) => item.id === id ? { ...item, status } : item));
   };
   const columns = [
     { label: "Booking ID", accessor: "booking_id" },
@@ -310,9 +315,18 @@ export default function PaymentPage() {
           )}
       {cancel && selectedData &&
             <RefundConfirmation
+             onOptimisticUpdate={handleOptimisticUpdate}
               open={cancel}
               data={selectedData}
               onOpenChange={setCancel}
+            />
+        }
+      {cancelRefund && selectedData &&
+            <CancelRefund
+             onOptimisticUpdate={handleOptimisticUpdate}
+              open={cancelRefund}
+              data={selectedData}
+              onOpenChange={setCancelRefund}
             />
         }
       </div>
