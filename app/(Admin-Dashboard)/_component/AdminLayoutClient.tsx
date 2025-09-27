@@ -2,17 +2,19 @@
 import { useState } from "react";
 import Header from "./common/Header";
 import Sidebar from "./common/Sidebar";
+import useFetchData from "@/hooks/useFetchData";
 
 function AdminLayoutClient({ children }) {
      const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const openSidebar = () => setSidebarOpen(true);
   const closeSidebar = () => setSidebarOpen(false);
-
+  const endpoint ="/auth/me"
+ const {data} = useFetchData(endpoint)
   return (
     <div className="bg-bgColor w-full overflow-y-auto h-screen relative overflow-hidden">
       <div className="w-full sticky top-0 left-0 z-10">
-        <Header onMenuClick={openSidebar} sidebarOpen={sidebarOpen} />
+        <Header onMenuClick={openSidebar} sidebarOpen={sidebarOpen} data={data?.data} />
       </div>
 
       <div className="max-w-[1480px] mx-auto">

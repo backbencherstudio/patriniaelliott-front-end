@@ -37,20 +37,26 @@ export default function ListingPage() {
   const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}`;
   const { data, loading, error } = useFetchData(endpoint);
   const [editLoading,setEditLoading]=useState(false)
-  const totalPages = data?.pagination?.total_pages || 0;
+  const totalPages = data?.pagination?.totalPages || 0;
   useEffect(()=>{
     if (data?.data) {
       setListingData(data?.data);
     }
   },[data])
-  const handleViewDetails = (user: any) => {
-    setSelectedData(user);
-    setIsModalOpen(true);
+  const handleViewDetails = async(user: any) => {
+     try {
+      const response = await UserService.getData(`/admin/listing-management/${user?.id}`,token);
+      setSelectedData(response?.data?.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.log("error",error);
+    }
   };
   const handleEdite = (user: any) => {
     setSelectedData(user);
     setIsEdit(true);
   };
+
 
   const columns = [
     { label: "User ID", accessor: "displayId", width:"100px" },
@@ -256,14 +262,14 @@ console.log(isEdit);
               onOpenChange={setIsEdit}
             />
           )}
-        {isEdit && selectedData && selectedData.type === "Tour" && (
+        {isEdit && selectedData && selectedData.type === "tour" && (
           <EditTourDialog
             open={isEdit}
             data={selectedData}
             onOpenChange={setIsEdit}
           />
         )}
-        {isModalOpen && selectedData && selectedData.type === "Tour" && (
+        {isModalOpen && selectedData && selectedData.type === "tour" && (
           <ListingToureCard
             open={isModalOpen}
             data={selectedData}

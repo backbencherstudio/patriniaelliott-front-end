@@ -65,7 +65,7 @@ export default function EditPropertyDialog({data,
      }
   } catch (error) {
     toast.error("Something went wrong");
-    console.log(error?.message);
+    console.log("check error",error);
      setLoading(false)
     
   }finally{

@@ -22,7 +22,6 @@ const handleConfirm = async() => {
     if(response?.data?.success){
         toast.success(response?.data?.data?.message);
         setIsConfirmOpen(true)
-        setIsOpen(false)
     }else{
         toast.error(response?.response?.data?.message);
     }

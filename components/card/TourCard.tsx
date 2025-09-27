@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 import { FaArrowRight, FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
@@ -19,82 +20,84 @@ type TourCardProps = {
     price: string;
 };
 
-export default function TourCard({tour}:any) {
-    console.log(tour);
+export default function TourCard({ tour }: any) {
     const [failedIndice, setFailedIndice] = useState<Set<number>>(new Set());
-      const getSlideSrc = (src: string, index: number) => {
-    if (!src) return "/empty.png";
-    return failedIndice.has(index) ? "/empty.png" : src;
-  };
+    const getSlideSrc = (src: string, index: number) => {
+        if (!src) return "/empty.png";
+        return failedIndice.has(index) ? "/empty.png" : src;
+    };
 
-  const handleImageError = (index: number) => {
-    setFailedIndice(prev => {
-      const next = new Set(prev);
-      next.add(index);
-      return next;
-    });
-  };
+    const handleImageError = (index: number) => {
+        setFailedIndice(prev => {
+            const next = new Set(prev);
+            next.add(index);
+            return next;
+        });
+    };
+    console.log(tour);
+    
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full ">
             <div className="relative">
                 <div className=' p-3'>
-                     {
-            tour?.roomFiles?.length >= 2 ?
-              <Swiper
-                slidesPerView={1}
-                loop={true}
-                speed={1000}
-                spaceBetween={20}
-                autoplay={{
-                  delay: 5000,
-                  disableOnInteraction: false,
-                }}
+                    {
+                        tour?.package_files?.length >= 2 ?
+                            <Swiper
+                                slidesPerView={1}
+                                loop={true}
+                                speed={1000}
+                                spaceBetween={20}
+                                autoplay={{
+                                    delay: 5000,
+                                    disableOnInteraction: false,
+                                }}
 
-                modules={[Autoplay, Navigation, Pagination]}
-                pagination={{
-                  clickable: true,
-                  bulletClass: 'hero-bullet',
-                  bulletActiveClass: 'hero-bullet-active',
-                }}>
-                {
-                  tour?.roomFiles?.slice(0, 4).map((file: any, index: number) => (
-                    <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
-                      <Image
-                        src={getSlideSrc(file, index)}
-                        alt={tour?.name}
-                        width={400}
-                        height={200}
-                        onError={() => handleImageError(index)}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
-                      />
-                    </SwiperSlide>
-                  ))
-                }
-              </Swiper>
-              :
-              <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
-                <Image
-                  src={"/Accommodation/a1.png"}
-                  alt={tour?.name}
-                  width={400}
-                  height={200}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
-                />
-              </div>
-          }
+                                modules={[Autoplay, Navigation, Pagination]}
+                                pagination={{
+                                    clickable: true,
+                                    bulletClass: 'hero-bullet',
+                                    bulletActiveClass: 'hero-bullet-active',
+                                }}>
+                                {
+                                    tour?.package_files?.length > 0 &&
+                                    tour?.package_files?.slice(0, 4).map((file: any, index: number) => (
+                                        <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
+                                            <Image
+                                                src={getSlideSrc(file?.file_url, index)}
+                                                alt={tour?.name}
+                                                width={400}
+                                                height={200}
+                                                onError={() => handleImageError(index)}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                                            />
+                                        </SwiperSlide>
+                                    ))
+                                }
+                            </Swiper>
+                            :
+                            <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
+                                <Image
+                                    src={tour?.package_files[0]?.file_url || "/Accommodation/a1.png"}
+                                    alt={tour?.name}
+                                    width={400}
+                                    height={200}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                                />
+                            </div>
+                    }
                 </div>
 
-                <span className="absolute top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                   Hotel + All inclusive
+                <span className="absolute z-20 top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                  {tour?.breakfast_available && "Breakfast Included" }
                 </span>
-                <span className="absolute bottom-6 left-6 flex items-center bg-white text-gray-700 text-xs px-2 py-1 rounded-full shadow">
-                    <FaMapMarkerAlt className="mr-1" /> {tour?.location}
+                <span className="absolute bottom-6 z-20 left-6 flex items-center bg-white text-gray-700 text-xs px-2 py-1 rounded-full shadow">
+                    <FaMapMarkerAlt className="mr-1" /> {tour?.city}
                 </span>
             </div>
 
             <div className="p-4 space-y-2 mt-2">
                 <span className="text-xs text-primaryColor bg-[#90A9C3]/20 px-3 py-1 rounded-full  font-medium">
-                   Hotel + All inclusive
+                    Hotel + All inclusive
                 </span>
                 <h3 className="font-medium mt-3 text-[22px] text-blackColor leading-[130%]">
                     {tour?.name}
@@ -107,7 +110,7 @@ export default function TourCard({tour}:any) {
                     ))}
 
                 </div>
-                <p className="text-sm text-[#0068EF]">Free cancellation <span className='text-grayColor1 text-xs'>({tour?.cancellation_policy})</span></p>
+                <p className="text-sm text-[#0068EF]">Free cancellation <span className='text-grayColor1 text-xs'>(24 hours)</span></p>
 
                 <div className="flex  text-xs text-gray-600 mt-2 mb-4">
                     <div className="flex items-center gap-2 border-r border-grayColor1/30 pr-8">
@@ -124,7 +127,7 @@ export default function TourCard({tour}:any) {
                         </svg>
                         <div >
                             <h3 className=' text-sm font-medium text-descriptionColor'>Duration</h3>
-                            <span>{tour?.duration} {tour?.duration_unit}</span>
+                            <span>{tour?.duration} {tour?.duration_type}</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 pl-8">
@@ -145,10 +148,10 @@ export default function TourCard({tour}:any) {
                         </p>
                         <p className="text-xl text-primaryColor capitalize font-medium">${tour?.price}/person</p>
                     </div>
-                    <button className="lg:text-[22px] text-base gap-1 flex lg:gap-3 items-center font-medium border border-secondaryColor text-secondaryColor px-3 lg:px-4 py-2 rounded-full hover:text-blackColor cursor-pointer hover:bg-secondaryColor transition">
-                        Check Details <FaArrowRight/>
-                        
-                    </button>
+                    <Link href={`/toure/${tour?.id}`} className="lg:text-[18px] text-base gap-1 flex lg:gap-3 items-center font-medium border border-secondaryColor text-secondaryColor px-3 lg:px-4 py-2 rounded-full hover:text-blackColor cursor-pointer hover:bg-secondaryColor transition">
+                        Check Details <FaArrowRight />
+
+                    </Link>
                 </div>
             </div>
         </div>

@@ -198,7 +198,7 @@ export default function PaymentPage() {
 
           {/* Date Range Dropdown */}
           <div className=" mt-4 md:mt-0 justify-end flex gap-2">
-            <div className=" items-center flex gap-1  md:gap-2 text-sm ">
+            {/* <div className=" items-center flex gap-1  md:gap-2 text-sm ">
               <Select
                 value={payment}
                 onValueChange={(value) =>
@@ -220,7 +220,7 @@ export default function PaymentPage() {
                   <SelectItem value="Stripe">Stripe</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
             <div className=" items-center flex gap-1  md:gap-2 text-sm ">
               <Select
                 value={dateRange}

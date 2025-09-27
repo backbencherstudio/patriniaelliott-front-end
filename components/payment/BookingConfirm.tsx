@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import complete from "@/public/auth/completeicon.png";
 import jsPDF from "jspdf";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { FaStar } from "react-icons/fa6";
 export default function BookingConfirm({ isOpen, setIsOpen, responseData }: any) {
 
@@ -12,14 +13,13 @@ export default function BookingConfirm({ isOpen, setIsOpen, responseData }: any)
     month: "short",
     year: "numeric",
   };
-
+const router = useRouter()
   const formattedDate = date.toLocaleDateString("en-GB", options);
 
   const generatePDF = async () => {
     try {
       // Create a new PDF document
       const pdf = new jsPDF('p', 'mm', 'a4');
-      
       // Set up the PDF content
       const pageWidth = 210;
       const pageHeight = 297;
@@ -102,6 +102,10 @@ export default function BookingConfirm({ isOpen, setIsOpen, responseData }: any)
       alert('PDF generation failed. Please try again.');
     }
   };
+  const hanldeCancelBooking = () => {
+    setIsOpen(false)
+    router.push("/")
+  }
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className=" " asChild></DialogTrigger>
@@ -180,7 +184,7 @@ export default function BookingConfirm({ isOpen, setIsOpen, responseData }: any)
           >
             Download Invoice
           </button>
-          <button onClick={() => setIsOpen(false)} className="w-full text-redColor  border border-redColor cursor-pointer  font-medium  py-3 px-4 rounded-full text-base">
+          <button onClick={hanldeCancelBooking} className="w-full text-redColor  border border-redColor cursor-pointer  font-medium  py-3 px-4 rounded-full text-base">
             Cancel
           </button>
         </div>

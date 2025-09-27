@@ -30,14 +30,15 @@ export default function LoginForm() {
     setLoading(true)
     try {
       const res = await UserService?.login(formData)
-      console.log(res);
-
+      console.log(res?.data?.type);
+      const userType = res?.data?.type
       const token = res?.data?.authorization?.token
+      
       if (res?.data?.success == true) {
         toast.success(res?.data?.message)
         CookieHelper.set({ key: "tourAccessToken", value: token })
         setLoading(false)
-        router.push(redirect || "/");
+        router.push(redirect || userType== "admin" ? "/dashboard" : "/");
       } else {
         toast.error(res?.response?.data?.message?.message)
         setLoading(false)

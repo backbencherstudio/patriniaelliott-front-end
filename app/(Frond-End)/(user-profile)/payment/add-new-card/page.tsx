@@ -1,17 +1,18 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { loadStripe } from '@stripe/stripe-js'
-import {
-  Elements,
-  CardNumberElement,
-  CardExpiryElement,
-  CardCvcElement,
-  useStripe,
-  useElements
-} from '@stripe/react-stripe-js'
-import { UserService } from '@/service/user/user.service'
 import { useToken } from '@/hooks/useToken'
+import { UserService } from '@/service/user/user.service'
+import {
+  CardCvcElement,
+  CardExpiryElement,
+  CardNumberElement,
+  Elements,
+  useElements,
+  useStripe
+} from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -37,7 +38,10 @@ function CheckoutForm () {
   const [loading, setLoading] = useState(false)
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const { token } = useToken()
-  
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectParam = searchParams.get('redirect')
+  const redirectTo = redirectParam ? decodeURIComponent(redirectParam) : '/payment/card-list'
   const [formData, setFormData] = useState<FormData>({
     email: '',
     fullName: '',
@@ -131,8 +135,8 @@ function CheckoutForm () {
       const responseData = resp.data || resp
       if (!responseData.success) {
         throw new Error(responseData.message || 'Failed to save payment method')
-      }
-
+      }   
+      router.push(redirectTo)
       setMessage('Payment method saved successfully ✅')
     } catch (err: any) {
       setMessage(err.message || 'Something went wrong')

@@ -1,7 +1,7 @@
 
 import { TourPolicyData } from "@/DemoAPI/TourPolicyData"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
-function TourPolices() {
+function TourPolices({vendorPackage}) {
   return (
     <div>
       <h1 className=' text-2xl lg:text-[32px] font-medium text-blackColor'>Policies</h1>

@@ -2,23 +2,18 @@
 
 import Rating from "@/components/reusable/Rating";
 import {
-    Dialog,
-    DialogContent,
+  Dialog,
+  DialogContent,
 } from "@/components/ui/dialog";
+import dayjs from "dayjs";
 import Image from "next/image";
-import { AiOutlineDislike } from "react-icons/ai";
-import { BiSolidLike } from "react-icons/bi";
 function ReviewDetails({
     open,
     onOpenChange,
     data,
   } :any) {
 
-    const date = new Date(data?.joinDate).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
+
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
        
@@ -31,7 +26,7 @@ function ReviewDetails({
             {/* Left - Image */}
             <div className="h-[250px] col-span-4  md:h-full">
               <Image
-                src={data?.propertyImage}
+                src={data?.reservation?.package_image || "/empty.png"}
                 alt="Room"
                 width={500}
                 height={500}
@@ -44,7 +39,7 @@ function ReviewDetails({
               {/* Title & User */}
               <div className="flex justify-between mt-3 lg:mt-0  items-start gap-4">
                 <div>
-                  <h2 className="text-base md:text-lg lg:text-2xl font-medium">{data?.reservation}</h2>
+                  <h2 className="text-base md:text-lg lg:text-2xl font-medium">{data?.reservation?.package_name}</h2>
                 </div>
                 <p className="text-base md:text-lg lg:text-2xl font-medium text-right">
                   $314
@@ -55,19 +50,19 @@ function ReviewDetails({
               </div>
 
               <div className="  space-y-2.5 rounded-2xl">
-                <Rating rating={data?.rating}/>
+                <Rating rating={data?.review?.rating}/>
 
-                <p className=" text-descriptionColor text-base md:text-lg">{data?.review}</p>
-                <p className="text-grayColor1 text-base ">{date} 03:29 PM</p>
+                <p className=" text-descriptionColor text-base md:text-lg">{data?.review?.comment}</p>
+                <p className="text-grayColor1 text-base "> {dayjs(data?.created_at).format("MMMM D, YYYY HH:mm")}</p>
                <div className=" flex justify-between mt-5">
                  <div className="flex gap-3 items-center">
                       <div className="w-9 h-9 overflow-hidden  rounded-full">
-                        <Image src={data?.userImage} alt={data?.userName} width={36} height={36} className="w-full h-full"/>
+                        <Image src={data?.user?.avatar || "/profile.png"} alt={data?.user?.name} width={36} height={36} className="w-full h-full"/>
                       </div>
-                      <h5 className=" text-base md:text-lg font-medium text-headerColor">{data?.userName}</h5>
+                      <h5 className=" text-base md:text-lg font-medium text-headerColor">{data?.user?.name}</h5>
                  </div>
                  <div>
-                     <div className="flex items-center space-x-2">
+                     {/* <div className="flex items-center space-x-2">
                                  
                                   <button
                                     className={`
@@ -75,7 +70,7 @@ function ReviewDetails({
                                    
                                   >
                                     <span> <BiSolidLike  className=" text-blue-600 text-xl"/> </span>
-                                    <span className="text-descriptionColor">128</span>
+                                    <span className="text-descriptionColor">{data?.review?.likes}</span>
                                   </button>
                                   <button
                                     className={`
@@ -83,10 +78,10 @@ function ReviewDetails({
                                    
                                   >
                                     <span> <AiOutlineDislike className="text-blackColor text-xl" /></span>
-                                    <span className="text-descriptionColor">10</span>
+                                    <span className="text-descriptionColor">{data?.review?.dislikes}</span>
                                   </button>
                                  
-                                </div>
+                                </div> */}
                  </div>
                </div>
               </div>

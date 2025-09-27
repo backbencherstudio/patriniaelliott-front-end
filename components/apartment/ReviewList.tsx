@@ -47,7 +47,7 @@ function ReviewList({ reviewData, currentPage, setCurrentPage, totalPages, onDel
             <div>
               <div className="flex items-center gap-3 mt-5">
                 <Image src={review.user?.avatar ? review?.user?.avatar : proImg} alt="rating" width={36} height={36} className=" rounded-full overflow-hidden" />
-                <h4 className="text-base lg:text-xl font-medium text-headerColor">{review?.user?.first_name}</h4>
+                <h4 className="text-base lg:text-xl font-medium text-headerColor">{review?.user?.first_name ? review?.user?.first_name : review?.user?.email}</h4>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -56,6 +56,7 @@ function ReviewList({ reviewData, currentPage, setCurrentPage, totalPages, onDel
                  border text-base border-grayColor1/20 text-[#8F6F65] px-3 py-1 rounded-sm flex items-center space-x-1`}
               >
                 <span>{review.likes % 2 === 0 ? <BiSolidLike /> : <BiLike />}</span>
+                {/* {review.likes % 2 === 0 ? <BiSolidLike /> : <BiLike />} */}
                 <span className="text-descriptionColor">{review.likes}</span>
               </button>
               <button

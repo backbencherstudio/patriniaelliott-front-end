@@ -11,7 +11,6 @@ import BookingAction from "./BookingAction";
 import BookingCard from "./BookingCard";
 import BookingPymentStatuse from "./BookingPymentStatuse";
 import DateCheck from "./DateCheck";
-import TableId from "./TableId";
 
 
 
@@ -90,11 +89,11 @@ export default function BookingPage() {
       label: "Booking ID", width:"100px", accessor: "booking_id", 
     },
     { label: "Name", 
-      accessor: "original_data", width:"140px",
-      formatter: (_, row) => <div >{row?.user?.name}</div> 
+      accessor: "name", width:"140px",
+      formatter: (value, row) => <div >{value}</div> 
     },
     { label: "Service", 
-      accessor: "type" ,width:"120px"
+      accessor: "services" ,width:"120px"
     },
     {
       label: "Payment", 
@@ -111,8 +110,8 @@ export default function BookingPage() {
     },
     {
       label: "Price", 
-      accessor: "total_amount",width:"100px",
-      formatter: (value) => `$${value}`,
+      accessor: "amount",width:"100px",
+      formatter: (value) => `${value}`,
     },
     { label: "Action", 
       accessor: "status",width:"100px", 

@@ -1,5 +1,5 @@
 
-const ToureLocationOnMap = () => {
+const ToureLocationOnMap = ({vendorPackage}) => {
   return (
     <div className="font-sans">
       <h2 className="text-2xl lg:text-[32px] font-medium mb-4">Location on Map</h2>

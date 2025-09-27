@@ -9,18 +9,24 @@ import 'react-credit-cards/es/styles-compiled.css';
 import { FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import BookingFinalStep from "./BookingFinalStep";
-export default function StepTwo({totalAmount ,data}:any) {
-  const customerId = data?.stripe_customer_id
+import PaymentSkleton from "./PaymentSkleton";
+export default function StepTwo({totalAmount }:any) {
+   const endpoint ="/auth/me"
+   const {data}= useFetchData(endpoint)
+  const customerId = data?.data?.stripe_customer_id
  const [isOpen, setIsOpen] = useState(false)
   const { token } = useToken()
   const [paymentID, setPaymentID] = useState("")
   const [paymentMethodId, setPaymentMethodId] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {data:cardData, loading}= useFetchData(`/user-profile/cards/${customerId}`)
+  const [submittingCardId, setSubmittingCardId] = useState<string | number | null>(null);
+  const {data:cardData, loading:cardLoading}= useFetchData(`/user-profile/cards/${customerId}`)
    const cvc = "****"
    const pathname = usePathname()
-     const handlePayment = async (item) => {
-    setIsSubmitting(true);
+  const addCardHref = `/payment/add-new-card?customerId=${customerId || ''}&redirect=${encodeURIComponent(pathname || '/')}`
+    const handlePayment = async (item) => {
+   setIsSubmitting(true);
+   setSubmittingCardId(item?.id);
     const formattedData = {
          booking_id: localStorage.getItem("bookingId"),
       	"currency": "usd",
@@ -42,58 +48,25 @@ export default function StepTwo({totalAmount ,data}:any) {
       console.log(error);
     }
     setIsSubmitting(false);
+    setSubmittingCardId(null);
   };
+console.log("check card path name",pathname);
 
   return (
-    <div className="mt-6">
+    <div className="mt-6 px-10">
       {/* <PaymentForm totalAmount={totalAmount} data={data}/> */}
-      <div className="mb-6 flex justify-end pr-6">
-        <Link href="/payment" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gap-2 bg-primaryColor hover:bg-primaryColor/90 transition-colors"> <FaPlus/> Add New Card</Link>
+      <div className="mb-6 flex justify-end lg:pr-10">
+      {cardData?.data  && <Link href={addCardHref} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gap-2 bg-primaryColor hover:bg-primaryColor/90 transition-colors"> <FaPlus/> Add New Card</Link>}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
-        {loading ? (
+        {cardLoading ? (
           // Skeleton Loading
           Array.from({ length: 2 }).map((_, index) => (
-            <div key={index} className="w-full">
-              <div className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
-                {/* Card Skeleton */}
-                <div className="bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg h-48 mb-4 relative overflow-hidden">
-                  {/* Card Content Skeleton */}
-                  <div className="absolute inset-0 p-6 flex flex-col justify-between">
-                    {/* Top Section */}
-                    <div className="flex justify-between items-start">
-                      <div className="h-4 bg-gray-300 rounded w-16"></div>
-                      <div className="h-6 bg-gray-300 rounded w-12"></div>
-                    </div>
-                    
-                    {/* Middle Section */}
-                    <div className="space-y-3">
-                      <div className="h-6 bg-gray-300 rounded w-32"></div>
-                      <div className="h-4 bg-gray-300 rounded w-24"></div>
-                    </div>
-                    
-                    {/* Bottom Section */}
-                    <div className="flex justify-between items-end">
-                      <div className="space-y-2">
-                        <div className="h-3 bg-gray-300 rounded w-20"></div>
-                        <div className="h-3 bg-gray-300 rounded w-16"></div>
-                      </div>
-                      <div className="h-4 bg-gray-300 rounded w-8"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Card Info Skeleton */}
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </div>
-              </div>
-            </div>
+            <PaymentSkleton  key={index}/>
           ))
         ) : cardData?.data && cardData?.data?.length > 0 ? (
           cardData?.data?.map((item:any)=>(
-            <div onClick={()=>!isSubmitting && handlePayment(item)} id="PaymentForm" className={`w-full cursor-pointer relative ${isSubmitting ? 'opacity-50 pointer-events-none' : ''}`} key={item?.id}>
+            <div onClick={()=>!isSubmitting && handlePayment(item)} id="PaymentForm" className={`w-full cursor-pointer relative ${isSubmitting && submittingCardId===item?.id ? 'opacity-50 pointer-events-none' : ''}`} key={item?.id}>
             <Cards
             cvc={cvc}
             expiry={item?.exp_month + "/" + item?.exp_year}
@@ -106,7 +79,7 @@ export default function StepTwo({totalAmount ,data}:any) {
           />
           
           {/* Loading Overlay */}
-          {isSubmitting && (
+          {isSubmitting && submittingCardId===item?.id && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
               <div className="flex flex-col items-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
@@ -127,7 +100,7 @@ export default function StepTwo({totalAmount ,data}:any) {
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Payment Cards Found</h3>
               <p className="text-gray-500 mb-6">Please add a new card to complete your booking payment</p>
-              <Link href="/payment" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primaryColor hover:bg-primaryColor/90 transition-colors">
+              <Link href={addCardHref} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primaryColor hover:bg-primaryColor/90 transition-colors">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>

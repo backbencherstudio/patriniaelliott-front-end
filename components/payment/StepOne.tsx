@@ -9,6 +9,7 @@ export default function StepOne({data,guests,setGuests}:{data?:any,guests:any,se
     ]);
   };
 
+
   const handleChange = (index, field, value) => {
     const updated = [...guests];
     updated[index][field] = value;

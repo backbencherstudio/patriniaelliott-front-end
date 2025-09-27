@@ -1,27 +1,21 @@
 "use client";
 import { useToureBookingContext } from "@/provider/TourBookingProvider";
 import { LucideCalendarDays, X } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 
 const ToureBookingSummary = ({activeTab,setActiveTab}:any) => {
    const {
      singleToure,
-     travelCount, setTravelCount,
-          setSingleToure,
+     travelCount, 
           startDate,
-          setStartDate,
-          
           endDate,
-          setEndDate,
           servicefee,
           totalDay,
-          totalPrice,
           calculateTotal,
-          handleBookNow,
-          bookingData,
           discountNumber,
           travelprice,
-          setTravelPrice,
           discount 
       
     } = useToureBookingContext();
@@ -30,18 +24,35 @@ const ToureBookingSummary = ({activeTab,setActiveTab}:any) => {
  if (!singleToure) return null;
 
   const { title, reviews, price,location, rating, image } = singleToure;
-
+  const [bookingData, setBookingData] = useState<any>()
+  useEffect(()=>{
+    const data = localStorage.getItem("toure_booking_single_toure")
+    setBookingData(JSON.parse(data))
+  },[])
+  console.log("check booking data",bookingData);
+  
+  // Show loading state if no apartment data
+  if (!bookingData) {
+    return (
+      <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
+        <div className="text-center py-8">
+          <p className="text-grayColor1 text-lg">No booking data available</p>
+          <p className="text-sm text-grayColor1 mt-2">Please select an apartment and configure your booking first.</p>
+        </div>
+      </div>
+    );
+  }
   return (
    
     <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
          {
-        !singleToure ? "Apartment data not available."  :
+        !bookingData ? "Tour data not available."  :
         <div>
              {/* Apartment Header */}
       <div className="flex items-start gap-4">
         <div className=" !w-[40%] h-[163px]">
-          <img
-            src={image.src || "/apartment.jpg"}
+          <Image
+            src={bookingData?.package_files[0]?.file_url || "/apartment.jpg"}
             alt={title ? title : ""}
             width={180}
             height={163}
@@ -51,20 +62,20 @@ const ToureBookingSummary = ({activeTab,setActiveTab}:any) => {
 
         <div className=" w-[60%]">
           <p className="text-4xl xl:text-[40px] font-bold text-black">
-            ${price || 0}
+            ${bookingData?.price || 0}
             <span className="text-lg font-medium text-descriptionColor">
               /per night
             </span>
           </p>
-          <h3 className="font-medium text-base xl:text-lg mt-1 text-black">{ title ? title : ""}</h3>
+          <h3 className="font-medium text-base xl:text-lg mt-1 text-black">{ bookingData?.name ? bookingData?.name : ""}</h3>
           <div className="flex gap-2 mt-2">
-            <p className="text-grayColor1 text-sm"><span className="text-headerColor font-medium">{totalDay} Nights</span> in {location} Tour Package</p>
+            <p className="text-grayColor1 text-sm"><span className="text-headerColor font-medium">{totalDay} Days</span> in {location} Tour Package</p>
           </div>
 
           <p className="flex items-center gap-1 text-sm text-headerColor mt-2">
-            <FaStar className="text-yellow-400" /> {rating || 0}{" "}
+            <FaStar className="text-yellow-400" /> {bookingData?.rating_summary?.averageRating || 0}{" "}
             <span className="text-grayColor1">
-              ({reviews || 0} reviews)
+              ({bookingData?.rating_summary?.averageReviews || 0} reviews)
             </span>
           </p>
         </div>

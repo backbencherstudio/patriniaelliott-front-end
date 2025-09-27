@@ -1,12 +1,13 @@
 'use client';
 import { useState } from 'react';
+import ReviewSection from '../apartment/ReviewSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"; // Adjust the import if needed
 import ToureItinerary from './ToureItinerary';
 import TourLocationOnMap from './ToureLocationOnMap ';
 import ToureOverview from './ToureOverview';
 import TourPolices from './TourPolices';
 
-const ToureTabs = () => {
+const ToureTabs = ({vendorPackage}:any) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
@@ -54,19 +55,19 @@ const ToureTabs = () => {
 
         {/* Tab Contents */}
         <TabsContent value="overview" className="pt-10 pb-8">
-         <ToureOverview/>
+         <ToureOverview vendorPackage={vendorPackage}/>
         </TabsContent>
         <TabsContent value="policies" className="pt-10 pb-8">
-         <TourPolices/>
+         <TourPolices vendorPackage={vendorPackage}/>
         </TabsContent>
         <TabsContent value="Itinerary" className="pt-10 pb-8">
-          <ToureItinerary/>
+          <ToureItinerary vendorPackage={vendorPackage}/>
         </TabsContent>
         <TabsContent value="map" className="pt-10 pb-8">
-          <TourLocationOnMap/>
+          <TourLocationOnMap vendorPackage={vendorPackage}/>
         </TabsContent>
         <TabsContent value="reviews" className="pt-10 pb-8">
-          <p>Reviews content goes here...</p>
+          <ReviewSection singleApartment={vendorPackage}/>
         </TabsContent>
       </Tabs>
     </div>
