@@ -105,15 +105,15 @@ const {data,loading} = useFetchData(endpoint)
       {/* Overview */}
       <div className="w-full bg-white rounded-xl p-4  mx-auto">
         <h2 className="text-2xl font-medium text-[#22262e] mb-1">
-          Transaction history
+          Manage Reviews
         </h2>
         <p className="text-base text-[#777980] mb-4">
-          Check up on your latest reservations and history.
+          Check up on your latest reviews and history.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <TotalReview/>
-            <FeedbackChart/>
-            <SatisfactionCard/>
+            <TotalReview data={reviewData?.data}/>
+            <FeedbackChart data={reviewData?.data}/>
+            <SatisfactionCard data={reviewData?.data}/>
          {/* <SatisfactionCard/> */}
         </div>
       </div>

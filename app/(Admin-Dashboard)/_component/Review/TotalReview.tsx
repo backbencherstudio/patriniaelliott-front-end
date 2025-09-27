@@ -1,19 +1,19 @@
 import { CircularProgressbar } from 'react-circular-progressbar'; // Import CircularProgressBar component 
 import 'react-circular-progressbar/dist/styles.css'; // Import the default styles
 
-function TotalReview() {
-  const averageRating = 4.5; // This will be dynamic from your data
+function TotalReview({data}:any) {
+  const averageRating = data?.average_review?.value; // This will be dynamic from your data
   const maxRating = 5; // Maximum possible rating (for example, 5 stars)
 
-  const percentage = (averageRating / maxRating) * 100;
+  const percentage = (data?.average_review?.value / maxRating) * 100;
 
   return (
     <div className="py-4 px-6 bg-bgColor border-0 rounded-lg shadow-none">
       <div className="h-full">
         <div className="flex items-center h-full justify-between">
           <div className="">
-            <h4 className="lg:text-3xl text-xl font-medium">{averageRating}</h4>
-            <p className="mt-3 text-sm text-descriptionColor">Average Review</p>
+            <h4 className="lg:text-3xl text-xl font-medium">{data?.average_review?.value}</h4>
+            <p className="mt-3 text-sm text-descriptionColor">{data?.average_review?.label}</p>
           </div>
 
           <div className="flex items-center w-21 h-21 space-x-4">

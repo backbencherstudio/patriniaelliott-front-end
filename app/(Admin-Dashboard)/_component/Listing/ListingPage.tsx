@@ -157,10 +157,10 @@ setEditLoading(true)
       {/* Overview */}
       <div className="w-full bg-white rounded-xl p-4  mx-auto">
         <h2 className="text-2xl font-medium text-[#22262e] mb-1">
-          Manage bookings
+          Manage Listings
         </h2>
         <p className="text-base text-[#777980] mb-4">
-          Check up on your latest reservations and history.
+          Check up on your latest listings and history.
         </p>
       </div>
       {/* Table Section */}
