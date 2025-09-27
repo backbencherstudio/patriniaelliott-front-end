@@ -62,7 +62,7 @@ function TourCardTwo({tour}:any) {
                             :
                             <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
                                 <Image
-                                    src={"/Accommodation/a1.png"}
+                                    src={tour?.package_files[0]?.file_url || "/Accommodation/a1.png"}
                                     alt={tour?.name}
                                     width={400}
                                     height={200}

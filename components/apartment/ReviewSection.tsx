@@ -90,6 +90,8 @@ const ReviewSection = ({ singleApartment }) => {
     } catch (error) {
       console.log(error.message);
       setLoading(false)
+    }finally{
+      setLoading(false)
     }
   }
   const handleDeleteComment = async (id) => {
@@ -109,6 +111,8 @@ const ReviewSection = ({ singleApartment }) => {
       console.log("delete response", res);
     } catch (error) {
       console.log(error.message);
+      setDLoading(false)
+    }finally{
       setDLoading(false)
     }
   }

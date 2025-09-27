@@ -2,8 +2,8 @@
 
 import TotalReviewStats from "@/components/reusable/TotalReviewStats";
 import {
-    Dialog,
-    DialogContent,
+  Dialog,
+  DialogContent,
 } from "@/components/ui/dialog";
 import Image from "next/image";
 
@@ -18,6 +18,8 @@ const ListingToureCard = ({
   setIsModalOpen,
   data,
 } :any) => {
+ 
+  console.log("check data",data);
   return (
     <Dialog open={open} onOpenChange={setIsModalOpen}>
      
@@ -30,7 +32,7 @@ const ListingToureCard = ({
           {/* Left - Image */}
           <div className="h-[250px] col-span-1  md:h-full">
             <Image
-              src={data?.image}
+              src={data?.package_files[0]?.file_url || "/empty.png"}
               alt="Room"
               width={500}
               height={500}
@@ -43,10 +45,10 @@ const ListingToureCard = ({
             {/* Title & User */}
             <div className="flex justify-between mt-3 lg:mt-0  items-start gap-4">
               <div>
-                <h2 className="text-base md:text-lg lg:text-2xl font-medium">{data?.propertyName}</h2>
+                <h2 className="text-base md:text-lg lg:text-2xl font-medium">{data?.name}</h2>
               </div>
               <p className="text-base md:text-lg lg:text-2xl font-medium text-right">
-                ${data?.price}
+                ${data?.price || 0}
                 <span className="text-xs md:text-sm font-normal text-muted-foreground ml-1">
                   /per night
                 </span>
@@ -61,19 +63,19 @@ const ListingToureCard = ({
               </div>
               <div className="space-y-2">
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">User ID:</p> <p className="text-blackColor/80">{data?.userId}</p>
+                <p className=" ">User ID:</p> <p className="text-blackColor/80">{data?.user?.id}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Duration:</p> <p className="text-blackColor/80">{data?.tourDetails.duration}</p>
+                <p className=" ">Duration:</p> <p className="text-blackColor/80">{data?.user?.duration}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Group Size:</p> <p className="text-blackColor/80">{data?.tourDetails.groupSize}</p>
+                <p className=" ">Group Size:</p> <p className="text-blackColor/80">{data?.user?.groupSize}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Inclusive:</p> <p className="text-blackColor/80">{data?.tourDetails.inclusive}</p>
+                <p className=" ">Inclusive:</p> <p className="text-blackColor/80">{data?.inclusive}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Status:</p> <p className="text-blackColor/80">{data?.status}</p>
+                <p className=" ">Status:</p> <p className="text-blackColor/80">{data?.status == 1 ? "pending" : data?.status == 2 ? "approved" : "cancel"}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
                 <p className=" ">Location:</p> <p className="text-blackColor/80">{data?.location}</p>

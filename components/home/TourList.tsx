@@ -43,7 +43,7 @@ export default function TourList() {
   const packageData = data ? data?.data : []
   const goNext = () => swiperRef.current?.slideNext();
   const goPrev = () => swiperRef.current?.slidePrev();
-console.log("check",loading);
+
 
   return (
     <section className="container px-4 md:px-16  relative">

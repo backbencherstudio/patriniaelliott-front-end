@@ -1,7 +1,8 @@
 "use client"
 import Image from 'next/image';
 import { useState } from 'react';
-import ImageModal from '../apartment/ImageModal';
+import ToureImage from './ToureImage';
+
 
 
 function TourImage({vendorPackage}:{vendorPackage:any}) {
@@ -96,7 +97,7 @@ function TourImage({vendorPackage}:{vendorPackage:any}) {
             </div>
           </div>
         </div>
-        {isOpen &&   <ImageModal images={vendorPackage?.package_files} isOpen={isOpen} setIsOpen={setIsOpen}/>}
+        {isOpen &&   <ToureImage images={vendorPackage?.package_files} isOpen={isOpen} setIsOpen={setIsOpen}/>}
     </div>
   )
 }

@@ -24,11 +24,17 @@ const BookingSummary = ({activeTab,setActiveTab,setTotalAmount}:any) => {
       </div>
     );
   }
+console.log("check booking data",bookingData);
 
-  const { name, reviews, price, rating, address } = bookingData?.apartment;
- const serviceFee = 170;
- const total = bookingData?.totalPrice +serviceFee - Number(bookingData?.discount)
+  const { name, reviews, price, rating, discount, service_fee, address } = bookingData?.apartment;
+ const serviceFee = service_fee;
+ const total = bookingData?.totalPrice + serviceFee - Number(discount)
  setTotalAmount(total)
+ console.log("check total",total);
+ console.log("check discount",discount);
+ console.log("service_fee total",service_fee);
+ console.log("bookingData?.totalPrice total",bookingData?.totalPrice);
+ 
   return (
    
     <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">

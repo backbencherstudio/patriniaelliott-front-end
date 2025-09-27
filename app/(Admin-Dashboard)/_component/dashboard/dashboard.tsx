@@ -85,15 +85,22 @@ setEditLoading(true)
 
   };
 
-  const handleViewDetails = (user: UserData) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
+  const handleViewDetails = async (user: UserData) => {
+     try {
+      const response = await UserService.getData(`/admin/user/${user?.id}`,token);
+      setSelectedUser(response?.data?.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.log("error",error);
+    }
+    
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedUser(null);
   };
+console.log("check selected user",selectedUser);
 
   return (
     <div className="flex flex-col gap-5">

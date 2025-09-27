@@ -64,7 +64,7 @@ export const BookingProvider = ({ children }) => {
     return basePrice + extraServicesTotal;
   }, [basePrice, extraServicesTotal]);
 
-  const discountNumber = 10;
+  const discountNumber = singleApartment?.discount;
   // Calculate discount
   const discount = useMemo(() => {
     return Number((totalPrice * (discountNumber/100)).toFixed(2));
@@ -82,7 +82,8 @@ export const BookingProvider = ({ children }) => {
       discount,
       totalDays,
       basePrice,
-      extraServicesTotal
+      extraServicesTotal,
+
     };
     
     // Save to localStorage safely
