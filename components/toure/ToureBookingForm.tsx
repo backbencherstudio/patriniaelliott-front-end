@@ -246,13 +246,13 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
             </span>
           </div>
           <div className="flex justify-between text-base text-descriptionColor border-b border-grayColor1/20 py-2">
-            <span className=" text-descriptionColor">{discountNumber}% campaign discount</span>
+            <span className=" text-descriptionColor">{discountNumber || 0}% campaign discount</span>
             <span>- ${discount}</span>
           </div>
 
           <div className="flex text-descriptionColor justify-between text-base border-b border-grayColor1/20 py-2">
             <span className=" ">Service fee</span>
-            <span> ${servicefee}</span>
+            <span> ${servicefee || 0}</span>
           </div>
 
         </div>
