@@ -1,8 +1,8 @@
+import TourCard from "@/components/card/TourCard";
 import ToureBookingForm from "@/components/toure/ToureBookingForm";
 import ToureHeader from "@/components/toure/ToureHeader";
 import ToureTabs from "@/components/toure/ToureTabs";
 import TourImage from "@/components/toure/TourImage";
-import { toursData } from "@/DemoAPI/toureData";
 import { UserService } from "@/service/user/user.service";
 
 import { ChevronRight } from "lucide-react";
@@ -13,9 +13,7 @@ async function BookingDetailsPage(props: {
 }) {
   const params = await props.params;
   const { tourSlug } = params;
-  const singleHotel: any = toursData.find(
-    (item: any) => item?.tourSlug == tourSlug
-  );
+
   const tokenStore = await cookies();
   const token = tokenStore.get("tourAccessToken")?.value;
 
@@ -31,7 +29,15 @@ async function BookingDetailsPage(props: {
 const singletour = vendorPackage ? vendorPackage : {}
 // console.log(singletour);
 // console.log(singletour?.package_files);
+  let tourData: any = [];
+  try {
+    const res = await UserService.getData(`/admin/vendor-package?type=tour&limit=${6}&page=${1}`, token);
+    
+    tourData = res?.data?.data ?? [];
+  } catch (error) {
+    console.log(error);
 
+  }
   return (
     <div>
       <div className=" container">
@@ -56,7 +62,15 @@ const singletour = vendorPackage ? vendorPackage : {}
           </div>
         </div>
       </div>
-    
+      <div className=" bg-bgColor relative lg:mt-15 py-12 lg:py-20">
+        <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
+          {tourData.map((tour: any, index) => (
+            <div key={tour.title}>
+              <TourCard tour={tour} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

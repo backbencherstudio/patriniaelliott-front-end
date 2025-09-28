@@ -22,7 +22,6 @@ const ApatmentTabs = ({ singleApartment }: any) => {
           <TabsTrigger
             value="highlights"
             className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'highlights' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
-
           >
             Highlights
             <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'highlights' ? 'bg-secondaryColor' : 'hidden'}`} />
@@ -55,7 +54,7 @@ const ApatmentTabs = ({ singleApartment }: any) => {
           <Overview overview={singleApartment?.description} />
         </TabsContent>
         <TabsContent value="highlights" className="pt-10 pb-8">
-          <HighLight aminate={singleApartment?.amenities} bedroom={singleApartment?.bedrooms}/>
+          <HighLight aminate={singleApartment?.amenities} bedroom={singleApartment?.bathrooms}/>
         </TabsContent>
         <TabsContent value="map" className="pt-10 pb-8">
           <LocationOnMap />

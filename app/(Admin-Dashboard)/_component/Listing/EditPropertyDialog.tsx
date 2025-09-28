@@ -50,7 +50,7 @@ export default function EditPropertyDialog({data,
                name: formData.name,
                description: formData.description,
                price: formData.price,
-               status: formData.status == 1 ? "approved" : "pending", // Convert to number
+               status: formData.status == 1 ? "Available" : "Pending", // Convert to number
              };
            }
            return item;
@@ -87,10 +87,10 @@ export default function EditPropertyDialog({data,
             <label className="text-sm md:text-base font-medium flex gap-2 items-center">Proparty Name <span><BiEditAlt className="text-grayColor1 text-xl" /></span></label>
             <input className=" block w-full border border-grayColor1/80 rounded-md text-base py-2 px-2 lg:py-3 lg:px-3" placeholder="Eclipse Haven" {...register("name")} />
           </div>
-          <div className="space-y-1">
+          {/* <div className="space-y-1">
               <label className="text-sm md:text-base font-medium flex gap-2 items-center">Description <span><BiEditAlt className="text-grayColor1 text-xl" /></span></label>
             <input className=" block w-full border border-grayColor1/80 rounded-md text-base py-2 px-2 lg:py-3 lg:px-3" placeholder="Eclipse Haven" {...register("description")} />
-          </div>
+          </div> */}
 
           <div className="space-y-1">
             <label className="text-sm md:text-base font-medium flex gap-2 items-center">Price <span><BiEditAlt className="text-grayColor1 text-xl" /></span></label>
