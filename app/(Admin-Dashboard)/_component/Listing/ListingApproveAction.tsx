@@ -63,7 +63,7 @@ function ListingApproveAction({ status, onOptimisticUpdate , handleViewDetails }
   
   return (
     <div>
-      {status?.status == "Available" || status?.status == "Cancel"  ? (
+      {status?.status == "Available" || status?.status == "Cancel" || status?.status == "succeeded" ? (
         <span
           className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
           onClick={() => handleViewDetails(status)}

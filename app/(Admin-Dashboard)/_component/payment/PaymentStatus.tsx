@@ -7,7 +7,7 @@ interface UserData {
     phone: string;
     role: string;
     joinDate: string;
-    status: "succeeded" | "approved" |'pending' | 'cancel';
+    status: "succeeded" | "approved" |'pending' | 'canceled';
   }
   export const statusStyles = {
     succeeded: {
@@ -28,7 +28,7 @@ interface UserData {
       text: 'text-[#ffa23a]',
       icon: '/dashboard/icon/loading.svg'
     },
-    cancel: {
+    canceled: {
       bg: 'bg-[#fe5050]/10',
       border: 'outline-[#fe5050]',
       text: 'text-[#fe5050]',
@@ -56,7 +56,7 @@ function PaymentStatuse({ status }: { status: UserData['status'] }) {
          {status == "succeeded" && "Complete" }
          {status == "approved" && "approved" }
          {status == "pending" && "Pending" }
-         {status == "cancel" && "Cancel" }
+         {status == "canceled" && "canceled" }
  
        
       </div>

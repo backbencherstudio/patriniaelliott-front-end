@@ -250,3 +250,64 @@ h2.react-datepicker__current-month {
     width: 290px;
      margin: 0 !important; 
 }
+.pdf-safe-colors {
+  /* Override OKLCH CSS variables with RGB/HEX that html2canvas supports */
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #1f2937; /* slate-800 */
+  --primary-foreground: #ffffff;
+  --secondary: #f3f4f6; /* gray-100 */
+  --secondary-foreground: #1f2937;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280; /* gray-500 */
+  --accent: #f3f4f6;
+  --accent-foreground: #1f2937;
+  --destructive: #e11d48; /* rose-600 */
+  --border: #e5e7eb; /* gray-200 */
+  --input: #e5e7eb;
+  --ring: #9ca3af; /* gray-400 */
+  --chart-1: #6d28d9;
+  --chart-2: #2563eb;
+  --chart-3: #0ea5e9;
+  --chart-4: #10b981;
+  --chart-5: #f59e0b;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #1f2937;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f3f4f6;
+  --sidebar-accent-foreground: #1f2937;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #9ca3af;
+}
+
+/* PDF Capture - Preserve all colors and styles */
+.pdf-capture {
+  background-color: #ffffff !important;
+}
+
+.pdf-capture * {
+  color: inherit !important;
+  background-color: inherit !important;
+  border-color: inherit !important;
+  text-decoration: inherit !important;
+  font-weight: inherit !important;
+  font-size: inherit !important;
+}
+
+/* Ensure specific colors are preserved */
+.pdf-capture [style*="color:"] {
+  color: inherit !important;
+}
+
+.pdf-capture [style*="background-color:"] {
+  background-color: inherit !important;
+}
+
+.pdf-capture [style*="border-color:"] {
+  border-color: inherit !important;
+}

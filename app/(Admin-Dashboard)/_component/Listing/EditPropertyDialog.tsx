@@ -15,7 +15,7 @@ export default function EditPropertyDialog({data,
   setListingData,
 }: any) {
 
-  console.log(data);
+
   const  {token}=useToken()
   const [loading,setLoading]=useState(false)
   const { register, handleSubmit, reset, control } = useForm({
@@ -36,8 +36,7 @@ export default function EditPropertyDialog({data,
     setLoading(true)
   try {
      const response = await UserService.updateData(`/admin/listing-management/${data?.id}`,submitData,token);
-     console.log(response);
-     
+
       if(response?.data?.success){
        toast.success(response?.data?.message);
        onOpenChange(false);
@@ -65,7 +64,6 @@ export default function EditPropertyDialog({data,
      }
   } catch (error) {
     toast.error("Something went wrong");
-    console.log("check error",error);
      setLoading(false)
     
   }finally{

@@ -11,7 +11,6 @@ import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
 import { toast } from "react-toastify";
 import EditPropertyDialog from "./EditPropertyDialog";
-import EditTourDialog from "./EditTourDialog";
 import ListingAction from "./ListingAction";
 import ListingApproveAction from "./ListingApproveAction";
 import ListingPropartyCard from "./ListingPropartyCard";
@@ -263,11 +262,13 @@ setEditLoading(true)
             />
           )}
         {isEdit && selectedData && selectedData.type === "tour" && (
-          <EditTourDialog
-            open={isEdit}
-            data={selectedData}
-            onOpenChange={setIsEdit}
-          />
+         <EditPropertyDialog
+              open={isEdit}
+              data={selectedData}
+              listingData={lisntingData}
+              setListingData={setListingData}
+              onOpenChange={setIsEdit}
+            />
         )}
         {isModalOpen && selectedData && selectedData.type === "tour" && (
           <ListingToureCard

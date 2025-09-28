@@ -34,7 +34,6 @@ export default function TourCard({ tour }: any) {
             return next;
         });
     };
-    console.log(tour);
     
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full ">
@@ -87,15 +86,15 @@ export default function TourCard({ tour }: any) {
                     }
                 </div>
 
-                <span className="absolute z-20 top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                  {tour?.breakfast_available && "Breakfast Included" }
-                </span>
+                {tour?.breakfast_available && <span className="absolute z-20 top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                  "Breakfast Included" 
+                </span>}
                 <span className="absolute bottom-6 z-20 left-6 flex items-center bg-white text-gray-700 text-xs px-2 py-1 rounded-full shadow">
                     <FaMapMarkerAlt className="mr-1" /> {tour?.city}
                 </span>
             </div>
 
-            <div className="p-4 space-y-2 mt-2">
+            <div className="p-4 space-y-2">
                 <span className="text-xs text-primaryColor bg-[#90A9C3]/20 px-3 py-1 rounded-full  font-medium">
                     Hotel + All inclusive
                 </span>

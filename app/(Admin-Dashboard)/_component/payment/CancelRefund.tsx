@@ -2,9 +2,9 @@
 
 
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader
+  Dialog,
+  DialogContent,
+  DialogHeader
 } from "@/components/ui/dialog";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
@@ -32,7 +32,7 @@ export default function CancelRefund({
   const handleRefund = async () => {
     setLoading(true)
     const formdata={
-    status:"cancel",
+    status:"canceled",
      partial_refund:false,
     }
 
@@ -42,7 +42,7 @@ export default function CancelRefund({
       console.log(res);
       if(res.data.success){
         toast.success(res.data.message || "Refunded successfully")
-        onOptimisticUpdate(data?.booking_id, "cancel")
+        onOptimisticUpdate(data?.booking_id, "canceled")
       }else{
         toast.error(res.data.message || "Refunded failed")
       }
