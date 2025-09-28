@@ -32,7 +32,6 @@ const singletour = vendorPackage ? vendorPackage : {}
   let tourData: any = [];
   try {
     const res = await UserService.getData(`/admin/vendor-package?type=tour&limit=${6}&page=${1}`, token);
-    
     tourData = res?.data?.data ?? [];
   } catch (error) {
     console.log(error);

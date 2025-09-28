@@ -42,7 +42,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "fellow-lone-provisions-decided.trycloudflare.com",
+        hostname: "disappointed-drinks-consequences-arm.trycloudflare.com",
       },
     ],
   },
