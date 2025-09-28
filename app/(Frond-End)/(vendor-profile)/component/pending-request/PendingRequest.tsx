@@ -3,12 +3,12 @@ import DynamicTableWithPagination from '@/app/(Admin-Dashboard)/_component/commo
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import PendingRequestAction from './PendingRequestAction'
-import PendingRequestStatCard from './PendingRequestStatCard'
 import PendingRequestStatus from './PendingRequestStatus'
 import PendingRequestEditModal from './PendingRequestEditModal'
 import { useVendorApi } from '@/hooks/useVendorApi'
 import { VendorService } from '@/service/vendor/vendor.service'
 import ConfirmDeleteModal from '../common/ConfirmDeleteModal'
+import { useUserType } from '@/hooks/useUserType'
 
 interface PropertyRequest {
   id: string;
@@ -38,8 +38,14 @@ export default function PendingRequest() {
   const [editingRaw, setEditingRaw] = useState<any>(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [docFront, setDocFront] = useState<File | null>(null)
+  const [docBack, setDocBack] = useState<File | null>(null)
+  const [docPassport, setDocPassport] = useState<File | null>(null)
+  const [mobile, setMobile] = useState<string>('')
+  const [submittingDocs, setSubmittingDocs] = useState(false)
 
   const { loading, error, handleApiCall, clearError } = useVendorApi()
+  const { userType, loading: roleLoading, isUser, isVendor } = useUserType()
   const apiListRef = (global as any).prApiListRef || { current: [] as any[] }
   ;(global as any).prApiListRef = apiListRef
 
@@ -104,12 +110,6 @@ export default function PendingRequest() {
     return statusMatch && dateMatch;
   });
 
-  const stats = [
-    { title: "Total Properties", count: packages.length, iconPath: "/vendor/tik.svg" },
-    { title: "Pending Approval", count: packages.filter(p => p.status === 'Pending').length, iconPath: "/vendor/pending.svg" },
-    { title: "Approved Properties", count: packages.filter(p => p.status === 'Approved').length, iconPath: "/vendor/check.svg" },
-    { title: "Total Revenue", count: "$12,500", iconPath: "/vendor/totalearn.svg" },
-  ];
 
   const columns = [
     { label: 'Property Name', accessor: 'propertyName', width: '200px' },
@@ -151,6 +151,98 @@ export default function PendingRequest() {
     setDeleteOpen(true)
   };
 
+  const handleSubmitDocuments = async () => {
+    try {
+      setSubmittingDocs(true)
+      const form = new FormData()
+      if (docFront) form.append('front_image', docFront)
+      if (docBack) form.append('back_image', docBack)
+      if (docPassport) form.append('passport_image', docPassport)
+      form.append('mobile', mobile)
+      // Assumed endpoint based on API list: upload document
+      // Note: This should be updated to use the proper service method
+      console.log('Document upload functionality needs to be implemented with proper service')
+      setDocFront(null); setDocBack(null); setDocPassport(null); setMobile('')
+    } catch (e) {
+      // ignore
+    } finally {
+      setSubmittingDocs(false)
+    }
+  }
+
+  // If user type is strictly 'user', show the submission layout. Vendors see the table.
+  if (!roleLoading && isUser) {
+    const firstRaw: any = (apiListRef.current || [])[0]
+    return (
+      <div className="w-full mx-auto max-w-[1036px] md:min-w-[1036px] flex flex-col gap-5 px-2 sm:px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-1 bg-white rounded-xl p-4 flex flex-col gap-3">
+            <div className="text-lg font-medium text-[#22262e]">Upload ID Documents</div>
+            <label className="text-sm">Front side</label>
+            <input type="file" accept="image/*" onChange={e=>setDocFront(e.target.files?.[0]||null)} className="p-2 border rounded" />
+            <label className="text-sm">Back side</label>
+            <input type="file" accept="image/*" onChange={e=>setDocBack(e.target.files?.[0]||null)} className="p-2 border rounded" />
+            <label className="text-sm">NID/Driving/Passport</label>
+            <input type="file" accept="image/*" onChange={e=>setDocPassport(e.target.files?.[0]||null)} className="p-2 border rounded" />
+            <label className="text-sm">Mobile number</label>
+            <input value={mobile} onChange={e=>setMobile(e.target.value)} placeholder="01XXXXXXXXX" className="p-2 border rounded" />
+            <button disabled={submittingDocs} onClick={handleSubmitDocuments} className="mt-2 px-4 py-2 rounded bg-[#0068ef] text-white disabled:opacity-60">{submittingDocs? 'Submitting...' : 'Submit'}</button>
+          </div>
+          <div className="lg:col-span-2 bg-white rounded-xl p-4">
+            <div className="text-lg font-medium text-[#22262e] mb-3">Already submitted package</div>
+            {!firstRaw ? (
+              <div className="text-sm text-[#777980]">No package found.</div>
+            ) : (
+              <div className="flex flex-col gap-2 text-sm">
+                <div className="text-base font-medium">{firstRaw.name}</div>
+                <div className="text-[#777980]">{firstRaw.city}{firstRaw.city && firstRaw.country ? ', ' : ''}{firstRaw.country}</div>
+                <div className="text-[#070707]">Type: {firstRaw.type || '-'}</div>
+                <div className="text-[#070707]">Price: {firstRaw.price || '-'}</div>
+                {firstRaw.description && (
+                  <div className="text-[#4a4c56] whitespace-pre-wrap">{firstRaw.description}</div>
+                )}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                  <div className="text-[#070707]"><span className="text-[#777980]">Capacity:</span> {firstRaw.min_capacity || 0}-{firstRaw.max_capacity || firstRaw.max_guests || 0}</div>
+                  <div className="text-[#070707]"><span className="text-[#777980]">Bathrooms:</span> {firstRaw.bathrooms ?? '-'}</div>
+                  <div className="text-[#070707]"><span className="text-[#777980]">Bedrooms:</span> {Array.isArray(firstRaw.bedrooms) ? firstRaw.bedrooms.length : (firstRaw.total_bedrooms ?? '-')}</div>
+                  <div className="text-[#070707]"><span className="text-[#777980]">Booking:</span> {firstRaw.booking_method || '-'}</div>
+                  <div className="text-[#070707]"><span className="text-[#777980]">Breakfast:</span> {firstRaw.breakfast_available ? 'Yes' : 'No'}</div>
+                  <div className="text-[#070707]"><span className="text-[#777980]">Commission:</span> {firstRaw.commission_rate ? `${firstRaw.commission_rate}%` : '-'}</div>
+                  <div className="text-[#070707]"><span className="text-[#777980]">Rating:</span> {firstRaw.rating_summary?.averageRating ?? 0} ({firstRaw.rating_summary?.totalReviews ?? 0})</div>
+                  <div className="text-[#070707]"><span className="text-[#777980]">Created:</span> {new Date(firstRaw.created_at).toLocaleDateString()}</div>
+                </div>
+                <div className="grid grid-cols-4 gap-2 mt-2">
+                  {(
+                    (Array.isArray(firstRaw.roomFiles) && firstRaw.roomFiles.length > 0
+                      ? firstRaw.roomFiles
+                      : (firstRaw.package_files||[]).map((f:any)=> f?.file_url || f)
+                    )
+                  ).slice(0,8).map((raw:string, idx:number)=> {
+                    const src = (()=>{
+                      try { return decodeURI(raw as any) } catch { return raw as any }
+                    })();
+                    return (
+                      <img
+                        key={`${src}-${idx}`}
+                        src={src}
+                        loading="eager"
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
+                        className="w-full h-20 object-cover rounded border"
+                        onError={(e)=>{ (e.currentTarget as HTMLImageElement).style.display='none' }}
+                        alt="package"
+                      />
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full mx-auto max-w-[1036px] md:min-w-[1036px] flex flex-col gap-5 px-2 sm:px-4">
       {/* Overview */}
@@ -165,14 +257,6 @@ export default function PendingRequest() {
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="w-full bg-white rounded-xl p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, index) => (
-            <PendingRequestStatCard key={index} {...stat} />
-          ))}
-        </div>
-      </div>
 
       {/* Table Section */}
       <div className="w-full bg-white rounded-xl p-3 md:p-4">
