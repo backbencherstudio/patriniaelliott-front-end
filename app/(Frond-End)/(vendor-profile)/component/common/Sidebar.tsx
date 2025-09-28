@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
+import { useUserType } from '@/hooks/useUserType';
 
 interface NavItem {
   icon: string;
@@ -19,23 +20,68 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-const navItems: NavItem[] = [
+// Base navigation items
+const baseNavItems: NavItem[] = [
   { icon: '/vendor/profileinfo.svg', label: 'Add Profile Information', href: '/profile-info', isActive: true },
-  // { icon: '/vendor/verification.svg', label: 'Vendor Verification', href: '/vendor-verification' },
   { icon: '/vendor/payment.svg', label: 'Payment Method', href: '/payment-method' },
   { icon: '/vendor/transection.svg', label: 'Transection History', href: '/transection-history' },
   { icon: '/vendor/withdraw.svg', label: 'Withdraw Balance', href: '/withdraw-balance' },
 ];
 
+// User-specific navigation items
+const userNavItems: NavItem[] = [
+  { icon: '/vendor/verification.svg', label: 'User Verification', href: '/user-verification' },
+];
+
+// Vendor-specific navigation items  
+const vendorNavItems: NavItem[] = [
+  { icon: '/vendor/pending.svg', label: 'Pending Request', href: '/pending-request' },
+];
+
 const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
+  const { userType, loading, isUser, isVendor, isAdmin, isUnknown } = useUserType();
   
   const isActive = (href: string): boolean => {
     if (href === "/profile-info") {
       return pathname === "/profile-info";
     }
+    if (href === "/user-verification") {
+      return pathname === "/user-verification";
+    }
     return pathname.startsWith(href);
   };
+
+  // Build navigation items based on user type
+  const getNavItems = (): NavItem[] => {
+    let items = [...baseNavItems];
+    
+    console.log('Current user type:', userType);
+    console.log('isUser:', isUser, 'isVendor:', isVendor, 'isAdmin:', isAdmin, 'isUnknown:', isUnknown);
+    
+    if (isUser) {
+      // For users: show User Verification, hide Pending Request
+      items = [...items, ...userNavItems];
+      console.log('User type detected: user - showing User Verification menu');
+    } else if (isVendor) {
+      // For vendors: show Pending Request, hide User Verification
+      items = [...items, ...vendorNavItems];
+      console.log('User type detected: vendor - showing Pending Request menu');
+    } else if (isAdmin) {
+      // For admins: show all menus
+      items = [...items, ...userNavItems, ...vendorNavItems];
+      console.log('User type detected: admin - showing all menus');
+    } else {
+      // For unknown user types or null, show all menus as fallback
+      console.log('User type not detected or unknown:', userType, '- showing all available menus as fallback');
+      items = [...items, ...userNavItems, ...vendorNavItems];
+    }
+    
+    console.log('Final navigation items:', items.map(item => item.label));
+    return items;
+  };
+
+  const navItems = getNavItems();
   
   return (
     <div className="h-screen lg:h-auto">
@@ -60,62 +106,54 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <button onClick={onClose}><X /></button>
         </div>
 
+        {/* Debug Panel - Remove in production */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mb-4 p-3 bg-gray-100 rounded-lg text-xs">
+            <div className="font-semibold mb-1">Debug Info:</div>
+            <div>User Type: {userType || 'null'}</div>
+            <div>Loading: {loading ? 'Yes' : 'No'}</div>
+            <div>isUser: {isUser ? 'Yes' : 'No'}</div>
+            <div>isVendor: {isVendor ? 'Yes' : 'No'}</div>
+            <div>isAdmin: {isAdmin ? 'Yes' : 'No'}</div>
+            <div>Menu Items: {navItems.length}</div>
+          </div>
+        )}
+
         {/* Account Section */}
         <div className="mb-4">
           <h2 className="text-sm font-normal text-gray-500 mb-2">Account</h2>
           <nav className="flex flex-col gap-1">
-            {navItems.slice(0, 5).map((item, idx) => (
-              <Link
-                key={idx}
-                href={item.href}
-                onClick={onClose}
-                className={`
-                  flex items-center justify-between gap-3 px-3 py-2.5  rounded-lg 
-                  transition-colors duration-200 
-                  ${isActive(item.href) ? 'bg-[#FFF7E7]' : 'hover:bg-[#FFF7E7]'}
-                `}
-              >
-                <div className='flex gap-3 items-center'>
- <div className={`w-[30px] flex justify-center items-center   h-[30px] flex-shrink-0 rounded-full ${isActive(item.href) ? 'bg-whiteColor' : 'bg-[#FFFBEE]'}  shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]`}>
-                  <Image src={item.icon} alt={item.label} width={20} height={20} />
-                </div>
-                <span className="text-base whitespace-nowrap font-normal text-[#111111]">{item.label}</span>
-                </div>
-               
-                 <span><IoIosArrowForward/></span>
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        {/* Main Navigation */}
-        
-
-        {/* Preferences Section */}
-        <div className="mt-4">
-          {/* <h2 className="text-sm font-normal text-gray-500 mb-2">Preferences</h2> */}
-          <nav className="flex flex-col gap-1">
-            {navItems.slice(5).map((item, idx) => (
-               <Link
-                key={idx}
-                href={item.href}
-                onClick={onClose}
-                className={`
-                  flex items-center justify-between gap-3 px-3 py-2.5  rounded-lg 
-                  transition-colors duration-200 
-                  ${isActive(item.href) ? 'bg-[#FFF7E7]' : 'hover:bg-[#FFF7E7]'}
-                `}
-              >
-                <div className='flex gap-3 items-center'>
- <div className={`w-[30px] flex justify-center items-center hover:bg-whiteColor  h-[30px] flex-shrink-0 rounded-full ${isActive(item.href) ? 'bg-whiteColor' : 'bg-[#FFFBEE]'}  shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]`}>
-                  <Image src={item.icon} alt={item.label} width={20} height={20} />
-                </div>
-                <span className="text-base font-normal text-[#111111]">{item.label}</span>
-                </div>
-               
-                 <span><IoIosArrowForward/></span>
-              </Link>
-            ))}
+            {loading ? (
+              <div className="flex items-center justify-center py-4">
+                <div className="text-sm text-gray-500">Loading user data...</div>
+              </div>
+            ) : navItems.length === 0 ? (
+              <div className="flex items-center justify-center py-4">
+                <div className="text-sm text-gray-500">No menu items available</div>
+              </div>
+            ) : (
+              navItems.map((item, idx) => (
+                <Link
+                  key={idx}
+                  href={item.href}
+                  onClick={onClose}
+                  className={`
+                    flex items-center justify-between gap-3 px-3 py-2.5  rounded-lg 
+                    transition-colors duration-200 
+                    ${isActive(item.href) ? 'bg-[#FFF7E7]' : 'hover:bg-[#FFF7E7]'}
+                  `}
+                >
+                  <div className='flex gap-3 items-center'>
+                    <div className={`w-[30px] flex justify-center items-center   h-[30px] flex-shrink-0 rounded-full ${isActive(item.href) ? 'bg-whiteColor' : 'bg-[#FFFBEE]'}  shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]`}>
+                      <Image src={item.icon} alt={item.label} width={20} height={20} />
+                    </div>
+                    <span className="text-base whitespace-nowrap font-normal text-[#111111]">{item.label}</span>
+                  </div>
+                 
+                   <span><IoIosArrowForward/></span>
+                </Link>
+              ))
+            )}
           </nav>
         </div>
 
