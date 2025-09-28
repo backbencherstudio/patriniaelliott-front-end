@@ -49,13 +49,13 @@ interface BookingDetailsDialogProps {
   data: BookingData;
 }
 
-const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
+const BookingDetailsDialog: React.FC<any> = ({
   open,
   setIsModalOpen,
   data,
 }) => {
 
-  console.log("data",data);
+  console.log("check booking data",data);
   
   return (
     <Dialog open={open} onOpenChange={setIsModalOpen}>
@@ -69,7 +69,7 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
           {/* Left - Image */}
           <div className="h-[250px]  md:h-full">
             <Image
-              src={data?.booking_items[0]?.package?.image || noimage}
+              src={ noimage}
               alt="Room"
               width={500}
               height={500}
@@ -82,7 +82,7 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
             {/* Title & User */}
             <div className="flex justify-between mt-3 lg:mt-0  items-start gap-4">
               <div>
-                <h2 className="text-base md:text-lg lg:text-2xl font-medium">{data?.booking_items[0]?.package?.name}</h2>
+                <h2 className="text-base md:text-lg lg:text-2xl font-medium">{data?.package?.name}</h2>
                 
               </div>
               <p className="text-base md:text-lg lg:text-2xl font-medium text-right">
@@ -102,13 +102,11 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                     className="rounded-full"
                   />
                   <div>
-                    <p className="font-medium text-base lg:text-lg">{data?.user?.name}</p>
-                    <p className="text-sm text-muted-foreground">{data?.email}</p>
+                    <p className="font-medium text-base lg:text-lg">{data?.contact?.first_name ? data?.contact?.first_name + " " + data?.contact?.last_name : "Vendor Name"}</p>
+                    <p className="text-sm text-muted-foreground">{data?.contact?.email}</p>
                   </div>
                 </div>
             {/* Divider */}
-
-           
 
             {/* Details */}
             <div className="text-sm  mt-4">
@@ -117,17 +115,17 @@ const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
               </div>
               <div className="space-y-2">
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Guest:</p> <p>{data?.user?.name}</p>
+                <p className=" ">Guest Name:</p> <p>{data?.reservation_details?.guest_name}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Reservation ID:</p> <p>{data?.id}</p>
+                <p className=" ">Reservation ID:</p> <p>{data?.reservation_details?.reservation_id}</p>
               </div>
              
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Guests:</p> <p>{data?.booking_items[0]?.package?.guest_count}</p>
+                <p className=" ">Guests:</p> <p>{data?.reservation_details?.guests}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Check in/Check out:</p> <p>{dayjs(data?.booking_items[0]?.start_date).format("YYYY-MM-DD")} / {dayjs(data?.booking_items[0]?.end_date).format("YYYY-MM-DD")}</p>
+                <p className=" ">Check in/Check out:</p> <p>{dayjs(data?.reservation_details?.check_in).format("YYYY-MM-DD")} / {dayjs(data?.reservation_details?.check_out).format("YYYY-MM-DD")}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
                 <p className=" ">Status:</p> <p>{data?.status}</p>

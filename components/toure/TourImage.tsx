@@ -6,7 +6,6 @@ import ToureImage from './ToureImage';
 
 
 function TourImage({vendorPackage}:{vendorPackage:any}) {
-    console.log("image",vendorPackage?.package_files[0]?.file_url);
      const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
      const [isOpen, setIsOpen] = useState(false);
   const getSlideSrc = (src: string, index: number) => {

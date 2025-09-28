@@ -1,12 +1,13 @@
 "use client";
 
-import { Frown, Meh, Smile } from "lucide-react";
 
-export default function SatisfactionCard() {
-  const data = {
-    poor: 20,
-    average: 20,
-    good: 60,
+
+export default function SatisfactionCard({data}:any) {
+  const dataCard = {
+    poor: data?.overall_satisfaction?.dissatisfied?.percentage
+,
+    average: data?.overall_satisfaction?.neutral?.percentage,
+    good: data?.overall_satisfaction?.satisfied?.percentage,
   };
 
   return (
@@ -17,30 +18,30 @@ export default function SatisfactionCard() {
         {/* Progress Bar */}
         <div className="flex h-4 w-full rounded-xs overflow-hidden mb-4 relative">
           {/* Poor - Red section */}
-          <div className="bg-[#FE5050]" style={{ width: `${data.poor}%` }} />
+          <div className="bg-[#FE5050]" style={{ width: `${dataCard.poor}%` }} />
 
           {/* Average - Gray section */}
-          <div className="bg-gray-300" style={{ width: `${data.average}%` }} />
+          <div className="bg-gray-300" style={{ width: `${dataCard.average}%` }} />
 
           {/* Good - Green section */}
-          <div className="bg-[#6DD287]" style={{ width: `${data.good}%` }} />
+          <div className="bg-[#6DD287]" style={{ width: `${dataCard.good}%` }} />
 
         
         </div>
 
         {/* Labels and Icons */}
-        <div className="flex justify-between text-xs text-gray-600">
+        <div className="flex justify-between text-xs text-gray-600 items-center">
           <div className="flex items-center gap-1 text-[#FE5050]">
-            <span>{data.poor}%</span>
-            <Frown className="w-5 h-5" />
+            <span>{dataCard.poor}%</span>
+           <span className="">{data?.overall_satisfaction?.dissatisfied?.emoji}</span>
           </div>
           <div className="flex items-center gap-1 text-gray-400">
-            <span>{data.average}%</span>
-            <Meh className="w-5 h-5" />
+            <span>{dataCard.average}%</span>
+            <span>{data?.overall_satisfaction?.neutral?.emoji}</span>
           </div>
           <div className="flex items-center gap-1 text-[#6DD287]">
-            <span>{data.good}%</span>
-            <Smile className="w-5 h-5" />
+            <span>{dataCard.good}%</span>
+            <span>{data?.overall_satisfaction?.satisfied?.emoji}</span>
           </div>
         </div>
       </div>

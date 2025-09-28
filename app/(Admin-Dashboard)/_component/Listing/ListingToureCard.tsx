@@ -66,25 +66,25 @@ const ListingToureCard = ({
                 <p className=" ">User ID:</p> <p className="text-blackColor/80">{data?.user?.id}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Duration:</p> <p className="text-blackColor/80">{data?.user?.duration}</p>
+                <p className=" ">Duration:</p> <p className="text-blackColor/80">{data?.duration || 1} Days</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Group Size:</p> <p className="text-blackColor/80">{data?.user?.groupSize}</p>
+                <p className=" ">Group Size:</p> <p className="text-blackColor/80">{data?.max_capacity || 1} People</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Inclusive:</p> <p className="text-blackColor/80">{data?.inclusive}</p>
+                <p className=" ">Inclusive:</p> <p className="text-blackColor/80">{data?.breakfast_available ? "Hotel + All Included" : "No Included"}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
                 <p className=" ">Status:</p> <p className="text-blackColor/80">{data?.status == 1 ? "pending" : data?.status == 2 ? "approved" : "cancel"}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Location:</p> <p className="text-blackColor/80">{data?.location}</p>
+                <p className=" ">Location:</p> <p className="text-blackColor/80">{data?.city}</p>
               </div>
               </div>
             </div>
             </div>
             <div className="col-span-1 p-4 rounded-2xl bg-secondaryColor/15 mt-4 lg:mt-0">
-                <TotalReviewStats averageRating={data?.rating}/>
+                <TotalReviewStats averageRating={data?.rating_summary}/>
             </div>
             </div>
            

@@ -3,7 +3,7 @@ function PaymentAction({ status, onView,onAccept,onCancel }: any) {
   
     return (
       <div>
-        {status?.status == "succeeded" || status?.status == "cancel" ? (
+        {status?.status == "succeeded" || status?.status == "canceled" || status?.status == "approved" ? (
           <span
             className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
             onClick={() => onView(status)}

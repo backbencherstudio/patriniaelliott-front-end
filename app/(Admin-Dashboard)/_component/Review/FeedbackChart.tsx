@@ -13,14 +13,14 @@ import { Bar } from 'react-chartjs-2';
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const BarChartComponent = () => {
+const BarChartComponent = ({data}:any) => {
   // Fixed the label for 2nd week and ensured data matches the labels
-  const labels = ['1st Week', '2nd Week', '3rd Week'];
-  const data = {
+  const labels = [data?.all_feedback?.label, data?.all_feedback?.label, data?.all_feedback?.label];
+  const dataChart = {
     labels: labels,
     datasets: [
       {
-        data: [30, 40, 60], // Removed the label
+        data: [data?.all_feedback?.total, data?.all_feedback?.total, data?.all_feedback?.total], // Removed the label
         backgroundColor: [
           '#E9E9EA',
           '#D2D2D5',
@@ -55,7 +55,7 @@ const BarChartComponent = () => {
   };
 
   // Percentage data and progress bar calculation
-  const percentage = 6.6;
+  const percentage = data?.all_feedback?.change_percentage;
   const progress = percentage > 0 ? percentage : 0; // Ensure positive value
 
   return (
@@ -63,12 +63,12 @@ const BarChartComponent = () => {
       <CardContent className='px-0'>
         <div className="flex justify-between items-center shadow-none">
           <div className="">
-            <h4 className="lg:text-3xl text-xl font-medium">250</h4>
+            <h4 className="lg:text-3xl text-xl font-medium">{data?.all_feedback?.total}</h4>
              <p className=' mt-3 text-sm text-descriptionColor'>All Feedback</p>
           </div>
           <div>
             <div style={{ height: '80px', width: '100px' }}>
-              <Bar data={data} options={options} />
+              <Bar data={dataChart} options={options} />
             </div>
             <div>
               <div className="flex items-center text-xs mt-2"> <p className='text-green-500 '>{progress}%</p> <span>vs last week</span> </div>

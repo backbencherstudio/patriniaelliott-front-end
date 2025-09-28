@@ -11,7 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import useFetchData from "@/hooks/useFetchData";
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import dayjs from "dayjs";
+import CancelRefund from "./CancelRefund";
 import CancelRefundDetails from "./CancelRefundDetails";
 import ConfirmRefundDetails from "./ConfirmRefundDetails";
 import PaymentAction from "./PaymentAction";
@@ -23,6 +26,7 @@ export default function PaymentPage() {
   const [isModalOpen, setIsModalOpen] = useState<any>(false);
   const [isEdit, setIsEdit] = useState<any>(false);
   const [cancel, setCancel] = useState<any>(false);
+  const [cancelRefund, setCancelRefund] = useState<any>(false);
   const [paymentData, setPaymentData] = useState<any>([]);
   const [paymentHistory, setPaymentHistory] = useState<any>();
   const [payment, setPayment] = useState<
@@ -38,24 +42,34 @@ export default function PaymentPage() {
  const endpoint = `/dashboard/payments/transactions?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`;
   const { data, loading, error } = useFetchData(endpoint);
   const totalPages = data?.data?.transactions?.pagination?.totalPages || 0;
-  
+  const {token} = useToken();
   useEffect(()=>{
     if (data?.data) {
         setPaymentData(data?.data?.transactions?.data);
         setPaymentHistory(data?.data?.statistics);
     }
   },[data])
-  const handleViewDetails = (user: any) => {
-    setSelectedData(user);
-    setIsModalOpen(true);
+  const handleViewDetails = async (user: any) => {
+     try {
+      const response = await UserService.getData(`/dashboard/payments/transactions/${user?.id}`,token);
+  
+      setSelectedData(response?.data?.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.log("error",error);
+    }
+   
   };
   const handleAccept = (user: any) => {
     setSelectedData(user);
     setCancel(true);
   };
   const handleCancel = (user: any) => {
-    setSelectedData(user);
-    setCancel(true);
+      setSelectedData(user);
+    setCancelRefund(true);
+  };
+  const handleOptimisticUpdate = (id: any, status: any) => {
+    setPaymentData((prev) => prev.map((item: any) => item.id === id ? { ...item, status } : item));
   };
   const columns = [
     { label: "Booking ID", accessor: "booking_id" },
@@ -76,7 +90,7 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleCancel} status={row} />
+        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleViewDetails} status={row} />
       ),
     },
   ];
@@ -99,13 +113,13 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleCancel} status={row} />
+       <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleViewDetails} status={row} />
       ),
     },
   ];
   const Refundcolumns = [
     { label: "Booking ID", accessor: "booking_id" ,width:"100px" },
-    { label: "Reason", accessor: "reason" },
+    { label: "Reason", accessor: "refund_reason" },
     { label: "Guest Name", accessor: "user",formatter: (value) => `${value?.name}` },
     { label: "Request date", accessor: "created_at",formatter: (value) => `${value ? dayjs(value).format("YYYY-MM-DD") : "-"}` },
     {
@@ -123,7 +137,7 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} status={row} />
+       <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleViewDetails} status={row} />
       ),
     },
   ];
@@ -301,7 +315,7 @@ export default function PaymentPage() {
           )}
       {isModalOpen &&
           selectedData &&
-          (selectedData.status === "succeeded") && (
+          (selectedData.status === "succeeded" || selectedData.status === "approved" || selectedData.status === "canceled") && (
             <ConfirmRefundDetails
               open={isModalOpen}
               data={selectedData}
@@ -310,9 +324,18 @@ export default function PaymentPage() {
           )}
       {cancel && selectedData &&
             <RefundConfirmation
+             onOptimisticUpdate={handleOptimisticUpdate}
               open={cancel}
               data={selectedData}
               onOpenChange={setCancel}
+            />
+        }
+      {cancelRefund && selectedData &&
+            <CancelRefund
+             onOptimisticUpdate={handleOptimisticUpdate}
+              open={cancelRefund}
+              data={selectedData}
+              onOpenChange={setCancelRefund}
             />
         }
       </div>

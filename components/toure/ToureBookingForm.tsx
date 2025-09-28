@@ -97,7 +97,6 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
     if (token) {
       try {
         const response = await UserService?.createData(`/booking`, bookingData, token);
-        console.log("response", response);
         
         if (response?.data?.success) {
           toast.success(response?.data?.message);

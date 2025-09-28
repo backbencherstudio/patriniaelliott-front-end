@@ -3,6 +3,7 @@ import ApartmentImage from "@/components/apartment/ApartmentImage";
 import PolicyDetails from "@/components/apartment/PolicyDetails";
 import ProfileCard from "@/components/apartment/ProfileCard";
 import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
+import AccommodationCard from "@/components/card/AccommodationCard";
 import { UserService } from "@/service/user/user.service";
 import { ChevronRight } from "lucide-react";
 import dynamic from 'next/dynamic';
@@ -70,7 +71,16 @@ async function HotelDetailsPage(props: {
   } catch (error) {
     console.log(error);
   }
+  let hotelData: any = [];
+  try {
+    const res = await UserService.getData(`/admin/vendor-package?type=hotel&limit=${6}&page=${1}`, token);
+    
+    hotelData = res?.data?.data ?? [];
+  } catch (error) {
+    console.log(error);
 
+  }
+  console.log(vendorPackage);
 
   return (
     <div>
@@ -105,11 +115,11 @@ async function HotelDetailsPage(props: {
           <AvailabilitySearchBox />
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
-          {/* {hotelData.map((tour: any, index) => (
+          {hotelData.map((tour: any, index) => (
             <div key={tour.title}>
-              <ApartmentDettailsPageCard data={tour} />
+              <AccommodationCard tour={tour} />
             </div>
-          ))} */}
+          ))}
         </div>
       </div>
 

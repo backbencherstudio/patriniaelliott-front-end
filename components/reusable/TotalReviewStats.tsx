@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from "react";
 import { FaStar } from "react-icons/fa";
 
 interface TotalReviewStatsProps {
-  averageRating: number;
+  averageRating: any;
 }
 
 const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) => {
@@ -16,22 +16,27 @@ const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) =>
   const circumference = 2 * Math.PI * radius;
 
   useEffect(() => {
+    // Ensure we have a valid number for the rating
+    const ratingValue = Number(averageRating?.averageRating) || 0;
+    
     if (ratingRef.current) {
       const ratingNumber = { val: 0 };
       gsap.to(ratingNumber, {
-        val: averageRating,
+        val: ratingValue,
         duration: 1.5,
         ease: "power2.out",
         onUpdate: () => {
           if (ratingRef.current) {
-            ratingRef.current.innerText = ratingNumber.val.toFixed(1);
+            // Ensure val is a number before calling toFixed
+            const currentVal = Number(ratingNumber.val) || 0;
+            ratingRef.current.innerText = currentVal.toFixed(1);
           }
         },
       });
     }
 
     if (circlePathRef.current) {
-      const offset = circumference - (averageRating / 5) * circumference;
+      const offset = circumference - (ratingValue / 5) * circumference;
 
       gsap.fromTo(
         circlePathRef.current,
@@ -43,7 +48,7 @@ const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) =>
         }
       );
     }
-  }, [averageRating]);
+  }, [averageRating?.averageRating]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-1">
@@ -85,7 +90,7 @@ const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) =>
                           <FaStar
                             key={i}
                             className={
-                              i < Math.round(Number(averageRating))
+                              i < Math.round(Number(averageRating?.averageRating) || 0)
                                 ? "text-[#FAAD14]"
                                 : "text-gray-300"
                             }
@@ -94,7 +99,7 @@ const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) =>
                       </div>
                     </div>
                     <p className="text-gray-500 text-base mt-1">
-                      From 120 reviews
+                      From {averageRating?.totalReviews} reviews
                     </p>
                   </div>
                   <div>
