@@ -49,13 +49,13 @@ const ReviewSection = ({ singleApartment }) => {
     fetchReviewData();
   }, [singleApartment?.id, currentPage]);
   const [comment, setComment] = useState("");
-  const [reviewStats, setReviewStats] = useState([
-    { rating: 5, count: 160 },
-    { rating: 4, count: 12 },
-    { rating: 3, count: 8 },
-    { rating: 2, count: 0 },
-    { rating: 1, count: 0 },
-  ]);
+const [reviewStats, setReviewStats] = useState([
+  { rating: 5, count: singleApartment?.rating_summary?.ratingDistribution?.["5"] ?? 0},
+  { rating: 4, count: singleApartment?.rating_summary?.ratingDistribution?.["4"] ?? 0},
+  { rating: 3, count: singleApartment?.rating_summary?.ratingDistribution?.["3"] ?? 0},
+  { rating: 2, count: singleApartment?.rating_summary?.ratingDistribution?.["2"] ?? 0},
+  { rating: 1, count: singleApartment?.rating_summary?.ratingDistribution?.["1"] ?? 0},
+]);
 
   const [starValue, setStarValue] = useState(0);
   const totalReviews = reviewStats.reduce((acc, item) => acc + item.count, 0);

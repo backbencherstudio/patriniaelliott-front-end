@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Select,
@@ -9,44 +9,71 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { reviewData } from "@/DemoAPI/reviewData";
 import useFetchData from "@/hooks/useFetchData";
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import { FaRegStar } from "react-icons/fa";
-import DynamicTableTwo from "../common/DynamicTableTwo";
+import { toast } from "react-toastify";
+import DynamicTableWithPagination from "../common/DynamicTable";
 import FeedbackChart from "./FeedbackChart";
 import ReviewAction from "./ReviewAction";
 import ReviewDetails from "./ReviewDetails";
 import ReviewStatuse from "./ReviewStatuse";
 import SatisfactionCard from "./SatisfactionCard";
 import TotalReview from "./TotalReview";
-import DynamicTableWithPagination from "../common/DynamicTable";
 
 
 export default function ReviewPage() {
   const [isModalOpen, setIsModalOpen] = useState<any>(false);
-
+  const {token} = useToken()
   const [selectedData, setSelectedData] = useState<any | null>(null);
   const [selectedRole, setSelectedRole] = useState<
     "All" | "Approved" | "Pending" | "Rejected"
   >("All");
   const [dateRange, setDateRange] = useState<"all" | "7" | "15" | "30">("all");
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [loading, setLoading] = useState(false)
+  const [reviewData, setReviewData] = useState<any>([])
   const handleViewDetails = (user: any) => {
     setSelectedData(user);
     setIsModalOpen(true);
   };
-  const handleDelete = (user: any) => {
-    setSelectedData(user);
+  const handleDelete = async(id: any) => {
+    try {
+      const res = await UserService.deleteData(`/admin/reviews/${id}`,token);
+      if (res?.data?.success) {
+        toast.success(res?.data?.message)
+        const updateUser = reviewData?.filter((item: any) => item.id !== id)
+        setReviewData(updateUser)
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const endpoint = `/admin/reviews?page=${currentPage}&limit=${10}`
-const {data,loading} = useFetchData(endpoint)
- const {data:reviewData,loading:reviewLoading} = useFetchData(`/admin/reviews/statistics`)
 
- console.log("reviewData",reviewData);
+ const {data:reviewDataData,loading:reviewLoading} = useFetchData(`/admin/reviews/statistics`)
+
+useEffect(()=>{
+  const fetchData = async()=>{
+    setLoading(true)
+try {
+  const res = await UserService.getData(`/admin/reviews?page=${currentPage}&limit=${10}`,token)
+  setReviewData(res?.data?.data)
+} catch (error) {
+  console.log(error);
+  
+}finally{
+  setLoading(false)
+}
+
+}
+if(token){
+  fetchData()
+}
+},[currentPage,token])    
  
 
-  const columns = [
+const columns = [
     { label: "User Name", accessor: "user", width:"168px" ,
       formatter: (value, row) => (
         <div className=" flex gap-2 items-center"><div className=" w-6 h-6 rounded-full overflow-hidden ">
@@ -96,7 +123,7 @@ const {data,loading} = useFetchData(endpoint)
         <ReviewAction onView={handleViewDetails}  onDelete={handleDelete}  status={value} data={row} />
       ),
     },
-  ];
+];
  
 
   
@@ -105,15 +132,15 @@ const {data,loading} = useFetchData(endpoint)
       {/* Overview */}
       <div className="w-full bg-white rounded-xl p-4  mx-auto">
         <h2 className="text-2xl font-medium text-[#22262e] mb-1">
-          Transaction history
+          Manage Reviews
         </h2>
         <p className="text-base text-[#777980] mb-4">
-          Check up on your latest reservations and history.
+          Check up on your latest reviews and history.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <TotalReview/>
-            <FeedbackChart/>
-            <SatisfactionCard/>
+            <TotalReview data={reviewDataData?.data}/>
+            <FeedbackChart data={reviewDataData?.data}/>
+            <SatisfactionCard data={reviewDataData?.data}/>
          {/* <SatisfactionCard/> */}
         </div>
       </div>
@@ -176,11 +203,11 @@ const {data,loading} = useFetchData(endpoint)
         <div>
           {selectedRole  && (
             <DynamicTableWithPagination
-            data={data?.data}
+            data={reviewData}
             columns={columns}
             currentPage={currentPage}
-            loading={loading}
-            totalPages={data?.pagination?.total_pages || 0}
+            loading={loading }
+            totalPages={reviewData?.pagination?.total_pages || 0}
             itemsPerPage={10}
             onPageChange={(page) => setCurrentPage(page)}
           />

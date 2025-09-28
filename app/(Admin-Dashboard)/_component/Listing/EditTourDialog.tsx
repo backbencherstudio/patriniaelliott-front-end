@@ -1,10 +1,10 @@
 "use client";
 
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { BiEditAlt } from "react-icons/bi";
@@ -32,7 +32,6 @@ export default function EditTourDialog({
   });
 
   const onSubmit = (formData: any) => {
-    console.log("Updated Tour Data:", formData);
     onOpenChange(false);
     reset();
   };

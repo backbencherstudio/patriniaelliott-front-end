@@ -60,7 +60,7 @@ function MenuDropDown({setMenuOpen,data}:any) {
                     <Link href="/my-account" className="w-full flex items-center gap-2.5">
                         <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                           <Image
-                            src={data?.avatar_url || "/profile.png"}
+                            src={"/usericon/user.svg"}
                             alt="My Account"
                             width={16}
                             height={16}

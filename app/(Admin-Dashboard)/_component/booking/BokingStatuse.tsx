@@ -9,7 +9,7 @@ interface UserData {
     status: 'succeeded' | 'pending' | 'cancele' | 'approved';
   }
   export const statusStyles = {
-    succeeded: {
+    Confirmed: {
       bg: 'bg-[#38c976]/10',
       border: 'outline-[#abefc6]',
       text: 'text-[#067647]',

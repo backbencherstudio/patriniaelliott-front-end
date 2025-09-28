@@ -3,11 +3,11 @@ import ApartmentImage from "@/components/apartment/ApartmentImage";
 import PolicyDetails from "@/components/apartment/PolicyDetails";
 import ProfileCard from "@/components/apartment/ProfileCard";
 import VerifiedVendorCard from "@/components/apartment/VerifiedVendorCard";
+import AccommodationCard from "@/components/card/AccommodationCard";
 import { UserService } from "@/service/user/user.service";
 import { ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import { cookies } from "next/headers";
-import Image from "next/image";
 const BookingForm = dynamic(() => import('@/components/apartment/BookingForm'), {
   loading: () => (
     <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
@@ -61,12 +61,22 @@ async function ApartmnetDetailsPage(props: {
   let vendorPackage: any = {};
   try {
     const res = await UserService.getData(`/admin/vendor-package/${apartmentSlug}`, token);
+    
     vendorPackage = res?.data?.data ?? {};
   } catch (error) {
     console.log(error);
 
   }
+  let hotelData: any = [];
+  try {
+    const res = await UserService.getData(`/admin/vendor-package?type=apartment&limit=${6}&page=${1}`, token);
+    
+    hotelData = res?.data?.data ?? [];
+  } catch (error) {
+    console.log(error);
 
+  }
+console.log(hotelData,"vendorPackage");
   return (
     <div>
       <div className=" container">
@@ -96,11 +106,11 @@ async function ApartmnetDetailsPage(props: {
           <AvailabilitySearchBox />
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
-          {/* {hotelData.map((tour: any, index) => (
+          {hotelData.map((tour: any, index) => (
             <div key={tour.title}>
-              <ApartmentDettailsPageCard data={tour} />
+              <AccommodationCard tour={tour} />
             </div>
-          ))} */}
+          ))}
         </div>
       </div>
 
