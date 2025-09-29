@@ -35,7 +35,7 @@ export default function StepTwo({totalAmount }:any) {
 
     try {
       const response = await UserService?.createData(`/booking/payment/create-intent`, formattedData, token)
-      console.log("response", response?.data?.data?.payment_intent_id);
+
       if (response?.data?.success) {
         toast.success(response?.data?.message);
         setPaymentID(response?.data?.data?.payment_intent_id)
@@ -50,7 +50,7 @@ export default function StepTwo({totalAmount }:any) {
     setIsSubmitting(false);
     setSubmittingCardId(null);
   };
-console.log("check card path name",pathname);
+
 
   return (
     <div className="mt-6 px-10">

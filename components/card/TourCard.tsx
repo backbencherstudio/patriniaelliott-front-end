@@ -1,5 +1,6 @@
 'use client';
 
+import { TextLimit } from '@/lib/TextLimit';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -98,8 +99,8 @@ export default function TourCard({ tour }: any) {
                 <span className="text-xs text-primaryColor bg-[#90A9C3]/20 px-3 py-1 rounded-full  font-medium">
                     Hotel + All inclusive
                 </span>
-                <h3 className="font-medium mt-3 text-[22px] text-blackColor leading-[130%]">
-                    {tour?.name}
+                <h3 className="font-medium mt-3 text-[20px] text-blackColor leading-[130%]">
+                    {TextLimit(tour?.name, 40)}
                 </h3>
 
                 <div className="flex items-center gap-1 text-yellow-500 text-sm">

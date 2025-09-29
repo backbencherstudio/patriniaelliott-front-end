@@ -21,6 +21,11 @@ const handleConfirm = async() => {
 
     if(response?.data?.success){
         toast.success(response?.data?.data?.message);
+        localStorage.removeItem("bookingDetails");
+        localStorage.removeItem("toure_booking_travel_price");
+        localStorage.removeItem("toure_booking_single_toure");
+        localStorage.removeItem("toure_booking_end_date");
+        localStorage.removeItem("toure_booking_start_date");
         setIsConfirmOpen(true)
     }else{
         toast.error(response?.response?.data?.message);
