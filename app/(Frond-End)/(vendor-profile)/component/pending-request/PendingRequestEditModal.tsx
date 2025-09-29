@@ -1,6 +1,5 @@
 'use client'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 
 interface PropertyRequestForm {
@@ -26,8 +25,7 @@ export default function PendingRequestEditModal({ open, onClose, data, onSave }:
 }) {
   const [form, setForm] = useState<PropertyRequestForm | null>(null)
   const [dirty, setDirty] = useState(false)
-  const photos = useMemo(() => (data?.package_files || []).map((f: any) => f.file_url), [data])
-  const hasPhotos = photos && photos.length > 0
+  // Images are intentionally not shown in the edit modal to prevent layout shifts
 
   useEffect(() => {
     if (data) {
@@ -81,19 +79,8 @@ export default function PendingRequestEditModal({ open, onClose, data, onSave }:
           <div className="p-4 border-b">
             <div className="text-xl font-medium">Edit Package</div>
           </div>
-          <div className={`flex-1 overflow-y-auto p-4 grid grid-cols-1 ${hasPhotos ? 'lg:grid-cols-3' : ''} gap-4`}>
-            {hasPhotos && (
-              <div className="lg:col-span-1 flex flex-col gap-3">
-                <div className="grid grid-cols-3 gap-2">
-                  {photos.slice(0, 6).map((src: string, i: number) => (
-                    <div key={i} className="relative w-full pt-[66%] bg-gray-100 rounded">
-                      <Image src={src} alt="photo" fill className="object-cover rounded" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div className={`${hasPhotos ? 'lg:col-span-2' : ''} grid grid-cols-1 md:grid-cols-2 gap-4`}>
+          <div className={`flex-1 overflow-y-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-4`}>
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 md:col-span-2`}>
               <div className="flex flex-col gap-1">
                 <label className="text-sm text-[#070707]">Name</label>
                 <input value={form?.name || ''} onChange={e=>handleChange('name', e.target.value)} className="p-3 rounded border w-full" />
