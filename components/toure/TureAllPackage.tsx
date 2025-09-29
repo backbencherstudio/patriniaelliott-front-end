@@ -7,8 +7,6 @@ import BigCardSkleton from "../apartment/BigCardSkleton";
 function TureAllPackage({data, loading,pagination, error, currentPage, setCurrentPage}: {data: any, loading: any, pagination: any, error: any, currentPage: any, setCurrentPage: any}) {
     const HotelsPerPage = 4;
    
-console.log(pagination);
-console.log(data);
 
   
   return (

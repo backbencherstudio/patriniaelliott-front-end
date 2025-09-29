@@ -17,7 +17,7 @@ const [data, setData] = useState(null);
   const[pagination , setPagination] = useState({});
   const {token} = useToken()
   const swiperRef = useRef<any>(null);
- const endpoint = `/admin/vendor-package?type=tour&limit=${10}&page=${1}`
+ const endpoint = `/application/packages?type=tour&limit=${10}&page=${1}`
   useEffect(() => {
     if (!endpoint ) return; // Skip if URL or token is missing
 

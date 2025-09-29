@@ -1,11 +1,12 @@
 'use client';
 
-import useFetchData from "@/hooks/useFetchData";
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import { useSearchParams } from "next/navigation";
-import { useState } from 'react';
-import PaginationPage from "../reusable/PaginationPage";
+import { useEffect, useState } from 'react';
 import BigCardSkleton from "../apartment/BigCardSkleton";
 import HotelCard from "../card/HotelCard";
+import PaginationPage from "../reusable/PaginationPage";
 
 
 
@@ -16,7 +17,11 @@ function HotelPage() {
     const endDate = searchParams.get("endDate");
     const min = searchParams.get("min");
     const max = searchParams.get("max");
-
+    const {token} = useToken()
+    const [data, setData] = useState(null);
+    const [pagination, setPagination] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     // Get all ratings parameters (multiple ratings can be selected)
     const allParams = Array.from(searchParams.entries());
     const ratings = allParams
@@ -50,13 +55,31 @@ function HotelPage() {
         return params.toString();
     };
 
-    const endpoint = `/admin/vendor-package?${buildQueryParams()}`
-    const { data, loading, error } = useFetchData(endpoint);
-    const totalPages = data?.meta?.totalPages
-    const packageData = data ? data?.data : []
+    const endpoint = `/application/packages?${buildQueryParams()}`
+   useEffect(() => {
+    if (!endpoint ) return; // Skip if URL or token is missing
 
-    console.log("hello=====",totalPages);
-    console.log("hello=====", packageData);
+    const fetchData = async () => {
+      try {
+        setLoading(true); // Set loading to true when starting request
+        const response = await UserService.getData(endpoint,token)
+        setData(response.data?.data); // Save the response data
+        console.log(response.data?.data);
+        setPagination(response?.data?.data?.meta)
+        } catch (err) {
+        setError(err.message || "Something went wrong"); // Handle error
+      } finally {
+        setLoading(false); 
+      }
+    };
+
+    fetchData(); 
+  }, [endpoint]);
+   
+
+ ;
+
+
     return (
         <div>
             {/* <FilterHeader title="Hotel" data={packageData} /> */}
@@ -66,7 +89,7 @@ function HotelPage() {
                     {Array.from({ length: 5 }, (_, i) => (
                         <BigCardSkleton key={i} />
                     ))}
-                </div> : packageData.length < 0 ? <div>Not found data !</div> : packageData.map((tour: any, index) => (
+                </div> : data?.length < 0 ? <div>Not found data !</div> : data?.map((tour: any, index) => (
                     <div key={index} className=" py-4">
                         <HotelCard hotel={tour} />
                     </div>
@@ -75,7 +98,7 @@ function HotelPage() {
 
             {/* Pagination Controls */}
             <div className="">
-                <PaginationPage totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                <PaginationPage totalPages={pagination?.totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
             </div>
 
         </div>

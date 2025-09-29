@@ -46,7 +46,7 @@ function ApartmentPage() {
         return params.toString();
     };
 
-    const endpoint = `/admin/vendor-package?${buildQueryParams()}`
+    const endpoint = `/application/packages?${buildQueryParams()}`
     const { data, loading, error } = useFetchData(endpoint);
     const totalPages = data?.meta?.totalPages
     const packageData = data ? data?.data : []

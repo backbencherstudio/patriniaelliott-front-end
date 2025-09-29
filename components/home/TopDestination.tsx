@@ -7,9 +7,11 @@ import { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Skeleton } from "../ui/skeleton";
 
 function TopDestination() {
        const [currentIndex, setCurrentIndex] = useState(1);
+       const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
        const [loading, setLoading]=useState(true);
        const [error, setError]=useState(null);
        const [data, setData]=useState(null);
@@ -32,7 +34,19 @@ function TopDestination() {
         fetchData()
        },[endpoint])
 
-       console.log(data,"data");
+  const getSlideSrc = (src: string, index: number) => {
+    if (!src) return "/empty.png";
+    return failedIndices.has(index) ? "/empty.png" : src;
+  };
+
+  const handleImageError = (index: number) => {
+    setFailedIndices(prev => {
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
+  };
+       console.log(loading,"loading");
        
       const swiperRef = useRef<any>(null);
     
@@ -95,17 +109,29 @@ function TopDestination() {
             <SwiperSlide key={index}>
               <div className=" w-full ">
                 <div className=" w-full h-full rounded-full overflow-hidden">
-                <Image
-                  src={des?.image || "/empty.png"}
+              { loading ? <div className="w-full h-full rounded-full overflow-hidden">
+                <Skeleton className="w-full h-full rounded-full overflow-hidden" />
+              </div> : 
+
+              <Image
+                  src={getSlideSrc(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/${des?.img}`, index)}
                   alt={`des ${index + 1}`}
                   width={220}
                   height={220}
+                  onError={() => handleImageError(index)}
                   className="w-full h-full hover:scale-110 transition-all duration-300 overflow-hidden rounded-full object-cover"
                 />
+              }   
                 </div>
                 <div className=" text-center mt-4">
-                    <h3 className=" text-2xl font-medium ">{des?.country}</h3>
-                    <p className="text-base text-descriptionColor leading-[150%] ">{des?.count} Times Tour</p>
+                 {
+                  loading ? <Skeleton className="w-full h-full rounded-full overflow-hidden" /> :
+                  <h3 className=" text-2xl font-medium ">{des?.country}</h3>
+                 }  
+                    {
+                      loading ? <Skeleton className="w-full h-full rounded-full overflow-hidden" /> :
+                      <p className="text-base text-descriptionColor leading-[150%] ">{des?.count} Times Tour</p>
+                    }  
                 </div>
               </div>
             </SwiperSlide>

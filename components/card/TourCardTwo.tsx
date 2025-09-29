@@ -26,7 +26,7 @@ function TourCardTwo({tour}:any) {
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
         {
-                        tour?.package_files?.length >= 2 ?
+                        tour?.room_photos?.length >= 2 ?
                             <Swiper
                                 slidesPerView={1}
                                 loop={true}
@@ -44,8 +44,8 @@ function TourCardTwo({tour}:any) {
                                     bulletActiveClass: 'hero-bullet-active',
                                 }}>
                                 {
-                                    tour?.package_files?.length > 0 &&
-                                    tour?.package_files?.slice(0, 4).map((file: any, index: number) => (
+                                    tour?.room_photos?.length > 0 &&
+                                    tour?.room_photos?.slice(0, 4).map((file: any, index: number) => (
                                         <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
                                             <Image
                                                 src={getSlideSrc(file?.file_url, index)}
@@ -62,7 +62,7 @@ function TourCardTwo({tour}:any) {
                             :
                             <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
                                 <Image
-                                    src={tour?.package_files[0]?.file_url || "/Accommodation/a1.png"}
+                                    src={tour?.room_photos[0]?.file_url || "/Accommodation/a1.png"}
                                     alt={tour?.name}
                                     width={400}
                                     height={200}
