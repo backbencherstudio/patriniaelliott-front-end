@@ -270,6 +270,98 @@ export const VendorService = {
     return await Fetch.get(`/vendor/transactions/${id}`, _config);
   },
 
+  // Payment Accounts
+  getPaymentAccounts: async (context: any = null) => {
+    const userToken = CookieHelper.get({ key: "tourAccessToken", context });
+    
+    if (!userToken) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+
+    // Note: Base URL already includes /api
+    return await Fetch.get("/payments/accounts", _config);
+  },
+
+  createPaymentAccount: async (data: any, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "tourAccessToken", context });
+    
+    if (!userToken) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+
+    // Note: Base URL already includes /api
+    return await Fetch.post("/payments/stripe/create-account", data, _config);
+  },
+
+  getPaymentAccountById: async (id: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "tourAccessToken", context });
+    
+    if (!userToken) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+
+    // Note: Base URL already includes /api
+    return await Fetch.get(`/payments/accounts/${id}`, _config);
+  },
+
+  getPaymentAccountStatus: async (accountId: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "tourAccessToken", context });
+    
+    if (!userToken) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+
+    // Note: Base URL already includes /api
+    return await Fetch.get(`/payments/${accountId}/status`, _config);
+  },
+
+  // Stripe onboarding link for a given account id
+  getStripeOnboardingLink: async (accountId: string, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "tourAccessToken", context });
+    
+    if (!userToken) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+
+    const _config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+
+    // Note: Base URL already includes /api
+    return await Fetch.get(`/payments/stripe/onboarding-link/${accountId}`, _config);
+  },
+
   getAllBookings: async (params: any = {}, context: any = null) => {
     const userToken = CookieHelper.get({ key: "tourAccessToken", context });
     
