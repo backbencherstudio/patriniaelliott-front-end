@@ -1,8 +1,8 @@
 'use client'
 
-import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const propertySteps = [
     "Name and location",
@@ -40,7 +40,7 @@ export default function Navbar() {
 
     return (
         <div className="w-full flex justify-center bg-[#F6F7F7] md:py-[48px] px-1">
-            <div className="w-full max-w-[1320px]">
+            <div className="container">
                 <ul className="hidden md:flex w-full justify-between">
                     {steps.map((step, index) => {
                         const isCompleted = index < currentIndex;
