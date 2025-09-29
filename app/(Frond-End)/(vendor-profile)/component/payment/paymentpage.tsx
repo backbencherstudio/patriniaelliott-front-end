@@ -25,6 +25,11 @@ interface PaymentAccount {
   onboarding_url?: string;
   is_verified?: boolean;
   status?: 'verified' | 'pending' | 'unverified';
+  routing_number?: string;  // Add this field
+  bank_routing_number?: string;
+  bank_status?: string;
+  bank_last4?: string;
+  bank_name?: string;
 }
 
 const paymentMethods = [
@@ -51,6 +56,10 @@ export default function PaymentPage() {
 
   const { loading, error, handleApiCall } = useVendorApi()
   const selectedMethod = watch('payoutMethod')
+  const hasVerifiedAccount = accounts.some(acc =>
+    acc?.payment_method?.toLowerCase() === 'stripe' &&
+    (acc?.status === 'verified' || acc?.business_type === 'individual')
+  )
 
   // Function to check Stripe account status
   const checkStripeAccountStatus = async (accountId: string) => {
@@ -110,15 +119,33 @@ export default function PaymentPage() {
                     }
                   }
                   
-                  // Get business type from status API
+                  // Get additional details (business type, bank info) from status API
                   let businessType = 'individual'
+                  let bankRoutingNumber: string | undefined = undefined
+                  let bankStatus: string | undefined = undefined
+                  let bankLast4: string | undefined = undefined
+                  let bankName: string | undefined = undefined
                   try {
                     const statusRes: any = await handleApiCall(VendorService.getPaymentAccountStatus, account.account_id)
-                    if (statusRes?.data?.success && statusRes?.data?.data) {
-                      businessType = statusRes.data.data.business_type || 'individual'
+                    if (statusRes?.data?.success) {
+                      const statusData =
+                        statusRes?.data?.data?.account ??
+                        statusRes?.data?.data?.data ??
+                        statusRes?.data?.data ??
+                        statusRes?.data
+                      businessType = statusData.business_type || 'individual'
+                      const external = statusData?.external_accounts
+                      const bank = Array.isArray(external?.data)
+                        ? external.data.find((d: any) => d?.object === 'bank_account') || external.data[0]
+                        : undefined
+                      bankRoutingNumber = bank?.routing_number ?? bank?.bank_account?.routing_number
+                      bankStatus = bank?.status ?? bank?.bank_account?.status
+                      bankLast4 = bank?.last4 ?? bank?.bank_account?.last4
+                      bankName = bank?.bank_name ?? bank?.bank_account?.bank_name
+                      console.log('Extracted bank info:', { bankRoutingNumber, bankStatus, bankLast4, bankName })
                     }
                   } catch (statusError) {
-                    console.error('Error fetching business type:', statusError)
+                    console.error('Error fetching business/bank info:', statusError)
                   }
                   
                   return {
@@ -126,7 +153,11 @@ export default function PaymentPage() {
                     onboarding_url: onboardingUrl,
                     is_verified: statusResult === 'verified',
                     status: statusResult,
-                    business_type: businessType
+                    business_type: businessType,
+                    bank_routing_number: bankRoutingNumber,
+                    bank_status: bankStatus,
+                    bank_last4: bankLast4,
+                    bank_name: bankName
                   }
                 } catch (onboardingError) {
                   console.error('Error processing Stripe account:', account.account_id, onboardingError)
@@ -252,15 +283,12 @@ export default function PaymentPage() {
         }}
       />
       
+      {!hasVerifiedAccount && (
       <form onSubmit={handleSubmit(onSubmit)} className="md:px-6 px-4 py-6 bg-white rounded-2xl flex flex-col gap-6">
       <div>
         <h2 className="text-[#070707] text-2xl font-medium">Payment details</h2>
         <p className="text-[#777980] text-sm mt-1">Enter your payment and payout details for ensuring smooth payout processing and tax compliance.</p>
-        {error && (
-          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600 text-sm">{error}</p>
-          </div>
-        )}
+
       </div>
 
       <div>
@@ -361,9 +389,10 @@ export default function PaymentPage() {
         </button>
       </div>
     </form>
+      )}
 
     {/* Payment Accounts List */}
-    <div className="md:px-6 px-4 py-6 bg-white rounded-2xl flex flex-col gap-6 mt-6">
+    <div className="md:px-6 px-4 py-6 bg-white rounded-2xl flex flex-col gap-6">
       <div>
         <h2 className="text-[#070707] text-2xl font-medium">Your Payment Accounts</h2>
         <p className="text-[#777980] text-sm mt-1">Manage your existing payment accounts and methods.</p>
@@ -386,7 +415,7 @@ export default function PaymentPage() {
             <div key={account.id} className="border border-[#e9e9ea] rounded-lg p-4 hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#0068ef]/10 rounded-lg flex items-center justify-center">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${account.status === 'verified' ? 'bg-[#38c976]/10' : 'bg-[#0068ef]/10'}`}>
                     <Image
                       src={`/icon/${account.payment_method.toLowerCase()}.svg`}
                       alt={account.payment_method}
@@ -403,7 +432,7 @@ export default function PaymentPage() {
                     <p className="text-sm text-[#777980] capitalize">{account.payment_method}</p>
                   </div>
                 </div>
-                <div className={`px-2 py-1 text-xs rounded-full ${
+                {/* <div className={`px-2 py-1 text-xs rounded-full ${
                   account.status === 'verified'
                     ? 'bg-[#38c976]/10 text-[#38c976]' 
                     : account.status === 'pending'
@@ -412,10 +441,10 @@ export default function PaymentPage() {
                 }`}>
                   {account.status === 'verified' ? 'Verified' : 
                    account.status === 'pending' ? 'Pending' : 'Unverified'}
-                </div>
+                </div> */}
               </div>
               
-              <div className="space-y-2 text-sm">
+              {/* <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-[#777980]">ID:</span>
                   <span className="text-[#22262e] font-mono text-xs">{account.id}</span>
@@ -424,44 +453,66 @@ export default function PaymentPage() {
                   <span className="text-[#777980]">User ID:</span>
                   <span className="text-[#22262e] font-mono text-xs">{account.user_id}</span>
                 </div>
-              </div>
+              </div> */}
 
               {/* Debug info for Stripe accounts */}
-              {account.payment_method.toLowerCase() === 'stripe' && (
+              {/* {account.payment_method.toLowerCase() === 'stripe' && (
                 <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-                  <div>Debug: payment_method = {account.business_type}</div>
+                  <div>Debug: business_type = {account.business_type}</div>
                   <div>Debug: status = {account.status || 'null'}</div>
                   <div>Debug: is_verified = {account.is_verified ? 'true' : 'false'}</div>
                   <div>Debug: account_id = {account.account_id}</div>
                   <div>Debug: onboarding_url = {account.onboarding_url ? 'present' : 'null'}</div>
-                </div>
-              )}
+                  <div>Debug: bank_routing_number = {account.bank_routing_number || 'null'}</div>
+                  <div>Debug: bank_status = {account.bank_status || 'null'}</div>
+                  <div>Debug: bank_last4 = {account.bank_last4 || 'null'}</div>
+                  <div>Debug: bank_name = {account.bank_name || 'null'}</div>
+                  
 
-              {/* Stripe Onboarding Link Card */}
+
+                  <div className="mt-1 text-[10px] opacity-70">If null, the status API may not include external_accounts.</div>
+                </div>
+              )} */}
+
+              {/* Stripe Onboarding Link Card - conditional styling and action */}
               {account.payment_method.toLowerCase() === 'stripe' && account.onboarding_url && account.status !== 'verified' && (
-                <div className="mt-4 p-3 bg-gradient-to-r from-[#0068ef]/5 to-[#0068ef]/10 border border-[#0068ef]/20 rounded-lg">
+                <div className={`mt-4 p-3 rounded-lg border ${account.business_type === 'individual'
+					? 'bg-gradient-to-r from-[#38c976]/5 to-[#38c976]/10 border-[#38c976]/20'
+					: 'bg-gradient-to-r from-[#0068ef]/5 to-[#0068ef]/10 border-[#0068ef]/20'}`}>
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 bg-[#0068ef] rounded-full flex items-center justify-center">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${account.business_type === 'individual' ? 'bg-[#38c976]' : 'bg-[#0068ef]'}`}>
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-sm font-medium text-[#0068ef]">Complete Verification</span>
+                    <span className={`text-sm font-medium ${account.business_type === 'individual' ? 'text-[#38c976]' : 'text-[#0068ef]'}`}>
+                      Complete Verification
+                    </span>
                   </div>
                   <p className="text-xs text-[#777980] mb-3">
                     Click below to complete your Stripe account verification and start receiving payments.
                   </p>
-                  <button
-                    onClick={() => {
-                      window.open(account.onboarding_url, '_blank', 'noopener,noreferrer')
-                    }}
-                    className="w-full px-4 py-2 bg-[#0068ef] text-white text-sm font-medium rounded-lg hover:bg-[#0051bc] transition-colors flex items-center justify-center gap-2"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                    Complete Stripe Setup
-                  </button>
+
+                  {account.business_type === 'individual' ? (
+                    <div className="w-full px-4 py-2 bg-[#38c976] text-white text-sm font-medium rounded-full opacity-60 cursor-not-allowed flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Complete
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        window.open(account.onboarding_url, '_blank', 'noopener,noreferrer')
+                      }}
+                      className="w-full px-4 py-2 bg-[#0068ef] text-white text-sm font-medium rounded-lg hover:bg-[#0051bc] transition-colors flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      Complete
+                    </button>
+                  )}
                 </div>
               )}
 
