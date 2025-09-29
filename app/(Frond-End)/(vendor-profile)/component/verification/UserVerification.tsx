@@ -250,7 +250,10 @@ export default function UserVerification() {
 
           {/* Submitted Packages Section */}
           <div className="w-full bg-white rounded-xl p-4">
-            <div className="text-xl font-medium text-[#22262e] mb-4">Your Submitted Packages</div>
+            <div className="text-xl font-medium text-[#22262e] mb-4">
+              Your Submitted Packages
+                  <p className='text-sm text-[#777980]'>You will be able to edit your package data after completing verification...</p>
+            </div>
             
             {loading ? (
               <div className="text-center py-8">
