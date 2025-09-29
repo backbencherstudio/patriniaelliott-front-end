@@ -190,6 +190,7 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
             onChange={setStartDate}
             placeholderText="Select a date"
             className="hidden"
+            minDate={new Date()}
           />
         </div>
 

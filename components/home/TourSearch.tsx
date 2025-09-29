@@ -115,11 +115,11 @@ export default function TourSearch({ typesearch }: any) {
     });
 
     if (appliedDateRange[0]) {
-      query.set("start", appliedDateRange[0].toISOString());
+      query.set("duration_start", appliedDateRange[0].toISOString());
     }
 
     if (appliedDateRange[1]) {
-      query.set("end", appliedDateRange[1].toISOString());
+      query.set("duration_end", appliedDateRange[1].toISOString());
     }
     if (typesearch == "hotel") {
       router.push(`/hotels?${query.toString()}`);
