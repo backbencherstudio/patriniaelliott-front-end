@@ -249,7 +249,7 @@ export default function PaymentPage() {
           }
         }
         
-        setShowSaveButton(false)
+    setShowSaveButton(false)
       } else {
         toast.error('Failed to create payment account')
       }
@@ -284,7 +284,7 @@ export default function PaymentPage() {
       />
       
       {!hasVerifiedAccount && (
-      <form onSubmit={handleSubmit(onSubmit)} className="md:px-6 px-4 py-6 bg-white rounded-2xl flex flex-col gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="md:px-6 px-4 py-6 bg-white rounded-2xl flex flex-col gap-6">
       <div>
         <h2 className="text-[#070707] text-2xl font-medium">Payment details</h2>
         <p className="text-[#777980] text-sm mt-1">Enter your payment and payout details for ensuring smooth payout processing and tax compliance.</p>

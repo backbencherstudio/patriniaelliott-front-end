@@ -234,23 +234,23 @@ export const VendorService = {
     return await Fetch.get(`/vendor/withdrawals?${queryString}`, _config);
   },
 
-  // Transaction History
+  // Transaction History (payments)
   getTransactions: async (params: any = {}, context: any = null) => {
     const userToken = CookieHelper.get({ key: "tourAccessToken", context });
-    
     if (!userToken) {
       throw new Error("Authentication token not found. Please login again.");
     }
 
-    const queryString = new URLSearchParams(params).toString();
+    const queryString = new URLSearchParams(params || {}).toString();
     const _config = {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + userToken,
       },
     };
-
-    return await Fetch.get(`/vendor/transactions?${queryString}`, _config);
+    // Note: Base URL includes /api
+    // Expected endpoint: /payments/transactions
+    return await Fetch.get(`/payments/transactions?${queryString}`, _config);
   },
 
   getTransactionDetails: async (id: string, context: any = null) => {
