@@ -128,6 +128,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
           onChange={setStartDate}
           placeholderText="Select a date"
           className="hidden"
+          minDate={new Date()}
         />
         <LucideCalendarDays className="text-secondaryColor" />
       </div>
@@ -150,6 +151,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
           onChange={setEndDate}
           placeholderText="Select a date"
           className="hidden"
+          minDate={startDate || new Date()}
         />
         <LucideCalendarDays className="text-secondaryColor" />
       </div>

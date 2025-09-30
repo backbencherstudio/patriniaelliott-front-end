@@ -22,7 +22,7 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
       <div
         {...getRootProps()}
         className={`border border-dashed bg-white flex flex-col items-center rounded-lg py-8 cursor-pointer transition ${isDragActive
-          ? "bg-purple-900/50 border-purple-600"
+          ? "bg-primaryColor/50 border-primaryColor"
           : "border-gray-200"
           }`}
       >
@@ -30,12 +30,12 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
           width={500}
           height={500}
           src={uploadIcon}
-          className="bg-[#EB5B2A] p-[10px] rounded-full mb-[6px] w-[50px] h-auto object-cover"
+          className="bg-primaryColor p-[10px] rounded-full mb-[6px] w-[50px] h-auto object-cover"
           alt="Image"
         />
         <input {...getInputProps()} />
         <p className="text-xs md:text-base text-black rounded-full">
-          Drag & Drop or <span className="text-[#EB5B2A]">Choose File</span> to
+          Drag & Drop or <span className="text-primaryColor font-semibold">Choose File</span> to
           upload
         </p>
         {/* <p className="mt-1 text-xs md:text-base text-gray-400 text-center">
@@ -250,7 +250,7 @@ const TourPlan = ({ tourPlan, setTourPlan, packageType }) => {
                   addPlan(dayIndex);
                 }}
 
-                className="px-2 py-[9px] bg-[#EB5B2A] flex items-center gap-1 text-white text-xs w-fit rounded hover:bg-[#d14a20] transition-colors"
+                className="px-2 py-[9px] bg-primaryColor flex items-center gap-1 text-white text-xs w-fit rounded hover:bg-primaryColor/90 transition-colors"
               >
                 <FaPlus className="w-3 h-3" /> Add Another Plan
               </button>
@@ -276,7 +276,7 @@ const TourPlan = ({ tourPlan, setTourPlan, packageType }) => {
         <button
           type="button"
           onClick={addDay}
-          className="px-2 py-[9px] bg-[#EB5B2A] flex items-center gap-1 text-white text-xs w-fit rounded hover:bg-[#d14a20] transition-colors mt-4"
+          className="px-2 py-[9px] bg-primaryColor flex items-center gap-1 text-white text-xs w-fit rounded hover:bg-primaryColor/90 transition-colors mt-4"
         >
           <FaPlus className="w-3 h-3" /> Add Another Day
         </button>

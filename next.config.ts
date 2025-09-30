@@ -34,7 +34,7 @@ const nextConfig: NextConfig = {
       // },
       {
         protocol: "https",
-        hostname: "patriniaelliott.obotoronika.com",
+        hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
       },
       {
         protocol: "https",
