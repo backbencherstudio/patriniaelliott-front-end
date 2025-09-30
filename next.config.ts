@@ -26,11 +26,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-<<<<<<< HEAD
         hostname: "terrorist-palm-consequences-concepts.trycloudflare.com",
-=======
-        hostname: "patriniaelliott.obotoronika.com",
->>>>>>> 1ee6bcc9f07303cca465a0bcc0f93f6eddd51345
       },
       // {
       //   protocol: "https",
