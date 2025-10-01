@@ -3,8 +3,8 @@ import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { toast, Toaster } from 'react-hot-toast'
-import { UserService } from '@/service/user/user.service'
 import { VendorService } from '@/service/vendor/vendor.service'
+import { useVendorApi } from '@/hooks/useVendorApi'
 
 interface VerificationFormData {
   mobile: string
@@ -32,6 +32,7 @@ export default function UserVerification() {
   const [docBack, setDocBack] = useState<File | null>(null)
   const [docPassport, setDocPassport] = useState<File | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const [packages, setPackages] = useState<PackageData[]>([])
   const [loading, setLoading] = useState(true)
   
@@ -44,6 +45,8 @@ export default function UserVerification() {
       mobile: ''
     }
   })
+
+  const { handleApiCall } = useVendorApi()
 
   const handleFileChange = (setter: (file: File | null) => void, files: FileList | null) => {
     if (files && files[0]) {
@@ -84,30 +87,44 @@ export default function UserVerification() {
   }, [])
 
   const onSubmit = async (data: VerificationFormData) => {
+    setSubmitting(true)
     try {
-      setSubmitting(true)
-      
-      // Create FormData for document upload
-      const docFormData = new FormData()
-      if (docFront) docFormData.append('front_image', docFront)
-      if (docBack) docFormData.append('back_image', docBack)
-      if (docPassport) docFormData.append('passport_image', docPassport)
-      docFormData.append('mobile', data.mobile)
+      const uploads: Array<{ type: string; file: File | null }> = [
+        { type: 'front', file: docFront },
+        { type: 'back', file: docBack },
+        { type: 'passport', file: docPassport },
+      ]
 
-      // Upload documents
-      await UserService.createPropertyData('/vendor/upload-document', docFormData as any, (UserService as any).token)
+      let uploadedAny = false
+      for (const item of uploads) {
+        if (!item.file) continue
+        const form = new FormData()
+        // API fields inferred from Insomnia collection
+        form.append('type', item.type)
+        form.append('image', item.file)
+        form.append('number', data.mobile)
+        form.append('status', 'pending')
+        await handleApiCall(VendorService.uploadUserVerificationDocument, form)
+        uploadedAny = true
+      }
+
+      if (!uploadedAny) {
+        toast.error('Please choose at least one document to upload.')
+        setSubmitting(false)
+        return
+      }
 
       toast.success('ID documents submitted successfully!')
-      
-      // Reset form
+
+      // Reset form values but keep button disabled after success
       setDocFront(null)
       setDocBack(null)
       setDocPassport(null)
-      
+      setSubmitted(true)
+      // keep submitting=true to disable button
     } catch (error) {
       console.error('Error submitting verification:', error)
       toast.error('Failed to submit documents. Please try again.')
-    } finally {
       setSubmitting(false)
     }
   }
@@ -238,13 +255,26 @@ export default function UserVerification() {
 
             {/* Submit Button */}
             <div className="flex justify-end mt-6">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="px-8 py-3 bg-[#0068ef] text-white rounded-lg text-base font-medium hover:bg-[#0051bd] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {submitting ? 'Submitting...' : 'Submit Documents'}
-              </button>
+              {submitted ? (
+                <button
+                  type="button"
+                  disabled
+                  className="px-8 py-3 bg-[#38c976] text-white rounded-lg text-base font-medium opacity-90 cursor-default flex items-center gap-2"
+                >
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="white"/>
+                  </svg>
+                  Submitted
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-8 py-3 bg-[#0068ef] text-white rounded-lg text-base font-medium hover:bg-[#0051bd] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Submitting...' : 'Submit Documents'}
+                </button>
+              )}
             </div>
           </div>
 
