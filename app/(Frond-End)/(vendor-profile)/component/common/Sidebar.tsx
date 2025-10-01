@@ -55,16 +55,23 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   // Build navigation items based on user type
   const getNavItems = (): NavItem[] => {
     let items = [...baseNavItems];
-    
+
     console.log('Current user type:', userType);
     console.log('isUser:', isUser, 'isVendor:', isVendor, 'isAdmin:', isAdmin, 'isUnknown:', isUnknown);
-    
+
     if (isUser) {
-      // For users: show User Verification, hide Pending Request
+      // For users: hide withdraw-balance, transection-history, payment-method
+      const hiddenForUser = new Set([
+        '/withdraw-balance',
+        '/transection-history',
+        '/payment-method',
+      ]);
+      items = items.filter(item => !hiddenForUser.has(item.href));
+      // Add User Verification item
       items = [...items, ...userNavItems];
-      console.log('User type detected: user - showing User Verification menu');
+      console.log('User type detected: user - hiding vendor financial menus, showing User Verification');
     } else if (isVendor) {
-      // For vendors: show Pending Request, hide User Verification
+      // For vendors: keep base menus and add Pending Request
       items = [...items, ...vendorNavItems];
       console.log('User type detected: vendor - showing Pending Request menu');
     } else if (isAdmin) {
@@ -76,7 +83,7 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       console.log('User type not detected or unknown:', userType, '- showing all available menus as fallback');
       items = [...items, ...userNavItems, ...vendorNavItems];
     }
-    
+
     console.log('Final navigation items:', items.map(item => item.label));
     return items;
   };
@@ -107,7 +114,7 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Debug Panel - Remove in production */}
-        {process.env.NODE_ENV === 'development' && (
+        {/* {process.env.NODE_ENV === 'development' && (
           <div className="mb-4 p-3 bg-gray-100 rounded-lg text-xs">
             <div className="font-semibold mb-1">Debug Info:</div>
             <div>User Type: {userType || 'null'}</div>
@@ -117,7 +124,7 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <div>isAdmin: {isAdmin ? 'Yes' : 'No'}</div>
             <div>Menu Items: {navItems.length}</div>
           </div>
-        )}
+        )} */}
 
         {/* Account Section */}
         <div className="mb-4">

@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "terrorist-palm-consequences-concepts.trycloudflare.com",
+        hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
       },
       // {
       //   protocol: "https",
