@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
+        hostname: "backend.naamstay.com",
       },
       // {
       //   protocol: "https",
@@ -34,7 +34,7 @@ const nextConfig: NextConfig = {
       // },
       {
         protocol: "https",
-        hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
+        hostname: "backend.naamstay.com",
       },
       {
         protocol: "https",
