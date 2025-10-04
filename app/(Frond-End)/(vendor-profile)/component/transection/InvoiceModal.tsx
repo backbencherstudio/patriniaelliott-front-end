@@ -7,6 +7,19 @@ import { useRef } from 'react';
 export default function InvoiceModal({ open, onClose, transaction }) {
   const contentRef = useRef<HTMLDivElement>(null);
 
+  // Normalize API transaction → UI fields
+  const tx = transaction || {}
+  const txId = tx.id || tx.invoiceId || '-'
+  const createdAt = tx.created_at ? new Date(tx.created_at).toLocaleString() : (tx.date || '-')
+  const bookingId = tx.booking_id || '-'
+  const userName = tx.user?.name || tx.guestName || '-'
+  const type = tx.type ? String(tx.type).toLowerCase() : ''
+  const provider = tx.provider || tx.paymentMethod || '-'
+  const status = tx.status || '-'
+  const reference = tx.reference_number || '-'
+  const refundReason = tx.refund_reason ?? '-'
+  const amount = tx.amount ? (type === 'refund' ? `-$${tx.amount}` : `$${tx.amount}`) : (tx.totalAmount || '$0')
+
   const handleDownload = () => {
     const doc = new jsPDF({
       orientation: 'portrait',
@@ -20,15 +33,15 @@ export default function InvoiceModal({ open, onClose, transaction }) {
     doc.text('Invoice ID', 40, 50);
     doc.setFontSize(12);
     doc.setTextColor('#777980');
-    doc.text(transaction.invoiceId || '206123456', 40, 70);
+    doc.text(String(txId), 40, 70);
 
     doc.setFontSize(12);
     doc.setTextColor('#777980');
-    doc.text(`Date: ${transaction.date || '30-06-24'}`, 420, 50);
+    doc.text(`Date: ${createdAt || '-'}`, 420, 50);
 
     // From/To/Info (with proper Y positions and line breaks)
-    const fromAddress = doc.splitTextToSize(transaction.fromAddress || '55 W 39th St, New York, NY 10018, United States', 150);
-    const toAddress = doc.splitTextToSize(transaction.toAddress || '6 Kelly Rd, Cambridge, MA 02139, EUA', 150);
+    const fromAddress = doc.splitTextToSize('—', 150);
+    const toAddress = doc.splitTextToSize('—', 150);
 
     // Titles
     doc.setFontSize(12);
@@ -39,8 +52,8 @@ export default function InvoiceModal({ open, onClose, transaction }) {
     doc.text('Info:', 400, 110);
 
     // Names
-    doc.text(transaction.fromName || 'Travel Booking', 40, 125);
-    doc.text(transaction.toName || 'Stephia Skarlet', 220, 125);
+    doc.text('Travel Booking', 40, 125);
+    doc.text(userName || 'Guest', 220, 125);
 
     // Addresses (multi-line)
     doc.setFont('helvetica', 'normal');
@@ -54,19 +67,19 @@ export default function InvoiceModal({ open, onClose, transaction }) {
     doc.setFontSize(11);
     doc.text('Account name:', 400, infoY);
     doc.setTextColor('#777980');
-    doc.text(transaction.accountName || 'Stephia Skarlet', 480, infoY);
+    doc.text(userName || 'Guest', 480, infoY);
 
     infoY += 15;
     doc.setTextColor('#22262e');
     doc.text('SUI:', 400, infoY);
     doc.setTextColor('#777980');
-    doc.text(transaction.sui || 'NL40 INGB 0930 000', 430, infoY);
+    doc.text(reference || '-', 430, infoY);
 
     infoY += 15;
     doc.setTextColor('#22262e');
     doc.text('PayPal:', 400, infoY);
     doc.setTextColor('#777980');
-    doc.text(transaction.paypal || 'JonesY@email.com', 450, infoY);
+    doc.text(provider || '-', 450, infoY);
 
     // Table
    (autoTable as any)(doc, {
@@ -89,15 +102,16 @@ export default function InvoiceModal({ open, onClose, transaction }) {
       },
 
       body: [
-        ['Property location', transaction.propertyLocation || '970 Ersel Street, Carrollton, TX 75006'],
-        ['Guest name', transaction.guestName || 'Stephia Skarlet'],
-        ['Check-in', transaction.checkIn || 'Jan 15, 2025'],
-        ['Check-out', transaction.checkOut || 'Jan 18, 2025'],
-        ['Days', transaction.days || '2 nights 3 days'],
-        ['Hotel price', transaction.hotelPrice || '$250'],
-        ['Service fee', transaction.serviceFee || '$20'],
-        ['Total amount', transaction.totalAmount || '$270'],
-        ['Payment method', transaction.paymentMethod || 'PayPal'],
+        ['Transaction ID', String(txId)],
+        ['Booking ID', String(bookingId)],
+        ['User', String(userName)],
+        ['Type', String(type || '-')],
+        ['Amount', String(amount)],
+        ['Provider', String(provider)],
+        ['Status', String(status)],
+        ['Reference number', String(reference)],
+        ['Created at', String(createdAt)],
+        ...(type === 'refund' ? [['Refund reason', String(refundReason)]] : []),
       ],
       styles: {
         halign: 'left',
@@ -118,7 +132,7 @@ export default function InvoiceModal({ open, onClose, transaction }) {
     });
 
     // Download
-    doc.save(`invoice-${transaction?.invoiceId || 'invoice'}.pdf`);
+    doc.save(`invoice-${txId || 'invoice'}.pdf`);
   };
 
   if (!transaction) return null;
@@ -130,28 +144,28 @@ export default function InvoiceModal({ open, onClose, transaction }) {
           {/* Header */}
           <div className="flex justify-between items-start px-6 pt-10 pb-2">
             <div>
-              <div className="font-semibold text-[17px] leading-tight text-[#22262e]">Invoice ID</div>
-              <div className="text-[13px] text-[#777980] mt-0.5">{transaction.invoiceId || '206123456'}</div>
+              <div className="font-semibold text-[17px] leading-tight text-[#22262e]">Invoice / Transaction ID</div>
+              <div className="text-[13px] text-[#777980] mt-0.5">{txId}</div>
             </div>
-            <div className="text-[13px] text-[#777980] mt-1">Date: {transaction.date || '30-08-24'}</div>
+            <div className="text-[13px] text-[#777980] mt-1">Date: {createdAt}</div>
           </div>
           {/* From/To/Info */}
           <div className="grid grid-cols-3 justify-between gap-3 px-4 pb-4">
             <div className="">
               <div className="font-semibold text-[13px] text-[#22262e] mb-0.5">From:</div>
-              <div className="text-[13px] text-[#22262e] font-medium">{transaction.fromName || 'Travel Booking'}</div>
-              <div className="text-[13px] text-[#777980]">{transaction.fromAddress || '55 W 39th St, New York, NY 10018, United States'}</div>
+              <div className="text-[13px] text-[#22262e] font-medium">Travel Booking</div>
+              <div className="text-[13px] text-[#777980]">—</div>
             </div>
             <div className="">
               <div className="font-semibold text-[13px] text-[#22262e] mb-0.5">To:</div>
-              <div className="text-[13px] text-[#22262e] font-medium">{transaction.toName || 'Stephia Skarlet'}</div>
-              <div className="text-[13px] text-[#777980]">{transaction.toAddress || '6 Kelly Rd, Cambridge, MA 02139, EUA'}</div>
+              <div className="text-[13px] text-[#22262e] font-medium">{userName || '-'}</div>
+              <div className="text-[13px] text-[#777980]">—</div>
             </div>
             <div className="">
               <div className="font-semibold text-[13px] text-[#22262e] mb-0.5">Info:</div>
-              <div className="text-[13px] text-[#22262e]">Account name: <span className="text-[#777980]">{transaction.accountName || 'Stephia Skarlet'}</span></div>
-              <div className="text-[13px] text-[#22262e]">SUI: <span className="text-[#777980]">{transaction.sui || 'NL40 INGB 0930 000'}</span></div>
-              <div className="text-[13px] text-[#22262e]">PayPal: <span className="text-[#777980]">{transaction.paypal || 'JonesY@email.com'}</span></div>
+              <div className="text-[13px] text-[#22262e]">Account name: <span className="text-[#777980]">{userName || '-'}</span></div>
+              <div className="text-[13px] text-[#22262e]">Reference: <span className="text-[#777980]">{reference}</span></div>
+              <div className="text-[13px] text-[#22262e]">Provider: <span className="text-[#777980]">{provider}</span></div>
             </div>
           </div>
           {/* Table */}
@@ -160,41 +174,43 @@ export default function InvoiceModal({ open, onClose, transaction }) {
               <table className="w-full text-sm">
                 <tbody>
                   <tr className="border-b last:border-b-0">
-                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa] w-[45%]">Property location</td>
-                    <td className="p-2 text-[#4a4c56]">{transaction.propertyLocation || '970 Great Street, Carrollton, TX 75009'}</td>
+                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa] w-[45%]">Transaction ID</td>
+                    <td className="p-2 text-[#4a4c56]">{txId}</td>
                   </tr>
                   <tr className="border-b last:border-b-0">
-                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Guest name</td>
-                    <td className="p-2 text-[#4a4c56]">{transaction.guestName || 'Stephia Skarlet'}</td>
+                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Booking ID</td>
+                    <td className="p-2 text-[#4a4c56]">{bookingId}</td>
                   </tr>
                   <tr className="border-b last:border-b-0">
-                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Check-in</td>
-                    <td className="p-2 text-[#4a4c56]">{transaction.checkIn || 'Jan 15, 2025'}</td>
+                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">User</td>
+                    <td className="p-2 text-[#4a4c56]">{userName}</td>
                   </tr>
                   <tr className="border-b last:border-b-0">
-                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Check-out</td>
-                    <td className="p-2 text-[#4a4c56]">{transaction.checkOut || 'Jan 18, 2025'}</td>
+                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Type</td>
+                    <td className="p-2 text-[#4a4c56]">{type}</td>
                   </tr>
                   <tr className="border-b last:border-b-0">
-                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Days</td>
-                    <td className="p-2 text-[#4a4c56]">{transaction.days || '2 nights & 3 days'}</td>
+                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Amount</td>
+                    <td className="p-2 text-[#4a4c56]">{amount}</td>
                   </tr>
                   <tr className="border-b last:border-b-0">
-                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Hotel price</td>
-                    <td className="p-2 text-[#4a4c56]">{transaction.hotelPrice || '$250'}</td>
+                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Provider</td>
+                    <td className="p-2 text-[#4a4c56]">{provider}</td>
                   </tr>
                   <tr className="border-b last:border-b-0">
-                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Service fee</td>
-                    <td className="p-2 text-[#4a4c56]">{transaction.serviceFee || '$20'}</td>
+                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Status</td>
+                    <td className="p-2 text-[#4a4c56]">{status}</td>
                   </tr>
                   <tr className="border-b last:border-b-0">
-                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Total amount</td>
-                    <td className="p-2 text-[#4a4c56]">{transaction.totalAmount || '$270'}</td>
+                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Reference number</td>
+                    <td className="p-2 text-[#4a4c56]">{reference}</td>
                   </tr>
-                  <tr>
-                    <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Payment method</td>
-                    <td className="p-2 text-[#4a4c56]">{transaction.paymentMethod || 'PayPal'}</td>
-                  </tr>
+                  {type === 'refund' && (
+                    <tr className="border-b last:border-b-0">
+                      <td className="p-2 font-medium text-[#22262e] bg-[#fafafa]">Refund reason</td>
+                      <td className="p-2 text-[#4a4c56]">{String(refundReason)}</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

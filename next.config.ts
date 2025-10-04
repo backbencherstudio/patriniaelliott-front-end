@@ -26,11 +26,15 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "patriniaelliott.obotoronika.com",
+        hostname: "backend.naamstay.com",
       },
       {
         protocol: "https",
         hostname: "serum-frost-reflections-auditor.trycloudflare.com",
+      },
+      {
+        protocol: "https",
+        hostname: "backend.naamstay.com",
       },
       {
         protocol: "https",

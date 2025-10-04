@@ -78,7 +78,6 @@ export default function ListingPage() {
     {
       label: "Status",
       accessor: "status",
-   
       formatter: (_, row) => <ListingStatuse status={row.status} />,
     },
     {

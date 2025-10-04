@@ -25,6 +25,11 @@ const navItems: NavItem[] = [
     href: "/dashboard",
   },
   {
+    icon: "/admin/vendor.svg",
+    label: "Vendor management",
+    href: "/dashboard/vendor-management",
+  },
+  {
     icon: "/admin/time-management.svg",
     label: "Manage bookings",
     href: "/dashboard/bookings",
@@ -117,7 +122,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   <div
                     className={`
                       w-[30px] h-[30px] flex justify-center items-center flex-shrink-0 rounded-full 
-                      ${isActive(item.href) ? "bg-whiteColor" : "bg-[#FFFBEE]"} 
+                      ${isActive(item.href) ? "bg-whiteColor" : "bg-[#FFFBEE]"}
                       shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]
                     `}
                   >
