@@ -72,13 +72,9 @@ function HotelPage() {
         setLoading(false); 
       }
     };
-
     fetchData(); 
   }, [endpoint]);
    
-
- ;
-
 
     return (
         <div>

@@ -30,7 +30,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
+        hostname: "serum-frost-reflections-auditor.trycloudflare.com",
       },
       {
         protocol: "https",
@@ -42,7 +42,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "disappointed-drinks-consequences-arm.trycloudflare.com",
+        hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
       },
     ],
   },
