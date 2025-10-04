@@ -1,16 +1,21 @@
 "use client";
 
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 
 interface NavItem {
   icon: string;
   label: string;
   href: string;
+  isDropdown?: boolean;
+  subItems?: {
+    label: string;
+    href: string;
+  }[];
 }
 
 interface SidebarProps {
@@ -28,6 +33,17 @@ const navItems: NavItem[] = [
     icon: "/admin/vendor.svg",
     label: "Vendor management",
     href: "/dashboard/vendor-management",
+    isDropdown: true,
+    subItems: [
+      {
+        label: "Vendor Approval",
+        href: "/dashboard/vendor-management",
+      },
+      {
+        label: "List Proparty Approval",
+        href: "/dashboard/list-proparty-approval",
+      },
+    ],
   },
   {
     icon: "/admin/time-management.svg",
@@ -68,12 +84,25 @@ const navItems: NavItem[] = [
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const isActive = (href: string): boolean => {
     if (href === "/dashboard") {
       return pathname === "/dashboard";
     }
     return pathname.startsWith(href);
+  };
+
+  const isAccordionActive = (subItems: { href: string }[]): boolean => {
+    return subItems.some(item => isActive(item.href));
+  };
+
+  const toggleAccordion = (label: string) => {
+    setExpandedItems(prev => 
+      prev.includes(label) 
+        ? prev.filter(item => item !== label)
+        : [...prev, label]
+    );
   };
 
   return (
@@ -108,32 +137,89 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <h2 className="text-sm font-normal text-gray-500 mb-2">Account</h2>
           <nav className="flex flex-col gap-1">
             {navItems.slice(0, 5).map((item, idx) => (
-              <Link
-                key={idx}
-                href={item.href}
-                onClick={onClose}
-                className={`
-                  flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg 
-                  transition-colors duration-200 
-                  ${isActive(item.href) ? "bg-[#FFF7E7]" : "hover:bg-[#FFF7E7]"}
-                `}
-              >
-                <div className="flex gap-3 items-center">
-                  <div
+              item.isDropdown ? (
+                <div key={idx} className="flex flex-col">
+                  {/* Accordion Header */}
+                  <button
+                    onClick={() => toggleAccordion(item.label)}
                     className={`
-                      w-[30px] h-[30px] flex justify-center items-center flex-shrink-0 rounded-full 
-                      ${isActive(item.href) ? "bg-whiteColor" : "bg-[#FFFBEE]"}
-                      shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]
+                      w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg 
+                      transition-colors duration-200 
+                      ${isAccordionActive(item.subItems || []) ? "bg-[#FFF7E7]" : "hover:bg-[#FFF7E7]"}
                     `}
                   >
-                    <Image src={item.icon} alt={item.label} width={20} height={20} />
-                  </div>
-                  <span className="text-base font-normal text-[#111111]">
-                    {item.label}
-                  </span>
+                    <div className="flex gap-3 items-center">
+                      <div
+                        className={`
+                          w-[30px] h-[30px] flex justify-center items-center flex-shrink-0 rounded-full 
+                          ${isAccordionActive(item.subItems || []) ? "bg-whiteColor" : "bg-[#FFFBEE]"}
+                          shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]
+                        `}
+                      >
+                        <Image src={item.icon} alt={item.label} width={20} height={20} />
+                      </div>
+                      <span className="text-base font-normal text-[#111111]">
+                        {item.label}
+                      </span>
+                    </div>
+                    <ChevronDown 
+                      className={`h-4 w-4 transition-transform duration-200 ${
+                        expandedItems.includes(item.label) ? "rotate-180" : ""
+                      }`} 
+                    />
+                  </button>
+                  
+                  {/* Accordion Content */}
+                  {expandedItems.includes(item.label) && (
+                    <div className="ml-6 mt-1 flex flex-col gap-1">
+                      {item.subItems?.map((subItem, subIdx) => (
+                        <Link
+                          key={subIdx}
+                          href={subItem.href}
+                          onClick={onClose}
+                          className={`
+                            flex items-center gap-3 px-3 py-2 rounded-lg 
+                            transition-colors duration-200 
+                            ${isActive(subItem.href) ? "bg-[#FFF7E7]" : "hover:bg-[#FFF7E7]"}
+                          `}
+                        >
+                          <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+                          <span className="text-sm font-normal text-[#111111]">
+                            {subItem.label}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <span><IoIosArrowForward /></span>
-              </Link>
+              ) : (
+                <Link
+                  key={idx}
+                  href={item.href}
+                  onClick={onClose}
+                  className={`
+                    flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg 
+                    transition-colors duration-200 
+                    ${isActive(item.href) ? "bg-[#FFF7E7]" : "hover:bg-[#FFF7E7]"}
+                  `}
+                >
+                  <div className="flex gap-3 items-center">
+                    <div
+                      className={`
+                        w-[30px] h-[30px] flex justify-center items-center flex-shrink-0 rounded-full 
+                        ${isActive(item.href) ? "bg-whiteColor" : "bg-[#FFFBEE]"}
+                        shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]
+                      `}
+                    >
+                      <Image src={item.icon} alt={item.label} width={20} height={20} />
+                    </div>
+                    <span className="text-base font-normal text-[#111111]">
+                      {item.label}
+                    </span>
+                  </div>
+                  <span><IoIosArrowForward /></span>
+                </Link>
+              )
             ))}
           </nav>
         </div>

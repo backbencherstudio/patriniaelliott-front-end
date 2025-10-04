@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import DynamicTableWithPagination from '../common/DynamicTable';
+import DocumentDetails from './DocumentDetails';
 import VendorDocumentAction from './VendorDocumentAction';
 
 function VendorPage() {
@@ -16,8 +17,13 @@ function VendorPage() {
     const [currentPage, setCurrentPage] = useState(1)
     const [limit, setLimit] = useState(10)
     const [totalPages, setTotalPages] = useState(0)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [selectedData, setSelectedData] = useState<any>(null)
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState<any>([])
+    const handleOptimisticUpdate = (id: any, status: any) => {
+    setData((prev) => prev.map((item: any) => item.id === id ? { ...item, status : status } : item));
+  };
     const columns = [
         { label: "Name", accessor: "user", width: "150px", formatter: (value) => `${value?.name}`, },
         {
@@ -33,24 +39,24 @@ function VendorPage() {
         {
             label: "Status",
             accessor: "status",
-            formatter: (value) => <div className={`w-full text-sm capitalize text-center flex items-center gap-1 justify-center py-1 rounded-full border ${value === "pending" ? "border-[#ffa23a] bg-[#FFA23A]/10 text-[#ffa23a]" : value === "approved" ? "border-greenColor bg-greenColor/10 text-greenColor" : "border-red-500 bg-red-500/10 text-redColor"}`}> {value == "pending" ? <Image src={pendingIcon} alt="pending" width={12} height={12} /> : value == "approved" ? <Image src={tikIcon} alt="approved" width={12} height={12} /> : <Image src={cancelIcon} alt="rejected" width={12} height={12} />} {value}</div>,
+            formatter: (value) => <div className={`w-full text-sm capitalize text-center flex items-center gap-1 justify-center py-1 rounded-full border ${value === "pending" ? "border-[#ffa23a] bg-[#FFA23A]/10 text-[#ffa23a]" : value === "approved" ? "border-greenColor bg-greenColor/10 text-greenColor" : "border-red-500 bg-red-500/10 text-redColor"}`}> {value == "pending" ? <Image src={pendingIcon} alt="pending" width={12} height={12} /> : value == "approved" ? <Image src={tikIcon} alt="approved" width={12} height={12} /> : <Image src={cancelIcon} alt="rejected" width={12} height={12} />} {value || "Cancel"}</div>,
         },
         {
             label: "Action",
             accessor: "status",
             formatter: (value, row) => (
                 <div>
-                    <VendorDocumentAction value={value} row={row} onView={handleView} onDelete={handleDelete} />
+                    <VendorDocumentAction value={value} row={row} onView={handleView} handleOptimisticUpdate={handleOptimisticUpdate}  />
                 </div>
             ),
         },
     ];
     const handleView = (row: any) => {
         console.log("check", row);
+        setSelectedData(row)
+        setIsModalOpen(true)
     }
-    const handleDelete = (id: any) => {
-        console.log("check", id);
-    }
+
     const fetchData = async () => {
         setLoading(true)
         try {
@@ -75,7 +81,7 @@ function VendorPage() {
             {/* Overview */}
             <div className="w-full bg-white rounded-xl p-4  mx-auto">
                 <h2 className="text-2xl font-medium text-[#22262e] mb-1">
-                    Manage Vendor
+                    Manage Vendor documents Approve
                 </h2>
                 <p className="text-base text-[#777980] mb-4">
                     Check up on your latest listings and history.
@@ -137,6 +143,9 @@ function VendorPage() {
             <div>
 
             </div>
+            {isModalOpen && selectedData && (
+                <DocumentDetails open={isModalOpen} setIsModalOpen={setIsModalOpen} data={selectedData} />
+            )}
         </div>
     )
 }

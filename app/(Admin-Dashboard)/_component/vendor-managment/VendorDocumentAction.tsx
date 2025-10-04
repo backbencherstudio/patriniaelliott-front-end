@@ -1,15 +1,66 @@
+import { useToken } from '@/hooks/useToken'
+import { UserService } from '@/service/user/user.service'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 
-function VendorDocumentAction({value,row,onView,onDelete}:{value:any,row:any,onView:any,onDelete:any}) {
+function VendorDocumentAction({value,row,onView,handleOptimisticUpdate}:{value:any,row:any,onView:any,handleOptimisticUpdate:any}) {
     const [loading,setLoading]=useState(false)
-    const handleApprove = () => {
-        console.log("check")
+      const {token}=useToken()
+  
+  const handleApprove = async() => {
+    setLoading(true)
+    // Optimistic update - immediately update UI
+    
+    
+    try {
+      const res = await UserService.updateStatuseChange(`/admin/vendor-user-verification/documents/${row?.id}/approve`,token)
+      
+      if(res.data.success){
+        toast.success(res.data.message || "Listing approved successfully")
+        handleOptimisticUpdate?.(row?.id, "approved");
+        // Refresh data to ensure consistency
+      }else{
+        toast.error(res.data.message || "Listing approved failed")
+        // Revert optimistic update on failure
+        handleOptimisticUpdate?.(row?.id, row?.status);
+      }
+    } catch (error) {
+      toast.error("Something went wrong")
+       console.log("check error",error);
+      // Revert optimistic update on error
+      handleOptimisticUpdate?.(row?.id, row?.status);
+    } finally {
+      setLoading(false)
     }
-    const handleReject = () => {
-        console.log("check")
+  }
+  
+  const handleReject = async() => {
+    setLoading(true)
+    // Optimistic update - immediately update UI
+    try {
+      const res = await UserService.updateStatuseChange(`/admin/vendor-user-verification/documents/${row?.id}/reject`,token)
+      
+      if(res.data.success){
+        toast.success(res.data.message || "Listing rejected successfully")
+          handleOptimisticUpdate?.(row?.id, "Cancel");
+      }else{
+        toast.error(res.data.message || "Listing rejected failed")
+        // Revert optimistic update on failure
+        handleOptimisticUpdate?.(row?.id, row?.status);
+      }
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong")
+      console.log("check error",error);
+      
+      // Revert optimistic update on error
+      handleOptimisticUpdate?.(row?.id, row?.status);
+    } finally {
+      setLoading(false)
     }
+  }
   return (
     <div className='flex items-center gap-2'>
+        {value == "pending" &&
      <div className="flex gap-1">
           <button 
             onClick={handleApprove} 
@@ -63,8 +114,9 @@ function VendorDocumentAction({value,row,onView,onDelete}:{value:any,row:any,onV
               />
             </svg>
           </button>
-        </div>
-      <button className='text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer' onClick={()=>onDelete(row.id)}>
+        </div>}
+        
+      <button className='text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer' onClick={()=>onView(row)}>
       View Details
       </button>
     </div>
