@@ -33,17 +33,6 @@ const navItems: NavItem[] = [
     icon: "/admin/vendor.svg",
     label: "Vendor management",
     href: "/dashboard/vendor-management",
-    isDropdown: true,
-    subItems: [
-      {
-        label: "Vendor Approval",
-        href: "/dashboard/vendor-management",
-      },
-      {
-        label: "List Proparty Approval",
-        href: "/dashboard/list-proparty-approval",
-      },
-    ],
   },
   {
     icon: "/admin/time-management.svg",
