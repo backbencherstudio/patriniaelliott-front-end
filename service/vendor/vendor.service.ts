@@ -533,7 +533,7 @@ export const VendorService = {
     };
 
     // Mirrors Insomnia path: /api/admin/vendor-package
-    return await Fetch.get(`/admin/vendor-package${queryString}`, _config);
+    return await Fetch.get(`/admin/package/my-packages`, _config);
   },
 
   updateVendorPackage: async (id: string, data: any, context: any = null) => {

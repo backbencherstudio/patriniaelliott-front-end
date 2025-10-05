@@ -13,17 +13,26 @@ interface VerificationFormData {
 interface PackageData {
   id: string
   name: string
-  description: string
-  price: string
+  description?: string
+  price?: string | number
+  computed_price?: number
+  discount?: number
+  duration?: string | null
+  min_capacity?: number
+  max_capacity?: number
   type: string
-  address: string
-  city: string
-  country: string
-  max_guests: number
-  bathrooms: number
-  bedrooms: any // Can be number, array, or object
-  package_files: Array<{ file_url: string }>
+  service_fee?: string | number
+  user_id?: string
+  user?: { id: string; name: string; type?: string }
+  package_files: Array<{ id?: string; file_url: string; file?: string; file_alt?: string }>
+  package_trip_plans?: Array<{ id: string; title: string; description?: string }>
+  package_policies?: Array<{
+    id: string
+    description?: string
+    package_policies?: Array<{ title: string; description: string }>
+  }>
   created_at: string
+  approved_at?: string | null
   status: number
 }
 
@@ -299,14 +308,15 @@ export default function UserVerification() {
                         {pkg.status === 1 ? 'Pending' : 'Approved'}
                       </span>
                     </div>
-                    
-                    <div className="text-sm text-[#777980] mb-2">
-                      {safeRender(pkg.city)}{pkg.city && pkg.country ? ', ' : ''}{safeRender(pkg.country)}
-                    </div>
-                    
+                    {/* Basic meta */}
                     <div className="text-sm text-[#070707] mb-2">
-                      Type: {safeRender(pkg.type)} | Price: ${safeRender(pkg.price)}
+                      Type: {safeRender(pkg.type)} | Price: $
+                      {pkg.computed_price ?? pkg.price ?? '-'}
+                      {pkg.discount ? ` (-${pkg.discount}%)` : ''}
                     </div>
+                    {pkg.user?.name && (
+                      <div className="text-xs text-[#777980] mb-2">Vendor: {pkg.user.name}</div>
+                    )}
                     
                     {pkg.description && (
                       <div className="text-sm text-[#4a4c56] mb-3 line-clamp-2">
@@ -315,11 +325,14 @@ export default function UserVerification() {
                     )}
                     
                     <div className="grid grid-cols-2 gap-2 text-xs text-[#777980] mb-3">
-                      <div>Max Guests: {safeRender(pkg.max_guests)}</div>
-                      <div>Bathrooms: {safeRender(pkg.bathrooms)}</div>
-                      <div>Bedrooms: {safeRender(pkg.bedrooms)}</div>
+                      <div>Min Capacity: {safeRender(pkg.min_capacity)}</div>
+                      <div>Max Capacity: {safeRender(pkg.max_capacity)}</div>
+                      <div>Service Fee: {pkg.service_fee ? `$${pkg.service_fee}` : '-'}</div>
                       <div>Created: {new Date(pkg.created_at).toLocaleDateString()}</div>
                     </div>
+                    {pkg.approved_at && (
+                      <div className="text-xs text-[#777980] mb-3">Approved: {new Date(pkg.approved_at).toLocaleDateString()}</div>
+                    )}
                     
                     {pkg.package_files && pkg.package_files.length > 0 && (
                       <div className="grid grid-cols-4 gap-2">
@@ -335,6 +348,18 @@ export default function UserVerification() {
                                 (e.currentTarget as HTMLImageElement).style.display = 'none'
                               }}
                             />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Policies (flattened key-value) */}
+                    {pkg.package_policies && pkg.package_policies.length > 0 && (
+                      <div className="mt-3 text-xs text-[#4a4c56] space-y-1">
+                        {pkg.package_policies.flatMap((p) => p.package_policies || []).map((p, i) => (
+                          <div key={i} className="flex justify-between gap-2">
+                            <span className="text-[#777980] capitalize">{p.title.replace(/_/g,' ')}</span>
+                            <span>{p.description}</span>
                           </div>
                         ))}
                       </div>
