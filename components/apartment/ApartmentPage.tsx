@@ -17,7 +17,7 @@ function ApartmentPage() {
     const endDate = searchParams.get("endDate");
     const min = searchParams.get("min");
     const max = searchParams.get("max");
-
+    const searchName = searchParams.get("destination");
     // Get all ratings parameters (multiple ratings can be selected)
     const allParams = Array.from(searchParams.entries());
     const ratings = allParams
@@ -37,10 +37,11 @@ function ApartmentPage() {
         if (endDate) params.append('duration_end', endDate);
         if (min) params.append('budget_start', min);
         if (max) params.append('budget_end', max);
+         if (searchName) params.append('q', searchName);
         // Add each rating as a separate parameter
         if (ratings && ratings.length > 0) {
             ratings.forEach(rating => {
-                params.append('min_rating', rating);
+                params.append('ratings', rating);
             });
         }
         return params.toString();

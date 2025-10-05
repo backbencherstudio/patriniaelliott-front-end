@@ -18,7 +18,7 @@ export default function DestinationSearch() {
     } else {
       params.delete('destination');
     }
-    router.push(`?${params.toString()}`);
+    router.replace(`?${params.toString()}`, { scroll: false });
   }, 500); // debounce delay 500ms
 
   useEffect(() => {
