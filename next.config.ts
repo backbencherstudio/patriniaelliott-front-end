@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "backend.naamstay.com",
+        hostname: "enhancing-wan-hamburg-hourly.trycloudflare.com",
       },
       // {
       //   protocol: "https",

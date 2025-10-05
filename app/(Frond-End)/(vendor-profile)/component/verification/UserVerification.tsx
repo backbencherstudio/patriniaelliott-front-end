@@ -91,11 +91,13 @@ export default function UserVerification() {
       const docFormData = new FormData()
       if (docFront) docFormData.append('front_image', docFront)
       if (docBack) docFormData.append('back_image', docBack)
-      if (docPassport) docFormData.append('passport_image', docPassport)
-      docFormData.append('mobile', data.mobile)
+      if (docPassport) docFormData.append('image', docPassport)
+      docFormData.append('number', data.mobile)
+      docFormData.append('type', 'NID')
+      docFormData.append('status', 'pending')
 
-      // Upload documents
-      await UserService.createPropertyData('/vendor/upload-document', docFormData as any, (UserService as any).token)
+      // Upload documents (same style as packages API call)
+      await VendorService.uploadVendorDocuments(docFormData as any)
 
       toast.success('ID documents submitted successfully!')
       
