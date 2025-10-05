@@ -38,6 +38,7 @@ export default function UserVerification() {
   const frontRef = useRef<HTMLInputElement>(null)
   const backRef = useRef<HTMLInputElement>(null)
   const passportRef = useRef<HTMLInputElement>(null)
+  const isSubmittingRef = useRef<boolean>(false)
 
   const { register, handleSubmit, formState: { errors } } = useForm<VerificationFormData>({
     defaultValues: {
@@ -84,6 +85,8 @@ export default function UserVerification() {
   }, [])
 
   const onSubmit = async (data: VerificationFormData) => {
+    if (isSubmittingRef.current) return
+    isSubmittingRef.current = true
     try {
       setSubmitting(true)
       
@@ -111,6 +114,7 @@ export default function UserVerification() {
       toast.error('Failed to submit documents. Please try again.')
     } finally {
       setSubmitting(false)
+      isSubmittingRef.current = false
     }
   }
 
