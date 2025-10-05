@@ -26,12 +26,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "backend.naamstay.com",
+        hostname: "enhancing-wan-hamburg-hourly.trycloudflare.com",
       },
-      // {
-      //   protocol: "https",
-      //   hostname: "fellow-lone-provisions-decided.trycloudflare.com",
-      // },
+      {
+        protocol: "https",
+        hostname: "serum-frost-reflections-auditor.trycloudflare.com",
+      },
       {
         protocol: "https",
         hostname: "backend.naamstay.com",
@@ -46,7 +46,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "disappointed-drinks-consequences-arm.trycloudflare.com",
+        hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
       },
     ],
   },

@@ -25,7 +25,6 @@ const ApartmentCard = ({ hotel }: any) => {
     });
   };
 
-  console.log("check",hotel);
   
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  md:grid md:grid-cols-9 lg:grid-cols-8 p-4  hover:shadow-xl transition-shadow">

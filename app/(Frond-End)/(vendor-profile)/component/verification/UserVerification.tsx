@@ -39,6 +39,7 @@ export default function UserVerification() {
   const frontRef = useRef<HTMLInputElement>(null)
   const backRef = useRef<HTMLInputElement>(null)
   const passportRef = useRef<HTMLInputElement>(null)
+  const isSubmittingRef = useRef<boolean>(false)
 
   const { register, handleSubmit, formState: { errors } } = useForm<VerificationFormData>({
     defaultValues: {
@@ -87,32 +88,22 @@ export default function UserVerification() {
   }, [])
 
   const onSubmit = async (data: VerificationFormData) => {
-    setSubmitting(true)
+    if (isSubmittingRef.current) return
+    isSubmittingRef.current = true
     try {
-      const uploads: Array<{ type: string; file: File | null }> = [
-        { type: 'front', file: docFront },
-        { type: 'back', file: docBack },
-        { type: 'passport', file: docPassport },
-      ]
+      setSubmitting(true)
+      
+      // Create FormData for document upload
+      const docFormData = new FormData()
+      if (docFront) docFormData.append('front_image', docFront)
+      if (docBack) docFormData.append('back_image', docBack)
+      if (docPassport) docFormData.append('image', docPassport)
+      docFormData.append('number', data.mobile)
+      docFormData.append('type', 'NID')
+      docFormData.append('status', 'pending')
 
-      let uploadedAny = false
-      for (const item of uploads) {
-        if (!item.file) continue
-        const form = new FormData()
-        // API fields inferred from Insomnia collection
-        form.append('type', item.type)
-        form.append('image', item.file)
-        form.append('number', data.mobile)
-        form.append('status', 'pending')
-        await handleApiCall(VendorService.uploadUserVerificationDocument, form)
-        uploadedAny = true
-      }
-
-      if (!uploadedAny) {
-        toast.error('Please choose at least one document to upload.')
-        setSubmitting(false)
-        return
-      }
+      // Upload documents (same style as packages API call)
+      await VendorService.uploadVendorDocuments(docFormData as any)
 
       toast.success('ID documents submitted successfully!')
 
@@ -126,6 +117,7 @@ export default function UserVerification() {
       console.error('Error submitting verification:', error)
       toast.error('Failed to submit documents. Please try again.')
       setSubmitting(false)
+      isSubmittingRef.current = false
     }
   }
 

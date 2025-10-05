@@ -12,11 +12,13 @@ import PaginationPage from "../reusable/PaginationPage";
 
 function HotelPage() {
     const [currentPage, setCurrentPage] = useState(1);
-    const searchParams = useSearchParams();
-    const startDate = searchParams.get("startDate");
-    const endDate = searchParams.get("endDate");
-    const min = searchParams.get("min");
-    const max = searchParams.get("max");
+        const searchParams = useSearchParams();
+        const startDate = searchParams.get("startDate");
+        const endDate = searchParams.get("endDate");
+        const searchName = searchParams.get("q");
+        const destinations = searchParams.get("destinations");
+        const min = searchParams.get("min");
+        const max = searchParams.get("max");
     const {token} = useToken()
     const [data, setData] = useState(null);
     const [pagination, setPagination] = useState(null);
@@ -30,6 +32,7 @@ function HotelPage() {
 
     const itemsPerPage = 6
 
+
     // Build query parameters dynamically
     const buildQueryParams = () => {
         const params = new URLSearchParams();
@@ -37,7 +40,9 @@ function HotelPage() {
         // Always include these parameters
         params.append('type', 'hotel');
         params.append('limit', itemsPerPage.toString());
-        params.append('page', currentPage.toString());
+            params.append('page', currentPage.toString());
+            if (searchName) params.append('q', searchName);
+            if (destinations) params.append('destinations', destinations);
 
         // Only add parameters that have values
         if (startDate) params.append('duration_start', startDate);
@@ -72,13 +77,9 @@ function HotelPage() {
         setLoading(false); 
       }
     };
-
     fetchData(); 
   }, [endpoint]);
    
-
- ;
-
 
     return (
         <div>

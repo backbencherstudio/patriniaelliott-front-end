@@ -108,7 +108,7 @@ export default function TourSearch({ typesearch }: any) {
 
   const handleSearch = () => {
     const query = new URLSearchParams({
-      location: selectedLocation || "",
+      destinations: selectedLocation || "",
       rooms: rooms.length.toString(),
       adults: totalAdults.toString(),
       children: totalChildren.toString(),
