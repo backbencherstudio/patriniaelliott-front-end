@@ -8,15 +8,15 @@ import { FaSearch } from 'react-icons/fa';
 export default function DestinationSearch() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [input, setInput] = useState(searchParams.get('destination') || '');
+  const [input, setInput] = useState(searchParams.get('q') || '');
 
   // Debounced route update
   const updateQuery = debounce((value: string) => {
     const params = new URLSearchParams(window.location.search);
     if (value) {
-      params.set('destination', value);
+      params.set('q', value);
     } else {
-      params.delete('destination');
+      params.delete('q');
     }
     router.replace(`?${params.toString()}`, { scroll: false });
   }, 500); // debounce delay 500ms

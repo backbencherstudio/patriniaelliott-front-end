@@ -2,7 +2,6 @@
 import FilterHeader from "@/components/filter/FilterHeader";
 import TureAllPackage from "@/components/toure/TureAllPackage";
 
-import { toursData } from "@/DemoAPI/toureData";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
 import { useSearchParams } from "next/navigation";
@@ -17,7 +16,8 @@ const [data, setData] = useState(null);
           const searchParams = useSearchParams();
         const startDate = searchParams.get("startDate");
         const endDate = searchParams.get("endDate");
-        const searchName = searchParams.get("destination");
+        const searchName = searchParams.get("q");
+           const destinations = searchParams.get("destinations");
         const min = searchParams.get("min");
         const max = searchParams.get("max");
         const allParams = Array.from(searchParams.entries());
@@ -36,7 +36,7 @@ const [data, setData] = useState(null);
         params.append('limit', itemsPerPage.toString());
             params.append('page', currentPage.toString());
             if (searchName) params.append('q', searchName);
-
+        if (destinations) params.append('destinations', destinations);
         // Only add parameters that have values
         if (startDate) params.append('duration_start', startDate);
         if (endDate) params.append('duration_end', endDate);

@@ -15,7 +15,8 @@ function HotelPage() {
         const searchParams = useSearchParams();
         const startDate = searchParams.get("startDate");
         const endDate = searchParams.get("endDate");
-        const searchName = searchParams.get("destination");
+        const searchName = searchParams.get("q");
+        const destinations = searchParams.get("destinations");
         const min = searchParams.get("min");
         const max = searchParams.get("max");
     const {token} = useToken()
@@ -41,6 +42,7 @@ function HotelPage() {
         params.append('limit', itemsPerPage.toString());
             params.append('page', currentPage.toString());
             if (searchName) params.append('q', searchName);
+            if (destinations) params.append('destinations', destinations);
 
         // Only add parameters that have values
         if (startDate) params.append('duration_start', startDate);
