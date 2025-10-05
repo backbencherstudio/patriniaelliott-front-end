@@ -18,7 +18,7 @@ function ApartmentPage() {
     const min = searchParams.get("min");
     const max = searchParams.get("max");
        const destinations = searchParams.get("destinations");
-    const searchName = searchParams.get("destination");
+    const searchName = searchParams.get("q");
     // Get all ratings parameters (multiple ratings can be selected)
     const allParams = Array.from(searchParams.entries());
     const ratings = allParams
