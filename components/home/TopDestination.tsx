@@ -15,7 +15,7 @@ function TopDestination() {
        const [loading, setLoading]=useState(true);
        const [error, setError]=useState(null);
        const [data, setData]=useState(null);
-       const endpoint = `/application/packages/top-destinations?limit=${10}&page=${1}`
+      const endpoint = `/application/packages/top-destinations?limit=${10}&page=${1}`
       const {token} = useToken()
       
        const fetchData = async()=>{
@@ -46,8 +46,7 @@ function TopDestination() {
       return next;
     });
   };
-       console.log(loading,"loading");
-       
+
       const swiperRef = useRef<any>(null);
     
       const goNext = () => swiperRef.current?.slideNext();

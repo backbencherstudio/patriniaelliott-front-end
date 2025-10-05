@@ -1,4 +1,6 @@
 "use client";
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MdDone } from "react-icons/md";
@@ -16,10 +18,30 @@ const PopularDestinationFilter = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  const [selectedDestinations, setSelectedDestinations] = useState<string[]>(
+    const [loading, setLoading]=useState(true);
+       const [error, setError]=useState(null);
+       const [data, setData]=useState(null);
+      const endpoint = `/application/packages/top-destinations?limit=${10}&page=${1}`
+      const {token} = useToken()
+      const [selectedDestinations, setSelectedDestinations] = useState<string[]>(
     []
   );
+       const fetchData = async()=>{
+        setLoading(true)
+        try {
+          const response = await UserService.getData(endpoint,token)
+          setData(response.data.data)
+        } catch (error) {
+          setError(error)
+        } finally {
+          setLoading(false)
+        }
+       }
+
+         useEffect(()=>{
+        fetchData()
+       },[endpoint])
+  
 
   useEffect(() => {
     const param = searchParams.get("destinations");
@@ -65,8 +87,8 @@ const PopularDestinationFilter = () => {
         </AccordionTrigger>
         <AccordionContent className="mt-4 border-b-0 space-y-4">
           <div className="mt-4 space-y-3">
-            {destinations.map((country, idx) => {
-              const isChecked = selectedDestinations.includes(country);
+            {data?.map((country, idx) => {
+              const isChecked = selectedDestinations.includes(country?.country);
               return (
                 <label
                   key={idx}
@@ -75,7 +97,7 @@ const PopularDestinationFilter = () => {
                   <input
                     type="checkbox"
                     checked={isChecked}
-                    onChange={() => handleToggle(country)}
+                    onChange={() => handleToggle(country?.country)}
                     className="peer hidden"
                   />
                   <div
@@ -89,7 +111,7 @@ const PopularDestinationFilter = () => {
                   >
                     {isChecked && <MdDone className="text-white text-base" />}
                   </div>
-                  <span className="text-base text-grayColor1">{country}</span>
+                  <span className="text-base text-grayColor1">{country?.country}</span>
                 </label>
               );
             })}

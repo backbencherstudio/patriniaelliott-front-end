@@ -4,11 +4,9 @@ import BudgetFilter from './BudgetFilter';
 import DateFilter from './DateFilter';
 import DestinationSearch from './DestinationSearch';
 import FreeCancellationFilter from './FreeCancellationChange';
-import MealPlanFilter from './MealPlanFilter';
 import PopularAreaFilter from './PopularAreaFilter';
 import PopularDestinationFilter from './PopularDestinationFilter';
 import RatingFilter from './RatingFilter';
-import ResidenceFilter from './ResidenceFilter';
 
 export default function FilterSidebar({toure}:any) {
 
@@ -44,16 +42,16 @@ export default function FilterSidebar({toure}:any) {
       </div>
 
       <div>
-     { !toure &&  <PopularDestinationFilter/>} 
+     {   <PopularDestinationFilter/>} 
       </div>
 
-      <div>
+      {/* <div>
       { !toure &&   <ResidenceFilter/>}
-      </div>
+      </div> */}
 
-      <div>
+      {/* <div>
          <MealPlanFilter/>
-      </div>
+      </div> */}
 
       <div>
         { !toure &&  <PopularAreaFilter/>}

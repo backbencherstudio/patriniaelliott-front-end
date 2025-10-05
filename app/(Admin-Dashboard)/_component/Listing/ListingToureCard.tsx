@@ -75,7 +75,7 @@ const ListingToureCard = ({
                 <p className=" ">Inclusive:</p> <p className="text-blackColor/80">{data?.breakfast_available ? "Hotel + All Included" : "No Included"}</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
-                <p className=" ">Status:</p> <p className="text-blackColor/80">{data?.status == 1 ? "pending" : data?.status == 2 ? "approved" : "cancel"}</p>
+                <p className=" ">Status:</p> <p className="text-blackColor/80">{ data?.status }</p>
               </div>
               <div className=" flex justify-between text-grayColor1">
                 <p className=" ">Location:</p> <p className="text-blackColor/80">{data?.city}</p>
