@@ -1,8 +1,8 @@
 "use client";
 
 import {
-    Dialog,
-    DialogContent,
+  Dialog,
+  DialogContent,
 } from "@/components/ui/dialog";
 import Image from "next/image";
 
@@ -29,7 +29,25 @@ const DocumentDetails = ({
     </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Left - Image */}
-          <div className="h-[250px] col-span-1  md:h-full">
+          <div className="h-auto col-span-1  md:h-full">
+            <Image
+              src={data?.front_image_url || "/empty.png"}
+              alt="Room"
+              width={500}
+              height={500}
+              className="w-full h-full rounded-md object-cover"
+            />
+          </div>
+          <div className="h-auto col-span-1  md:h-full">
+            <Image
+              src={data?.back_image_url || "/empty.png"}
+              alt="Room"
+              width={500}
+              height={500}
+              className="w-full h-full rounded-md object-cover"
+            />
+          </div>
+          <div className="h-auto col-span-1  md:h-full">
             <Image
               src={data?.image_url || "/empty.png"}
               alt="Room"

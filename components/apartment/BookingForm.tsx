@@ -20,6 +20,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
     setStartDate,
     endDate,
     setEndDate,
+    discountPrice,
     totalDays,
     basePrice,
     totalPrice,
@@ -207,6 +208,10 @@ const BookingForm = ({ singleApartments, type }: any) => {
           <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
             <span>{totalDays} Days Stay</span>
             <span>${basePrice}</span>
+          </div>
+          <div className="flex justify-between border-b border-grayColor1/20 py-2 text-base text-headerColor">
+            <span className=" text-descriptionColor">{singleApartments?.discount}% campaign discount</span>
+            <span>- ${discountPrice}</span>
           </div>
           
           {selectedExtraServices.map((service) => (

@@ -30,7 +30,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "serum-frost-reflections-auditor.trycloudflare.com",
+        hostname: "enhancing-wan-hamburg-hourly.trycloudflare.com",
       },
       {
         protocol: "https",
