@@ -72,11 +72,11 @@ function MenuDropDown({setMenuOpen,data}:any) {
                         )}>My Account</div>
                     </Link>
                       </DropdownMenuItem>
-                        {/* <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
-            <Link  onClick={() => setMenuOpen(false)} href="/property-list" className="w-full flex items-center gap-2.5">
+                        <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
+            <Link  onClick={() => setMenuOpen(false)} href="/profile-info" className="w-full flex items-center gap-2.5">
                           <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                             <Image
-                              src="/usericon/date.png"
+                              src="/admin/vendor.svg"
                               alt="My Booking"
                               width={16}
                               height={16}
@@ -84,10 +84,10 @@ function MenuDropDown({setMenuOpen,data}:any) {
                           </div>
                           <div className={cn(
                             "text-base",
-                            pathname === "/property-list" ? "text-[#d6ae29]" : "text-[#070707]"
-                          )}>List Your Property</div>
+                            pathname === "/profile-info" ? "text-[#d6ae29]" : "text-[#070707]"
+                          )}>Vendor Account</div>
                       </Link> 
-                        </DropdownMenuItem> */}
+                        </DropdownMenuItem>
                       <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10 w-full focus:bg-transparent">
                     <Link href="/apartment-history" className="w-full flex items-center gap-2.5">
                         <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
