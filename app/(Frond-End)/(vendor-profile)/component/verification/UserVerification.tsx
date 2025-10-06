@@ -301,11 +301,11 @@ export default function UserVerification() {
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-lg font-medium text-[#22262e]">{pkg.name}</h3>
                       <span className={`px-2 py-1 rounded text-xs ${
-                        pkg.status === 1 
-                          ? 'bg-[#ffa23a]/10 text-[#ffa23a]' 
-                          : 'bg-[#38c976]/10 text-[#38c976]'
+                        pkg.approved_at 
+                          ? 'bg-[#38c976]/10 text-[#38c976]' 
+                          : 'bg-[#ffa23a]/10 text-[#ffa23a]'
                       }`}>
-                        {pkg.status === 1 ? 'Pending' : 'Approved'}
+                        {pkg.approved_at ? 'Approved' : 'Pending'}
                       </span>
                     </div>
                     {/* Basic meta */}
@@ -337,7 +337,7 @@ export default function UserVerification() {
                     {pkg.package_files && pkg.package_files.length > 0 && (
                       <div className="grid grid-cols-4 gap-2">
                         {pkg.package_files.slice(0, 4).map((file, idx) => (
-                          <div key={idx} className="w-full h-16 bg-gray-100 rounded">
+                          <div key={idx} className="w-full h-16 bg-gray-100 rounded ">
                             <Image
                               src={file.file_url}
                               alt={`Package image ${idx + 1}`}
@@ -354,7 +354,7 @@ export default function UserVerification() {
                     )}
 
                     {/* Policies (flattened key-value) */}
-                    {pkg.package_policies && pkg.package_policies.length > 0 && (
+                    {/* {pkg.package_policies && pkg.package_policies.length > 0 && (
                       <div className="mt-3 text-xs text-[#4a4c56] space-y-1">
                         {pkg.package_policies.flatMap((p) => p.package_policies || []).map((p, i) => (
                           <div key={i} className="flex justify-between gap-2">
@@ -363,7 +363,7 @@ export default function UserVerification() {
                           </div>
                         ))}
                       </div>
-                    )}
+                    )} */}
                   </div>
                 ))}
               </div>
