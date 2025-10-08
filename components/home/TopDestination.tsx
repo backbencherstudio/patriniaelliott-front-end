@@ -8,6 +8,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Skeleton } from "../ui/skeleton";
+import Link from "next/link";
 
 function TopDestination() {
        const [currentIndex, setCurrentIndex] = useState(1);
@@ -34,8 +35,8 @@ function TopDestination() {
         fetchData()
        },[endpoint])
 
-  const getSlideSrc = (src: string, index: number) => {
-    if (!src) return "/empty.png";
+  const getSlideSrc = (src: string | null | undefined, index: number) => {
+    if (!src || src === "null" || src === "undefined") return "/empty.png";
     return failedIndices.has(index) ? "/empty.png" : src;
   };
 
@@ -58,7 +59,7 @@ function TopDestination() {
         <h2 className=' text-3xl lg:text-5xl font-medium text-blackColor text-center'>Top Destinations</h2>
         <div className=" relative">
            <div >
-          <div className="container justify-center md:justify-between  flex gap-15">
+          <div className="container justify-center lg:justify-between  flex gap-15">
             <button onClick={goPrev}>
               <div className="absolute -bottom-20  lg:top-[50%] -translate-1/2 z-10 xl:-left-10 flex items-center cursor-pointer justify-center w-10 h-10 rounded-full bg-white/20 border border-secondaryColor backdrop-blur-[5px] hover:bg-secondaryColor  shadow shadow-stone-300 transition-all">
                 <FaChevronLeft className="text-blackColor" />
@@ -72,6 +73,19 @@ function TopDestination() {
           </div>
         </div>
           <div className=" mt-12">
+        {loading ? (
+          <div className="flex gap-6 justify-center items-center px-4">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <Skeleton className="w-[180px] h-[180px] rounded-full" />
+                <div className="mt-4 text-center">
+                  <Skeleton className="w-24 h-6 mx-auto mb-2" />
+                  <Skeleton className="w-20 h-4 mx-auto" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
         <Swiper
           slidesPerView={1}
           spaceBetween={30}
@@ -83,13 +97,13 @@ function TopDestination() {
           }}
          breakpoints={{
           0:{
-             slidesPerView: 2,
+             slidesPerView: 3,
           },
               640: {
-                slidesPerView: 2,
+                slidesPerView: 3,
               },
               768: {
-                slidesPerView: 3,
+                slidesPerView: 4,
               },
               1024: {
                 slidesPerView: 5,
@@ -106,36 +120,28 @@ function TopDestination() {
         >
           {data?.map((des, index) => (
             <SwiperSlide key={index}>
-              <div className=" w-full ">
-                <div className=" w-full h-full rounded-full overflow-hidden">
-              { loading ? <div className="w-full h-full rounded-full overflow-hidden">
-                <Skeleton className="w-full h-full rounded-full overflow-hidden" />
-              </div> : 
-
-              <Image
-                  src={getSlideSrc(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/${des?.img}`, index)}
-                  alt={`des ${index + 1}`}
-                  width={220}
-                  height={220}
-                  onError={() => handleImageError(index)}
-                  className="w-full h-full hover:scale-110 transition-all duration-300 overflow-hidden rounded-full object-cover"
-                />
-              }   
+              <Link href={`/toure/${des?.package_id}`}>
+              <div className=" w-full flex justify-center flex-col items-center ">
+                <div className=" xl:w-[190px] lg:w-[170px] lg:h-[170px] h-[120px] md:w-[156px] md:h-[156px] w-[120px] xl:h-[190px] rounded-full overflow-hidden">
+                <Image
+                    src={getSlideSrc(des?.img, index)}
+                    alt={`des ${index + 1}`}
+                    width={220}
+                    height={220}
+                    onError={() => handleImageError(index)}
+                    className=" w-full h-full hover:scale-110 transition-all duration-300 rounded-full object-cover"
+                  />
                 </div>
                 <div className=" text-center mt-4">
-                 {
-                  loading ? <Skeleton className="w-full h-full rounded-full overflow-hidden" /> :
-                  <h3 className=" text-2xl font-medium ">{des?.country}</h3>
-                 }  
-                    {
-                      loading ? <Skeleton className="w-full h-full rounded-full overflow-hidden" /> :
-                      <p className="text-base text-descriptionColor leading-[150%] ">{des?.count} Times Tour</p>
-                    }  
+                  <h3 className=" text-lg md:text-2xl font-medium ">{des?.country}</h3>
+                  <p className="text-sm md:text-base text-descriptionColor leading-[150%] ">{des?.count} Times Tour</p>
                 </div>
               </div>
+              </Link>
             </SwiperSlide>
           ))}
         </Swiper>
+        )}
         </div>
         
         </div>

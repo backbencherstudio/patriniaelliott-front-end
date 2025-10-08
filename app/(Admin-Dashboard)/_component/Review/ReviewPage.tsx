@@ -84,14 +84,13 @@ const columns = [
     { label: "Reservation", accessor: "reservation" ,width:"238px",
       formatter: (value, row) => (
         <div className=" flex gap-2 items-center"><div className=" w-17 h-10 rounded-md overflow-hidden ">
-           <Image src={value?.package_image} alt={value?.name} width={68} height={40} />
+           <Image src={value?.package_image?.url || "/empty.png"} alt={value?.name} width={68} height={40} className="w-full h-full object-cover" />
            </div><div>
            <p className="text-headerColor font-medium text-xs">{value?.package_name}</p>
            <p className=" text-xs mt-1">{row?.package_type}</p>
             </div> </div>
       ),
     },
-
     {
       label: "Review",
       accessor: "review",

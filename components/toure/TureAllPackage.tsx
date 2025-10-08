@@ -16,11 +16,16 @@ function TureAllPackage({ data, loading, pagination, error, currentPage, setCurr
                 <BigCardSkleton key={i} />
               ))}
             </div>
-            : data.length < 0 ? <div>Not found data !</div> : data.map((tour: any, index) => (
+            : data?.length > 0 ?  data?.map((tour: any, index) => (
               <div key={index} className=" py-4">
                 <TourCardTwo tour={tour} />
               </div>
-            ))}
+            ))
+            : 
+            <div className="text-center text-2xl font-bold text-redColor py-10">Not found data !</div>
+          }
+           
+           
         </div>
       </div>
 

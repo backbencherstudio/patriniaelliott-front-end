@@ -30,6 +30,14 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
+      },
+      {
+        protocol: "http",
+        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
+      },
+      {
+        protocol: "https",
         hostname: "enhancing-wan-hamburg-hourly.trycloudflare.com",
       },
       {

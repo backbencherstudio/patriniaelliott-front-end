@@ -65,11 +65,12 @@ function ApartmentPage() {
                             <BigCardSkleton key={i} />
                         ))}
                     </div>
-                    : packageData.length < 0 ? <div>Not found data !</div> : packageData.map((tour: any, index) => (
+                    : packageData.length > 0 ? packageData.map((tour: any, index) => (
                         <div key={index} className=" py-4">
                             <ApartmentCard hotel={tour} />
                         </div>
-                    ))}
+                    )): <div className="text-center text-2xl font-bold text-grayColor1 py-10">Not found data !</div>
+                    }
             </div>
 
             {/* Pagination Controls */}
