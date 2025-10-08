@@ -44,6 +44,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "fellow-lone-provisions-decided.trycloudflare.com",
       },
+      {
+        protocol: "https",
+        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
+      },
     ],
   },
 };

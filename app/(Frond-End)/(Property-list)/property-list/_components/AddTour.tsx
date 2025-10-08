@@ -124,11 +124,13 @@ const AddTour = () => {
       service_fee: '',
       discount: '',
       policy_description: '',
-      transportation:'',
-      meals:'',
-      guide:'',
-      addOns:'',
-      cancellation_policy:''
+      transportation: '',
+      meals: '',
+      guide: '',
+      addOns: '',
+      cancellation_policy: '',
+      min_traveller: '',
+      max_traveller: ''
     },
   });
   const [countries, setCountries] = useState<countryType[]>(country.country);
@@ -236,6 +238,8 @@ const AddTour = () => {
       tripPlan: tourPlan,
       country: countries?.filter(ct => ct.code === selectedCountry)?.[0]?.name,
       city: data?.city,
+      minTraveller: data?.min_traveller,
+      maxTraveller: data?.max_traveller,
       duration: data?.duration,
       durationType: "days",
       price: data?.price,
@@ -244,25 +248,25 @@ const AddTour = () => {
       discount: Number(data?.discount),
       service_fee: Number(data?.service_fee),
       policy_description: data?.policy_description,
-      package_policies:[
+      package_policies: [
         {
-          title:'transportation',
+          title: 'transportation',
           description: data?.transportation
         },
         {
-          title:'meals',
+          title: 'meals',
           description: data?.meals
         },
         {
-          title:'guide_tours',
+          title: 'guide_tours',
           description: data?.guide
         },
         {
-          title:'add_ons',
+          title: 'add_ons',
           description: data?.addOns
         },
         {
-          title:'cancellation_policy',
+          title: 'cancellation_policy',
           description: data?.cancellation_policy
         }
       ]
@@ -383,7 +387,7 @@ const AddTour = () => {
                 <textarea
                   className="w-full border p-2 rounded-sm resize-none h-[100px] outline-none"
                   placeholder="Policy description"
-                  {...register('policy_description',{required:"Enter policy description"})}
+                  {...register('policy_description', { required: "Enter policy description" })}
                 ></textarea>
                 <div>
                   <label className="block text-gray-500 text-base font-medium mb-2">
@@ -393,11 +397,11 @@ const AddTour = () => {
                     type="text"
                     className="w-full border p-2 rounded-sm outline-none"
                     placeholder="Enter transportation policies"
-                    {...register('transportation',{required:'Enter transportation policy'})}
+                    {...register('transportation', { required: 'Enter transportation policy' })}
                   />
                   {errors.transportation && (
-                  <p className="text-red-500 text-xs mt-1">{errors.transportation.message}</p>
-                )}
+                    <p className="text-red-500 text-xs mt-1">{errors.transportation.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-gray-500 text-base font-medium mb-2">
@@ -407,11 +411,11 @@ const AddTour = () => {
                     type="text"
                     className="w-full border p-2 rounded-sm outline-none"
                     placeholder="Enter meals policies"
-                    {...register('meals',{required:'Enter meals policy'})}
+                    {...register('meals', { required: 'Enter meals policy' })}
                   />
                   {errors.meals && (
-                  <p className="text-red-500 text-xs mt-1">{errors.meals.message}</p>
-                )}
+                    <p className="text-red-500 text-xs mt-1">{errors.meals.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-gray-500 text-base font-medium mb-2">
@@ -421,11 +425,11 @@ const AddTour = () => {
                     type="text"
                     className="w-full border p-2 rounded-sm outline-none"
                     placeholder="Enter guided tours policies"
-                    {...register('guide',{required:'Enter guide policy'})}
+                    {...register('guide', { required: 'Enter guide policy' })}
                   />
                   {errors.guide && (
-                  <p className="text-red-500 text-xs mt-1">{errors.guide.message}</p>
-                )}
+                    <p className="text-red-500 text-xs mt-1">{errors.guide.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-gray-500 text-base font-medium mb-2">
@@ -435,11 +439,11 @@ const AddTour = () => {
                     type="text"
                     className="w-full border p-2 rounded-sm outline-none"
                     placeholder="Enter add-ons policies"
-                    {...register('addOns',{required:'Enter add-ons policy'})}
+                    {...register('addOns', { required: 'Enter add-ons policy' })}
                   />
                   {errors.addOns && (
-                  <p className="text-red-500 text-xs mt-1">{errors.addOns.message}</p>
-                )}
+                    <p className="text-red-500 text-xs mt-1">{errors.addOns.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-gray-500 text-base font-medium mb-2">
@@ -449,11 +453,11 @@ const AddTour = () => {
                     type="text"
                     className="w-full border p-2 rounded-sm outline-none"
                     placeholder="Enter cancellation policies"
-                    {...register('cancellation_policy',{required:'Enter cancellation policy'})}
+                    {...register('cancellation_policy', { required: 'Enter cancellation policy' })}
                   />
                   {errors.cancellation_policy && (
-                  <p className="text-red-500 text-xs mt-1">{errors.cancellation_policy.message}</p>
-                )}
+                    <p className="text-red-500 text-xs mt-1">{errors.cancellation_policy.message}</p>
+                  )}
                 </div>
               </div>
 
@@ -495,6 +499,59 @@ const AddTour = () => {
                     <p className="text-red-500 text-xs mt-1">{errors.city.message}</p>
                   )}
                 </div>
+
+                <div className="flex flex-col 2xl:flex-row gap-4">
+                  <div className="flex-1">
+                    <label className="block text-[#444] text-base font-medium mb-4">
+                      Minimum Travellers
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="Enter min. travellers"
+                      {...register("min_traveller", {
+                        required: "Min. travellers is required",
+                        min: { value: 1, message: "Must be at least 1" },
+                        pattern: {
+                          value: /^[1-9]\d*$/,
+                          message: "Must be a valid number"
+                        }
+                      })}
+                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                      aria-invalid={!!errors.min_traveller}
+                    />
+                    {errors.min_traveller && (
+                      <p className="text-red-500 text-xs mt-1">{errors.min_traveller.message}</p>
+                    )}
+                  </div>
+
+                  <div className="flex-1">
+                    <label className="block text-[#444] text-base font-medium mb-4">
+                      Maximum Travellers
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="Enter max. travellers"
+                      {...register("max_traveller", {
+                        required: "Maximum travellers is required",
+                        min: { value: 1, message: "Must be at least 1" },
+                        pattern: {
+                          value: /^[1-9]\d*$/,
+                          message: "Must be a valid number"
+                        }
+                      })}
+                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                      aria-invalid={!!errors.max_traveller}
+                    />
+                    {errors.max_traveller && (
+                      <p className="text-red-500 text-xs mt-1">{errors.max_traveller.message}</p>
+                    )}
+                  </div>
+                </div>
+
                 {/* Duration + Type */}
                 <div className="flex flex-col 2xl:flex-row gap-4">
                   <div className="flex-1">
@@ -551,6 +608,7 @@ const AddTour = () => {
                   <label className="block text-[#444] text-base font-medium">Discount (%)</label>
                   <input
                     type="text"
+                    inputMode="numeric"
                     placeholder="Discount"
                     {...register("discount", { required: true })}
                     className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
@@ -564,6 +622,7 @@ const AddTour = () => {
                   <label className="block text-[#444] text-base font-medium">Service fee ($)</label>
                   <input
                     type="text"
+                    inputMode="numeric"
                     placeholder="Service fee"
                     {...register("service_fee", { required: true })}
                     className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"

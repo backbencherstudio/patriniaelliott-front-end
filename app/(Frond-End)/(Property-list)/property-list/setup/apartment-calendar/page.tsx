@@ -94,17 +94,10 @@ export default function Page() {
 
   // hydrate price from localStorage (safe parse)
   useEffect(() => {
-    try {
-      let nightly = listProperty?.price_per_night
-      if (listProperty?.type === "Tour") {
-        nightly = listProperty?.tour_plan?.price
-      } else {
-        nightly = listProperty?.price_per_night
-      }
-      setPrice(Number.isFinite(nightly) ? nightly : 0);
-    } catch {
-      setPrice(0);
-    }
+   const nightly = listProperty?.type === "Tour"
+   ? listProperty?.tour_plan?.price
+   : listProperty?.price_per_night;
+   setPrice(Number(nightly) || 0);
   }, []);
 
   const daysNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
