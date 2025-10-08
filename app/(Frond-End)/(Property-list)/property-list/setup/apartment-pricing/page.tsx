@@ -6,7 +6,7 @@ import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
-
+import CreateBlog from "../../_components/PolicyEditor";
 
 const header = [
     "Name and location",
@@ -327,6 +327,37 @@ export default function page() {
 
 
                         <div className="flex gap-6">
+                            <div className="space-y-6 bg-white p-5 rounded-lg flex-1">
+                                <div>
+                                    <CreateBlog
+                                        content=""
+                                        onContentChange={(data) => console.log(data)}
+                                        title="Check-in policy"
+                                        subtitle="Check-in"
+                                    />
+                                </div>
+                                <div>
+                                    <CreateBlog
+                                        content=""
+                                        onContentChange={(data) => console.log(data)}
+                                        title="Special check in instructions"
+                                        subtitle="Special check in instructions"
+                                    />
+                                </div>
+                                <div>
+                                    <CreateBlog
+                                        content=""
+                                        onContentChange={(data) => console.log(data)}
+                                        title="children and extra beds"
+                                        subtitle="Children and extra beds"
+                                    />
+                                </div>
+                            </div>
+                            <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block"></div>
+                        </div>
+
+
+                        <div className="flex gap-6">
                             <div className="space-y-5 flex-1">
                                 <h3 className="text-2xl font-medium">Standard rate plan</h3>
                                 <div className="p-6 rounded-lg bg-white space-y-6 text-[#23262F]">
@@ -340,38 +371,21 @@ export default function page() {
                                                     <path d="M8 8.0026V5.33594" stroke="#FE5050" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </h2>
-                                            <div className="flex gap-2 items-center border border-[#0068EF] rounded p-[6px] w-fit cursor-pointer" onClick={() => setIsCancelEdit(prev => !prev)}>
-                                                {!isCancelEdit ? <>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                        <path d="M5 17.0039H17M12.1896 6.54505C12.1896 6.54505 12.1896 7.6348 13.2794 8.72455C14.3691 9.8143 15.4589 9.8143 15.4589 9.8143M7.87975 14.996L10.1682 14.669C10.4983 14.6219 10.8042 14.4689 11.04 14.2331L16.5486 8.72455C17.1505 8.12269 17.1505 7.1469 16.5486 6.54505L15.4589 5.4553C14.857 4.85344 13.8812 4.85344 13.2794 5.4553L7.77078 10.9639C7.53499 11.1997 7.38203 11.5056 7.33488 11.8357L7.00795 14.1242C6.9353 14.6327 7.3712 15.0686 7.87975 14.996Z" stroke="#0068EF" stroke-linecap="round" />
-                                                    </svg>
-                                                    <span className="text-[#0068EF] text-sm">Edit</span>
-                                                </> :
-                                                    <span className="text-[#0068EF] text-sm">Save</span>}
-                                            </div>
                                         </div>
                                         <div className="space-y-3">
                                             <p className="text-[#299C46] text-sm">You're 91% more likely to get bookings with the pre-selected cancellation policy
                                                 settings than with a 30-day cancellation policy</p>
                                             <div className="space-y-2">
-                                                {
-                                                    cancelPolicies.map((policy, index) => (
-                                                        <div key={index} className="flex items-center gap-2">
-                                                            {!isCancelEdit && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                                <path d="M4.16406 12.0859C4.16406 12.0859 5.41406 12.0859 7.08073 15.0026C7.08073 15.0026 11.7131 7.36371 15.8307 5.83594" stroke="#299C46" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                            </svg>}
-                                                            {isCancelEdit ? <div className="flex gap-1 items-center w-full">
-                                                                <input type="text" className="text-[#4A4C56] text-sm w-full break-words border p-1 outline-none rounded-[4px]" value={policy} onChange={(e) => handleCancelPolicyChange(e.target.value, index)} />
-                                                                <svg className="cursor-pointer w-[10px]" xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none" onClick={() => deleteCancelPolicy(index)}>
-                                                                    <path d="M10.9723 10.6673C11.1955 10.8905 11.1955 11.2524 10.9723 11.4756C10.861 11.5868 10.7148 11.6431 10.5685 11.6431C10.4222 11.6431 10.2759 11.5875 10.1647 11.4756L5.99756 7.30845L1.83041 11.4756C1.71918 11.5868 1.57291 11.6431 1.42664 11.6431C1.28037 11.6431 1.1341 11.5875 1.02288 11.4756C0.799665 11.2524 0.799665 10.8905 1.02288 10.6673L5.19004 6.5002L1.02288 2.33313C0.799665 2.10992 0.799665 1.74804 1.02288 1.52483C1.24609 1.30162 1.60796 1.30162 1.83117 1.52483L5.99833 5.69194L10.1655 1.52483C10.3887 1.30162 10.7506 1.30162 10.9738 1.52483C11.197 1.74804 11.197 2.10992 10.9738 2.33313L6.80662 6.5002L10.9723 10.6673Z" fill="#070707" />
-                                                                </svg>
-                                                            </div> :
-                                                                <p className="text-[#4A4C56] text-sm">{policy}</p>}
-                                                        </div>
-                                                    ))
-                                                }
+                                                <div>
+                                                    <CreateBlog
+                                                        content=""
+                                                        onContentChange={(data) => console.log(data)}
+                                                        title=""
+                                                        subtitle=""
+                                                    />
+                                                </div>
                                             </div>
-                                            {isCancelEdit && <div onClick={addNewCancelPolicy} className="flex gap-2 items-center border border-[#0068EF] text-[#0068EF] rounded p-[6px] w-fit cursor-pointer">+ Add Policy</div>}
+                                            {/* {isCancelEdit && <div onClick={addNewCancelPolicy} className="flex gap-2 items-center border border-[#0068EF] text-[#0068EF] rounded p-[6px] w-fit cursor-pointer">+ Add Policy</div>} */}
                                         </div>
                                     </div>
                                     <div className="space-y-5">
@@ -470,35 +484,18 @@ export default function page() {
                                                         <path d="M8 8.0026V5.33594" stroke="#FE5050" stroke-linecap="round" stroke-linejoin="round" />
                                                     </svg>
                                                 </h2>
-                                                <div className="flex gap-2 items-center border border-[#0068EF] rounded p-[6px] w-fit cursor-pointer" onClick={() => setIsRefundEdit(prev => !prev)}>
-                                                    {!isRefundEdit ? <>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                            <path d="M5 17.0039H17M12.1896 6.54505C12.1896 6.54505 12.1896 7.6348 13.2794 8.72455C14.3691 9.8143 15.4589 9.8143 15.4589 9.8143M7.87975 14.996L10.1682 14.669C10.4983 14.6219 10.8042 14.4689 11.04 14.2331L16.5486 8.72455C17.1505 8.12269 17.1505 7.1469 16.5486 6.54505L15.4589 5.4553C14.857 4.85344 13.8812 4.85344 13.2794 5.4553L7.77078 10.9639C7.53499 11.1997 7.38203 11.5056 7.33488 11.8357L7.00795 14.1242C6.9353 14.6327 7.3712 15.0686 7.87975 14.996Z" stroke="#0068EF" stroke-linecap="round" />
-                                                        </svg>
-                                                        <span className="text-[#0068EF] text-sm">Edit</span>
-                                                    </> :
-                                                        <span className="text-[#0068EF] text-sm">Save</span>}
-                                                </div>
                                             </div>
                                             <div className="space-y-2">
-                                                {
-                                                    refundPolicies.map((policy, index) => (
-                                                        <div key={index} className="flex items-center gap-2">
-                                                            {!isRefundEdit && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                                <path d="M4.16406 12.0859C4.16406 12.0859 5.41406 12.0859 7.08073 15.0026C7.08073 15.0026 11.7131 7.36371 15.8307 5.83594" stroke="#299C46" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                            </svg>}
-                                                            {isRefundEdit ? <div className="flex gap-1 items-center w-full">
-                                                                <input type="text" className="text-[#4A4C56] text-sm w-full break-words border p-1 outline-none rounded-[4px]" value={policy} onChange={(e) => handleRefundPolicyChange(e.target.value, index)} />
-                                                                <svg className="cursor-pointer w-[10px]" xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none" onClick={() => deleteRefundPolicy(index)}>
-                                                                    <path d="M10.9723 10.6673C11.1955 10.8905 11.1955 11.2524 10.9723 11.4756C10.861 11.5868 10.7148 11.6431 10.5685 11.6431C10.4222 11.6431 10.2759 11.5875 10.1647 11.4756L5.99756 7.30845L1.83041 11.4756C1.71918 11.5868 1.57291 11.6431 1.42664 11.6431C1.28037 11.6431 1.1341 11.5875 1.02288 11.4756C0.799665 11.2524 0.799665 10.8905 1.02288 10.6673L5.19004 6.5002L1.02288 2.33313C0.799665 2.10992 0.799665 1.74804 1.02288 1.52483C1.24609 1.30162 1.60796 1.30162 1.83117 1.52483L5.99833 5.69194L10.1655 1.52483C10.3887 1.30162 10.7506 1.30162 10.9738 1.52483C11.197 1.74804 11.197 2.10992 10.9738 2.33313L6.80662 6.5002L10.9723 10.6673Z" fill="#070707" />
-                                                                </svg>
-                                                            </div> :
-                                                                <p className="text-[#4A4C56] text-sm">{policy}</p>}
-                                                        </div>
-                                                    ))
-                                                }
+                                                <div>
+                                                    <CreateBlog
+                                                        content=""
+                                                        onContentChange={(data) => console.log(data)}
+                                                        title=""
+                                                        subtitle=""
+                                                    />
+                                                </div>
                                             </div>
-                                            {isRefundEdit && <div onClick={addNewRefundPolicy} className="flex gap-2 items-center border border-[#0068EF] text-[#0068EF] rounded p-[6px] w-fit cursor-pointer">+ Add Policy</div>}
+                                            {/* {isRefundEdit && <div onClick={addNewRefundPolicy} className="flex gap-2 items-center border border-[#0068EF] text-[#0068EF] rounded p-[6px] w-fit cursor-pointer">+ Add Policy</div>} */}
                                         </div>
                                         <div className="p-6 rounded-lg bg-white space-y-6 text-[#23262F]">
                                             <h2>What's the first date when guests can check in?</h2>
