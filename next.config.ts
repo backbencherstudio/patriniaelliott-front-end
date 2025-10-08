@@ -34,11 +34,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "backend.naamstay.com",
+        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
       },
       {
         protocol: "https",
-        hostname: "backend.naamstay.com",
+        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
       },
       {
         protocol: "https",
