@@ -66,6 +66,7 @@ export default function Apartment() {
   const [selectedDateRange, setSelectedDateRange] = useState<'all' | '7' | '15' | '30'>('all');
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   // Filter data by date
   const filteredData = apartmentData.filter((apartment) => {
@@ -76,6 +77,17 @@ export default function Apartment() {
     cutoffDate.setDate(today.getDate() - parseInt(selectedDateRange));
     return bookingDate >= cutoffDate;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    // Reset or clamp page when data or filters change
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages]);
 
   // Table columns
   const columns = [
@@ -104,19 +116,11 @@ export default function Apartment() {
       width: '100px',
       formatter: (_: any, row: any) => (
         <div className="flex items-center gap-4">
-          <Link href={`/apartment-history/${row?.id}`}
+          <Link href={`/apartment-history`}
             className="text-sm text-[#777980] underline cursor-pointer hover:text-[#0068ef]"
-           
           >
             View details
           </Link>
-          <Image
-            src="/booking/delete.svg"
-            alt="Delete"
-            width={16}
-            height={16}
-            className="w-4 h-4 cursor-pointer"
-          />
         </div>
       )
     }
@@ -185,11 +189,11 @@ export default function Apartment() {
         </div>
         <DynamicTableWithPagination
           loading={dashboardLoading}
-          totalPages={1}
+          totalPages={totalPages}
           columns={columns}
-          data={filteredData}
+          data={paginatedData}
           currentPage={currentPage}
-          itemsPerPage={10}
+          itemsPerPage={itemsPerPage}
           onPageChange={setCurrentPage}
           noDataMessage="No apartments found."
         />

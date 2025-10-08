@@ -4,7 +4,7 @@ import DynamicTableWithPagination from '@/app/(Admin-Dashboard)/_component/commo
 import TransStatCard from '@/app/(Frond-End)/(vendor-profile)/component/transection/TransStatCard';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ApartmentStatuse from '../apartment/ApartmentStatuse';
 import { useBookingDashboard } from '@/hooks/useBookingDashboard';
 import { useMyProfile } from '@/hooks/useMyProfile';
@@ -64,6 +64,7 @@ export default function Hotel() {
   const [selectedDateRange, setSelectedDateRange] = useState<'all' | '7' | '15' | '30'>('all');
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   // Filter data by date
   const filteredData = hotelData.filter((hotel) => {
@@ -75,6 +76,16 @@ export default function Hotel() {
     return bookingDate >= cutoffDate;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages]);
+
   // Table columns
   const columns = [
     {
@@ -82,15 +93,7 @@ export default function Hotel() {
       accessor: 'name',
       width: '200px',
       formatter: (_: string, row: any) => (
-        <div className="flex items-center gap-2">
-          <img 
-            src={row.image} 
-            alt={row.name} 
-            className="w-6 h-6 rounded-full object-cover"
-            onError={(e) => {
-              e.currentTarget.src = "/profile.png";
-            }}
-          />
+        <div className="flex items-center">
           <span className="text-sm text-[#070707]">{row.name}</span>
         </div>
       )
@@ -110,19 +113,11 @@ export default function Hotel() {
       width: '100px',
       formatter: (_: any, row: any) => (
         <div className="flex items-center gap-4">
-          <Link href={`/hotel-history/${row?.id}`}
+          <Link href={`/apartment-history`}
             className="text-sm text-[#777980] underline cursor-pointer hover:text-[#0068ef]"
-          // onClick={() => onViewDetails(row)} // Add this if you want details modal
           >
             View details
           </Link>
-          <Image
-            src="/booking/delete.svg"
-            alt="Delete"
-            width={16}
-            height={16}
-            className="w-4 h-4 cursor-pointer"
-          />
         </div>
       )
     }
@@ -190,11 +185,11 @@ export default function Hotel() {
         </div>
         <DynamicTableWithPagination
           loading={dashboardLoading}
-          totalPages={1}
+          totalPages={totalPages}
           columns={columns}
-          data={filteredData}
+          data={paginatedData}
           currentPage={currentPage}
-          itemsPerPage={10}
+          itemsPerPage={itemsPerPage}
           onPageChange={setCurrentPage}
           noDataMessage="No hotels found."
         />
