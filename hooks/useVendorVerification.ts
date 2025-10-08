@@ -5,45 +5,30 @@ import { VerificationData, VerificationStatus } from '@/types/vendor.types';
 
 export const useVendorVerification = () => {
   const [verificationStatus, setVerificationStatus] = useState<VerificationStatus | null>(null);
-  const { loading, error, handleApiCall, clearError, token } = useVendorApi();
+  const { loading, error, handleApiCall, clearError } = useVendorApi();
 
   const submitVerification = useCallback(async (data: VerificationData) => {
     try {
-      if (!token) {
-        console.warn('No token available, skipping verification submission');
-        return { success: false, data: null, message: 'Authentication required' };
-      }
-      
       const result = await handleApiCall(VendorService.submitVerification, data);
       return result;
     } catch (err) {
       console.error('Failed to submit verification:', err);
       throw err;
     }
-  }, [handleApiCall, token]);
+  }, [handleApiCall]);
 
   const submitVerificationStep = useCallback(async (step: number, data: Partial<VerificationData>) => {
     try {
-      if (!token) {
-        console.warn('No token available, skipping verification step submission');
-        return { success: false, data: null, message: 'Authentication required' };
-      }
-      
       const result = await handleApiCall(VendorService.submitVerificationStep, step, data);
       return result;
     } catch (err) {
       console.error(`Failed to submit verification step ${step}:`, err);
       throw err;
     }
-  }, [handleApiCall, token]);
+  }, [handleApiCall]);
 
   const getVerificationStatus = useCallback(async () => {
     try {
-      if (!token) {
-        console.warn('No token available, skipping verification status fetch');
-        return { success: false, data: null, message: 'Authentication required' };
-      }
-      
       const result = await handleApiCall(VendorService.getVerificationStatus);
       if (result.data) {
         setVerificationStatus(result.data);
@@ -53,15 +38,7 @@ export const useVendorVerification = () => {
       console.error('Failed to get verification status:', err);
       throw err;
     }
-  }, [handleApiCall, token]);
-
-  // Initialize with empty data if no token
-  useEffect(() => {
-    if (!token) {
-      console.log('No token available, verification status fetch skipped');
-      setVerificationStatus(null);
-    }
-  }, [token]);
+  }, [handleApiCall]);
 
   return {
     verificationStatus,

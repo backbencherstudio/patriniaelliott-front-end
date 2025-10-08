@@ -10,7 +10,7 @@ interface UserData {
     status: 'Available' | 'Booked' | 'Canceled';
   }
   export const statusStyles = {
-    approved: {
+    Available: {
       bg: 'bg-[#38c976]/10',
       border: 'outline-[#abefc6]',
       text: 'text-[#067647]',
@@ -22,7 +22,7 @@ interface UserData {
       text: 'text-[#ffa23a]',
       icon: '/dashboard/icon/loading.svg'
     },
-    cancel: {
+    Cancel: {
       bg: 'bg-[#fe5050]/10',
       border: 'outline-[#fe5050]',
       text: 'text-[#fe5050]',

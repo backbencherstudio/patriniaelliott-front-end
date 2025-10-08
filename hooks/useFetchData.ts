@@ -11,7 +11,6 @@ const useFetchData = (url) => {
   const [error, setError] = useState(null);
   const {token} = useToken()
  
-  
   useEffect(() => {
     if (!url ) return; // Skip if URL or token is missing
 

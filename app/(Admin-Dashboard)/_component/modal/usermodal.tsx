@@ -45,7 +45,7 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
 
             <div className="flex flex-col items-center">
               <div className="w-[100px] h-[100px] mb-4">
-                <img src={userData?.profile_image} alt="profile" className="rounded-full w-full h-full object-cover" />
+                <Image src={userData?.avatar_url} width={100} height={100} alt="profile" className="rounded-full w-full h-full object-cover" />
               </div>
               <div className="text-center w-full">
                 <h3 className="text-[#22262e] text-xl font-medium mb-2">{userData?.name}</h3>
@@ -60,16 +60,16 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
             <div className='bg-secondaryColor/5 border border-secondaryColor rounded-xl p-4'>
             <div className="flex justify-between items-center mb-4">
              {
-              userData.type == "host" ? <div className="flex items-center gap-2">
+              userData.type == "vendor" ? <div className="flex items-center gap-2">
               <Image src="/modal/redclock.svg" alt="pending" width={20} height={20} />
-              <span className="text-[#fe5050] text-base">{userData?.status}</span>
+              <span className={`text-[#fe5050] text-base ${userData?.status == 1 ? "text-[#008000]" : "text-[#fe5050]"}`}>{userData?.status == 1 ? "Active" : "Inactive"}</span>
             </div> :  <div className="flex items-center gap-2">
                 <Image src="/modal/redclock.svg" alt="pending" width={20} height={20} />
-                <span className="text-[#fe5050] text-base">{userData?.status}</span>
+                <span className={`text-[#fe5050] text-base ${userData?.status == 1 ? "text-[#008000]" : "text-[#fe5050]"}`}>{userData?.status == 1 ? "Active" : "Inactive"}</span>
               </div>
              }
             
-              <span className="text-[#4a4c56] flex items-center gap-1 text-base"><FaStar className='text-yellow-400'/> {userData?.rating}</span>
+              <span className="text-[#4a4c56] flex items-center gap-1 text-base"><FaStar className='text-yellow-400'/> {userData?.average_rating  || 0}</span>
             </div>
 
             <div className="flex flex-col gap-4">
@@ -92,7 +92,7 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
           <div className="flex-1 bg-bgColor rounded-xl p-4">
             <div className="border-b border-[#f3f3f4] pb-4  md:mb-8">
               <h3 className="text-[#070707] text-xl md:text-2xl font-medium mb-4 md:mb-8">Hi, I'm {userData?.name}</h3>
-              <p className="text-[#4a4c56] text-base md:text-lg leading-[27px]">{userData?.bio}</p>
+              <p className="text-[#4a4c56] text-base md:text-lg leading-[27px]">{userData?.bio || "No bio"}</p>
             </div>
 
             <div className="flex  md:flex-row gap-4 md:gap-6">

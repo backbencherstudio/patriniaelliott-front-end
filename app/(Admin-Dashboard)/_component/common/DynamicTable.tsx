@@ -24,6 +24,7 @@ interface DynamicTableProps {
   onDelete?: (id: any) => void;
   noDataMessage?: string;
     editLoading?:boolean;
+  className?: string;
 }
 
 export default function DynamicTableWithPagination({
@@ -38,6 +39,7 @@ export default function DynamicTableWithPagination({
   onDelete,
   noDataMessage = "No data found.",
   editLoading,
+  className,
 }: DynamicTableProps) {
   
 
@@ -60,8 +62,8 @@ export default function DynamicTableWithPagination({
   return (
     <div>
     
-      <div className="overflow-x-auto  ">
-        <table className="min-w-[1080px] w-full text-left table-fixed">
+      <div className={`overflow-x-auto ${className || ''}`}>
+        <table className="w-full text-left table-auto">
           <colgroup>
             {columns.map((col, index) => (
               <col key={index} style={{ width: col.width ? col.width : "auto" }} />
@@ -99,8 +101,8 @@ export default function DynamicTableWithPagination({
                   {columns.map((col, idx) => (
                     <td 
                       key={idx} 
-                      className="px-2 py-3 text-sm text-[#777980] whitespace-normal break-words"
-                      style={{ width: col.width ? col.width : "auto", wordBreak: 'break-word' as any }}
+                      className="px-2 py-3 text-sm text-[#777980] whitespace-nowrap"
+                      style={{ width: col.width ? col.width : "auto" }}
                     >
                       {col.formatter ? col.formatter(row[col.accessor], row, i) : row[col.accessor]}
                     </td>

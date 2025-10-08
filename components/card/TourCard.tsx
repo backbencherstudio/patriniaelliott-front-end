@@ -1,5 +1,6 @@
 'use client';
 
+import { TextLimit } from '@/lib/TextLimit';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -34,7 +35,6 @@ export default function TourCard({ tour }: any) {
             return next;
         });
     };
-    console.log(tour);
     
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full ">
@@ -77,7 +77,7 @@ export default function TourCard({ tour }: any) {
                             :
                             <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
                                 <Image
-                                    src={"/Accommodation/a1.png"}
+                                    src={tour?.package_files[0]?.file_url || "/Accommodation/a1.png"}
                                     alt={tour?.name}
                                     width={400}
                                     height={200}
@@ -87,20 +87,20 @@ export default function TourCard({ tour }: any) {
                     }
                 </div>
 
-                <span className="absolute z-20 top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                  {tour?.breakfast_available && "Breakfast Included" }
-                </span>
+                {tour?.breakfast_available && <span className="absolute z-20 top-6 left-6 bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                  "Breakfast Included" 
+                </span>}
                 <span className="absolute bottom-6 z-20 left-6 flex items-center bg-white text-gray-700 text-xs px-2 py-1 rounded-full shadow">
                     <FaMapMarkerAlt className="mr-1" /> {tour?.city}
                 </span>
             </div>
 
-            <div className="p-4 space-y-2 mt-2">
+            <div className="p-4 space-y-2">
                 <span className="text-xs text-primaryColor bg-[#90A9C3]/20 px-3 py-1 rounded-full  font-medium">
                     Hotel + All inclusive
                 </span>
-                <h3 className="font-medium mt-3 text-[22px] text-blackColor leading-[130%]">
-                    {tour?.name}
+                <h3 className="font-medium mt-3 text-[20px] text-blackColor leading-[130%]">
+                    {TextLimit(tour?.name, 40)}
                 </h3>
 
                 <div className="flex items-center gap-1 text-yellow-500 text-sm">

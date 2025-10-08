@@ -11,7 +11,6 @@ import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
 import { toast } from "react-toastify";
 import EditPropertyDialog from "./EditPropertyDialog";
-import EditTourDialog from "./EditTourDialog";
 import ListingAction from "./ListingAction";
 import ListingApproveAction from "./ListingApproveAction";
 import ListingPropartyCard from "./ListingPropartyCard";
@@ -43,13 +42,22 @@ export default function ListingPage() {
       setListingData(data?.data);
     }
   },[data])
-  const handleViewDetails = (user: any) => {
-    setSelectedData(user);
-    setIsModalOpen(true);
+  const handleViewDetails = async(user: any) => {
+     try {
+      const response = await UserService.getData(`/admin/listing-management/${user?.id}`,token);
+      setSelectedData(response?.data?.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.log("error",error);
+    }
   };
   const handleEdite = (user: any) => {
     setSelectedData(user);
     setIsEdit(true);
+  };
+
+  const handleOptimisticUpdate = (id: any, status: any, payment_status: any) => {
+    setListingData((prev) => prev.map((item: any) => item.id === id ? { ...item, status : status } : item));
   };
 
   const columns = [
@@ -70,13 +78,12 @@ export default function ListingPage() {
     {
       label: "Status",
       accessor: "status",
-   
       formatter: (_, row) => <ListingStatuse status={row.status} />,
     },
     {
       label: "Approval",
       accessor: "status",
-      formatter: (_, row) => <ListingApproveAction status={row}  handleViewDetails={handleViewDetails} />,
+      formatter: (_, row) => <ListingApproveAction status={row} onOptimisticUpdate={handleOptimisticUpdate} handleViewDetails={handleViewDetails} />,
     },
     {
       label: "Action",
@@ -111,9 +118,6 @@ setEditLoading(true)
     setEditLoading(false)
   }
 };
-
-console.log(isEdit);
-
 
   // Prefer API data; fallback to demo data
   const listingItems = (data?.data && data.data.length ? data.data : []);
@@ -151,10 +155,10 @@ console.log(isEdit);
       {/* Overview */}
       <div className="w-full bg-white rounded-xl p-4  mx-auto">
         <h2 className="text-2xl font-medium text-[#22262e] mb-1">
-          Manage bookings
+          Manage Listings
         </h2>
         <p className="text-base text-[#777980] mb-4">
-          Check up on your latest reservations and history.
+          Check up on your latest listings and history.
         </p>
       </div>
       {/* Table Section */}
@@ -256,14 +260,16 @@ console.log(isEdit);
               onOpenChange={setIsEdit}
             />
           )}
-        {isEdit && selectedData && selectedData.type === "Tour" && (
-          <EditTourDialog
-            open={isEdit}
-            data={selectedData}
-            onOpenChange={setIsEdit}
-          />
+        {isEdit && selectedData && selectedData.type === "tour" && (
+         <EditPropertyDialog
+              open={isEdit}
+              data={selectedData}
+              listingData={lisntingData}
+              setListingData={setListingData}
+              onOpenChange={setIsEdit}
+            />
         )}
-        {isModalOpen && selectedData && selectedData.type === "Tour" && (
+        {isModalOpen && selectedData && selectedData.type === "tour" && (
           <ListingToureCard
             open={isModalOpen}
             data={selectedData}

@@ -227,7 +227,7 @@ export default function Page() {
         }
         localStorage.removeItem("propertyData");
         setTimeout(() => {
-          router.push("/property-list");
+          router.push("/user-verification");
         }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");

@@ -60,16 +60,16 @@ export const BookingProvider = ({ children }) => {
   }, [selectedExtraServices]);
 
   // Calculate total price
-  const totalPrice = useMemo(() => {
-    return basePrice + extraServicesTotal;
-  }, [basePrice, extraServicesTotal]);
 
-  const discountNumber = 10;
+
+  const discountNumber = singleApartment?.discount;
   // Calculate discount
-  const discount = useMemo(() => {
-    return Number((totalPrice * (discountNumber/100)).toFixed(2));
-  }, [totalPrice]);
-
+  const discountPrice = useMemo(() => {
+    return Number(Math.round(basePrice * (discountNumber/100)));
+  }, [basePrice]);
+  const totalPrice = useMemo(() => {
+    return (basePrice - Number(discountPrice)) + extraServicesTotal;
+  }, [basePrice, extraServicesTotal]);
   // Book now handler
   const handleBookNow = () => {
     const bookingDetails = {
@@ -79,10 +79,11 @@ export const BookingProvider = ({ children }) => {
       endDate,
       selectedExtraServices,
       totalPrice,
-      discount,
+      discountPrice,
       totalDays,
       basePrice,
-      extraServicesTotal
+      extraServicesTotal,
+
     };
     
     // Save to localStorage safely
@@ -129,7 +130,7 @@ export const BookingProvider = ({ children }) => {
     basePrice,
     extraServicesTotal,
     totalPrice,
-    discount,
+    discountPrice,
     discountNumber,
     handleBookNow,
     bookingData,
@@ -143,7 +144,7 @@ export const BookingProvider = ({ children }) => {
     basePrice,
     extraServicesTotal,
     totalPrice,
-    discount,
+    discountPrice,
     discountNumber,
     bookingData
   ]);

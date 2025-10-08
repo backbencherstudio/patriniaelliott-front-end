@@ -32,8 +32,8 @@ const STORAGE_KEYS = {
   TRAVEL_COUNT: 'toure_booking_travel_count'
 } as const;
 
-const SERVICE_FEE = 40;
-const DISCOUNT_PERCENTAGE = 10;
+
+
 
 // Helper functions
 const getFromStorage = (key: string, defaultValue: any) => {
@@ -132,16 +132,18 @@ export const ToureBookingProvider = ({ children }: { children: React.ReactNode }
     return Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24)));
   }, [startDate, endDate]);
 
-  const calculateTotal = useCallback(() => {
-    return travelprice + SERVICE_FEE;
+ 
+
+  
+  const discount = useMemo(() => 
+    Number(((travelprice * singleToure?.discount) / 100).toFixed(2)), 
+    [travelprice]
+  );
+   const calculateTotal = useCallback(() => {
+    return (travelprice  + Number(singleToure?.service_fee));
   }, [travelprice]);
 
   const totalPrice = calculateTotal();
-  const discount = useMemo(() => 
-    Number(((totalPrice * DISCOUNT_PERCENTAGE) / 100).toFixed(2)), 
-    [totalPrice]
-  );
-
   // Memoized handlers
   const handleSetSingleToure = useCallback((toure: any) => {
     setSingleToure(toure);
@@ -177,7 +179,7 @@ export const ToureBookingProvider = ({ children }: { children: React.ReactNode }
       toure: singleToure,
       startDate,
       endDate,
-      servicefee: SERVICE_FEE,
+      servicefee: singleToure?.service_fee,
       totalPrice,
       discount
     };
@@ -198,9 +200,9 @@ export const ToureBookingProvider = ({ children }: { children: React.ReactNode }
     setTravelCount: handleSetTravelCount,
     totalDay,
     totalPrice,
-    servicefee: SERVICE_FEE,
+    servicefee: singleToure?.service_fee,
     discount,
-    discountNumber: DISCOUNT_PERCENTAGE,
+    discountNumber: singleToure?.discount,
     calculateTotal,
     handleBookNow,
     bookingData

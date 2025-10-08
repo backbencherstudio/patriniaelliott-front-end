@@ -1,7 +1,7 @@
 import Rating from "../reusable/Rating";
 
 const ToureHeader = ({ singletour }: any) => {
-console.log("check header",singletour);
+
 
   return (
     <div className="lg:flex justify-between items-center pb-8">

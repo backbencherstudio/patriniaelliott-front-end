@@ -1,14 +1,52 @@
 "use client"
 
-import { destinations } from "@/DemoAPI/destinationData";
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Skeleton } from "../ui/skeleton";
 
 function TopDestination() {
        const [currentIndex, setCurrentIndex] = useState(1);
+       const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
+       const [loading, setLoading]=useState(true);
+       const [error, setError]=useState(null);
+       const [data, setData]=useState(null);
+      const endpoint = `/application/packages/top-destinations?limit=${10}&page=${1}`
+      const {token} = useToken()
+      
+       const fetchData = async()=>{
+        setLoading(true)
+        try {
+          const response = await UserService.getData(endpoint,token)
+          setData(response.data.data)
+        } catch (error) {
+          setError(error)
+        } finally {
+          setLoading(false)
+        }
+       }
+
+         useEffect(()=>{
+        fetchData()
+       },[endpoint])
+
+  const getSlideSrc = (src: string, index: number) => {
+    if (!src) return "/empty.png";
+    return failedIndices.has(index) ? "/empty.png" : src;
+  };
+
+  const handleImageError = (index: number) => {
+    setFailedIndices(prev => {
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
+  };
+
       const swiperRef = useRef<any>(null);
     
       const goNext = () => swiperRef.current?.slideNext();
@@ -66,19 +104,33 @@ function TopDestination() {
           onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex + 1)}
           className="w-full"
         >
-          {destinations.map((des, index) => (
+          {data?.map((des, index) => (
             <SwiperSlide key={index}>
-              <div className=" w-full">
-                <Image
-                  src={des.image}
+              <div className=" w-full ">
+                <div className=" w-full h-full rounded-full overflow-hidden">
+              { loading ? <div className="w-full h-full rounded-full overflow-hidden">
+                <Skeleton className="w-full h-full rounded-full overflow-hidden" />
+              </div> : 
+
+              <Image
+                  src={getSlideSrc(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/${des?.img}`, index)}
                   alt={`des ${index + 1}`}
                   width={220}
                   height={220}
-                  className="w-full h-full object-cover"
+                  onError={() => handleImageError(index)}
+                  className="w-full h-full hover:scale-110 transition-all duration-300 overflow-hidden rounded-full object-cover"
                 />
+              }   
+                </div>
                 <div className=" text-center mt-4">
-                    <h3 className=" text-2xl font-medium ">{des.name}</h3>
-                    <p className="text-base text-descriptionColor leading-[150%] ">{des.tours} Times Tour</p>
+                 {
+                  loading ? <Skeleton className="w-full h-full rounded-full overflow-hidden" /> :
+                  <h3 className=" text-2xl font-medium ">{des?.country}</h3>
+                 }  
+                    {
+                      loading ? <Skeleton className="w-full h-full rounded-full overflow-hidden" /> :
+                      <p className="text-base text-descriptionColor leading-[150%] ">{des?.count} Times Tour</p>
+                    }  
                 </div>
               </div>
             </SwiperSlide>

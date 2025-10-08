@@ -4,7 +4,7 @@ import { useState } from 'react';
 import ImageModal from './ImageModal';
 
 function ApartmentImage({vendorPackage}:{vendorPackage:any}) {
-    console.log("image",vendorPackage);
+
      const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
      const [isOpen, setIsOpen] = useState(false);
   const getSlideSrc = (src: string, index: number) => {

@@ -25,10 +25,12 @@ const BookingSummary = ({activeTab,setActiveTab,setTotalAmount}:any) => {
     );
   }
 
-  const { name, reviews, price, rating, address } = bookingData?.apartment;
- const serviceFee = 170;
- const total = bookingData?.totalPrice +serviceFee - Number(bookingData?.discount)
+  const { name, reviews, price, rating, discount, service_fee, address } = bookingData?.apartment;
+ const serviceFee = service_fee;
+ const total = Number(bookingData?.totalPrice) + Number(serviceFee) 
  setTotalAmount(total)
+
+ 
   return (
    
     <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
@@ -131,13 +133,13 @@ const BookingSummary = ({activeTab,setActiveTab,setTotalAmount}:any) => {
             <span className=" text-descriptionColor">
               ${price} × {bookingData?.totalDays} nights
             </span>
-            <span>${(price * bookingData?.totalDays)}</span>
+            <span>${Number(price) * Number(bookingData?.totalDays)}</span>
           </div>
 
           {/* Example static discount - make dynamic later */}
           <div className="flex justify-between text-base text-headerColor">
             <span className=" text-descriptionColor">{bookingData?.discountNumber}% campaign discount</span>
-            <span>- ${bookingData?.discount}</span>
+            <span>- ${bookingData?.discountPrice}</span>
           </div>
 
           <div className="flex text-base text-headerColor  justify-between">

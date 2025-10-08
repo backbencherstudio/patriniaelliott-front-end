@@ -24,14 +24,14 @@ const ApartmentCard = ({ hotel }: any) => {
       return next;
     });
   };
-  console.log("check",hotel);
+
   
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden gap-5  md:grid md:grid-cols-9 lg:grid-cols-8 p-4  hover:shadow-xl transition-shadow">
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
         {
-            roomFiles?.length >= 2 ?
+            hotel?.room_photos?.length >= 2 ?
               <Swiper
                 slidesPerView={1}
                 loop={true}
@@ -49,7 +49,7 @@ const ApartmentCard = ({ hotel }: any) => {
                   bulletActiveClass: 'hero-bullet-active',
                 }}>
                 {
-                  roomFiles?.slice(0, 4).map((file: any, index: number) => (
+                   hotel?.room_photos?.slice(0, 4).map((file: any, index: number) => (
                     <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
                       <Image
                        src={getSlideSrc(file, index)}

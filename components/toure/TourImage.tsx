@@ -1,11 +1,11 @@
 "use client"
 import Image from 'next/image';
 import { useState } from 'react';
-import ImageModal from '../apartment/ImageModal';
+import ToureImage from './ToureImage';
+
 
 
 function TourImage({vendorPackage}:{vendorPackage:any}) {
-    console.log("image",vendorPackage?.package_files[0]?.file_url);
      const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
      const [isOpen, setIsOpen] = useState(false);
   const getSlideSrc = (src: string, index: number) => {
@@ -96,7 +96,7 @@ function TourImage({vendorPackage}:{vendorPackage:any}) {
             </div>
           </div>
         </div>
-        {isOpen &&   <ImageModal images={vendorPackage?.package_files} isOpen={isOpen} setIsOpen={setIsOpen}/>}
+        {isOpen &&   <ToureImage images={vendorPackage?.package_files} isOpen={isOpen} setIsOpen={setIsOpen}/>}
     </div>
   )
 }

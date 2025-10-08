@@ -5,20 +5,21 @@ import { UserService } from "@/service/user/user.service";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewDetails }: any) {
+function ListingApproveAction({ status, onOptimisticUpdate , handleViewDetails }: any) {
   const {token}=useToken()
   const [loading, setLoading]= useState(false)
   
   const handleApprove = async() => {
     setLoading(true)
     // Optimistic update - immediately update UI
-    onOptimisticUpdate?.(status?.id, "approved", "approved");
+    
     
     try {
-      const res = await UserService.updateData(`/admin/listing-management/approve-property/${status?.id}`,{status:"approved"},token)
+      const res = await UserService.createStatuseChange(`/admin/listing-management/${status?.id}/approve`,token)
       
       if(res.data.success){
         toast.success(res.data.message || "Listing approved successfully")
+        onOptimisticUpdate?.(status?.id, "Available", "Available");
         // Refresh data to ensure consistency
       }else{
         toast.error(res.data.message || "Listing approved failed")
@@ -27,6 +28,7 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewD
       }
     } catch (error) {
       toast.error("Something went wrong")
+       console.log("check error",error);
       // Revert optimistic update on error
       onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
     } finally {
@@ -37,19 +39,21 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewD
   const handleReject = async() => {
     setLoading(true)
     // Optimistic update - immediately update UI
-    onOptimisticUpdate?.(status?.id, "cancel", "cancel");
     try {
-      const res = await UserService.updateData(`/admin/listing-management/reject-property/${status?.id}`,{status:"cancel"},token)
+      const res = await UserService.createStatuseChange(`/admin/listing-management/${status?.id}/reject`,token)
       
       if(res.data.success){
         toast.success(res.data.message || "Listing rejected successfully")
+          onOptimisticUpdate?.(status?.id, "Cancel", "Cancel");
       }else{
         toast.error(res.data.message || "Listing rejected failed")
         // Revert optimistic update on failure
         onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
       }
     } catch (error) {
-      toast.error("Something went wrong")
+      toast.error(error?.message || "Something went wrong")
+      console.log("check error",error);
+      
       // Revert optimistic update on error
       onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
     } finally {
@@ -59,7 +63,7 @@ function ListingApproveAction({ status, onView, onOptimisticUpdate , handleViewD
   
   return (
     <div>
-      {status?.status == "approved" || status?.status == "cancel" || status?.status == "succeeded" ? (
+      {status?.status == "Available" || status?.status == "Cancel" || status?.status == "succeeded" ? (
         <span
           className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
           onClick={() => handleViewDetails(status)}

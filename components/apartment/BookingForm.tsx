@@ -20,6 +20,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
     setStartDate,
     endDate,
     setEndDate,
+    discountPrice,
     totalDays,
     basePrice,
     totalPrice,
@@ -65,7 +66,6 @@ const BookingForm = ({ singleApartments, type }: any) => {
     if (token) {
       try {
         const response = await UserService?.createData(`/booking`,data,token)
-        console.log("response",response);
         if (response?.data?.success) {
           toast.success(response?.data?.message);
            localStorage.setItem("bookingId", response?.data?.data?.booking?.id);
@@ -73,10 +73,15 @@ const BookingForm = ({ singleApartments, type }: any) => {
            handleBookNow();
             router.push(type === "apartment" ? `/apartment/${singleApartments?.id}/booking` : `/hotel/${singleApartments?.id}/booking`);
               setLoading(false);
+        }else{
+          toast.error(response?.response?.data?.message?.message);
         }
         } catch (error) {
           console.log(error);
+          toast.error(error?.response?.data?.message?.message);
           setLoading(false);
+      }finally{
+        setLoading(false);
       }
       
     } else {
@@ -124,6 +129,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
           onChange={setStartDate}
           placeholderText="Select a date"
           className="hidden"
+          minDate={new Date()}
         />
         <LucideCalendarDays className="text-secondaryColor" />
       </div>
@@ -146,6 +152,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
           onChange={setEndDate}
           placeholderText="Select a date"
           className="hidden"
+          minDate={startDate || new Date()}
         />
         <LucideCalendarDays className="text-secondaryColor" />
       </div>
@@ -201,6 +208,10 @@ const BookingForm = ({ singleApartments, type }: any) => {
           <div className="flex justify-between text-descriptionColor border-b border-grayColor1/20 py-2">
             <span>{totalDays} Days Stay</span>
             <span>${basePrice}</span>
+          </div>
+          <div className="flex justify-between border-b border-grayColor1/20 py-2 text-base text-headerColor">
+            <span className=" text-descriptionColor">{singleApartments?.discount}% campaign discount</span>
+            <span>- ${discountPrice}</span>
           </div>
           
           {selectedExtraServices.map((service) => (

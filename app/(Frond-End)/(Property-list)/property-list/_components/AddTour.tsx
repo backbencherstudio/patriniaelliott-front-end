@@ -1,21 +1,19 @@
 'use client'
 
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import Dropdownmenu from "@/components/reusable/Dropdownmenu";
+import { usePropertyContext } from "@/provider/PropertySetupProvider";
+import country from '@/public/toure/countries.json';
+import languages from '@/public/toure/languages.json';
+import uploadIcon from '@/public/toure/upload-icon.svg';
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
-import uploadIcon from '@/public/toure/upload-icon.svg'
+import toast, { Toaster } from "react-hot-toast";
 import Select from "react-select";
 import TourPlan from "./TourPlan";
-import Link from "next/link";
-import toast from "react-hot-toast";
-import Image from "next/image";
-import { usePropertyContext } from "@/provider/PropertySetupProvider";
-import { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import languages from '@/public/toure/languages.json'
-import Dropdownmenu from "@/components/reusable/Dropdownmenu";
-import country from '@/public/toure/countries.json'
 
 const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -38,12 +36,12 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
           width={500}
           height={500}
           src={uploadIcon}
-          className="bg-[#EB5B2A] p-[10px] rounded-full mb-[6px] w-[50px] h-auto object-cover"
+          className="bg-primaryColor p-[10px] rounded-full mb-[6px] w-[50px] h-auto object-cover"
           alt="Image"
         />
         <input {...getInputProps()} />
         <p className="text-xs md:text-base text-black rounded-full">
-          Drag & Drop or <span className="text-[#EB5B2A]">Choose File</span> to
+          Drag & Drop or <span className="text-primaryColor font-semibold">Choose File</span> to
           upload
         </p>
         {/* <p className="mt-1 text-xs md:text-base text-gray-400 text-center">
@@ -304,11 +302,12 @@ const AddTour = () => {
   }, [selectedRegion]);
 
   return (
+    <section className="container">
     <div className="flex flex-col gap-4">
       <Toaster position="top-right" />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="bg-white min-h-screen pt-8 px-0 sm:px-6 pb-6 rounded-lg flex flex-col gap-4">
-          <div className="md:grid md:grid-cols-3 gap-8 px-2">
+        <div className="bg-white min-h-screen pt-8  pb-6 rounded-lg flex flex-col gap-4">
+          <div className="md:grid md:grid-cols-3 gap-8 ">
             {/* LEFT */}
             <div className="flex flex-col gap-8 col-span-2">
               <h3 className="text-2xl font-semibold text-[#080613]">
@@ -473,7 +472,7 @@ const AddTour = () => {
             </div>
 
             {/* RIGHT */}
-            <div className="p-4 bg-[#FDEFEA] rounded-2xl h-fit mt-4 md:mt-0">
+            <div className="p-4 bg-secondaryColor/5 border border-secondaryColor rounded-2xl h-fit mt-4 md:mt-0">
               <div className="flex flex-col gap-4">
                 <div className="flex-1 border p-2 rounded-md">
                   <label className="block text-[#444] text-xl font-medium mb-4">
@@ -791,6 +790,7 @@ const AddTour = () => {
         </div>
       </form>
     </div>
+    </section>
   );
 };
 

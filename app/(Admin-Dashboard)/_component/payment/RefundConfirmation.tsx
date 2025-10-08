@@ -12,12 +12,14 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 interface RefundConfirmationModalProps {
+  onOptimisticUpdate: (id: any, status: any) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   data:any;
 }
 
 export default function RefundConfirmation({
+  onOptimisticUpdate,
   open,
   onOpenChange,
   data,
@@ -33,15 +35,19 @@ export default function RefundConfirmation({
     console.log(formdata);
     
     try {
-      const res = await UserService.updateData(`/dashboard/payments/transactions/refund-request/${data?.id}`,formdata ,token)
+      const res = await UserService.createData(`/dashboard/payments/transactions/refund-request/${data?.booking_id}`,formdata ,token)
       console.log(res);
       if(res.data.success){
         toast.success(res.data.message || "Refunded successfully")
+        onOptimisticUpdate(data?.booking_id, "approved")
       }else{
         toast.error(res.data.message || "Refunded failed")
       }
     } catch (error) {
       console.log(error);
+      onOptimisticUpdate(data?.booking_id, "cancel")
+    }finally{
+      onOpenChange(false)
     }
   };
 

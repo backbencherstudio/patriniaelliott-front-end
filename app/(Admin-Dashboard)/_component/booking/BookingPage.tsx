@@ -3,12 +3,14 @@ import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 
 import useFetchData from "@/hooks/useFetchData";
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import DynamicTableWithPagination from "../common/DynamicTable";
 import BokingStatuse from "./BokingStatuse";
 import BookingAction from "./BookingAction";
-import BookingCard from "./BookingCard";
+import BookingDetailsDialog from "./BookingCard";
 import BookingPymentStatuse from "./BookingPymentStatuse";
 import DateCheck from "./DateCheck";
 
@@ -21,7 +23,7 @@ export default function BookingPage() {
   const [selectedRole, setSelectedRole] = React.useState<
     "all" | "hotel" | "apartment" | "tour"
   >("all");
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
 
   const endpoint = `/admin/booking?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
@@ -32,11 +34,18 @@ export default function BookingPage() {
   );
 
   // Local state for optimistic updates - store all updates
+  const {token}=useToken()
   const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, any>>({});
 
-  const handleViewDetails = (user: any) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
+  const handleViewDetails = async   (user: any) => {
+  try {
+      const response = await UserService.getData(`/admin/booking/${user?.id}`,token);
+      setSelectedUser(response?.data?.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.log("error",error);
+    }
+   
   };
 
   // Clear optimistic updates when page or role changes
@@ -110,8 +119,8 @@ export default function BookingPage() {
     },
     {
       label: "Price", 
-      accessor: "total_amount",width:"100px",
-      formatter: (value) => `$${value}`,
+      accessor: "amount",width:"100px",
+      formatter: (value) => `${value}`,
     },
     { label: "Action", 
       accessor: "status",width:"100px", 
@@ -135,8 +144,12 @@ export default function BookingPage() {
     if (optimisticUpdate) {
       return {
         ...booking,
-        status: optimisticUpdate.status,
-        payment_status: optimisticUpdate.payment_status
+        status: {
+                text: optimisticUpdate.status,
+            },
+        payment: {
+                status: optimisticUpdate.payment_status,
+            },
       };
     }
     return booking;
@@ -213,7 +226,8 @@ export default function BookingPage() {
         </div>
       </div>
       <div>
-        {isModalOpen && <BookingCard open={isModalOpen} data={selectedUser} setIsModalOpen={setIsModalOpen} />}
+        {isModalOpen && <BookingDetailsDialog open={isModalOpen} data={selectedUser} setIsModalOpen={setIsModalOpen} />}
+        {/* {isModalOpen && <BookingDetailsDialog open={isModalOpen} data={selectedUser} setIsModalOpen={setIsModalOpen} />} */}
       </div>
     </div>
   );

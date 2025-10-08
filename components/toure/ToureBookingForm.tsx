@@ -97,7 +97,6 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
     if (token) {
       try {
         const response = await UserService?.createData(`/booking`, bookingData, token);
-        console.log("response", response);
         
         if (response?.data?.success) {
           toast.success(response?.data?.message);
@@ -151,7 +150,6 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
       <div>
         <p className="text-grayColor1 text-base"><span className="text-headerColor font-medium">{singlToureDetails?.duration} Days
           {/* {singlToureDetails?.duration_type} */}
-          
           </span> in {singlToureDetails?.city} Tour Package</p>
         <div className="flex mt-1 items-center gap-2 text-base text-[#0068EF] ">
           Cancellation Policy{" "}
@@ -191,6 +189,7 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
             onChange={setStartDate}
             placeholderText="Select a date"
             className="hidden"
+            minDate={new Date()}
           />
         </div>
 
@@ -225,11 +224,7 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
           <p>{travelCount}</p>
           <button onClick={() => setTravelCount(travelCount + 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiPlus /></button>
         </div>
-
       </div>
-
-
-
 
       {/* Pricing Summary */}
       <div className="mt-6 bg-secondaryColor/10 rounded-lg p-4">
@@ -246,13 +241,13 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
             </span>
           </div>
           <div className="flex justify-between text-base text-descriptionColor border-b border-grayColor1/20 py-2">
-            <span className=" text-descriptionColor">{discountNumber}% campaign discount</span>
+            <span className=" text-descriptionColor">{discountNumber || 0}% campaign discount</span>
             <span>- ${discount}</span>
           </div>
 
           <div className="flex text-descriptionColor justify-between text-base border-b border-grayColor1/20 py-2">
             <span className=" ">Service fee</span>
-            <span> ${servicefee}</span>
+            <span> ${servicefee || 0}</span>
           </div>
 
         </div>

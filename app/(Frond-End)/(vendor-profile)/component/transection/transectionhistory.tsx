@@ -1,137 +1,13 @@
 'use client'
 import DynamicTableWithPagination from '@/app/(Admin-Dashboard)/_component/common/DynamicTable'
 import Image from 'next/image'
-import { useState } from 'react'
-
+import { useEffect, useMemo, useState } from 'react'
 import InvoiceModal from './InvoiceModal'
 import RefundDetailsModal from './RefundDetailsModal'
 import TransStatCard from './TransStatCard'
 import TransStatuse from './TransStatuse'
-
-const transactionData = [
-  {
-    date: '15-05-25',
-    transactionId: 'TXN789001',
-    type: 'Bookings',
-    amount: '$350',
-    paymentMethod: 'Credit Card',
-    status: 'Completed'
-  },
-  {
-    date: '14-05-25',
-    transactionId: 'TXN789002',
-    type: 'Withdrawal',
-    amount: '-$800',
-    paymentMethod: 'PayPal',
-    status: 'Pending'
-  },
-  {
-    date: '12-05-25',
-    transactionId: 'TXN789003',
-    type: 'Bookings',
-    amount: '$275',
-    paymentMethod: 'Bank Transfer',
-    status: 'Completed'
-  },
-  {
-    date: '10-05-25',
-    transactionId: 'TXN789004',
-    type: 'Refund',
-    amount: '-$150',
-    paymentMethod: 'Credit Card',
-    status: 'Failed'
-  },
-  {
-    date: '08-05-25',
-    transactionId: 'TXN789005',
-    type: 'Bookings',
-    amount: '$420',
-    paymentMethod: 'Stripe',
-    status: 'Completed'
-  },
-  {
-    date: '07-05-25',
-    transactionId: 'TXN789006',
-    type: 'Withdrawal',
-    amount: '-$600',
-    paymentMethod: 'Bank Transfer',
-    status: 'Completed'
-  },
-  {
-    date: '06-05-25',
-    transactionId: 'TXN789007',
-    type: 'Bookings',
-    amount: '$550',
-    paymentMethod: 'Credit Card',
-    status: 'Completed'
-  },
-  {
-    date: '05-05-25',
-    transactionId: 'TXN789008',
-    type: 'Refund',
-    amount: '-$200',
-    paymentMethod: 'PayPal',
-    status: 'Completed'
-  },
-  {
-    date: '04-05-25',
-    transactionId: 'TXN789009',
-    type: 'Bookings',
-    amount: '$380',
-    paymentMethod: 'Stripe',
-    status: 'Pending'
-  },
-  {
-    date: '03-05-25',
-    transactionId: 'TXN789010',
-    type: 'Bookings',
-    amount: '$290',
-    paymentMethod: 'Credit Card',
-    status: 'Completed'
-  },
-  {
-    date: '02-05-25',
-    transactionId: 'TXN789011',
-    type: 'Withdrawal',
-    amount: '-$750',
-    paymentMethod: 'Bank Transfer',
-    status: 'Completed'
-  },
-  {
-    date: '02-05-25',
-    transactionId: 'TXN789012',
-    type: 'Bookings',
-    amount: '$480',
-    paymentMethod: 'PayPal',
-    status: 'Completed'
-  },
-  {
-    date: '01-05-25',
-    transactionId: 'TXN789013',
-    type: 'Refund',
-    amount: '-$175',
-    paymentMethod: 'Credit Card',
-    status: 'Failed'
-  },
-  {
-    date: '01-05-25',
-    transactionId: 'TXN789014',
-    type: 'Bookings',
-    amount: '$320',
-    paymentMethod: 'Stripe',
-    status: 'Completed'
-  },
-  {
-    date: '01-05-25',
-    transactionId: 'TXN789015',
-    type: 'Bookings',
-    amount: '$395',
-    paymentMethod: 'Bank Transfer',
-    status: 'Completed'
-  }
-]
-
-
+import { useVendorApi } from '@/hooks/useVendorApi'
+import { VendorService } from '@/service/vendor/vendor.service'
 
 export default function TransectionHistory() {
   const [activeTab, setActiveTab] = useState<'All transactions' | 'Bookings' | 'Refunds'>('All transactions')
@@ -139,7 +15,12 @@ export default function TransectionHistory() {
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [showInvoice, setShowInvoice] = useState(false)
-  const [selectedTransaction, setSelectedTransaction] = useState(null)
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null)
+
+  const { loading, handleApiCall } = useVendorApi()
+  const [stats, setStats] = useState<any>({ total_bookings: 0, total_earnings: 0, total_withdraw: 0, total_refund: 0 })
+  const [rows, setRows] = useState<any[]>([])
+  const [totalPages, setTotalPages] = useState<number>(1)
 
   const dateRanges = [
     { value: 'all', label: 'All Time' },
@@ -148,52 +29,78 @@ export default function TransectionHistory() {
     { value: '30', label: 'Last 30 days' }
   ]
 
-  const filteredTransactions = transactionData.filter((transaction) => {
-    const statusMatch = activeTab === 'All transactions' ||
-      (activeTab === 'Bookings' && transaction.status === 'Completed') ||
-      (activeTab === 'Refunds' && transaction.status === 'Failed');
+  // fetch data
+  const reload = async (page = 1) => {
+    const res: any = await handleApiCall(VendorService.getTransactions, { page, limit: 10 })
+    const root = res?.data?.data || res?.data || res
+    const statistics = root?.statistics || {}
+    const list = root?.transactions?.data || []
+    const pg = root?.transactions?.pagination || {}
+    setStats(statistics)
+    const mapped = list.map((t: any) => ({
+      date: new Date(t.created_at).toLocaleDateString('en-GB'),
+      transactionId: t.id,
+      type: (t.type || '').charAt(0).toUpperCase() + (t.type || '').slice(1),
+      amount: (t.type === 'refund' ? '-' : '') + '$' + (t.amount || 0),
+      paymentMethod: (t.provider || '').charAt(0).toUpperCase() + (t.provider || '').slice(1),
+      status: mapStatus(t.status),
+      _raw: t,
+    }))
+    setRows(mapped)
+    setTotalPages(pg?.totalPages || 1)
+  }
 
-    let dateMatch = true;
-    if (selectedDateRange !== 'all') {
-      const [day, month, year] = transaction.date.split('-').map(num => parseInt(num));
-      const transactionDate = new Date(2000 + year, month - 1, day);
-      const today = new Date();
-      const cutoffDate = new Date(today);
-      cutoffDate.setDate(today.getDate() - parseInt(selectedDateRange));
-      dateMatch = transactionDate >= cutoffDate;
-    }
+  useEffect(() => { reload(1) }, [])
 
-    return statusMatch && dateMatch;
-  });
+  // Debug panel (temporary)
+  const [debug, setDebug] = useState<any>(null)
+  useEffect(() => {
+    (async ()=>{
+      try {
+        const res: any = await VendorService.getTransactions({ page: 1, limit: 10 })
+        setDebug(res?.data || res)
+      } catch (e) {
+        setDebug({ error: (e as any)?.message || 'failed' })
+      }
+    })()
+  }, [])
 
-  const stats = [
-    { title: "Total Bookings", count: "45 transactions", iconPath: "/vendor/tik.svg" },
-    { title: "Total Earnings", count: 18000, iconPath: "/vendor/totalearn.svg" },
-    { title: "Withdrawn", count: 2700, iconPath: "/vendor/withdrawn.svg" },
-    { title: "Refunds Issued", count: 200, iconPath: "/vendor/refunds.svg" },
-  ];
+  const filteredTransactions = useMemo(()=>{
+    return rows.filter((transaction: any) => {
+      if (activeTab === 'All transactions') return true
+      if (activeTab === 'Bookings') return (transaction.type || '').toLowerCase() === 'booking'
+      if (activeTab === 'Refunds') return (transaction.type || '').toLowerCase() === 'refund'
+      return true
+    })
+  }, [rows, activeTab])
 
+  const statCards = [
+    { title: "Total Bookings", count: stats.total_bookings || 0, iconPath: "/vendor/tik.svg" },
+    { title: "Total Earnings", count: stats.total_earnings || 0, iconPath: "/vendor/totalearn.svg" },
+    { title: "Withdrawn", count: stats.total_withdraw || 0, iconPath: "/vendor/withdrawn.svg" },
+    { title: "Refunds Issued", count: stats.total_refund || 0, iconPath: "/vendor/refunds.svg" },
+  ]
+
+  const nowrap = (v: any) => <div className="whitespace-nowrap">{v}</div>
   const columns = [
-    { label: 'Date', accessor: 'date', width: '120px' },
-    { label: 'Transaction ID', accessor: 'transactionId', width: '180px' },
-    { label: 'Type', accessor: 'type', width: '120px' },
-    { label: 'Amount', accessor: 'amount', width: '100px' },
-    { label: 'Payment Method', accessor: 'paymentMethod', width: '140px' },
+    { label: 'Date', accessor: 'date', formatter: (v: any) => nowrap(v) },
+    { label: 'Transaction ID', accessor: 'transactionId', formatter: (v: any) => nowrap(v) },
+    { label: 'Type', accessor: 'type', formatter: (v: any) => nowrap(v) },
+    { label: 'Amount', accessor: 'amount', formatter: (v: any) => nowrap(v) },
+    { label: 'Payment Method', accessor: 'paymentMethod', formatter: (v: any) => nowrap(v) },
     {
       label: 'Status',
       accessor: 'status',
-      width: '120px',
       formatter: (value: string) => <TransStatuse status={value} />
     },
     {
       label: 'Action',
       accessor: 'action',
-      width: '120px',
       formatter: (_: any, row: any) => (
         <button
           className="text-[#0068ef] underline text-xs hover:text-[#0051bd]"
           onClick={() => {
-            setSelectedTransaction(row);
+            setSelectedTransaction(row?._raw || row);
             setShowInvoice(true);
           }}
         >
@@ -220,11 +127,17 @@ export default function TransectionHistory() {
       {/* Stats Section */}
       <div className="w-full bg-white rounded-xl p-4 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, index) => (
+          {statCards.map((stat, index) => (
             <TransStatCard key={index} {...stat} />
           ))}
         </div>
       </div>
+
+      {/* Debug Box (remove after verification) */}
+      {/* <div className="w-full bg-white rounded-xl p-4 mx-auto">
+        <div className="text-sm text-[#777980] mb-2">Debug API preview</div>
+        <pre className="text-xs bg-[#f8fafc] p-3 rounded border overflow-x-auto max-h-60">{JSON.stringify(debug, null, 2)}</pre>
+      </div> */}
 
       {/* Table Section */}
       <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-xl mx-auto">
@@ -285,20 +198,22 @@ export default function TransectionHistory() {
         </div>
 
         <div className="overflow-x-auto">
+          {/* Full-width responsive table - no fixed/min widths; nowrap enforced by formatter */}
           <DynamicTableWithPagination
-            loading={false}
-            totalPages={1}
+            loading={loading}
+            totalPages={totalPages}
             columns={columns}
             data={filteredTransactions}
             currentPage={currentPage}
             itemsPerPage={10}
-            onPageChange={(page) => setCurrentPage(page)}
+            onPageChange={(page) => { setCurrentPage(page); reload(page) }}
             noDataMessage="No transactions found."
+            className="w-full flex "
           />
         </div>
       </div>
 
-      {showInvoice && selectedTransaction?.type === 'Refund' ? (
+      {showInvoice && (selectedTransaction?.type === 'refund' || selectedTransaction?.type === 'Refund') ? (
         <RefundDetailsModal
           open={showInvoice}
           onClose={setShowInvoice}
@@ -313,4 +228,12 @@ export default function TransectionHistory() {
       ) : null}
     </div>
   )
+}
+
+// Map provider status to UI status tokens
+function mapStatus(status: string): string {
+  const s = (status || '').toLowerCase()
+  if (s === 'succeeded' || s === 'approved' || s === 'completed') return 'Completed'
+  if (s === 'canceled' || s === 'failed') return 'Failed'
+  return 'Pending'
 }
