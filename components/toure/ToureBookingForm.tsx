@@ -150,7 +150,6 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
       <div>
         <p className="text-grayColor1 text-base"><span className="text-headerColor font-medium">{singlToureDetails?.duration} Days
           {/* {singlToureDetails?.duration_type} */}
-          
           </span> in {singlToureDetails?.city} Tour Package</p>
         <div className="flex mt-1 items-center gap-2 text-base text-[#0068EF] ">
           Cancellation Policy{" "}
@@ -225,11 +224,7 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
           <p>{travelCount}</p>
           <button onClick={() => setTravelCount(travelCount + 1)} className=" cursor-pointer p-1 rounded-full border border-secondaryColor "><FiPlus /></button>
         </div>
-
       </div>
-
-
-
 
       {/* Pricing Summary */}
       <div className="mt-6 bg-secondaryColor/10 rounded-lg p-4">
