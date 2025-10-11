@@ -433,6 +433,26 @@ export const VendorService = {
     return await Fetch.post("/vendor/verification", data, _config);
   },
 
+  // Upload vendor ID documents (front/back/passport etc.)
+  uploadVendorDocuments: async (data: FormData, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "tourAccessToken", context });
+    
+    if (!userToken) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+
+    const _config = {
+      headers: {
+        Authorization: "Bearer " + userToken,
+        "content-type": "multipart/form-data",
+      },
+    };
+
+    // Insomnia shows POST /api/vendor-user-verification
+    // Our Fetch base already includes /api (see AppConfig.app.apiUrl)
+    return await Fetch.post("/vendor-user-verification", data, _config);
+  },
+
   submitVerificationStep: async (step: number, data: any, context: any = null) => {
     const userToken = CookieHelper.get({ key: "tourAccessToken", context });
     

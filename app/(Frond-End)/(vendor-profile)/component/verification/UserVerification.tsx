@@ -38,6 +38,7 @@ export default function UserVerification() {
   const frontRef = useRef<HTMLInputElement>(null)
   const backRef = useRef<HTMLInputElement>(null)
   const passportRef = useRef<HTMLInputElement>(null)
+  const isSubmittingRef = useRef<boolean>(false)
 
   const { register, handleSubmit, formState: { errors } } = useForm<VerificationFormData>({
     defaultValues: {
@@ -84,6 +85,8 @@ export default function UserVerification() {
   }, [])
 
   const onSubmit = async (data: VerificationFormData) => {
+    if (isSubmittingRef.current) return
+    isSubmittingRef.current = true
     try {
       setSubmitting(true)
       
@@ -91,11 +94,13 @@ export default function UserVerification() {
       const docFormData = new FormData()
       if (docFront) docFormData.append('front_image', docFront)
       if (docBack) docFormData.append('back_image', docBack)
-      if (docPassport) docFormData.append('passport_image', docPassport)
-      docFormData.append('mobile', data.mobile)
+      if (docPassport) docFormData.append('image', docPassport)
+      docFormData.append('number', data.mobile)
+      docFormData.append('type', 'NID')
+      docFormData.append('status', 'pending')
 
-      // Upload documents
-      await UserService.createPropertyData('/vendor/upload-document', docFormData as any, (UserService as any).token)
+      // Upload documents (same style as packages API call)
+      await VendorService.uploadVendorDocuments(docFormData as any)
 
       toast.success('ID documents submitted successfully!')
       
@@ -109,6 +114,7 @@ export default function UserVerification() {
       toast.error('Failed to submit documents. Please try again.')
     } finally {
       setSubmitting(false)
+      isSubmittingRef.current = false
     }
   }
 
