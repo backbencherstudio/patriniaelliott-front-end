@@ -41,25 +41,38 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
 
   // Initialize dates only once when component mounts
   useEffect(() => {
-    if (!startDate) {
+    if (!startDate && singlToureDetails?.calendar_configuration) {
+      const calendarStartDate = new Date(singlToureDetails.calendar_configuration.calendar_start_date);
+      const calendarEndDate = new Date(singlToureDetails.calendar_configuration.calendar_end_date);
       const today = new Date();
-      setStartDate(today);
+      
+      // Set start date to calendar start date or today, whichever is later
+      const initialStartDate = calendarStartDate > today ? calendarStartDate : today;
+      setStartDate(initialStartDate);
+      
       const durationDays = parseInt(singlToureDetails?.duration) || 4;
-      const endDate = new Date(today);
-      endDate.setDate(today.getDate() + durationDays);
-      setEndDate(endDate);
+      const calculatedEndDate = new Date(initialStartDate);
+      calculatedEndDate.setDate(initialStartDate.getDate() + durationDays);
+      
+      // Make sure end date doesn't exceed calendar end date
+      const finalEndDate = calculatedEndDate > calendarEndDate ? calendarEndDate : calculatedEndDate;
+      setEndDate(finalEndDate);
     }
-  }, []); // Empty dependency array - only run once
+  }, [singlToureDetails?.calendar_configuration]); // Depend on calendar configuration
 
   // Auto-update end date when start date changes
   useEffect(() => {
-    if (startDate && singlToureDetails?.duration) {
+    if (startDate && singlToureDetails?.duration && singlToureDetails?.calendar_configuration) {
       const durationDays = parseInt(singlToureDetails.duration);
-      const newEndDate = new Date(startDate);
-      newEndDate.setDate(startDate.getDate() + durationDays);
-      setEndDate(newEndDate);
+      const calendarEndDate = new Date(singlToureDetails.calendar_configuration.calendar_end_date);
+      const calculatedEndDate = new Date(startDate);
+      calculatedEndDate.setDate(startDate.getDate() + durationDays);
+      
+      // Make sure end date doesn't exceed calendar end date
+      const finalEndDate = calculatedEndDate > calendarEndDate ? calendarEndDate : calculatedEndDate;
+      setEndDate(finalEndDate);
     }
-  }, [startDate, singlToureDetails?.duration, setEndDate]);
+  }, [startDate, singlToureDetails?.duration, singlToureDetails?.calendar_configuration, setEndDate]);
 
   // Update single tour data when it changes
   useEffect(() => {
@@ -189,7 +202,8 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
             onChange={setStartDate}
             placeholderText="Select a date"
             className="hidden"
-            minDate={new Date()}
+            minDate={singlToureDetails?.calendar_configuration?.calendar_start_date ? new Date(singlToureDetails.calendar_configuration.calendar_start_date) : new Date()}
+            maxDate={singlToureDetails?.calendar_configuration?.calendar_end_date ? new Date(singlToureDetails.calendar_configuration.calendar_end_date) : null}
           />
         </div>
 

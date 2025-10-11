@@ -13,14 +13,16 @@ import FilterHeader from "../filter/FilterHeader";
 
 function HotelPage() {
     const [currentPage, setCurrentPage] = useState(1);
-        const searchParams = useSearchParams();
-        const startDate = searchParams.get("startDate");
-        const endDate = searchParams.get("endDate");
-        const searchName = searchParams.get("q");
-        const destinations = searchParams.get("destinations");
-        const min = searchParams.get("min");
-        const max = searchParams.get("max");
-    const {token} = useToken()
+    const searchParams = useSearchParams();
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
+    const searchName = searchParams.get("q");
+    const destinations = searchParams.get("destinations");
+    const min = searchParams.get("min");
+    const max = searchParams.get("max");
+    const people = searchParams.get("people");
+    const rooms = searchParams.get("rooms");
+    const { token } = useToken()
     const [data, setData] = useState(null);
     const [pagination, setPagination] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -41,10 +43,11 @@ function HotelPage() {
         // Always include these parameters
         params.append('type', 'hotel');
         params.append('limit', itemsPerPage.toString());
-            params.append('page', currentPage.toString());
-            if (searchName) params.append('q', searchName);
-            if (destinations) params.append('destinations', destinations);
-
+        params.append('page', currentPage.toString());
+        if (searchName) params.append('q', searchName);
+        if (destinations) params.append('destinations', destinations);
+        if (people) params.append('max_capacity', people);
+        if (rooms) params.append('total_bedrooms', rooms);
         // Only add parameters that have values
         if (startDate) params.append('duration_start', startDate);
         if (endDate) params.append('duration_end', endDate);
@@ -62,25 +65,25 @@ function HotelPage() {
     };
 
     const endpoint = `/application/packages?${buildQueryParams()}`
-   useEffect(() => {
-    if (!endpoint ) return; // Skip if URL or token is missing
+    useEffect(() => {
+        if (!endpoint) return; // Skip if URL or token is missing
 
-    const fetchData = async () => {
-      try {
-        setLoading(true); // Set loading to true when starting request
-        const response = await UserService.getData(endpoint,token)
-        setData(response.data?.data); // Save the response data
-        console.log(response.data?.data);
-        setPagination(response?.data?.data?.meta)
-        } catch (err) {
-        setError(err.message || "Something went wrong"); // Handle error
-      } finally {
-        setLoading(false); 
-      }
-    };
-    fetchData(); 
-  }, [endpoint]);
-   
+        const fetchData = async () => {
+            try {
+                setLoading(true); // Set loading to true when starting request
+                const response = await UserService.getData(endpoint, token)
+                setData(response.data?.data); // Save the response data
+                console.log(response.data?.data);
+                setPagination(response?.data?.data?.meta)
+            } catch (err) {
+                setError(err.message || "Something went wrong"); // Handle error
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [endpoint]);
+
 
     return (
         <div>
@@ -95,7 +98,7 @@ function HotelPage() {
                     <div key={index} className=" py-4">
                         <HotelCard hotel={tour} />
                     </div>
-                )): <div className="text-center text-2xl font-bold text-grayColor1 py-10">Not found data !</div>
+                )) : <div className="text-center text-2xl font-bold text-grayColor1 py-10">Not found data !</div>
                 }
             </div>
 

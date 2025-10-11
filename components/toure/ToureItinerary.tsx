@@ -1,10 +1,10 @@
 "use client";
 
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useState } from "react";
 
@@ -21,7 +21,6 @@ interface DayDetails {
 
 function TourItinerary({vendorPackage}) {
   const [openItems, setOpenItems] = useState<string[]>(["item-0", "item-1"]);
-
   const itineraryData: DayDetails[] = [
     {
       title: "Arrival in Kathmandu and Exploration",

@@ -70,17 +70,16 @@ export default function TourSearch({ typesearch }: any) {
   }, []);
   type Room = {
     id: number;
-    adults: number;
-    children: number;
+    people: number;
   };
 
   const [rooms, setRooms] = useState<Room[]>([
-    { id: 1, adults: 2, children: 0 },
+    { id: 1, people: 2 },
   ]);
 
   const handleChange = (
     index: number,
-    type: "adults" | "children",
+    type: "people",
     action: "increment" | "decrement"
   ) => {
     setRooms((prev) =>
@@ -91,7 +90,7 @@ export default function TourSearch({ typesearch }: any) {
               [type]:
                 action === "increment"
                   ? room[type] + 1
-                  : Math.max(room[type] - 1, type === "adults" ? 1 : 0),
+                  : Math.max(room[type] - 1, type === "people" ? 1 : 0),
             }
           : room
       )
@@ -100,18 +99,16 @@ export default function TourSearch({ typesearch }: any) {
   const addRoom = () => {
     setRooms((prev) => [
       ...prev,
-      { id: prev.length + 1, adults: 2, children: 0 },
+      { id: prev.length + 1, people: 2 },
     ]);
   };
-  const totalAdults = rooms.reduce((acc, r) => acc + r.adults, 0);
-  const totalChildren = rooms.reduce((acc, r) => acc + r.children, 0);
+  const totalPeople = rooms.reduce((acc, r) => acc + r.people, 0);
 
   const handleSearch = () => {
     const query = new URLSearchParams({
       destinations: selectedLocation || "",
       rooms: rooms.length.toString(),
-      adults: totalAdults.toString(),
-      children: totalChildren.toString(),
+      people: totalPeople.toString(),
     });
 
     if (appliedDateRange[0]) {
@@ -296,7 +293,7 @@ export default function TourSearch({ typesearch }: any) {
                   <p className="text-black text-sm !mb-0 whitespace-nowrap">
                     {`${rooms.length} Room${
                       rooms.length > 1 ? "s" : ""
-                    }, ${totalAdults} Adults, ${totalChildren} Children`}
+                    }, ${totalPeople} People`}
                   </p>
                 </div>
               </div>
@@ -319,30 +316,29 @@ export default function TourSearch({ typesearch }: any) {
                   <div className="flex justify-between bg-secondaryColor/12 items-center text-sm font-semibold p-2 mb-3">
                     <p>Room {room.id}</p>
                     <span className="text-grayColor1 font-normal text-sm ">
-                      {room.adults} Adult{room.adults > 1 ? "s" : ""},{" "}
-                      {room.children} Child
+                      {room.people} People{room.people > 1 ? "s" : ""},{" "}
                     </span>
                   </div>
                   <div className="flex justify-between items-center px-4 pb-3">
                     <div>
-                      <p className="text-sm font-medium text-black">Adults</p>
+                      <p className="text-sm font-medium text-black">People</p>
                       <p className="text-xs text-muted-foreground">15+ years</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() =>
-                          handleChange(index, "adults", "decrement")
+                          handleChange(index, "people", "decrement")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
                         <Minus size={16} />
                       </button>
                       <span className="w-4 text-center text-sm">
-                        {room.adults}
+                        {room.people}
                       </span>
                       <button
                         onClick={() =>
-                          handleChange(index, "adults", "increment")
+                          handleChange(index, "people", "increment")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
@@ -351,33 +347,33 @@ export default function TourSearch({ typesearch }: any) {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center px-4 pb-3">
+                  {/* <div className="flex justify-between items-center px-4 pb-3">
                     <div>
-                      <p className="text-sm font-medium text-black">Children</p>
+                      <p className="text-sm font-medium text-black">People</p>
                       <p className="text-xs text-muted-foreground">1–9 years</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() =>
-                          handleChange(index, "children", "decrement")
+                          handleChange(index, "people", "decrement")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
                         <Minus size={16} />
                       </button>
                       <span className="w-4 text-center text-sm">
-                        {room.children}
+                        {room.people}
                       </span>
                       <button
                         onClick={() =>
-                          handleChange(index, "children", "increment")
+                            handleChange(index, "people", "increment")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
                         <Plus size={16} />
                       </button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               ))}
 
