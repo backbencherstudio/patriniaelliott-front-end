@@ -23,7 +23,7 @@ const navItems: NavItem[] = [
   { icon: '/booking/apartment.svg', label: 'Apartment History', href: '/apartment-history', isActive: true },
   { icon: '/booking/hotel.svg', label: 'Hotel History', href: '/hotel-history' },
   { icon: '/booking/tour.svg', label: 'Tour History', href: '/tour-history' },
-  { icon: '/booking/refund.svg', label: 'Refund History', href: '/refund-history' },
+  // { icon: '/booking/refund.svg', label: 'Refund History', href: '/refund-history' },
 ];
 
 const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {

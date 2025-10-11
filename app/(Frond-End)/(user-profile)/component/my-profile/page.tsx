@@ -83,7 +83,7 @@ export default function MyProfile() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Load authenticated user's profile and populate inputs
-  const { me, loading: meLoading, updateMe, fetchMe } = useMyProfile();
+  const { me, loading: meLoading, updateMe, updateMeWithAvatar, fetchMe } = useMyProfile();
 
   useEffect(() => {
     if (!me) return;
@@ -107,8 +107,10 @@ export default function MyProfile() {
     setValue('issuingCountry', me.passport_issuing_country ?? '');
     setValue('passportNumber', me.passport_number ?? '');
     setValue('passportExpiryDate', me.passport_expiry_date ? new Date(me.passport_expiry_date) : null);
-    // avatar preview if available
-    if (me.avatar) {
+    // avatar preview if available - use avatar_url if available, otherwise use avatar
+    if (me.avatar_url) {
+      setPreviewImage(me.avatar_url);
+    } else if (me.avatar) {
       setPreviewImage(me.avatar);
     }
   }, [me, setValue]);
@@ -205,7 +207,13 @@ export default function MyProfile() {
         passport_expiry_date: data.passportExpiryDate ? data.passportExpiryDate.toISOString().split('T')[0] : null,
       };
 
-      await updateMe(payload);
+      // Use updateMeWithAvatar if there's a profile image, otherwise use regular updateMe
+      if (data.profileImage) {
+        await updateMeWithAvatar(payload, data.profileImage);
+      } else {
+        await updateMe(payload);
+      }
+      
       await fetchMe();
       toast.success('Profile updated successfully!');
     } catch (error) {
@@ -228,10 +236,14 @@ export default function MyProfile() {
         </div>
         <div className="relative">
           <div
-            className="w-[46px] h-[46px] rounded-full relative border border-black/10 overflow-hidden cursor-pointer"
+            className="w-[46px] h-[46px] rounded-full relative border border-black/10 overflow-hidden cursor-pointer hover:border-blue-500 transition-colors"
+            title={isEditing ? "Click to change avatar" : "Click to edit profile"}
             onClick={() => {
               if (isEditing && fileInputRef.current) {
                 fileInputRef.current.click();
+              } else if (!isEditing) {
+                // If not in edit mode, enter edit mode first
+                setIsEditing(true);
               }
             }}
           >
@@ -241,6 +253,10 @@ export default function MyProfile() {
               width={46}
               height={46}
               className="rounded-full w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback to default avatar if image fails to load
+                e.currentTarget.src = "/usericon/avatar.png";
+              }}
             />
             <input
               type="file"
@@ -258,11 +274,14 @@ export default function MyProfile() {
             />
           </div>
           <div
-            className="absolute bottom-0 right-0 bg-blue-600 p-1 rounded-full"
-            style={{ pointerEvents: isEditing ? 'auto' : 'none', cursor: isEditing ? 'pointer' : 'default' }}
+            className="absolute bottom-0 right-0 bg-blue-600 p-1 rounded-full cursor-pointer hover:bg-blue-700 transition-colors"
+            title={isEditing ? "Click to change avatar" : "Click to edit profile"}
             onClick={() => {
               if (isEditing && fileInputRef.current) {
                 fileInputRef.current.click();
+              } else if (!isEditing) {
+                // If not in edit mode, enter edit mode first
+                setIsEditing(true);
               }
             }}
           >
@@ -281,7 +300,19 @@ export default function MyProfile() {
             onClick={() => {
               setIsEditing(prev => !prev);
               if (isEditing) {
-                setPreviewImage(null);
+                // Reset to original avatar when canceling
+                if (me?.avatar_url) {
+                  setPreviewImage(me.avatar_url);
+                } else if (me?.avatar) {
+                  setPreviewImage(me.avatar);
+                } else {
+                  setPreviewImage(null);
+                }
+                // Reset the file input
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = '';
+                }
+                setValue('profileImage', null);
               }
             }}
           >

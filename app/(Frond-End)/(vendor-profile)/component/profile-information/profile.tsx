@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast, Toaster } from 'react-hot-toast';
 import { useVendorProfile } from '../../../../../hooks/useVendorProfile';
+import { useMyProfile } from '../../../../../hooks/useMyProfile';
 
 const vendorTypeOptions = [
   { value: "Property Manager", label: "Property Manager" },
@@ -60,6 +61,39 @@ export default function Profile() {
   // Use the vendor profile hook
   const vendorId = "cmfpdolh7000djvc4bvgxv91z"; // Updated to match API response
   const { vendorData, loading, error, fetchVendorData, updateVendorData } = useVendorProfile(vendorId);
+
+  // Get current logged-in user to use their id as vendor_id for packages
+  const { me } = useMyProfile();
+  const currentUserId = me?.id || me?.data?.id || null;
+
+  // State for "Your Submitted Packages"
+  const [packages, setPackages] = useState<any[] | null>(null);
+  const [packagesLoading, setPackagesLoading] = useState<boolean>(false);
+  const [packagesError, setPackagesError] = useState<string | null>(null);
+
+  // Fetch packages by user id from external admin endpoint
+  const fetchMyPackages = async () => {
+    if (!currentUserId) return;
+    try {
+      setPackagesLoading(true);
+      setPackagesError(null);
+      const url = `https://https://humanitarian-crimes-too-producing.trycloudflare.com/api/admin/package/my-packages?vendor_id=${currentUserId}`;
+      const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+      const data = await res.json().catch(() => null);
+      const list = data?.data ?? data ?? [];
+      setPackages(Array.isArray(list) ? list : []);
+    } catch (e: any) {
+      setPackagesError(e?.message || 'Failed to load packages');
+      setPackages([]);
+    } finally {
+      setPackagesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMyPackages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUserId]);
 
   // Populate form when vendor data is loaded
   useEffect(() => {
@@ -274,6 +308,49 @@ export default function Profile() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Your Submitted Packages (debug + list) */}
+      <div className="p-4 md:p-6 bg-white rounded-xl flex flex-col gap-4 my-6">
+        <div className="flex items-center justify-between">
+          <div className="text-2xl font-medium text-[#22262e]">Your Submitted Packages</div>
+          <button
+            type="button"
+            onClick={fetchMyPackages}
+            className="pl-3 pr-3 py-2 bg-[#0068ef] rounded text-white text-sm"
+          >
+            Refresh
+          </button>
+        </div>
+        <div className="text-sm text-[#777980]">User ID: {currentUserId || 'Loading...'}</div>
+        {packagesLoading && (
+          <div className="text-sm text-[#777980]">Loading packages...</div>
+        )}
+        {packagesError && (
+          <div className="text-sm text-red-600">{packagesError}</div>
+        )}
+        {!packagesLoading && !packagesError && (
+          <div className="flex flex-col gap-3">
+            {(packages && packages.length > 0) ? (
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {packages.map((pkg: any) => (
+                  <li key={pkg?.id} className="border border-[#e9e9ea] rounded-lg p-4">
+                    <div className="text-base font-medium text-[#070707]">{pkg?.name || 'Untitled package'}</div>
+                    <div className="text-sm text-[#777980]">Price: {pkg?.price ?? 'N/A'}</div>
+                    <div className="text-xs text-[#9aa0a6]">ID: {pkg?.id}</div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="text-sm text-[#777980]">No packages found.</div>
+            )}
+            {/* Debug JSON */}
+            <details className="mt-2">
+              <summary className="cursor-pointer text-sm text-[#0068ef]">Debug: raw response</summary>
+              <pre className="text-xs overflow-auto max-h-80 bg-[#f8f9fa] p-3 rounded">{JSON.stringify(packages, null, 2)}</pre>
+            </details>
+          </div>
+        )}
       </div>
 
       <form key={`${vendorData?.id || 'loading'}-${JSON.stringify(vendorData)}`} onSubmit={handleSubmit(onSubmit)} className="w-full">

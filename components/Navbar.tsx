@@ -83,7 +83,7 @@ export default function Navbar() {
               >
                 List your proparty
               </Link>
-             <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data}/>
+             <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data}/>
             </>
           ) : (
             <>
@@ -109,7 +109,7 @@ export default function Navbar() {
         {/* Mobile Menu Toggle */}
         <div className="lg:hidden flex items-center gap-2">
           <div className="md:hidden">
-          {token ? <MenuDropDown setMenuOpen={setMenuOpen}/> : <div className=" flex items-center gap-3">
+          {token ? <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data}/> : <div className=" flex items-center gap-3">
                 <Link href="/login" className="text-white text-base" onClick={() => setMenuOpen(false)}>
                   Login
                 </Link>
