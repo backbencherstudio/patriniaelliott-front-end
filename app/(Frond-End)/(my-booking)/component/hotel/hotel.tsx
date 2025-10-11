@@ -13,11 +13,16 @@ export default function Hotel() {
   const { dashboardData, loading: dashboardLoading, error: dashboardError } = useBookingDashboard();
   const { me } = useMyProfile();
 
-  // Get all bookings from dashboard data (not filtering by type)
+  // Get all bookings from dashboard data
   const allBookings = dashboardData?.recent_bookings || [];
   
+  // Filter bookings by hotel type
+  const hotelBookings = allBookings.filter(booking => 
+    booking.type?.toLowerCase() === 'hotel'
+  );
+  
   // Transform API data to match component structure
-  const hotelData = allBookings.map((booking, index) => ({
+  const hotelData = hotelBookings.map((booking, index) => ({
     id: booking.id,
     name: booking.package_name,
     image: booking.package_image || "/profile.png",
@@ -26,31 +31,44 @@ export default function Hotel() {
       month: 'short', 
       day: 'numeric' 
     }),
+    bookingDateTime: new Date(booking.booking_date_time), // Keep original date for filtering
     amount: `$${booking.total_amount}`,
     status: booking.status.charAt(0).toUpperCase() + booking.status.slice(1),
     type: booking.type
   }));
 
-  // Get stats from dashboard data
+  // Calculate hotel-specific stats
+  const hotelStats = {
+    totalBookings: hotelBookings.length,
+    completedStays: hotelBookings.filter(booking => 
+      booking.status?.toLowerCase() === 'completed' || booking.status?.toLowerCase() === 'approved'
+    ).length,
+    totalSpend: hotelBookings.reduce((sum, booking) => sum + (Number(booking.total_amount) || 0), 0),
+    upcomingStays: hotelBookings.filter(booking => 
+      booking.status?.toLowerCase() === 'pending'
+    ).length
+  };
+
+  // Get stats from hotel-specific data
   const stats = [
     {
       title: "Total bookings",
-      count: dashboardData?.summary?.total_bookings || 0,
+      count: hotelStats.totalBookings,
       iconPath: "/booking/tik.svg"
     },
     {
       title: "Completed Stays",
-      count: dashboardData?.summary?.completed_stays || 0,
+      count: hotelStats.completedStays,
       iconPath: "/booking/bed.svg"
     },
     {
       title: "Total Spend",
-      count: dashboardData?.summary?.total_spend?.toString() || "0",
+      count: hotelStats.totalSpend.toString(),
       iconPath: "/booking/wallet.svg"
     },
     {
       title: "Upcoming Stays",
-      count: dashboardData?.summary?.upcoming_stays || 0,
+      count: hotelStats.upcomingStays,
       iconPath: "/booking/tik.svg"
     }
   ];
@@ -69,7 +87,7 @@ export default function Hotel() {
   // Filter data by date
   const filteredData = hotelData.filter((hotel) => {
     if (selectedDateRange === 'all') return true;
-    const bookingDate = new Date(hotel.bookingDate);
+    const bookingDate = hotel.bookingDateTime; // Use the original date object
     const today = new Date();
     const cutoffDate = new Date(today);
     cutoffDate.setDate(today.getDate() - parseInt(selectedDateRange));
@@ -81,10 +99,16 @@ export default function Hotel() {
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   useEffect(() => {
-    if (currentPage > totalPages) {
+    // Reset page to 1 when filters change
+    setCurrentPage(1);
+  }, [selectedDateRange]);
+
+  useEffect(() => {
+    // Clamp page when total pages change
+    if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
     }
-  }, [totalPages]);
+  }, [totalPages, currentPage]);
 
   // Table columns
   const columns = [
@@ -106,20 +130,6 @@ export default function Hotel() {
       accessor: 'status',
       width: '100px',
       formatter: (value: string) => <ApartmentStatuse value={value} />
-    },
-    {
-      label: 'Action',
-      accessor: 'action',
-      width: '100px',
-      formatter: (_: any, row: any) => (
-        <div className="flex items-center gap-4">
-          <Link href={`/apartment-history`}
-            className="text-sm text-[#777980] underline cursor-pointer hover:text-[#0068ef]"
-          >
-            View details
-          </Link>
-        </div>
-      )
     }
   ];
 
