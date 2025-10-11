@@ -2,13 +2,13 @@
 
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
+import CustomImage from "../reusable/CustomImage";
 
 function TopDestination() {
        const [currentIndex, setCurrentIndex] = useState(1);
@@ -123,13 +123,14 @@ function TopDestination() {
               <Link href={`/toure/${des?.package_id}`}>
               <div className=" w-full flex justify-center flex-col items-center ">
                 <div className=" xl:w-[190px] lg:w-[170px] lg:h-[170px] h-[120px] md:w-[156px] md:h-[156px] w-[120px] xl:h-[190px] rounded-full overflow-hidden">
-                <Image
+                <CustomImage
                     src={getSlideSrc(des?.img, index)}
                     alt={`des ${index + 1}`}
+                    loading="lazy"
                     width={220}
                     height={220}
                     onError={() => handleImageError(index)}
-                    className=" w-full h-full hover:scale-110 transition-all duration-300 rounded-full object-cover"
+                    className=" !w-full !h-full hover:scale-110 transition-all duration-300 rounded-full object-cover"
                   />
                 </div>
                 <div className=" text-center mt-4">

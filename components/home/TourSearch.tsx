@@ -5,7 +5,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useToken } from "@/hooks/useToken";
 import usericon from "@/public/icon/user.svg";
+import { UserService } from "@/service/user/user.service";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -26,6 +28,7 @@ export default function TourSearch({ typesearch }: any) {
     null,
     null,
   ]);
+
   const [appliedDateRange, setAppliedDateRange] = useState<
     [Date | null, Date | null]
   >([null, null]);
@@ -36,6 +39,27 @@ export default function TourSearch({ typesearch }: any) {
   const [openFilter, setOpenFilter] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+   const [loading, setLoading]=useState(true);
+       const [error, setError]=useState(null);
+      const {token} = useToken()
+      const [selectedDestinations, setSelectedDestinations] = useState<string[]>(
+    []
+  );
+       const fetchData = async()=>{
+        setLoading(true)
+        try {
+          const response = await UserService.getData(`/application/packages/top-destinations?limit=${10}&page=${1}`,token)
+          setSelectedDestinations(response.data.data)
+        } catch (error) {
+          setError(error)
+        } finally {
+          setLoading(false)
+        }
+       }
+         useEffect(()=>{
+        fetchData()
+       },[])
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -127,6 +151,7 @@ export default function TourSearch({ typesearch }: any) {
     }
   };
 
+
   return (
     <div className="bg-white relative rounded-[12px] px-4 py-[14px] flex items-center flex-col lg:flex-row  justify-center lg:justify-between  shadow-md !w-full">
       {/* ✅ Location */}
@@ -148,6 +173,7 @@ export default function TourSearch({ typesearch }: any) {
                 width={20}
                 height={20}
                 alt="image"
+                loading="lazy"
                 className="w-5 h-5"
               />
               <div>
@@ -167,21 +193,21 @@ export default function TourSearch({ typesearch }: any) {
               onChange={(e) => setLocationInput(e.target.value)}
             />
             <ul className="mt-2 max-h-60 overflow-auto">
-              {destinations
-                .filter((item) =>
-                  item.toLowerCase().includes(locationInput.toLowerCase())
+              {selectedDestinations
+                .filter((item :any) =>
+                  item.country?.toLowerCase().includes(locationInput.toLowerCase())
                 )
-                .map((loc) => (
+                .map((loc :any) => (
                   <li
-                    key={loc}
+                    key={loc?.package_id}
                     className="cursor-pointer p-2 hover:bg-gray-100 rounded"
                     onClick={() => {
-                      setSelectedLocation(loc);
+                      setSelectedLocation(loc?.country);
                       setLocationPopoverOpen(false);
                       setLocationInput("");
                     }}
                   >
-                    {loc}
+                    {loc?.country}
                   </li>
                 ))}
             </ul>

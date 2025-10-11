@@ -3,7 +3,8 @@
 import call from "@/public/destination/call.svg";
 import des from "@/public/destination/destination.svg";
 import fly from "@/public/destination/fly.svg";
-import Image from 'next/image';
+  import Image from 'next/image';
+import CustomImage from "../reusable/CustomImage";
 
 const travelFeatures = [
   {
@@ -39,7 +40,7 @@ export default function WhyTravelWithUs() {
         <div className="col-span-5 flex flex-col gap-8 w-full ">
           {travelFeatures.map((feature, index) => (
             <div key={index} className="flex gap-4 items-start">
-              <Image  src={feature.icon} alt={feature.title} width={42} height={42} />
+              <Image  src={feature.icon} alt={feature.title} width={42} height={42} loading="lazy" />
               <div className=" ">
                 <h3 className="text-2xl font-medium text-blackColor">{feature.title}</h3>
                 <p className="text-descriptionColor text-lg mt-2 leading-[150%]">{feature.description}</p>
@@ -50,11 +51,12 @@ export default function WhyTravelWithUs() {
 
         {/* Right side */}
         <div className="col-span-6 w-full lg:pl-10">
-          <Image
-            src="/destination/travelimage.jpg" // Replace with your image path or external link
+          <CustomImage
+            src="/destination/travelimage.jpg"
             alt="Travel"
             width={600}
             height={400}
+            loading="lazy"
             className="rounded-lg w-full h-auto object-cover"
           />
         </div>
