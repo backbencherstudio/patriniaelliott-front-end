@@ -105,6 +105,7 @@ export default function Profile() {
   });
   const [avatarPreview, setAvatarPreview] = useState<string>("/vendor/avatar.png");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarUploading, setAvatarUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use the vendor profile hook
@@ -166,9 +167,16 @@ export default function Profile() {
     const vendorType = vendorData.vendor_verification?.vendor_type || '';
     const taxId = vendorData.vendor_verification?.TIN || '';
     
-    // Set avatar preview from avatar_url
+    // Set avatar preview from avatar_url or avatar field
     if (vendorData.user_info?.avatar_url) {
       setAvatarPreview(vendorData.user_info.avatar_url);
+    } else if (vendorData.user_info?.avatar) {
+      // If we have avatar filename but no URL, construct the URL
+      const baseUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://honors-whale-even-inspiration.trycloudflare.com";
+      setAvatarPreview(`${baseUrl}/public/storage/avatar/${vendorData.user_info.avatar}`);
+    } else {
+      // Keep default avatar if no avatar is set
+      setAvatarPreview("/vendor/avatar.png");
     }
     
     console.log('Setting form values:', {
@@ -215,6 +223,7 @@ export default function Profile() {
       // Add avatar file if selected
       if (avatarFile) {
         updateData.avatar = avatarFile;
+        setAvatarUploading(true);
       }
 
       console.log('Updating vendor profile with data:', updateData);
@@ -225,6 +234,12 @@ export default function Profile() {
       const result = await updateVendorData(updateData);
       console.log('Update result:', result);
       
+      // Update avatar preview if avatar was uploaded
+      if (avatarFile && result?.data?.user_info?.avatar_url) {
+        setAvatarPreview(result.data.user_info.avatar_url);
+        console.log('Avatar updated to:', result.data.user_info.avatar_url);
+      }
+      
       setIsEditing(false);
       toast.success('Profile updated successfully!');
       
@@ -232,6 +247,8 @@ export default function Profile() {
     } catch (error: any) {
       console.error('Error updating profile:', error);
       toast.error('Failed to update profile. Please try again.');
+    } finally {
+      setAvatarUploading(false);
     }
   };
 
@@ -352,18 +369,23 @@ export default function Profile() {
               />
               <button
                 type="button"
-                className="w-5 h-5 absolute top-[25.5px] right-0.5 md:-right-1.5 bg-[#0068ef] rounded-full flex items-center justify-center"
+                className={`w-5 h-5 absolute top-[25.5px] right-0.5 md:-right-1.5 bg-[#0068ef] rounded-full flex items-center justify-center ${isEditing ? 'cursor-pointer hover:bg-[#0051bc]' : 'cursor-not-allowed opacity-50'}`}
                 onClick={handleAvatarClick}
                 tabIndex={0}
-                aria-label="Change avatar"
+                aria-label={isEditing ? "Change avatar" : "Avatar editing disabled"}
+                disabled={!isEditing}
               >
-                <Image
-                  src="/vendor/camera.svg"
-                  alt="Camera icon"
-                  className="w-[10.7px] h-[10.7px]"
-                  width={20}
-                  height={20}
-                />
+                {avatarUploading ? (
+                  <div className="w-[10.7px] h-[10.7px] border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Image
+                    src="/vendor/camera.svg"
+                    alt="Camera icon"
+                    className="w-[10.7px] h-[10.7px]"
+                    width={20}
+                    height={20}
+                  />
+                )}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -375,49 +397,6 @@ export default function Profile() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Your Submitted Packages (debug + list) */}
-      <div className="p-4 md:p-6 bg-white rounded-xl flex flex-col gap-4 my-6">
-        <div className="flex items-center justify-between">
-          <div className="text-2xl font-medium text-[#22262e]">Your Submitted Packages</div>
-          <button
-            type="button"
-            onClick={fetchMyPackages}
-            className="pl-3 pr-3 py-2 bg-[#0068ef] rounded text-white text-sm"
-          >
-            Refresh
-          </button>
-        </div>
-        <div className="text-sm text-[#777980]">User ID: {currentUserId || 'Loading...'}</div>
-        {packagesLoading && (
-          <div className="text-sm text-[#777980]">Loading packages...</div>
-        )}
-        {packagesError && (
-          <div className="text-sm text-red-600">{packagesError}</div>
-        )}
-        {!packagesLoading && !packagesError && (
-          <div className="flex flex-col gap-3">
-            {(packages && packages.length > 0) ? (
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {packages.map((pkg: any) => (
-                  <li key={pkg?.id} className="border border-[#e9e9ea] rounded-lg p-4">
-                    <div className="text-base font-medium text-[#070707]">{pkg?.name || 'Untitled package'}</div>
-                    <div className="text-sm text-[#777980]">Price: {pkg?.price ?? 'N/A'}</div>
-                    <div className="text-xs text-[#9aa0a6]">ID: {pkg?.id}</div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="text-sm text-[#777980]">No packages found.</div>
-            )}
-            {/* Debug JSON */}
-            <details className="mt-2">
-              <summary className="cursor-pointer text-sm text-[#0068ef]">Debug: raw response</summary>
-              <pre className="text-xs overflow-auto max-h-80 bg-[#f8f9fa] p-3 rounded">{JSON.stringify(packages, null, 2)}</pre>
-            </details>
-          </div>
-        )}
       </div>
 
       <form key={`${vendorData?.id || 'loading'}-${JSON.stringify(vendorData)}`} onSubmit={handleSubmit(onSubmit)} className="w-full">
@@ -646,10 +625,10 @@ export default function Profile() {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || avatarUploading}
               className="md:mt-4 bg-blueColor text-white py-2 md:py-3 px-5 md:px-8 rounded-lg hover:bg-[#0051bc] transition-colors disabled:opacity-50"
             >
-              {loading ? 'Saving...' : 'Save'}
+              {loading || avatarUploading ? 'Saving...' : 'Save'}
             </button>
           </div>
         )}
