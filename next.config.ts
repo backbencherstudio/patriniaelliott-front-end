@@ -34,11 +34,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "backend.naamstay.com",
+        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
       },
       {
         protocol: "https",
-        hostname: "backend.naamstay.com",
+        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
       },
       {
         protocol: "https",

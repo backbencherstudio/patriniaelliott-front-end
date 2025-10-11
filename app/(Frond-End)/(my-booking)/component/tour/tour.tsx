@@ -4,8 +4,10 @@ import DynamicTableWithPagination from '@/app/(Admin-Dashboard)/_component/commo
 import TransStatCard from '@/app/(Frond-End)/(vendor-profile)/component/transection/TransStatCard'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ApartmentStatuse from '../apartment/ApartmentStatuse'
+import { useBookingDashboard } from '@/hooks/useBookingDashboard'
+import { useMyProfile } from '@/hooks/useMyProfile'
 
 const DeleteIcon = () => {
   return (
@@ -19,77 +21,48 @@ const DeleteIcon = () => {
   )
 }
 
-export const tourData = [
-  {
-    id: 1,
-    name: "Paris City Tour",
-    image: "/profile.png",
-    bookingDate: "Feb 6, 2022",
-    amount: "$2999",
-    status: "Completed"
-  },
-  {
-    id: 2,
-    name: "Tokyo Explorer",
-    image: "/profile.png",
-    bookingDate: "April 16, 2022",
-    amount: "$2999",
-    status: "Canceled"
-  },
-  {
-    id: 3,
-    name: "Rome Historical Tour",
-    image: "/profile.png",
-    bookingDate: "May 22, 2023",
-    amount: "$3559",
-    status: "Completed"
-  },
-  {
-    id: 4,
-    name: "New York City Tour",
-    image: "/profile.png",
-    bookingDate: "Jun 5, 2024",
-    amount: "$2999",
-    status: "Completed"
-  },
-  {
-    id: 5,
-    name: "London Sightseeing",
-    image: "/profile.png",
-    bookingDate: "Sep 9, 2024",
-    amount: "$2999",
-    status: "Completed"
-  },
-  {
-    id: 6,
-    name: "Bangkok Adventure",
-    image: "/profile.png",
-    bookingDate: "Jan 8, 2025",
-    amount: "$2999",
-    status: "Completed"
-  }
-];
-
 export default function Tour() {
+  const { dashboardData, loading: dashboardLoading, error: dashboardError } = useBookingDashboard();
+  const { me } = useMyProfile();
+
+  // Get all bookings from dashboard data (not filtering by type)
+  const allBookings = dashboardData?.recent_bookings || [];
+  
+  // Transform API data to match component structure
+  const tourData = allBookings.map((booking, index) => ({
+    id: booking.id,
+    name: booking.package_name,
+    image: booking.package_image || "/profile.png",
+    bookingDate: new Date(booking.booking_date_time).toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    }),
+    amount: `$${booking.total_amount}`,
+    status: booking.status.charAt(0).toUpperCase() + booking.status.slice(1),
+    type: booking.type
+  }));
+
+  // Get stats from dashboard data
   const stats = [
     {
       title: "Total bookings",
-      count: 16,
+      count: dashboardData?.summary?.total_bookings || 0,
       iconPath: "/booking/tik.svg"
     },
     {
       title: "Completed Tours",
-      count: 14,
+      count: dashboardData?.summary?.completed_stays || 0,
       iconPath: "/booking/bed.svg"
     },
     {
       title: "Total Spend",
-      count: "14,526",
+      count: dashboardData?.summary?.total_spend?.toString() || "0",
       iconPath: "/booking/wallet.svg"
     },
     {
       title: "Upcoming Tours",
-      count: 2,
+      count: dashboardData?.summary?.upcoming_stays || 0,
       iconPath: "/booking/tik.svg"
     }
   ];
@@ -103,6 +76,7 @@ export default function Tour() {
   const [selectedDateRange, setSelectedDateRange] = useState<'all' | '7' | '15' | '30'>('all');
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   // Filter data by date
   const filteredData = tourData.filter((tour) => {
@@ -114,6 +88,16 @@ export default function Tour() {
     return bookingDate >= cutoffDate;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages]);
+
   // Table columns
   const columns = [
     {
@@ -121,14 +105,14 @@ export default function Tour() {
       accessor: 'name',
       width: '200px',
       formatter: (_: string, row: any) => (
-        <div className="flex items-center gap-2">
-          <img src={row.image} alt={row.name} className="w-6 h-6 rounded-full" />
+        <div className="flex items-center">
           <span className="text-sm text-[#070707]">{row.name}</span>
         </div>
       )
     },
     { label: 'Booking Date', accessor: 'bookingDate', width: '140px' },
     { label: 'Booking amount', accessor: 'amount', width: '100px' },
+    { label: 'Type', accessor: 'type', width: '100px' },
     {
       label: 'Status',
       accessor: 'status',
@@ -141,14 +125,11 @@ export default function Tour() {
       width: '100px',
       formatter: (_: any, row: any) => (
         <div className="flex items-center gap-4">
-          <Link href={`/tour-history/${row?.id}`}
+          <Link href={`/apartment-history`}
             className="text-sm text-[#777980] underline cursor-pointer hover:text-[#0068ef]"
           >
             View details
           </Link>
-          <div className="w-4 h-4 relative overflow-hidden text-[#777980] hover:text-[#fe5050] transition-colors duration-200 cursor-pointer">
-            <DeleteIcon />
-          </div>
         </div>
       )
     }
@@ -159,7 +140,7 @@ export default function Tour() {
       {/* Stats Card Section */}
       <div className="p-4 md:p-6 bg-white rounded-xl mb-10">
         <div className="mb-6">
-          <h1 className="md:text-3xl text-2xl font-medium text-[#070707]">Welcome, Elisabeth!</h1>
+          <h1 className="md:text-3xl text-2xl font-medium text-[#070707]">Welcome, {me?.first_name || 'User'}!</h1>
           <p className="text-base text-[#777980]">Check up on your latest reservations and history.</p>
         </div>
         <div className="w-full bg-white rounded-xl mx-auto">
@@ -219,12 +200,12 @@ export default function Tour() {
           </div>
         </div>
         <DynamicTableWithPagination
-         loading={false}
-         totalPages={1}
+         loading={dashboardLoading}
+         totalPages={totalPages}
           columns={columns}
-          data={filteredData}
+          data={paginatedData}
           currentPage={currentPage}
-          itemsPerPage={10}
+          itemsPerPage={itemsPerPage}
           onPageChange={setCurrentPage}
           noDataMessage="No tours found."
         />

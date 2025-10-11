@@ -1,6 +1,6 @@
 // server base url
 export const URL =
-  process.env.NEXT_PUBLIC_API_ENDPOINT || "https://backend.naamstay.com";
+  process.env.NEXT_PUBLIC_API_ENDPOINT || "https://humanitarian-crimes-too-producing.trycloudflare.com";
 // app config
 export const AppConfig = () => ({
   app: {
