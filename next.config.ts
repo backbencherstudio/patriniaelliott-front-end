@@ -48,6 +48,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
       },
+      {
+        protocol: "https",
+        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
+      },
     ],
   },
 };
