@@ -34,11 +34,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
+        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
       },
       {
         protocol: "https",
-        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
+        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
       },
       {
         protocol: "https",

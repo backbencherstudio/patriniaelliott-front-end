@@ -77,7 +77,7 @@ export default function Profile() {
     try {
       setPackagesLoading(true);
       setPackagesError(null);
-      const url = `https://https://shipping-embedded-validity-cbs.trycloudflare.com/api/admin/package/my-packages?vendor_id=${currentUserId}`;
+      const url = `https://https://humanitarian-crimes-too-producing.trycloudflare.com/api/admin/package/my-packages?vendor_id=${currentUserId}`;
       const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
       const data = await res.json().catch(() => null);
       const list = data?.data ?? data ?? [];
