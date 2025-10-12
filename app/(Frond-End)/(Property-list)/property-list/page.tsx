@@ -25,6 +25,8 @@ function page() {
     router.push('/property-list/choose-apartment-type');
   };
 
+  
+
   return (
     <div className="py-15 md:py-30 flex items-center justify-center bg-[#F6F7F7] px-4">
       <div className="space-y-[32px]">

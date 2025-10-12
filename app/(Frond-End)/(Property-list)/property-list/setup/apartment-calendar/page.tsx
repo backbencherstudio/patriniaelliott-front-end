@@ -94,10 +94,10 @@ export default function Page() {
 
   // hydrate price from localStorage (safe parse)
   useEffect(() => {
-   const nightly = listProperty?.type === "Tour"
-   ? listProperty?.tour_plan?.price
-   : listProperty?.price_per_night;
-   setPrice(Number(nightly) || 0);
+    const nightly = listProperty?.type === "Tour"
+      ? listProperty?.tour_plan?.price
+      : listProperty?.price_per_night;
+    setPrice(Number(nightly) || 0);
   }, []);
 
   const daysNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -162,11 +162,29 @@ export default function Page() {
       fd.append('meting_points', String(propertyData?.tour_plan?.meetingPoint ?? ''));
       fd.append('language', JSON.stringify(propertyData?.tour_plan?.language));
       // fd.append('cancellation_policy', JSON.stringify(propertyData?.tour_plan?.cancellation_policy));
-      fd.append('discount',String(propertyData?.tour_plan?.discount))
-      fd.append('policy_description',String(propertyData?.tour_plan?.policy_description));
-      fd.append('package_policies',JSON.stringify(propertyData?.tour_plan?.package_policies));
-      fd.append('service_fee',String(propertyData?.tour_plan?.service_fee));
-      fd.append('trip_plans', JSON.stringify(propertyData?.tour_plan?.tripPlan?.[0]?.tripPlan));
+      fd.append('discount', String(propertyData?.tour_plan?.discount))
+      fd.append('policy_description', String(propertyData?.tour_plan?.policy_description));
+      fd.append('package_policies', JSON.stringify(propertyData?.tour_plan?.package_policies));
+      fd.append('service_fee', String(propertyData?.tour_plan?.service_fee));
+      const trip_plan = [];
+      for (let i = 0; i < listProperty?.tour_plan?.tripPlan?.length; i++) {
+        const title = `Day ${i + 1}`;
+        const details = listProperty?.tour_plan?.tripPlan[i]?.tripPlan?.map((trip) => {
+          return {
+            title: trip.title,
+            description: trip.description,
+            time: trip.time,
+            notes: trip.ticket,
+          };
+        });
+        trip_plan.push({
+          title,
+          details,
+        });
+      }
+
+      fd.append('trip_plans', JSON.stringify(trip_plan))
+
       fd.append('extra_services', JSON.stringify(propertyData?.tour_plan?.extra_service));
       propertyData?.tour_plan?.tourImages?.forEach(img =>
         fd.append('package_files', img)
@@ -214,6 +232,32 @@ export default function Page() {
       );
       fd.append("calendar_start_date", toISODate(startDate));
       fd.append("calendar_end_date", toISODate(endDate));
+      fd.append("package_policies",JSON.stringify([
+        {
+          title: 'check in',
+          description: listProperty?.checkinPolicy,
+        },
+        {
+          title: 'check out',
+          description: listProperty?.checkoutPolicy,
+        },
+        {
+          title: 'Special check in instructions',
+          description: listProperty?.specialCheckinPolicy,
+        },
+        {
+          title: 'children and extra beds',
+          description: listProperty?.childrenExtra,
+        },
+        {
+          title: 'Cancellation policy',
+          description: listProperty?.refundPolicy,
+        },
+        {
+          title: 'Non-refundable policy',
+          description: listProperty?.nonRefundPolicy,
+        },
+      ]))
     }
 
     const endpoint = "/admin/vendor-package";
@@ -226,9 +270,9 @@ export default function Page() {
           toast.success("Property setup completed.");
         }
         localStorage.removeItem("propertyData");
-        setTimeout(() => {
-          router.push("/user-verification");
-        }, 1000);
+        // setTimeout(() => {
+        //   router.push("/user-verification");
+        // }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");
       }

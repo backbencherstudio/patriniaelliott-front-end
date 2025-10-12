@@ -42,6 +42,11 @@ export default function Page() {
     const [hostNeighborhood, setHostNeighborhood] = useState(false)
     const [formData, setFormData] = useState({});
     const [user, setUser] = useState(null);
+    const [property,setProperty] = useState('');
+    const [host,setHost] = useState('');
+    const [city,setCity] = useState('');
+    const [street,setStreet] = useState('');
+    const [zipcode,setZipcode] = useState('');
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -83,20 +88,6 @@ export default function Page() {
             country: selectedCountry
         });
 
-        const updatedProperty = {
-            ...JSON.parse(localStorage.getItem("propertyData")),
-            about_property: formElements.propertyintro.value,
-            host_name: formElements.hostname.value,
-            about_host: formElements.hostabout.value,
-            email: formElements.email.value,
-            region: selectedRegion,
-            street: formElements.street.value,
-            zip_code: formElements.zipcode.value,
-            city: formElements.city.value,
-            country: selectedCountry
-        };
-        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
-
         router.push("/property-list/setup/property-setup")
     }
 
@@ -130,6 +121,13 @@ export default function Page() {
 
     useEffect(() => {
         getUser();
+        setProperty(listProperty?.about_property);
+        setHost(listProperty?.about_host);
+        setSelectedCountry(listProperty?.country);
+        setSelectedRegion(listProperty?.region);
+        setCity(listProperty?.city);
+        setStreet(listProperty?.street);
+        setZipcode(listProperty?.zip_code);
     }, []);
 
     return (
@@ -162,7 +160,7 @@ export default function Page() {
                                         </div>
                                     </div>
                                     <div>
-                                        <textarea name="propertyintro" required id="propertyintro" disabled={!hostProperty} placeholder="Enter property intro" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none"></textarea>
+                                        <textarea name="propertyintro" required id="propertyintro" disabled={!hostProperty} value={property} onChange={(e)=>setProperty(e.target?.value)} placeholder="Enter property intro" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none"></textarea>
                                     </div>
                                 </div>
 
@@ -184,7 +182,7 @@ export default function Page() {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostabout" className="text-[#070707]">About the host</label>
-                                    <textarea disabled={!aboutHost} name="hostabout" id="hostabout" placeholder="Write about the host" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" />
+                                    <textarea disabled={!aboutHost} value={host} onChange={(e)=>setHost(e.target?.value)} name="hostabout" id="hostabout" placeholder="Write about the host" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" />
                                 </div>
                             </div>
 
@@ -213,15 +211,15 @@ export default function Page() {
                                     <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="city" className="text-[#070707]">City</label>
-                                        <input type="text" required name="city" id="city" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
+                                        <input type="text" value={city} onChange={(e)=>setCity(e.target?.value)} required name="city" id="city" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="street" className="text-[#070707]">Street name and house number</label>
-                                        <input type="text" required name="street" id="street" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
+                                        <input type="text" value={street} onChange={(e)=>setStreet(e.target?.value)} required name="street" id="street" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="zipcode" className="text-[#070707]">Zip code</label>
-                                        <input type="text" required name="zipcode" id="zipcode" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
+                                        <input type="text" value={zipcode} onChange={(e)=>setZipcode(e.target?.value)} required name="zipcode" id="zipcode" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
                                     </div>
                                     <h3 className="text-[#23262F] font-medium text-2xl">Pin the location of your property</h3>
                                     <div className="space-y-3">
