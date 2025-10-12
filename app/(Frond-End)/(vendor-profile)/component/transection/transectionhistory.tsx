@@ -98,6 +98,7 @@ export default function TransectionHistory() {
       accessor: 'action',
       formatter: (_: any, row: any) => (
         <button
+          aria-label="View Transaction Details"
           className="text-[#0068ef] underline text-xs hover:text-[#0051bd]"
           onClick={() => {
             setSelectedTransaction(row?._raw || row);
@@ -145,6 +146,7 @@ export default function TransectionHistory() {
           <div className="flex flex-wrap gap-2 md:gap-4">
             {['All transactions', 'Bookings', 'Refunds'].map((tab) => (
               <button
+                aria-label={`Filter ${tab}`}
                 key={tab}
                 onClick={() => setActiveTab(tab as typeof activeTab)}
                 className={`px-2 md:px-4 py-2 border-b-2 cursor-pointer text-sm md:text-base ${activeTab === tab

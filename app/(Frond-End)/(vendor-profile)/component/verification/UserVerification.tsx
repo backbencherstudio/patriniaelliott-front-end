@@ -193,6 +193,7 @@ export default function UserVerification() {
                     className="hidden"
                   />
                   <button
+                    aria-label="Choose Front Document"
                     type="button"
                     onClick={() => frontRef.current?.click()}
                     className="px-4 py-2 border border-[#d2d2d5] rounded-lg text-sm hover:bg-[#f5f5f5]"
@@ -217,6 +218,7 @@ export default function UserVerification() {
                     className="hidden"
                   />
                   <button
+                    aria-label="Choose Back Document"
                     type="button"
                     onClick={() => backRef.current?.click()}
                     className="px-4 py-2 border border-[#d2d2d5] rounded-lg text-sm hover:bg-[#f5f5f5]"
@@ -241,6 +243,7 @@ export default function UserVerification() {
                     className="hidden"
                   />
                   <button
+                    aria-label="Choose Passport Document"
                     type="button"
                     onClick={() => passportRef.current?.click()}
                     className="px-4 py-2 border border-[#d2d2d5] rounded-lg text-sm hover:bg-[#f5f5f5]"
@@ -258,6 +261,7 @@ export default function UserVerification() {
             <div className="flex justify-end mt-6">
               {submitted ? (
                 <button
+                  aria-label="Verification Submitted"
                   type="button"
                   disabled
                   className="px-8 py-3 bg-[#38c976] text-white rounded-lg text-base font-medium opacity-90 cursor-default flex items-center gap-2"
@@ -269,6 +273,7 @@ export default function UserVerification() {
                 </button>
               ) : (
                 <button
+                  aria-label="Submit Documents"
                   type="submit"
                   disabled={submitting}
                   className="px-8 py-3 bg-[#0068ef] text-white rounded-lg text-base font-medium hover:bg-[#0051bd] disabled:opacity-50 disabled:cursor-not-allowed"

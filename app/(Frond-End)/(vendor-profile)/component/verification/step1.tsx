@@ -158,6 +158,7 @@ export default function Step1({ onNext, currentStep, onStepClick, formData, upda
 
       <div className="flex justify-end w-full mt-5">
         <button
+          aria-label="Next Step"
           type="button"
           onClick={onNext}
           className="px-8 py-2.5 bg-[#0068ef] rounded-lg flex items-center gap-1.5 text-white text-base font-medium cursor-pointer hover:bg-[#0051bd] transition-colors"

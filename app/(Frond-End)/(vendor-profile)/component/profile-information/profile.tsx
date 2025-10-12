@@ -292,12 +292,14 @@ export default function Profile() {
             {isAuthError ? (
               <>
                 <button
+                  aria-label="Go to Login"
                   onClick={() => window.location.href = '/auth/login'}
                   className="bg-blueColor text-white px-4 py-2 rounded-lg hover:bg-[#0051bc] transition-colors"
                 >
                   Go to Login
                 </button>
                 <button
+                  aria-label="Clear Cookies and Retry"
                   onClick={() => {
                     // Clear any stale tokens and reload
                     document.cookie.split(";").forEach(function(c) { 
@@ -312,6 +314,7 @@ export default function Profile() {
               </>
             ) : (
               <button
+                aria-label="Retry"
                 onClick={() => fetchVendorData()}
                 className="bg-blueColor text-white px-4 py-2 rounded-lg hover:bg-[#0051bc] transition-colors"
               >
@@ -592,6 +595,7 @@ export default function Profile() {
         {isEditing && (
           <div className='flex justify-end gap-3 mt-4'>
             <button
+              aria-label="Cancel Changes"
               type="button"
                               onClick={() => {
                   setIsEditing(false);
@@ -624,6 +628,7 @@ export default function Profile() {
               Cancel
             </button>
             <button
+              aria-label="Save Changes"
               type="submit"
               disabled={loading || avatarUploading}
               className="md:mt-4 bg-blueColor text-white py-2 md:py-3 px-5 md:px-8 rounded-lg hover:bg-[#0051bc] transition-colors disabled:opacity-50"

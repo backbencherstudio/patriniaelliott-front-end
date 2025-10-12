@@ -46,7 +46,7 @@ export default function Payment3() {
           <span className="text-[#4a4c56] text-sm">02-2025</span>
         </div>
 
-        <button onClick={() => toast.success('Card deleted')} className="p-3 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors w-full sm:w-auto">
+        <button aria-label="Delete Card" onClick={() => toast.success('Card deleted')} className="p-3 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors w-full sm:w-auto">
           <span className="text-[#fe5050] text-base font-medium">Delete</span>
         </button>
       </div>
@@ -68,7 +68,7 @@ export default function Payment3() {
           <span className="text-[#4a4c56] text-sm">02-2025</span>
         </div>
 
-        <button className="p-3 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors w-full sm:w-auto">
+        <button aria-label="Delete Card" className="p-3 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors w-full sm:w-auto">
           <span className="text-[#fe5050] text-base font-medium">Delete</span>
         </button>
       </div>
@@ -77,6 +77,7 @@ export default function Payment3() {
       <div className="flex flex-col sm:flex-row justify-end items-center gap-4 sm:gap-6">
         <span className="text-[#777980] text-base">Pay with new card</span>
         <Link
+          aria-label="Add New Card"
           href={"/payment/add-new-card"}
           className="px-8 py-3 rounded-lg text-center border border-[#0068ef] cursor-pointer hover:bg-[#0068ef]/5 transition-colors w-full sm:w-auto"
         >

@@ -98,6 +98,7 @@ export function DialogDemo({ onClose, showModal, email }: any) {
             {/* Action Buttons */}
             <div className="flex justify-end gap-3 mt-3">
               <button 
+                aria-label="Cancel Delete"
                 type="button"
                 onClick={() => onClose(false)}  // Close modal on click
                 className="md:px-6 py-2.5 px-4 rounded-lg border border-[#777980] text-[#777980] text-lg font-medium font-['Inter'] hover:bg-[#f5f5f5] transition-colors cursor-pointer"
@@ -105,6 +106,7 @@ export function DialogDemo({ onClose, showModal, email }: any) {
                 Cancel
               </button>
               <button 
+                aria-label="Confirm Delete Account"
                 type="submit"
                 disabled={submitting}
                 className="md:px-6 py-2.5 px-4 bg-[#fe5050] rounded-lg text-white text-lg font-medium font-['Inter'] hover:bg-[#e54646] transition-colors cursor-pointer disabled:opacity-60"

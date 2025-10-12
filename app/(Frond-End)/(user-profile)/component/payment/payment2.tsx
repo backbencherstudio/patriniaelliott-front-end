@@ -288,6 +288,7 @@ const router = useRouter()
       {/* Action Buttons */}
       <div className="grid grid-cols-2 gap-3 mt-6">
         <Link href="/payment"
+          aria-label="Cancel Add Card"
           type="button"
           
           className="px-8 py-3 rounded-lg outline-1 outline-[#0068ef] text-[#0068ef] text-base font-medium cursor-pointer hover:bg-[#0068ef]/5 transition-all duration-200 "
@@ -295,6 +296,7 @@ const router = useRouter()
           Cancel
         </Link>
         <button
+          aria-label="Add Card"
           type="submit"
           className="px-8 py-3 bg-[#0068ef] rounded-lg text-white text-base font-medium cursor-pointer hover:bg-[#0068ef]/90 transition-all duration-200 "
         >

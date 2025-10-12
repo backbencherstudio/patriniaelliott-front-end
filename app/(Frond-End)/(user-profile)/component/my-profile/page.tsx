@@ -295,6 +295,7 @@ export default function MyProfile() {
         <div className="flex  justify-between mb-8 md:gap-4">
           <h2 className="text-xl md:text-2xl font-medium">Personal Information</h2>
           <button
+            aria-label={isEditing ? "Cancel Edit" : "Edit Profile"}
             type="button"
             className="flex items-center gap-1 md:gap-2 bg-blue-600 whitespace-nowrap text-white px-2 py-1.5 rounded"
             onClick={() => {
@@ -689,6 +690,7 @@ export default function MyProfile() {
           {/* Save Button */}
           {isEditing && (
             <button
+              aria-label="Save Profile Changes"
               type="submit"
               className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors"
             >

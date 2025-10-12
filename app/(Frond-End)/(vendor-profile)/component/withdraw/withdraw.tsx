@@ -207,6 +207,7 @@ export default function Withdraw() {
                 <div className="text-xs text-[#777980]">Total balance</div>
               </div>
               <button
+                aria-label="Withdraw Request"
                 onClick={() => setShowRequestModal(true)}
                 disabled={!balance || balance.available <= 0}
                 className="px-8 py-3 bg-[#0068ef] rounded-lg text-white font-medium hover:bg-[#0056c7] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -222,6 +223,7 @@ export default function Withdraw() {
             <div className="flex flex-wrap gap-2 md:gap-4">
               {['All history', 'Successful', 'Pending', 'Canceled'].map((tab) => (
                 <button
+                  aria-label={`Filter ${tab}`}
                   key={tab}
                   onClick={() => setActiveTab(tab as typeof activeTab)}
                   className={`px-2 md:px-4 py-2 border-b-2 cursor-pointer text-sm md:text-base ${activeTab === tab

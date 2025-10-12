@@ -381,6 +381,7 @@ export default function PaymentPage() {
 
       <div className='flex justify-end'>
         <button
+          aria-label="Create Account"
           type="submit"
           disabled={submitting}
           className="md:mt-4 bg-blueColor text-white py-2 md:py-3 px-5 md:px-6 rounded-lg hover:bg-[#0051bc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -502,6 +503,7 @@ export default function PaymentPage() {
                     </div>
                   ) : (
                     <button
+                      aria-label="Complete Verification"
                       onClick={() => {
                         window.open(account.onboarding_url, '_blank', 'noopener,noreferrer')
                       }}

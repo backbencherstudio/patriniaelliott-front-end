@@ -42,7 +42,7 @@ const BookingLayout: React.FC<bookingLayoutProps> = ({ children }) => {
                 
                 <div className="flex flex-col h-full w-full">
                     <div className="xl:pt-5 xl:hidden">
-                        <button onClick={openSidebar}>open menu </button>
+                        <button aria-label="Open Menu" onClick={openSidebar}>open menu </button>
                     </div>
                     <main className="xl:pr-5 flex-1 xl:pt-0 pt-5">{children}</main>
                 </div>
