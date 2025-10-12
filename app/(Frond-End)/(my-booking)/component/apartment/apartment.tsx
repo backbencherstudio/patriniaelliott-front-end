@@ -14,11 +14,16 @@ export default function Apartment() {
   const { dashboardData, loading: dashboardLoading, error: dashboardError } = useBookingDashboard();
   const { me } = useMyProfile();
 
-  // Get all bookings from dashboard data (not filtering by type)
+  // Get all bookings from dashboard data
   const allBookings = dashboardData?.recent_bookings || [];
   
+  // Filter bookings by apartment type
+  const apartmentBookings = allBookings.filter(booking => 
+    booking.type?.toLowerCase() === 'apartment'
+  );
+  
   // Transform API data to match component structure
-  const apartmentData = allBookings.map((booking, index) => ({
+  const apartmentData = apartmentBookings.map((booking, index) => ({
     id: booking.id,
     name: booking.package_name,
     image: booking.package_image || "/profile.png",
@@ -27,31 +32,44 @@ export default function Apartment() {
       month: 'short', 
       day: 'numeric' 
     }),
+    bookingDateTime: new Date(booking.booking_date_time), // Keep original date for filtering
     amount: `$${booking.total_amount}`,
     status: booking.status.charAt(0).toUpperCase() + booking.status.slice(1),
     type: booking.type
   }));
 
-  // Get stats from dashboard data
+  // Calculate apartment-specific stats
+  const apartmentStats = {
+    totalBookings: apartmentBookings.length,
+    completedStays: apartmentBookings.filter(booking => 
+      booking.status?.toLowerCase() === 'completed' || booking.status?.toLowerCase() === 'approved'
+    ).length,
+    totalSpend: apartmentBookings.reduce((sum, booking) => sum + (Number(booking.total_amount) || 0), 0),
+    upcomingStays: apartmentBookings.filter(booking => 
+      booking.status?.toLowerCase() === 'pending'
+    ).length
+  };
+
+  // Get stats from apartment-specific data
   const stats = [
     {
       title: "Total bookings",
-      count: dashboardData?.summary?.total_bookings || 0,
+      count: apartmentStats.totalBookings,
       iconPath: "/booking/tik.svg"
     },
     {
       title: "Completed Stays",
-      count: dashboardData?.summary?.completed_stays || 0,
+      count: apartmentStats.completedStays,
       iconPath: "/booking/bed.svg"
     },
     {
       title: "Total Spend",
-      count: dashboardData?.summary?.total_spend?.toString() || "0",
+      count: apartmentStats.totalSpend.toString(),
       iconPath: "/booking/wallet.svg"
     },
     {
       title: "Upcoming Stays",
-      count: dashboardData?.summary?.upcoming_stays || 0,
+      count: apartmentStats.upcomingStays,
       iconPath: "/booking/tik.svg"
     }
   ];
@@ -71,7 +89,7 @@ export default function Apartment() {
   // Filter data by date
   const filteredData = apartmentData.filter((apartment) => {
     if (selectedDateRange === 'all') return true;
-    const bookingDate = new Date(apartment.bookingDate);
+    const bookingDate = apartment.bookingDateTime; // Use the original date object
     const today = new Date();
     const cutoffDate = new Date(today);
     cutoffDate.setDate(today.getDate() - parseInt(selectedDateRange));
@@ -83,11 +101,16 @@ export default function Apartment() {
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   useEffect(() => {
-    // Reset or clamp page when data or filters change
-    if (currentPage > totalPages) {
+    // Reset page to 1 when filters change
+    setCurrentPage(1);
+  }, [selectedDateRange]);
+
+  useEffect(() => {
+    // Clamp page when total pages change
+    if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
     }
-  }, [totalPages]);
+  }, [totalPages, currentPage]);
 
   // Table columns
   const columns = [
@@ -109,20 +132,6 @@ export default function Apartment() {
       accessor: 'status',
       width: '100px',
       formatter: (value: string) => <ApartmentStatuse value={value}/>
-      },
-    {
-      label: 'Action',
-      accessor: 'action',
-      width: '100px',
-      formatter: (_: any, row: any) => (
-        <div className="flex items-center gap-4">
-          <Link href={`/apartment-history`}
-            className="text-sm text-[#777980] underline cursor-pointer hover:text-[#0068ef]"
-          >
-            View details
-          </Link>
-        </div>
-      )
     }
   ];
 

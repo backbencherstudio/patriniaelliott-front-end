@@ -18,11 +18,16 @@ export const useVendorProfile = (vendorId: string) => {
       console.log('🔍 Fetching vendor data for ID:', vendorId);
       const res: VendorResponse = await VendorService.getVendorProfileWithCookie(vendorId);
       console.log('📡 API Response:', res);
+      // The VendorService now returns the API response directly
+      // API response structure: { success: true, message: "...", data: { vendor_verification: {...}, user_info: {...} } }
       const data = (res as any)?.data ?? res;
+      console.log('📊 API response:', res);
       console.log('📊 Processed data:', data);
-      console.log('🏢 VendorVerification data:', data?.VendorVerification);
-      setVendorData(data?.data ?? data ?? null);
-      console.log('✅ Vendor data set:', data?.data ?? data ?? null);
+      console.log('🏢 Vendor verification data:', data?.vendor_verification);
+      console.log('👤 User info data:', data?.user_info);
+      
+      setVendorData(data ?? null);
+      console.log('✅ Vendor data set:', data ?? null);
       return res;
     } catch (e: any) {
       console.error('❌ Error fetching vendor data:', e);
@@ -40,8 +45,7 @@ export const useVendorProfile = (vendorId: string) => {
       const res = await VendorService.updateVendorProfileWithCookie(vendorId, payload);
       // Optimistically merge
       const updated = (res as any)?.data ?? res;
-      const merged = updated?.data ?? updated;
-      if (merged) setVendorData((prev) => ({ ...(prev || {}), ...merged }));
+      if (updated) setVendorData((prev) => ({ ...(prev || {}), ...updated }));
       return res;
     } catch (e: any) {
       setError(e?.message || 'Failed to update vendor profile');

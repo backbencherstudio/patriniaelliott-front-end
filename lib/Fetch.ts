@@ -94,7 +94,7 @@ export class Fetch {
       const res = await fetch(`${this._baseUrl}${url}`, {
         ...header,
         method: "PATCH",
-        body: data,
+        body: data instanceof FormData ? data : JSON.stringify(data),
       });
       return await res.json();
     }
