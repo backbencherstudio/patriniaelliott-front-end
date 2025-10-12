@@ -2,7 +2,7 @@
 
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -50,8 +50,17 @@ function TopDestination() {
 
       const swiperRef = useRef<any>(null);
     
-      const goNext = () => swiperRef.current?.slideNext();
-      const goPrev = () => swiperRef.current?.slidePrev();
+       const goNext = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  }, []);
+
+  const goPrev = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  }, []); 
   return (
     <section className=' container '>
         <div className="mt-24 mb-20">
@@ -60,12 +69,12 @@ function TopDestination() {
         <div className=" relative">
            <div >
           <div className="container justify-center lg:justify-between  flex gap-15">
-            <button onClick={goPrev}>
+            <button aria-label="Previous" onClick={goPrev}>
               <div className="absolute -bottom-20  lg:top-[50%] -translate-1/2 z-10 xl:-left-10 flex items-center cursor-pointer justify-center w-10 h-10 rounded-full bg-white/20 border border-secondaryColor backdrop-blur-[5px] hover:bg-secondaryColor  shadow shadow-stone-300 transition-all">
                 <FaChevronLeft className="text-blackColor" />
               </div>
             </button>
-            <button onClick={goNext}>
+            <button aria-label="Next" onClick={goNext}>
               <div className="absolute lg:top-[50%] -bottom-20 -translate-1/2 xl:-right-20 z-10 flex items-center justify-center cursor-pointer w-10 h-10 rounded-full bg-white/20 border border-secondaryColor hover:bg-secondaryColor  shadow shadow-stone-300 transition-all backdrop-blur-[5px]">
                 <FaChevronRight className="text-blackColor " />
               </div>

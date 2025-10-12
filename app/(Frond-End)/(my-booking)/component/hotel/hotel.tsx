@@ -155,7 +155,8 @@ export default function Hotel() {
             <div className="text-base text-[#777980]">Check up on your latest reservations.</div>
           </div>
           <div className="relative flex justify-end w-full md:w-auto">
-            <button
+            <button 
+              aria-label="Date filter"
               onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
               className="px-3 py-1.5 rounded border border-[#0068ef] flex items-center gap-3 cursor-pointer hover:bg-[#f5f5f5] justify-center md:justify-start"
             >
@@ -180,6 +181,7 @@ export default function Hotel() {
                 {dateRanges.map((range) => (
                   <div
                     key={range.value}
+                    aria-label="Date filter"
                     onClick={() => {
                       setSelectedDateRange(range.value as 'all' | '7' | '15' | '30');
                       setIsDateDropdownOpen(false);

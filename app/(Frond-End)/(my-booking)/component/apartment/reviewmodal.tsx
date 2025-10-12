@@ -97,6 +97,7 @@ export default function ReviewModal({ open, onClose, apartment }: ReviewModalPro
           </div>
           <div className="w-full">
             <button 
+              aria-label="Submit"
               type="submit"
               className="w-full pl-5 pr-[19.19px] py-3 bg-[#0068ef] rounded-[50px] text-white text-base font-medium hover:bg-[#0051bc] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               disabled={watch('rating') === 0}

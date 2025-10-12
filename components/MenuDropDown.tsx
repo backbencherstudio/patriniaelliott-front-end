@@ -25,6 +25,7 @@ function MenuDropDown({ setMenuOpen, data }: any) {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger
+          aria-label="User Avatar"
           className="flex items-center border-none gap-1.5
                     focus:outline-none focus-visible:outline-none
                     focus:ring-0 focus-visible:ring-0
@@ -64,7 +65,7 @@ function MenuDropDown({ setMenuOpen, data }: any) {
                   </div>
                   <div className="flex flex-col gap-1.5 mt-1 w-full">
                       <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
-                    <Link href="/my-account" className="w-full flex items-center gap-2.5">
+                    <Link aria-label="My Account" href="/my-account" className="w-full flex items-center gap-2.5">
                         <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                           <Image
                             src={"/usericon/user.svg"}
@@ -80,7 +81,7 @@ function MenuDropDown({ setMenuOpen, data }: any) {
                     </Link>
                       </DropdownMenuItem>
                         <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
-            <Link  onClick={() => setMenuOpen(false)} href="/profile-info" className="w-full flex items-center gap-2.5">
+            <Link aria-label="Vendor Account"  onClick={() => setMenuOpen(false)} href="/profile-info" className="w-full flex items-center gap-2.5">
                           <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                             <Image
                               src="/admin/vendor.svg"
@@ -96,7 +97,7 @@ function MenuDropDown({ setMenuOpen, data }: any) {
                       </Link> 
                         </DropdownMenuItem>
                       <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10 w-full focus:bg-transparent">
-                    <Link href="/apartment-history" className="w-full flex items-center gap-2.5">
+                    <Link aria-label="My Booking" href="/apartment-history" className="w-full flex items-center gap-2.5">
                         <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                           <Image
                             src="/usericon/date.svg"
@@ -112,7 +113,7 @@ function MenuDropDown({ setMenuOpen, data }: any) {
                     </Link>
                       </DropdownMenuItem>
                     <DropdownMenuItem className=" w-full group transition-all hover:!bg-secondaryColor/10 focus:bg-transparent" >
-                      <button onClick={hanldeLogout} className=" cursor-pointer flex items-center gap-2.5">
+                      <button aria-label="Logout" onClick={hanldeLogout} className=" cursor-pointer flex items-center gap-2.5">
 <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                         <Image
                           src="/usericon/logout.svg"

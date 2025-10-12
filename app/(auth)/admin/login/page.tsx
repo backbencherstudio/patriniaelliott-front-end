@@ -84,18 +84,20 @@ function LoginPage() {
                   placeholder="********"
                   className={`w-full border rounded-md px-4 py-3 pr-10 focus:outline-none focus:ring-2 ${errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-yellow-500'}`}
                 />
-                <span
+                <button
+                  aria-label="Show password"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-3 flex items-center text-grayColor1 cursor-pointer"
                 >
                   {showPassword ? <EyeOff /> : <Eye />}
-                </span>
+                </button>
               </div>
               {errors.password && <p className="text-red-500 text-base mt-1">{errors.password.message}</p>}
             </div>
            
             <div className="pt-4">
               <button
+                aria-label="Get started"
                 type="submit"
                 disabled={loading}
                 className="w-full disabled:bg-grayColor1 disabled:text-white/50 disabled:cursor-not-allowed bg-secondaryColor text-blackColor font-semibold py-4 cursor-pointer rounded-md transition"

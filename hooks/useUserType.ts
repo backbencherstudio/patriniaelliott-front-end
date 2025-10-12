@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
 import { MyProfileService } from '@/service/user/myprofile.service'
+import { useEffect, useState } from 'react'
 
 export const useUserType = () => {
   const [userType, setUserType] = useState<string | null>(null)

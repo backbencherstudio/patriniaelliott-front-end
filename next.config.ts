@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Remove problematic CSS optimization that causes critters error
+  experimental: {
+    optimizePackageImports: ['react-icons'],
+    optimizeCss:true
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
   poweredByHeader: false,
+  // Optimize font loading
+  optimizeFonts: true,
   images: {
     remotePatterns: [
       {
@@ -38,7 +48,7 @@ const nextConfig: NextConfig = {
         hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
       },
       {
-        protocol: "https",
+        protocol: "http",
         hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
       },
       {
@@ -55,11 +65,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
-      },
-      {
-        protocol: "http",
-        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
+        hostname: "flexible-heaven-reasons-bacterial.trycloudflare.com",
       },
     ],
   },

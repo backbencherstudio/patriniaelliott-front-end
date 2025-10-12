@@ -2,7 +2,7 @@
 
 import useFetchData from "@/hooks/useFetchData";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -17,9 +17,17 @@ function Accommodation() {
   const endpoint = `/admin/vendor-package?type=${activeTab}&limit=${10}&page=${1}`
   const { data, loading, error } = useFetchData(endpoint);
   const packageData = data ? data?.data : []
+  const goNext = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  }, []);
 
-  const goNext = () => swiperRef.current?.slideNext();
-  const goPrev = () => swiperRef.current?.slidePrev();
+  const goPrev = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  }, []);
  
 
   return (
@@ -32,6 +40,7 @@ function Accommodation() {
           <div className="flex justify-center text-center mx-auto  ">
             {['apartment', 'hotel',"tour"].map(tab => (
               <button
+                aria-label={tab}
                 key={tab}
                 className={`text-2xl cursor-pointer font-medium px-4 pb-2 transition border-b-[2px] border-[#A5A5AB] ${activeTab === tab ? ' border-b-2 border-secondaryColor text-secondaryColor ' : 'text-[#A5A5AB]'
                   }`}
@@ -44,12 +53,14 @@ function Accommodation() {
           <div className="relative">
             {/* Swiper Navigation Buttons */}
             {!error && (!loading && <button
+              aria-label="Previous"
               onClick={goPrev}
               className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 left-0 xl:-left-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
             >
               <FaChevronLeft className="text-black text-sm" />
             </button>)}
             {!error && (!loading && <button
+              aria-label="Next"
               onClick={goNext}
               className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 right-0 xl:-right-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
             >
@@ -88,7 +99,7 @@ function Accommodation() {
             </Swiper>
           </div>
           <div>
-            {!error && (!loading && <Link href={`/${activeTab}s`}>
+            {!error && (!loading && <Link aria-label="View All Apartments" href={`/${activeTab}s`}>
               <CustomButton>View All Apartments</CustomButton>
             </Link>)}
           </div>

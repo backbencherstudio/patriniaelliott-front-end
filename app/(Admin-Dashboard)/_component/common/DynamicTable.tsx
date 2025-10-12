@@ -115,16 +115,17 @@ export default function DynamicTableWithPagination({
                   {(onView || onDelete) && (
                     <td className="px-2 py-3 flex gap-4">
                       {onView && (
-                        <span
+                        <button
                           className="text-sm underline text-nowrap text-[#777980] hover:text-[#0068ef] cursor-pointer"
+                          aria-label="View details"
                           onClick={() => onView(row)}
                         >
                           View details
-                        </span>
+                        </button>
                       )}
                       {onDelete && (
                         
-                        <button disabled={editLoading} className="hover:text-redColor text-[#777980] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"  onClick={() => onDelete(row.id)}>
+                        <button aria-label="Delete" disabled={editLoading} className="hover:text-redColor text-[#777980] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"  onClick={() => onDelete(row.id)}>
                           {editLoading ? <Loader size={18} className="text-primaryColor" /> : <RiDeleteBin6Line
                              size={18} className="" />}
                           </button>
@@ -159,6 +160,7 @@ export default function DynamicTableWithPagination({
           <div className="flex items-center gap-1 lg:gap-2 order-1 lg:order-2 flex-wrap">
             {/* First Page Button */}
             <button
+              aria-label="First page"
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1}
               className="px-3 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
@@ -169,6 +171,7 @@ export default function DynamicTableWithPagination({
             
             {/* Previous Button */}
             <button
+              aria-label="Previous"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
               className="px-4 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
@@ -182,6 +185,7 @@ export default function DynamicTableWithPagination({
               {getPagination().map((page, i) => (
                 <button
                   key={i}
+                  aria-label="Page number"
                   onClick={() => typeof page === "number" && onPageChange(page)}
                   disabled={page === "..."}
                   className={`px-2 lg:px-3 py-2 rounded-lg cursor-pointer text-sm font-medium transition-colors ${
@@ -199,6 +203,7 @@ export default function DynamicTableWithPagination({
             
             {/* Next Button */}
             <button
+              aria-label="Next"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="px-4 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
@@ -209,6 +214,7 @@ export default function DynamicTableWithPagination({
             
             {/* Last Page Button */}
             <button
+              aria-label="Last page"
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages}
               className="px-3 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"

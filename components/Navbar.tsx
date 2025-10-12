@@ -43,13 +43,14 @@ export default function Navbar() {
   return (
     <header className="bg-primaryColor py-4 ">
       <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-white text-2xl md:text-3xl font-semibold tracking-wide">
+        <Link aria-label="Logo" href="/" className="text-white text-2xl md:text-3xl font-semibold tracking-wide">
           LOGO
         </Link>
         <nav className="hidden lg:flex space-x-6 text-base">
           {menuItems.map((item) => (
             <Link
               key={item.slug}
+              aria-label={item.en}
               href={item.slug}
               className={cn(
                 "hover:text-secondaryColor transition",
@@ -78,6 +79,7 @@ export default function Navbar() {
           {token ? (
             <>
               <Link
+                aria-label="List your proparty"
                 href="/property-list"
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
               >
@@ -88,15 +90,17 @@ export default function Navbar() {
           ) : (
             <>
             <Link
+                aria-label="List your proparty"
                 href={token ? "/property-list" : "/login"}
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
               >
                 List your proparty
               </Link>
-              <Link href="/login" className="text-white text-base">
+              <Link aria-label="Login" href="/login" className="text-white text-base">
                 Login
               </Link>
               <Link
+                aria-label="Sign up"
                 href="/registration"
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-2 md:px-6 py-2 rounded"
               >
@@ -110,10 +114,11 @@ export default function Navbar() {
         <div className="lg:hidden flex items-center gap-2">
           <div className="md:hidden">
           {token ? <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data}/> : <div className=" flex items-center gap-3">
-                <Link href="/login" className="text-white text-base" onClick={() => setMenuOpen(false)}>
+                <Link aria-label="Login" href="/login" className="text-white text-base" onClick={() => setMenuOpen(false)}>
                   Login
                 </Link>
                 <Link
+                  aria-label="Sign up"
                   href="/registration"
                   className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base md:px-4 px-2 py-1 rounded"
                   onClick={() => setMenuOpen(false)}
@@ -123,6 +128,7 @@ export default function Navbar() {
               </div>}  
           </div> 
           <button
+            aria-label="Menu"
             onClick={() => setMenuOpen(!menuOpen)}
             className="text-white text-2xl"
           >
@@ -149,6 +155,7 @@ export default function Navbar() {
         <div className="flex flex-col h-full p-6 space-y-3">
           {/* Close Button */}
           <button
+            aria-label="Close"
             onClick={() => setMenuOpen(false)}
             className="self-end text-white text-2xl mb-6"
           >
@@ -158,6 +165,7 @@ export default function Navbar() {
           {menuItems.map((item) => (
             <Link
               key={item.slug}
+              aria-label={item.en}
               href={item.slug}
               className={cn(
                 "block text-base py-2",
@@ -173,6 +181,7 @@ export default function Navbar() {
             <BsGlobe2 className="text-white" />
             <select
               value={language}
+              aria-label="Language"
               onChange={(e) => setLanguage(e.target.value as "en" )}
               className="bg-transparent outline-none text-white"
             >
@@ -185,6 +194,7 @@ export default function Navbar() {
             
               <>
                 <Link
+                  aria-label="List your proparty"
                   href={token ? "/property-list" : "/login"}
                   onClick={() => setMenuOpen(false)}
                   className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"

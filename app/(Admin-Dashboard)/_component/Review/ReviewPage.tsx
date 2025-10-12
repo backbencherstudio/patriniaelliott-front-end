@@ -150,6 +150,7 @@ const columns = [
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">
             {["All", "Approved", "Pending","Rejected"].map((role) => (
               <button
+                aria-label={role}
                 key={role}
                 onClick={() =>
                   setSelectedRole(role as "All" | "Approved" | "Pending" | "Rejected")
@@ -175,7 +176,7 @@ const columns = [
                   setDateRange(value as "all" | "7" | "15" | "30")
                 }
               >
-                <SelectTrigger className="rounded-sm border border-[#0068ef] text-[#0068ef] bg-transparent ">
+                <SelectTrigger aria-label="Date range" className="rounded-sm border border-[#0068ef] text-[#0068ef] bg-transparent ">
                   <Image
                     src="/dashboard/icon/filter.svg"
                     alt="filter"
