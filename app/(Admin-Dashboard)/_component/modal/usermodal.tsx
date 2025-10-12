@@ -48,7 +48,7 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
                 <Image src={userData?.avatar_url} width={100} height={100} alt="profile" className="rounded-full w-full h-full object-cover" />
               </div>
               <div className="text-center w-full">
-                <h3 className="text-[#22262e] text-xl font-medium mb-2">{userData?.name}</h3>
+                <h3 className="text-[#22262e] text-xl font-medium mb-2">{userData?.display_name}</h3>
                 <p className="text-[#777980] text-base mb-2">{userData?.type}</p>
                 <div className="inline-flex items-center justify-center gap-2 px-3 py-2 bg-neutral-50 rounded-lg outline outline-[#e9e9ea]">
                   <span className="text-[#777980]">ID {userData?.id}</span>
@@ -69,7 +69,7 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
               </div>
              }
             
-              <span className="text-[#4a4c56] flex items-center gap-1 text-base"><FaStar className='text-yellow-400'/> {userData?.average_rating  || 0}</span>
+              <span className="text-[#4a4c56] flex items-center gap-1 text-base"><FaStar className='text-yellow-400'/> { userData?.average_rating.toFixed(1) || 0}</span>
             </div>
 
             <div className="flex flex-col gap-4">
@@ -131,8 +131,8 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
 
         </div>
 
-        <button className="self-end px-6 md:px-8 py-3 md:py-3.5 rounded-full outline outline-[#fe5050] text-[#fe5050] font-medium text-sm md:text-base">
-          Remove User
+        <button onClick={() => onClose()} className="self-end px-6 cursor-pointer py-3  rounded-full outline outline-[#fe5050] text-[#fe5050] font-medium text-sm md:text-base">
+          Remove 
         </button>
       </div>
     </div>

@@ -12,21 +12,20 @@ import { IoIosArrowDown } from "react-icons/io";
 
 import { cn } from "@/lib/utils";
 import { UserService } from "@/service/user/user.service";
-function MenuDropDown({setMenuOpen,data}:any) {
-      const pathname = usePathname();
-      const hanldeLogout =async()=>{
-         try {
-          const res = await UserService?.logout()
-         } catch (error) {
-          console.log(error.message);
-          
-         }
-      }
+function MenuDropDown({ setMenuOpen, data }: any) {
+  const pathname = usePathname();
+  const hanldeLogout = async () => {
+    try {
+      const res = await UserService?.logout()
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   return (
     <div>
-       <DropdownMenu>
-                <DropdownMenuTrigger
-                  className="flex items-center border-none gap-1.5
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          className="flex items-center border-none gap-1.5
                     focus:outline-none focus-visible:outline-none
                     focus:ring-0 focus-visible:ring-0
                     focus:border-none focus-visible:border-none

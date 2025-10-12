@@ -1,11 +1,11 @@
 "use client";
 
+import useFetchData from "@/hooks/useFetchData";
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import useFetchData from "@/hooks/useFetchData";
-import Link from "next/link";
 import AccommodationCard from "../card/AccommodationCard";
 import CardSkeleton from "../card/CardSkeleton";
 import CustomButton from "../reusable/CustomButton";
@@ -20,7 +20,7 @@ function Accommodation() {
 
   const goNext = () => swiperRef.current?.slideNext();
   const goPrev = () => swiperRef.current?.slidePrev();
-  console.log(packageData);
+ 
 
   return (
     <section className=" bg-bgColor py-12">

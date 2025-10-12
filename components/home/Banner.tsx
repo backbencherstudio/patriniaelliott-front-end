@@ -5,17 +5,26 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
  // adjust this path as needed
 import { heroSlides } from '@/DemoAPI/heroSlide';
-import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
+import CustomImage from '../reusable/CustomImage';
 import AllSearch from './AllSearch';
 
 export default function Banner() {
      const [currentIndex, setCurrentIndex] = useState(1);
   const swiperRef = useRef<any>(null);
 
-  const goNext = () => swiperRef.current?.slideNext();
-  const goPrev = () => swiperRef.current?.slidePrev();
+  const goNext = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  }, []);
+
+  const goPrev = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  }, []);
   return (
      <section className=''>
       <div className="relative w-full">
@@ -38,12 +47,11 @@ export default function Banner() {
         <Swiper
           slidesPerView={1}
           loop={true}
-          speed={1500}
+          speed={800}
           autoplay={{
-            delay: 30000000,
+            delay: 5000,
             disableOnInteraction: false,
           }}
-        
           modules={[Navigation, Autoplay, Pagination]}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
           onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex + 1)}
@@ -52,9 +60,10 @@ export default function Banner() {
           {heroSlides.map((banner, index) => (
             <SwiperSlide key={index}>
               <div className="relative w-full">
-                <Image
+                <CustomImage
                   src={banner.imageUrl}
                   alt={`Banner ${index + 1}`}
+                  name={`Banner ${index + 1}`}
                   width={1920}
                   height={700}
                   className="w-full h-[500px] md:h-[450px] lg:h-[500px] xl:h-auto object-cover"

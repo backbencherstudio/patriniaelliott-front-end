@@ -38,8 +38,8 @@ export default function StepOne({data,guests,setGuests}:{data?:any,guests:any,se
         <Image
         width={40}
          height={40}
-          src="https://i.pravatar.cc/40"
-          className="w-10 h-10 rounded-full"
+          src={data?.avatar_url  || "https://i.pravatar.cc/40"}
+          className="w-10 h-10 object-cover rounded-full"
           alt="avatar"
         />
         <div className="flex-1 text-base">
