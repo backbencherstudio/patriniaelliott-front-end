@@ -54,7 +54,7 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         xl:rounded-[12px] p-5 w-full overflow-y-auto
       `}>
         <div className="flex justify-end xl:hidden cursor-pointer">
-          <button onClick={onClose}><X /></button>
+          <button aria-label="Close" onClick={onClose}><X /></button>
         </div>
 
         {/* Account Section */}
@@ -63,6 +63,7 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <nav className="flex flex-col gap-1">
             {navItems.slice(0, 5).map((item, idx) => (
               <Link
+                aria-label={item.label}
                 key={idx}
                 href={item.href}
                 onClick={onClose}
@@ -94,6 +95,7 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <nav className="flex flex-col gap-1">
             {navItems.slice(5).map((item, idx) => (
                <Link
+                aria-label={item.label}
                 key={idx}
                 href={item.href}
                 onClick={onClose}
@@ -119,6 +121,7 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Log out section */}
           <div className="mt-auto pt-4">
           <Link
+            aria-label="Log out"
             href="/logout"
             onClick={onClose}
             className="flex items-center gap-3 px-3 py-3 border border-grayColor1/20 rounded-lg transition-colors duration-200 hover:bg-gray-50"

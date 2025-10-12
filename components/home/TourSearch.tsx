@@ -165,6 +165,7 @@ export default function TourSearch({ typesearch }: any) {
         >
           <PopoverTrigger asChild>
             <Button
+              aria-label="Location"
               variant="ghost"
               className="flex hover:bg-transparent cursor-pointer items-center justify-start  lg:border-r border-black/20 rounded-none  h-auto px-2"
             >
@@ -188,6 +189,7 @@ export default function TourSearch({ typesearch }: any) {
           </PopoverTrigger>
           <PopoverContent className="w-60 p-2">
             <input
+              aria-label="Location input"
               placeholder="Type your destination"
               value={locationInput}
               onChange={(e) => setLocationInput(e.target.value)}
@@ -200,6 +202,7 @@ export default function TourSearch({ typesearch }: any) {
                 .map((loc :any) => (
                   <li
                     key={loc?.package_id}
+                    aria-label="Location item"
                     className="cursor-pointer p-2 hover:bg-gray-100 rounded"
                     onClick={() => {
                       setSelectedLocation(loc?.country);
@@ -222,6 +225,7 @@ export default function TourSearch({ typesearch }: any) {
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
+              aria-label="Date filter"
               variant="ghost"
               className="flex hover:bg-transparent cursor-pointer items-start justify-start lg:border-r !pr-4  !pl-8 border-black/20 rounded-none flex-col h-auto "
             >
@@ -285,6 +289,7 @@ export default function TourSearch({ typesearch }: any) {
             />
             <div className="text-right mt-2">
               <button
+                aria-label="Apply"
                 className="bg-secondaryColor  py-2  text-black font-medium px-4  rounded-md cursor-pointer"
                 onClick={() => {
                   setAppliedDateRange(dateRange);
@@ -305,7 +310,7 @@ export default function TourSearch({ typesearch }: any) {
       <div className=" lg:border-0 border-b border-blackColor/20 w-full py-2 lg:py-0 flex justify-center">
         <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
           <PopoverTrigger asChild>
-            <div className="flex flex-col items-start px-2 cursor-pointer lg:border-r !pl-6 !pr-8 border-black/20 rounded-none">
+            <div aria-label="Guest" className="flex flex-col items-start px-2 cursor-pointer lg:border-r !pl-6 !pr-8 border-black/20 rounded-none">
               <div className="flex items-center gap-3 text-sm">
                 <Image
                   src={usericon}
@@ -337,6 +342,7 @@ export default function TourSearch({ typesearch }: any) {
               {rooms.map((room, index) => (
                 <div
                   key={room.id}
+                  aria-label="Room"
                   className="border border-yellow-400 rounded-lg  mb-4"
                 >
                   <div className="flex justify-between bg-secondaryColor/12 items-center text-sm font-semibold p-2 mb-3">
@@ -352,6 +358,7 @@ export default function TourSearch({ typesearch }: any) {
                     </div>
                     <div className="flex items-center gap-2">
                       <button
+                        aria-label="Decrement"
                         onClick={() =>
                           handleChange(index, "people", "decrement")
                         }
@@ -363,6 +370,7 @@ export default function TourSearch({ typesearch }: any) {
                         {room.people}
                       </span>
                       <button
+                        aria-label="Increment"
                         onClick={() =>
                           handleChange(index, "people", "increment")
                         }
@@ -404,6 +412,7 @@ export default function TourSearch({ typesearch }: any) {
               ))}
 
               <button
+                aria-label="Add another room"
                 onClick={addRoom}
                 className="w-full bg-secondaryColor cursor-pointer flex items-center justify-center py-2 text-black font-semibold text-sm rounded-md mb-3"
               >
@@ -422,6 +431,7 @@ export default function TourSearch({ typesearch }: any) {
           ref={buttonRef}
           variant="outline"
           size="icon"
+          aria-label="Filter"
           onClick={() => setOpenFilter((prev) => !prev)}
           className="bg-white border rounded-full w-10 h-10"
         >
@@ -430,6 +440,7 @@ export default function TourSearch({ typesearch }: any) {
 
         <div className=" ">
           <button
+            aria-label="Search"
             onClick={handleSearch}
             className="bg-secondaryColor cursor-pointer flex justify-center items-center text-black w-10 h-10 p-2 rounded-md"
           >

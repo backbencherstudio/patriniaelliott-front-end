@@ -9,7 +9,7 @@ function ListingAction({ onView, data,onEdit,onDelete ,editLoading }: any) {
   return (
     <div className="relative">
       <Popover>
-        <PopoverTrigger className='px-4'>
+        <PopoverTrigger aria-label="Popover Trigger" className='px-4'>
           <HiOutlineDotsHorizontal className="cursor-pointer text-center
            text-gray-600 hover:text-gray-800 text-xl" />
         </PopoverTrigger>
@@ -19,6 +19,7 @@ function ListingAction({ onView, data,onEdit,onDelete ,editLoading }: any) {
         <ul className="text-sm text-gray-700">
           <li>
   <button
+  aria-label="View Details"
     onClick={() => onView(data)}
     className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
                border-l-2 border-transparent 
@@ -32,6 +33,7 @@ function ListingAction({ onView, data,onEdit,onDelete ,editLoading }: any) {
   <li>
 
   <button
+  aria-label="Edit"
      onClick={() => onEdit(data)}
     
     className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
@@ -46,6 +48,7 @@ function ListingAction({ onView, data,onEdit,onDelete ,editLoading }: any) {
 <li>
 
   <button
+  aria-label="Delete"
    disabled={editLoading}
     onClick={() => onDelete(data?.id)}
     className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed

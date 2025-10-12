@@ -118,7 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         `}
       >
         <div className="flex justify-end lg:hidden cursor-pointer">
-          <button onClick={onClose}><X /></button>
+          <button aria-label="Close" onClick={onClose}><X /></button>
         </div>
 
         {/* Account Section */}
@@ -130,6 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 <div key={idx} className="flex flex-col">
                   {/* Accordion Header */}
                   <button
+                    aria-label="Toggle accordion"
                     onClick={() => toggleAccordion(item.label)}
                     className={`
                       w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg 
@@ -163,6 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                     <div className="ml-6 mt-1 flex flex-col gap-1">
                       {item.subItems?.map((subItem, subIdx) => (
                         <Link
+                          aria-label="Sub item"
                           key={subIdx}
                           href={subItem.href}
                           onClick={onClose}
@@ -183,6 +185,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </div>
               ) : (
                 <Link
+                  aria-label="Item"
                   key={idx}
                   href={item.href}
                   onClick={onClose}
@@ -219,6 +222,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <nav className="flex flex-col gap-1">
             {navItems.slice(5).map((item, idx) => (
               <Link
+                aria-label="Item"
                 key={idx}
                 href={item.href}
                 onClick={onClose}
@@ -252,6 +256,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <div className="mt-auto pt-4">
           <Link
             href="/login"
+            aria-label="Log out"
             onClick={onClose}
             className="flex items-center gap-3 px-3 py-3 border border-grayColor1/20 rounded-lg transition-colors duration-200 hover:bg-gray-50"
           >

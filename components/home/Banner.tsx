@@ -31,12 +31,12 @@ export default function Banner() {
         {/* Desktop Navigation */}
         <div className="">
           <div className="container  flex justify-between">
-            <button onClick={goPrev}>
+            <button aria-label="Previous" onClick={goPrev}>
               <div className="absolute top-[50%] -translate-1/2 z-10 left-10 lg:left-50 flex items-center cursor-pointer justify-center w-10 h-10 rounded-full bg-white/20 border border-white backdrop-blur-[5px]">
                 <FaChevronLeft className="text-white" />
               </div>
             </button>
-            <button onClick={goNext}>
+            <button aria-label="Next" onClick={goNext}>
               <div className="absolute top-[50%] -translate-1/2 right-0 lg:right-50 z-10 flex items-center justify-center cursor-pointer w-10 h-10 rounded-full bg-white/20 border border-white backdrop-blur-[5px]">
                 <FaChevronRight className="text-white" />
               </div>
@@ -66,6 +66,7 @@ export default function Banner() {
                   name={`Banner ${index + 1}`}
                   width={1920}
                   height={700}
+                  loading='lazy'
                   className="w-full h-[500px] md:h-[450px] lg:h-[500px] xl:h-auto object-cover"
                 />
                 <div className="absolute inset-0 " />

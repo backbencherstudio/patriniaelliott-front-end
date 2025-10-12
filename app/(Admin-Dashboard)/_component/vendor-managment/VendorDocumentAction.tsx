@@ -63,6 +63,7 @@ function VendorDocumentAction({value,row,onView,handleOptimisticUpdate}:{value:a
         {value == "pending" &&
      <div className="flex gap-1">
           <button 
+            aria-label="Approve"
             onClick={handleApprove} 
             disabled={loading}
             className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px] disabled:opacity-50"
@@ -89,6 +90,7 @@ function VendorDocumentAction({value,row,onView,handleOptimisticUpdate}:{value:a
             </svg>
           </button>
           <button 
+            aria-label="Reject"
             onClick={handleReject} 
             disabled={loading}
             className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px] disabled:opacity-50"
@@ -116,7 +118,7 @@ function VendorDocumentAction({value,row,onView,handleOptimisticUpdate}:{value:a
           </button>
         </div>}
         
-      <button className='text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer' onClick={()=>onView(row)}>
+      <button aria-label="View Details" className='text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer' onClick={()=>onView(row)}>
       View Details
       </button>
     </div>

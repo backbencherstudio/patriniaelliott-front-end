@@ -1,62 +1,54 @@
 import Image from 'next/image'
-import React from 'react'
 
+// Simple shimmer placeholder for blur effect
+const shimmer = (w, h) => `
+<svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g">
+      <stop stop-color="#f3f3f3" offset="20%" />
+      <stop stop-color="#ecebeb" offset="50%" />
+      <stop stop-color="#f3f3f3" offset="70%" />
+    </linearGradient>
+  </defs>
+  <rect width="${w}" height="${h}" fill="#f3f3f3" />
+  <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
+  <animateTransform xlink:href="#r" attributeName="transform" type="translate" values="-${w} 0; ${w} 0; -${w} 0" dur="1s" repeatCount="indefinite" />
+</svg>`
+
+const toBase64 = (str) => {
+  if (typeof window === 'undefined') {
+    return Buffer.from(str).toString('base64')
+  }
+  return window.btoa(str)
+}
 
 export default function CustomImage({
   src = "",
   alt = "",
   width = 100,
   height = 100,
-  loading = "lazy",
-  layout = "responsive",
+  className = "",
+  priority = false,
   ...props
 }) {
-  const shimmer = (w, h) => `
-<svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <defs>
-    <linearGradient id="g">
-      <stop stop-color="#dddddd" offset="20%" />
-      <stop stop-color="#b1b1b1" offset="50%" />
-      <stop stop-color="#dddddd" offset="70%" />
-    </linearGradient>
-  </defs>
-  <rect width="${w}" height="${h}" fill="#dddddd" />
-  <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
-  <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
-</svg>`
+  // Generate blur data URL
+  const blurDataURL = `data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`
 
-  const toBase64 = (str) =>
-    typeof window === 'undefined'
-      ? Buffer.from(str).toString('base64')
-      : window.btoa(str)
+  // Handle empty or invalid src
+  const imageSrc = src || '/empty.png'
+
   return (
     <Image
-      crossOrigin="anonymous"
-      src={src} alt={alt}
-      loading="lazy"
+      src={imageSrc}
+      alt={alt}
       width={width}
       height={height}
-      unoptimized={false}
-      layout={layout}
+      className={className}
+      priority={priority}
       placeholder="blur"
-      blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`}
-      loader={() => src}
+      blurDataURL={blurDataURL}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
       {...props}
     />
   )
 }
-
-
-// const shimmer = (w, h) => `
-// <svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-//   <defs>
-//     <linearGradient id="g">
-//       <stop stop-color="#333" offset="20%" />
-//       <stop stop-color="#222" offset="50%" />
-//       <stop stop-color="#333" offset="70%" />
-//     </linearGradient>
-//   </defs>
-//   <rect width="${w}" height="${h}" fill="#333" />
-//   <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
-//   <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
-// </svg>`

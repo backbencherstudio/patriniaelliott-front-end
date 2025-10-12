@@ -66,6 +66,7 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
               />
               {/* Delete Button */}
               <button
+                aria-label="Delete"
                 onClick={() => onImageDelete(idx)}
                 className="absolute cursor-pointer top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                 title="Delete"
@@ -690,6 +691,8 @@ const AddTour = () => {
                     {!showExtraService && (
                       <button
                         type="button"
+                        aria-label="Add extra services"
+                        
                         className="border border-[#061D35] bg-[#061D35] text-white hover:text-[#061D35] hover:bg-transparent duration-300 transition-colors px-3 py-1 cursor-pointer rounded-md"
                         onClick={() => setShowExtraService((prev) => !prev)}
                       >
@@ -724,6 +727,7 @@ const AddTour = () => {
                   {showExtraService && (
                     <div className="space-x-3">
                       <button
+                        aria-label="Save"
                         type="button"
                         className="border border-[#061D35] bg-[#061D35] text-white hover:text-[#061D35] hover:bg-transparent duration-300 transition-colors px-3 py-1 cursor-pointer rounded-md"
                         onClick={(e) => {
@@ -734,6 +738,7 @@ const AddTour = () => {
                         Save
                       </button>
                       <button
+                        aria-label="Cancel"
                         type="button"
                         className="border border-[#061D35] px-3 py-1 cursor-pointer rounded-md"
                         onClick={() => setShowExtraService(false)}
@@ -780,6 +785,7 @@ const AddTour = () => {
           {/* Actions */}
           <div className="flex flex-col-reverse md:flex-row justify-center items-center gap-4">
             <button
+              aria-label="Next"
               type="submit"
               className="border cursor-pointer border-[#061D35] px-16 py-3 rounded-full bg-[#061D35] text-base font-semibold text-white hover:bg-white hover:text-[#061D35]"
               disabled={loading}

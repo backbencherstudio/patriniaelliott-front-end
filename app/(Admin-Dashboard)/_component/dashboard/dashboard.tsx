@@ -128,6 +128,7 @@ console.log("check selected user",selectedUser);
           <div className="flex gap-2 whitespace-nowrap md:gap-4">
             {["All", "vendor", "user"].map((role) => (
               <button
+                aria-label="Role"
                 key={role}
                 onClick={() =>
                   setSelectedRole(role as "All" | "vendor" | "user")
@@ -153,6 +154,7 @@ console.log("check selected user",selectedUser);
               height={14}
             />
             <select
+              aria-label="Date range"
               value={dateRange}
               onChange={(e) =>
                 setDateRange(e.target.value as "all" | "7" | "15" | "30")

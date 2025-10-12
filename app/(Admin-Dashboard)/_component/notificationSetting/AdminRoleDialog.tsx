@@ -119,6 +119,7 @@ export default function AdminRoleDialog({ open, onOpenChange }: any) {
           {/* Footer Buttons */}
           <div className="flex justify-end items-center gap-2 pt-4 ">
             <button
+              aria-label="Cancel"
               type="button"
               onClick={() => onOpenChange(false)}
               className="border border-blueColor lg:py-2.5 lg:px-8 cursor-pointer rounded-md md:text-base py-2 px-6  text-blueColor text-sm"
@@ -126,6 +127,7 @@ export default function AdminRoleDialog({ open, onOpenChange }: any) {
               Cancel
             </button>
             <button
+              aria-label="Update"
               type="submit"
               className="bg-blueColor cursor-pointer lg:py-2.5 lg:px-8 rounded-md md:text-base py-2 px-6  hover:bg-blueColor text-white text-sm"
             >

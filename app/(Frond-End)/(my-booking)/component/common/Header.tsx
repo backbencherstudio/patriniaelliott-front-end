@@ -30,6 +30,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }: HeaderProps
       {/* Mobile menu button */}
       <div className=" flex items-center">
         <button
+          aria-label="Menu"
           onClick={onMenuClick}
           className=" p-2 lg:hidden text-[#4A4C56]"
         >
@@ -46,16 +47,16 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }: HeaderProps
         {
           isShow &&
           <div className=" absolute top-10  text-center bg-redColor py-4 shadow-2xl rounded-xl  w-[120px]">
-            <button onClick={handleLogout} className=" text-white text-base cursor-pointer font-medium">Log out</button>
+            <button aria-label="Log out" onClick={handleLogout} className=" text-white text-base cursor-pointer font-medium">Log out</button>
           </div>
         }
         <div className="flex items-center gap-4">
-          <button className=" cursor-pointer relative ">
+          <button aria-label="Notifications" className=" cursor-pointer relative ">
             <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-redColor "></span>
             <IoNotificationsOutline size={24} className="text-whiteColor" />
              
           </button>
-<div onClick={() => seIsShow(!isShow)}
+<div aria-label="Profile" onClick={() => seIsShow(!isShow)}
           className="flex justify-start items-center gap-3 cursor-pointer hover:opacity-90">
             
           <Image
@@ -69,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }: HeaderProps
             <h4 className="text-base font-medium text-white">Jackob Gerrald</h4>
             <p className=" text-sm text-whiteColor/70">Super Admin</p>
           </div>
-          <button className=" cursor-pointer">
+          <button aria-label="Arrow down" className=" cursor-pointer">
             <IoIosArrowDown size={24} className="text-whiteColor" />
           </button>
         </div>

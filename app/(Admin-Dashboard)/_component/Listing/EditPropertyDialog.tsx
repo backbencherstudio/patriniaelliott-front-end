@@ -117,7 +117,7 @@ export default function EditPropertyDialog({data,
           </div>
 
           <div className="pt-4 flex justify-end">
-            <button type="submit" disabled={loading} className="bg-primaryColor disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-white px-6 py-2 rounded-md">
+            <button aria-label="Save Changes" type="submit" disabled={loading} className="bg-primaryColor disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-white px-6 py-2 rounded-md">
             {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>

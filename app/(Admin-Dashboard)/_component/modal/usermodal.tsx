@@ -22,11 +22,11 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={handleBackdropClick}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" aria-label="Backdrop" onClick={handleBackdropClick}>
       <div className="p-4 md:p-6 bg-white rounded-xl flex flex-col gap-4 md:gap-6 max-h-[90vh] overflow-auto w-full max-w-[974px] m-4">
         <div className="flex justify-between items-start">
           <h2 className="text-[#070707] text-xl md:text-[28px] font-medium">User Details</h2>
-          <div className="w-[34px] h-[34px] p-[9px] bg-[#e9e9ea] rounded-full flex items-center cursor-pointer" onClick={onClose}>
+          <div className="w-[34px] h-[34px] p-[9px] bg-[#e9e9ea] rounded-full flex items-center cursor-pointer" aria-label="Close" onClick={onClose}>
             <Image src="/modal/close.svg" alt="close" width={16} height={16} />
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
 
         </div>
 
-        <button onClick={() => onClose()} className="self-end px-6 cursor-pointer py-3  rounded-full outline outline-[#fe5050] text-[#fe5050] font-medium text-sm md:text-base">
+        <button aria-label="Remove" onClick={() => onClose()} className="self-end px-6 cursor-pointer py-3  rounded-full outline outline-[#fe5050] text-[#fe5050] font-medium text-sm md:text-base">
           Remove 
         </button>
       </div>

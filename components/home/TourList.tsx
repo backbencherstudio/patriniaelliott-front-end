@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -41,8 +41,17 @@ export default function TourList() {
     fetchData(); 
   }, [endpoint, token]);
   const packageData = data ? data?.data : []
-  const goNext = () => swiperRef.current?.slideNext();
-  const goPrev = () => swiperRef.current?.slidePrev();
+  const goNext = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  }, []);
+
+  const goPrev = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  }, []);
 
 
   return (
@@ -54,12 +63,14 @@ export default function TourList() {
         <div className="relative">
           {/* Swiper Navigation Buttons */}
           <button
+            aria-label="Previous"
             onClick={goPrev}
             className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 left-0 xl:-left-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
           >
             <FaChevronLeft className="text-black text-sm" />
           </button>
           <button
+            aria-label="Next"
             onClick={goNext}
             className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 right-0 xl:-right-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
           >
