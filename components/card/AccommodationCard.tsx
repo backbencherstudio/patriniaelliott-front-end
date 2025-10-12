@@ -10,6 +10,7 @@ import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 
 import { Swiper, SwiperSlide } from "swiper/react";
+import CustomImage from "../reusable/CustomImage";
 
 
 export default function AccommodationCard({ tour }: { tour: Package }) {
@@ -54,13 +55,14 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
                 {
                   roomFiles?.slice(0, 4).map((file: any, index: number) => (
                     <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
-                      <Image
+                      <CustomImage
                         src={getSlideSrc(file, index)}
                         alt={name}
                         width={400}
                         height={200}
+                        loading="lazy"
                         onError={() => handleImageError(index)}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                        className="!w-full !h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
                       />
                     </SwiperSlide>
                   ))
@@ -68,12 +70,13 @@ export default function AccommodationCard({ tour }: { tour: Package }) {
               </Swiper>
               :
               <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
-                <Image
+                <CustomImage
                   src={"/Accommodation/a1.png"}
                   alt={name}
                   width={400}
                   height={200}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
+                  loading="lazy"
+                  className="!w-full !h-full object-cover group-hover:scale-110 transition-all duration-300 !rounded-lg "
                 />
               </div>
           }

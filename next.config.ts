@@ -24,9 +24,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "plus.unsplash.com",
       },
+
       {
         protocol: "https",
-        hostname: "enhancing-wan-hamburg-hourly.trycloudflare.com",
+        hostname: "commodities-suzuki-straight-makers.trycloudflare.com",
       },
       {
         protocol: "https",
@@ -34,11 +35,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "backend.naamstay.com",
+        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
       },
       {
         protocol: "https",
-        hostname: "backend.naamstay.com",
+        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
       },
       {
         protocol: "https",

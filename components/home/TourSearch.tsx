@@ -5,7 +5,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useToken } from "@/hooks/useToken";
 import usericon from "@/public/icon/user.svg";
+import { UserService } from "@/service/user/user.service";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -26,6 +28,7 @@ export default function TourSearch({ typesearch }: any) {
     null,
     null,
   ]);
+
   const [appliedDateRange, setAppliedDateRange] = useState<
     [Date | null, Date | null]
   >([null, null]);
@@ -36,6 +39,27 @@ export default function TourSearch({ typesearch }: any) {
   const [openFilter, setOpenFilter] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+   const [loading, setLoading]=useState(true);
+       const [error, setError]=useState(null);
+      const {token} = useToken()
+      const [selectedDestinations, setSelectedDestinations] = useState<string[]>(
+    []
+  );
+       const fetchData = async()=>{
+        setLoading(true)
+        try {
+          const response = await UserService.getData(`/application/packages/top-destinations?limit=${10}&page=${1}`,token)
+          setSelectedDestinations(response.data.data)
+        } catch (error) {
+          setError(error)
+        } finally {
+          setLoading(false)
+        }
+       }
+         useEffect(()=>{
+        fetchData()
+       },[])
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -70,17 +94,16 @@ export default function TourSearch({ typesearch }: any) {
   }, []);
   type Room = {
     id: number;
-    adults: number;
-    children: number;
+    people: number;
   };
 
   const [rooms, setRooms] = useState<Room[]>([
-    { id: 1, adults: 2, children: 0 },
+    { id: 1, people: 2 },
   ]);
 
   const handleChange = (
     index: number,
-    type: "adults" | "children",
+    type: "people",
     action: "increment" | "decrement"
   ) => {
     setRooms((prev) =>
@@ -91,7 +114,7 @@ export default function TourSearch({ typesearch }: any) {
               [type]:
                 action === "increment"
                   ? room[type] + 1
-                  : Math.max(room[type] - 1, type === "adults" ? 1 : 0),
+                  : Math.max(room[type] - 1, type === "people" ? 1 : 0),
             }
           : room
       )
@@ -100,18 +123,16 @@ export default function TourSearch({ typesearch }: any) {
   const addRoom = () => {
     setRooms((prev) => [
       ...prev,
-      { id: prev.length + 1, adults: 2, children: 0 },
+      { id: prev.length + 1, people: 2 },
     ]);
   };
-  const totalAdults = rooms.reduce((acc, r) => acc + r.adults, 0);
-  const totalChildren = rooms.reduce((acc, r) => acc + r.children, 0);
+  const totalPeople = rooms.reduce((acc, r) => acc + r.people, 0);
 
   const handleSearch = () => {
     const query = new URLSearchParams({
       destinations: selectedLocation || "",
       rooms: rooms.length.toString(),
-      adults: totalAdults.toString(),
-      children: totalChildren.toString(),
+      people: totalPeople.toString(),
     });
 
     if (appliedDateRange[0]) {
@@ -129,6 +150,7 @@ export default function TourSearch({ typesearch }: any) {
       router.push(`/tours?${query.toString()}`);
     }
   };
+
 
   return (
     <div className="bg-white relative rounded-[12px] px-4 py-[14px] flex items-center flex-col lg:flex-row  justify-center lg:justify-between  shadow-md !w-full">
@@ -151,6 +173,7 @@ export default function TourSearch({ typesearch }: any) {
                 width={20}
                 height={20}
                 alt="image"
+                loading="lazy"
                 className="w-5 h-5"
               />
               <div>
@@ -170,21 +193,21 @@ export default function TourSearch({ typesearch }: any) {
               onChange={(e) => setLocationInput(e.target.value)}
             />
             <ul className="mt-2 max-h-60 overflow-auto">
-              {destinations
-                .filter((item) =>
-                  item.toLowerCase().includes(locationInput.toLowerCase())
+              {selectedDestinations
+                .filter((item :any) =>
+                  item.country?.toLowerCase().includes(locationInput.toLowerCase())
                 )
-                .map((loc) => (
+                .map((loc :any) => (
                   <li
-                    key={loc}
+                    key={loc?.package_id}
                     className="cursor-pointer p-2 hover:bg-gray-100 rounded"
                     onClick={() => {
-                      setSelectedLocation(loc);
+                      setSelectedLocation(loc?.country);
                       setLocationPopoverOpen(false);
                       setLocationInput("");
                     }}
                   >
-                    {loc}
+                    {loc?.country}
                   </li>
                 ))}
             </ul>
@@ -296,7 +319,7 @@ export default function TourSearch({ typesearch }: any) {
                   <p className="text-black text-sm !mb-0 whitespace-nowrap">
                     {`${rooms.length} Room${
                       rooms.length > 1 ? "s" : ""
-                    }, ${totalAdults} Adults, ${totalChildren} Children`}
+                    }, ${totalPeople} People`}
                   </p>
                 </div>
               </div>
@@ -319,30 +342,29 @@ export default function TourSearch({ typesearch }: any) {
                   <div className="flex justify-between bg-secondaryColor/12 items-center text-sm font-semibold p-2 mb-3">
                     <p>Room {room.id}</p>
                     <span className="text-grayColor1 font-normal text-sm ">
-                      {room.adults} Adult{room.adults > 1 ? "s" : ""},{" "}
-                      {room.children} Child
+                      {room.people} People{room.people > 1 ? "s" : ""},{" "}
                     </span>
                   </div>
                   <div className="flex justify-between items-center px-4 pb-3">
                     <div>
-                      <p className="text-sm font-medium text-black">Adults</p>
+                      <p className="text-sm font-medium text-black">People</p>
                       <p className="text-xs text-muted-foreground">15+ years</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() =>
-                          handleChange(index, "adults", "decrement")
+                          handleChange(index, "people", "decrement")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
                         <Minus size={16} />
                       </button>
                       <span className="w-4 text-center text-sm">
-                        {room.adults}
+                        {room.people}
                       </span>
                       <button
                         onClick={() =>
-                          handleChange(index, "adults", "increment")
+                          handleChange(index, "people", "increment")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
@@ -351,33 +373,33 @@ export default function TourSearch({ typesearch }: any) {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center px-4 pb-3">
+                  {/* <div className="flex justify-between items-center px-4 pb-3">
                     <div>
-                      <p className="text-sm font-medium text-black">Children</p>
+                      <p className="text-sm font-medium text-black">People</p>
                       <p className="text-xs text-muted-foreground">1–9 years</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() =>
-                          handleChange(index, "children", "decrement")
+                          handleChange(index, "people", "decrement")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
                         <Minus size={16} />
                       </button>
                       <span className="w-4 text-center text-sm">
-                        {room.children}
+                        {room.people}
                       </span>
                       <button
                         onClick={() =>
-                          handleChange(index, "children", "increment")
+                            handleChange(index, "people", "increment")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
                         <Plus size={16} />
                       </button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               ))}
 

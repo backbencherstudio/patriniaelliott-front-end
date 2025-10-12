@@ -169,18 +169,23 @@ export const VendorService = {
       },
     };
 
-    const endpoint = `/vendor-user-verification/vendor/${vendorId}`;
+    const endpoint = `/admin/vendor-user-verification/vendor/${vendorId}`;
     console.log('🌐 API Endpoint:', endpoint);
     console.log('📤 Request config:', _config);
     console.log('🔗 Full URL will be:', `${process.env.NEXT_PUBLIC_API_ENDPOINT || "https://honors-whale-even-inspiration.trycloudflare.com"}/api${endpoint}`);
 
     const response = await Fetch.get(endpoint, _config);
-    console.log('📥 Response received:', response);
+    console.log('📥 Raw axios response:', response);
     
-    return response;
+    // Axios returns { data: {...}, status: 200, statusText: 'OK', headers: {...}, config: {...} }
+    // We need to extract the actual API response from response.data
+    const apiResponse = response.data || response;
+    console.log('📥 API response data:', apiResponse);
+    
+    return apiResponse;
   },
 
-  // Update vendor profile using token from cookie
+  // Update vendor profile using token from cookie (multipart form data)
   updateVendorProfileWithCookie: async (vendorId: string, data: any, context: any = null) => {
     const userToken = CookieHelper.get({ key: "tourAccessToken", context });
     
@@ -188,14 +193,40 @@ export const VendorService = {
       throw new Error("Authentication token not found. Please login again.");
     }
 
+    // Convert data to FormData for multipart request
+    const formData = new FormData();
+    
+    // Add each field individually to FormData
+    Object.keys(data).forEach(key => {
+      if (data[key] !== null && data[key] !== undefined) {
+        formData.append(key, data[key]);
+      }
+    });
+
     const _config = {
       headers: {
-        "Content-Type": "application/json",
         Authorization: "Bearer " + userToken,
+        // Don't set Content-Type for FormData, let browser set it with boundary
       },
     };
 
-    return await Fetch.patch(`/vendor-user-verification/vendor/${vendorId}`, data, _config);
+    console.log('🔄 PATCH Request - Vendor ID:', vendorId);
+    console.log('🔄 PATCH Request - Data:', data);
+    console.log('🔄 PATCH Request - FormData entries:');
+    for (let [key, value] of formData.entries()) {
+      console.log(`  ${key}:`, value);
+    }
+    console.log('🔄 PATCH Request - Config:', _config);
+
+    const response = await Fetch.patch(`/admin/vendor-user-verification/vendor/${vendorId}`, formData, _config);
+    console.log('🔄 Raw PATCH axios response:', response);
+    
+    // Axios returns { data: {...}, status: 200, statusText: 'OK', headers: {...}, config: {...} }
+    // We need to extract the actual API response from response.data
+    const apiResponse = response.data || response;
+    console.log('🔄 PATCH API response data:', apiResponse);
+    
+    return apiResponse;
   },
 
   // Balance & Withdrawals
@@ -495,6 +526,24 @@ export const VendorService = {
     return await Fetch.get("/vendor/verification/status", _config);
   },
 
+  // Upload user verification document (multipart)
+  uploadUserVerificationDocument: async (form: FormData, context: any = null) => {
+    const userToken = CookieHelper.get({ key: "tourAccessToken", context });
+    if (!userToken) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+
+    const _config = {
+      headers: {
+        Authorization: "Bearer " + userToken,
+        "content-type": "multipart/form-data",
+      },
+    } as any;
+
+    // Backend expects POST /vendor-user-verification with fields: type, image, number, status
+    return await Fetch.post("/vendor-user-verification", form, _config);
+  },
+
   // Vendor Packages (Pending/Approved)
   getVendorPackages: async (params: any = {}, context: any = null) => {
     const userToken = CookieHelper.get({ key: "tourAccessToken", context });
@@ -515,7 +564,7 @@ export const VendorService = {
     };
 
     // Mirrors Insomnia path: /api/admin/vendor-package
-    return await Fetch.get(`/admin/vendor-package${queryString}`, _config);
+    return await Fetch.get(`/admin/package/my-packages`, _config);
   },
 
   updateVendorPackage: async (id: string, data: any, context: any = null) => {

@@ -6,17 +6,17 @@ function RefundStatuse({ value }: { value: string }) {
   let text = '';
   let icon = '';
 
-  if (value === 'completed') {
+  if (value === 'completed' || value === 'approved') {
     bg = 'bg-[#ecfcf2]';
     outline = 'outline-[#aaefc6]';
     text = 'text-[#057647]';
     icon = '/booking/check.svg';
-  } else if (value === 'processing') {
+  } else if (value === 'processing' || value === 'pending') {
     bg = 'bg-[#ffa23a]/10';
     outline = 'outline-[#ffa23a]';
     text = 'text-[#ffa23a]';
     icon = '/booking/processing.svg';
-  } else if (value === 'canceled') {
+  } else if (value === 'canceled' || value === 'cancelled' || value === 'rejected') {
     bg = 'bg-[#fe5050]/10';
     outline = 'outline-[#fe5050]';
     text = 'text-[#fe5050]';

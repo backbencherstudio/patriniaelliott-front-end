@@ -45,10 +45,28 @@ export const useMyProfile = () => {
     }
   }, []);
 
+  const updateMeWithAvatar = useCallback(async (payload: any, avatarFile: File | null) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await MyProfileService.updateMeWithAvatar(payload, avatarFile);
+      // Optimistically merge
+      const updated = (res as any)?.data ?? res;
+      const merged = updated?.data ?? updated;
+      if (merged) setMe((prev) => ({ ...(prev || {}), ...merged }));
+      return res;
+    } catch (e: any) {
+      setError(e?.message || 'Failed to update profile with avatar');
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchMe();
   }, [fetchMe]);
 
-  return { me, loading, error, fetchMe, updateMe };
+  return { me, loading, error, fetchMe, updateMe, updateMeWithAvatar };
 };
 

@@ -69,7 +69,7 @@ const BookingDetailsDialog: React.FC<any> = ({
           {/* Left - Image */}
           <div className="h-[250px]  md:h-full">
             <Image
-              src={ noimage}
+              src={data?.booking_items?.[0]?.package?.featured_image?.url || noimage}
               alt="Room"
               width={500}
               height={500}
