@@ -8,7 +8,7 @@ interface Payment3Props {
 }
 
 export default function Payment3() {
-  // show success toast if redirected after adding a card
+  // show success toast if redirected after addingg a card
   if (typeof window !== 'undefined') {
     const url = new URL(window.location.href)
     const added = url.searchParams.get('added')
