@@ -30,15 +30,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "enhancing-wan-hamburg-hourly.trycloudflare.com",
-      },
-      {
-        protocol: "https",
-        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
-      },
-      {
-        protocol: "https",
-        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
+        hostname: "commodities-suzuki-straight-makers.trycloudflare.com",
       },
       {
         protocol: "https",
