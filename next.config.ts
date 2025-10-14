@@ -65,7 +65,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "flexible-heaven-reasons-bacterial.trycloudflare.com",
+        hostname: "wives-draw-physician-tied.trycloudflare.com",
       },
     ],
   },

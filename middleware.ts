@@ -23,8 +23,8 @@ const PROTECTED_ROUTES = [
   '/property-list',
   '/apartment',
   '/hotel',
-  '/toure',
-  '/tours'
+  '/toure/:path*/booking'  // Tour booking pages require login
+  // Note: /toure and /tours removed from protected routes to allow public access
 ];
 
 // Define admin-only routes
@@ -156,8 +156,8 @@ export const config = {
     '/property-list/:path*',
     '/apartment/:path*',
     '/hotel/:path*',
-    '/toure/:path*',
-    '/tours/:path*',
+    '/toure/:path*/booking',  // Tour booking pages require login
+    // Note: /toure and /tours removed from matcher to allow public access
     
     // Public auth routes
     '/login',
