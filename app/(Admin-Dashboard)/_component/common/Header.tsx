@@ -29,15 +29,19 @@ const Header: React.FC<HeaderProps> = ({
 }: HeaderProps) => {
   const [isShow, seIsShow] = useState<boolean>(false);
   const router = useRouter();
- const hanldeLogout =async()=>{
-         try {
-          const res = await UserService?.logout()
-           router?.push("/login")
-         } catch (error) {
-          console.log(error.message);
-          
-         }
-      }
+ const hanldeLogout = async () => {
+   try {
+     // Call logout service which will clear all data
+     UserService?.logout();
+     
+     // Redirect to home page after logout
+     router?.push('/');
+   } catch (error) {
+     console.error('Logout error:', error);
+     // Even if there's an error, redirect to home page
+     router?.push('/');
+   }
+ }
   return (
     <nav className="bg-primaryColor py-3">
       <div className=" container px-5   relative flex justify-between mb-1 z-50">

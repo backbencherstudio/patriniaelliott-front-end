@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/dialog";
 import { useForm } from 'react-hook-form';
 import { MyProfileService } from '@/service/user/myprofile.service';
+import { DataClearHelper } from '@/helper/data-clear.helper';
 import { useState } from 'react';
 
 export function DialogDemo({ onClose, showModal, email }: any) {
@@ -29,13 +30,20 @@ export function DialogDemo({ onClose, showModal, email }: any) {
         password: data.password,
         feedback: data.feedback,
       });
+      
+      // Clear all user data comprehensively after successful account deletion
+      console.log('🧹 Account deleted successfully, clearing all user data...');
+      DataClearHelper.clearAllUserData();
+      
       onClose(false);
-      // Optionally redirect after deletion
+      
+      // Redirect to home page after clearing all data
       if (typeof window !== 'undefined') {
         window.location.href = '/';
       }
     } catch (e) {
-      // no-op; UI validations can be added later
+      console.error('❌ Error deleting account:', e);
+      // Handle error appropriately - you might want to show a toast notification here
     } finally {
       setSubmitting(false);
     }

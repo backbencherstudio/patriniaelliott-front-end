@@ -1,4 +1,5 @@
 import { CookieHelper } from "../../helper/cookie.helper";
+import { DataClearHelper } from "../../helper/data-clear.helper";
 import { Fetch } from "../../lib/Fetch";
 
 const config = {
@@ -46,7 +47,13 @@ newPassword: async (data) => {
   },
 
   logout: (context = null) => {
+    // Clear authentication cookies
     CookieHelper.destroy({ key: "tourAccessToken", context });
+    CookieHelper.destroy({ key: "token", context });
+    
+    // Clear all user data comprehensively
+    console.log('🚪 Logging out user, clearing all data...');
+    DataClearHelper.clearAllUserData(context);
   },
   // get user details
   getUserDetails: async (context = null ) => {
