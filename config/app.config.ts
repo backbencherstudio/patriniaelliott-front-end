@@ -1,16 +1,16 @@
 // server base url
 export const URL =
-  process.env.NEXT_PUBLIC_API_ENDPOINT || "https://backend.naamstay.com";
+  process.env.NEXT_PUBLIC_API_ENDPOINT || "https://humanitarian-crimes-too-producing.trycloudflare.com";
 // app config
 export const AppConfig = () => ({
   app: {
     // server endpoint
     url: URL,
-    name: "app",
-    slogan: "app",
+    name: "Naamstay",
+    slogan: "Naamstay",
     meta: {
-      description: "app",
-      keywords: "app",
+      description: "naamstay",
+      keywords: "naamstay",
     },
 
     // api endpoint

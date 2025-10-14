@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast, Toaster } from 'react-hot-toast';
 import { useVendorProfile } from '../../../../../hooks/useVendorProfile';
+import { useMyProfile } from '../../../../../hooks/useMyProfile';
 
 const vendorTypeOptions = [
   { value: "Property Manager", label: "Property Manager" },
@@ -26,18 +27,67 @@ interface FormData {
 }
 
 interface VendorData {
-  id: string;
-  email: string;
-  name: string;
-  first_name: string;
-  phone_number: string;
-  address: string;
-  VendorVerification?: {
-    business_website?: string;
-    vendor_type?: string;
-    TIN?: string;
-    address?: string;
+  vendor_verification: {
+    id: string;
+    user_id: string;
+    first_name: string;
+    phone_number: string;
+    business_website: string;
+    vendor_type: string;
+    TIN: string;
+    property_name: string;
+    address: string;
+    unit_number: string;
+    postal_code: string;
+    city: string;
+    country: string;
+    owner_type: string;
+    owner_first_name: string;
+    owner_last_name: string;
+    owner_phone_numbers: string;
+    owner_alt_names: string;
+    manager_name: string;
+    is_govt_representation: boolean;
+    payment_method: string;
+    payment_email: string;
+    payment_account_name: string;
+    payment_TIN: string;
+    billing_address: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+    verified_at: string | null;
   };
+  user_info: {
+    id: string;
+    name: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone_number: string;
+    country: string;
+    city: string;
+    address: string;
+    zip_code: string;
+    gender: string;
+    date_of_birth: string;
+    nationality: string;
+    passport_number: string;
+    passport_first_name: string;
+    passport_last_name: string;
+    passport_issuing_country: string;
+    passport_expiry_date: string;
+    street_address: string;
+    apt_suite_unit: string;
+    display_name: string;
+    state: string;
+    type: string;
+    created_at: string;
+    updated_at: string;
+    avatar?: string;
+    avatar_url?: string;
+  };
+  has_verification: boolean;
 }
 
 export default function Profile() {
@@ -55,28 +105,79 @@ export default function Profile() {
   });
   const [avatarPreview, setAvatarPreview] = useState<string>("/vendor/avatar.png");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarUploading, setAvatarUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use the vendor profile hook
-  const vendorId = "cmfpdolh7000djvc4bvgxv91z"; // Updated to match API response
+  const vendorId = "cmfz8mc480019jv5c9w296eoh"; // Updated to match API response
   const { vendorData, loading, error, fetchVendorData, updateVendorData } = useVendorProfile(vendorId);
+
+  // Get current logged-in user to use their id as vendor_id for packages
+  const { me } = useMyProfile();
+  const currentUserId = me?.id || me?.data?.id || null;
+
+  // State for "Your Submitted Packages"
+  const [packages, setPackages] = useState<any[] | null>(null);
+  const [packagesLoading, setPackagesLoading] = useState<boolean>(false);
+  const [packagesError, setPackagesError] = useState<string | null>(null);
+
+  // Fetch packages by user id from external admin endpoint
+  const fetchMyPackages = async () => {
+    if (!currentUserId) return;
+    try {
+      setPackagesLoading(true);
+      setPackagesError(null);
+      const url = `https://https://humanitarian-crimes-too-producing.trycloudflare.com/api/admin/package/my-packages?vendor_id=${currentUserId}`;
+      const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+      const data = await res.json().catch(() => null);
+      const list = data?.data ?? data ?? [];
+      setPackages(Array.isArray(list) ? list : []);
+    } catch (e: any) {
+      setPackagesError(e?.message || 'Failed to load packages');
+      setPackages([]);
+    } finally {
+      setPackagesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMyPackages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUserId]);
 
   // Populate form when vendor data is loaded
   useEffect(() => {
-    if (!vendorData) return;
+    if (!vendorData) {
+      console.log('No vendor data available yet');
+      return;
+    }
     
     console.log('Vendor data loaded, populating form:', vendorData);
+    console.log('Vendor verification:', vendorData.vendor_verification);
+    console.log('User info:', vendorData.user_info);
     
-    // Populate form with vendor data
-    const firstName = vendorData.first_name || vendorData.name || '';
-    const email = vendorData.email || '';
-    const phoneNumber = vendorData.phone_number || '';
+    // Populate form with vendor data from new API structure
+    const firstName = vendorData.vendor_verification?.first_name || vendorData.user_info?.first_name || '';
+    const email = vendorData.user_info?.email || '';
+    const phoneNumber = vendorData.vendor_verification?.phone_number || vendorData.user_info?.phone_number || '';
     
-    // Business Details - get from VendorVerification
-    const address = vendorData.VendorVerification?.address || vendorData.address || '';
-    const businessWebsite = vendorData.VendorVerification?.business_website || '';
-    const vendorType = vendorData.VendorVerification?.vendor_type || '';
-    const taxId = vendorData.VendorVerification?.TIN || '';
+    // Business Details - get from vendor_verification
+    const address = vendorData.vendor_verification?.address || vendorData.user_info?.address || '';
+    const businessWebsite = vendorData.vendor_verification?.business_website || '';
+    const vendorType = vendorData.vendor_verification?.vendor_type || '';
+    const taxId = vendorData.vendor_verification?.TIN || '';
+    
+    // Set avatar preview from avatar_url or avatar field
+    if (vendorData.user_info?.avatar_url) {
+      setAvatarPreview(vendorData.user_info.avatar_url);
+    } else if (vendorData.user_info?.avatar) {
+      // If we have avatar filename but no URL, construct the URL
+      const baseUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://honors-whale-even-inspiration.trycloudflare.com";
+      setAvatarPreview(`${baseUrl}/public/storage/avatar/${vendorData.user_info.avatar}`);
+    } else {
+      // Keep default avatar if no avatar is set
+      setAvatarPreview("/vendor/avatar.png");
+    }
     
     console.log('Setting form values:', {
       firstName,
@@ -85,7 +186,8 @@ export default function Profile() {
       address,
       businessWebsite,
       vendorType,
-      taxId
+      taxId,
+      avatarUrl: vendorData.user_info?.avatar_url
     });
     
     setValue('firstName', firstName);
@@ -101,28 +203,42 @@ export default function Profile() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      if (!vendorData?.id) {
-        console.error('No vendor ID available');
+      if (!vendorData?.vendor_verification?.id) {
+        console.error('No vendor verification ID available');
         return;
       }
 
-      // Prepare update data
-      const updateData = {
+      // Prepare update data for the new API structure
+      const updateData: any = {
         first_name: data.firstName,
-        email: data.email,
         phone_number: data.phoneNumber,
+        business_website: data.businessWebsite,
+        vendor_type: data.vendorType,
+        TIN: data.taxId,
         address: data.address,
-        VendorVerification: {
-          business_website: data.businessWebsite,
-          vendor_type: data.vendorType,
-          TIN: data.taxId,
-        }
+        // User info updates should be sent separately or in the same level
+        email: data.email,
       };
 
+      // Add avatar file if selected
+      if (avatarFile) {
+        updateData.avatar = avatarFile;
+        setAvatarUploading(true);
+      }
+
       console.log('Updating vendor profile with data:', updateData);
+      console.log('Vendor ID:', vendorId);
+      console.log('Current vendor data:', vendorData);
 
       // Update vendor profile using the hook
-      await updateVendorData(updateData);
+      const result = await updateVendorData(updateData);
+      console.log('Update result:', result);
+      
+      // Update avatar preview if avatar was uploaded
+      if (avatarFile && result?.data?.user_info?.avatar_url) {
+        setAvatarPreview(result.data.user_info.avatar_url);
+        console.log('Avatar updated to:', result.data.user_info.avatar_url);
+      }
       
       setIsEditing(false);
       toast.success('Profile updated successfully!');
@@ -131,6 +247,8 @@ export default function Profile() {
     } catch (error: any) {
       console.error('Error updating profile:', error);
       toast.error('Failed to update profile. Please try again.');
+    } finally {
+      setAvatarUploading(false);
     }
   };
 
@@ -251,18 +369,23 @@ export default function Profile() {
               />
               <button
                 type="button"
-                className="w-5 h-5 absolute top-[25.5px] right-0.5 md:-right-1.5 bg-[#0068ef] rounded-full flex items-center justify-center"
+                className={`w-5 h-5 absolute top-[25.5px] right-0.5 md:-right-1.5 bg-[#0068ef] rounded-full flex items-center justify-center ${isEditing ? 'cursor-pointer hover:bg-[#0051bc]' : 'cursor-not-allowed opacity-50'}`}
                 onClick={handleAvatarClick}
                 tabIndex={0}
-                aria-label="Change avatar"
+                aria-label={isEditing ? "Change avatar" : "Avatar editing disabled"}
+                disabled={!isEditing}
               >
-                <Image
-                  src="/vendor/camera.svg"
-                  alt="Camera icon"
-                  className="w-[10.7px] h-[10.7px]"
-                  width={20}
-                  height={20}
-                />
+                {avatarUploading ? (
+                  <div className="w-[10.7px] h-[10.7px] border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Image
+                    src="/vendor/camera.svg"
+                    alt="Camera icon"
+                    className="w-[10.7px] h-[10.7px]"
+                    width={20}
+                    height={20}
+                  />
+                )}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -290,13 +413,13 @@ export default function Profile() {
                   if (vendorData) {
                     console.log('Edit button clicked, populating form with:', vendorData);
                     
-                    const firstName = vendorData.first_name || vendorData.name || '';
-                    const email = vendorData.email || '';
-                    const phoneNumber = vendorData.phone_number || '';
-                    const address = vendorData.address || vendorData.VendorVerification?.address || '';
-                    const businessWebsite = vendorData.VendorVerification?.business_website || '';
-                    const vendorType = vendorData.VendorVerification?.vendor_type || '';
-                    const taxId = vendorData.VendorVerification?.TIN || '';
+                    const firstName = vendorData.vendor_verification?.first_name || vendorData.user_info?.first_name || '';
+                    const email = vendorData.user_info?.email || '';
+                    const phoneNumber = vendorData.vendor_verification?.phone_number || vendorData.user_info?.phone_number || '';
+                    const address = vendorData.vendor_verification?.address || vendorData.user_info?.address || '';
+                    const businessWebsite = vendorData.vendor_verification?.business_website || '';
+                    const vendorType = vendorData.vendor_verification?.vendor_type || '';
+                    const taxId = vendorData.vendor_verification?.TIN || '';
                     
                     setValue('firstName', firstName);
                     setValue('email', email);
@@ -330,10 +453,10 @@ export default function Profile() {
                     {...register('firstName')}
                     className="w-full text-sm bg-transparent outline-none"
                     placeholder="Enter your first name"
-                    defaultValue={vendorData?.first_name || vendorData?.name || ''}
+                    defaultValue={vendorData?.vendor_verification?.first_name || vendorData?.user_info?.first_name || ''}
                   />
                 ) : (
-                  <div className="text-sm text-[#777980]">{vendorData?.first_name || vendorData?.name || 'Enter your first name'}</div>
+                  <div className="text-sm text-[#777980]">{vendorData?.vendor_verification?.first_name || vendorData?.user_info?.first_name || 'Enter your first name'}</div>
                 )}
               </div>
             </div>
@@ -347,10 +470,10 @@ export default function Profile() {
                     type="email"
                     className="w-full text-sm bg-transparent outline-none"
                     placeholder="Enter your email address"
-                    defaultValue={vendorData?.email || ''}
+                    defaultValue={vendorData?.user_info?.email || ''}
                   />
                 ) : (
-                  <div className="text-sm text-[#777980]">{vendorData?.email || 'Enter your email address'}</div>
+                  <div className="text-sm text-[#777980]">{vendorData?.user_info?.email || 'Enter your email address'}</div>
                 )}
               </div>
             </div>
@@ -363,10 +486,10 @@ export default function Profile() {
                     {...register('phoneNumber')}
                     className="w-full text-sm bg-transparent outline-none"
                     placeholder="Enter your phone number"
-                    defaultValue={vendorData?.phone_number || ''}
+                    defaultValue={vendorData?.vendor_verification?.phone_number || vendorData?.user_info?.phone_number || ''}
                   />
                 ) : (
-                  <div className="text-sm text-[#777980]">{vendorData?.phone_number || 'Enter your phone number'}</div>
+                  <div className="text-sm text-[#777980]">{vendorData?.vendor_verification?.phone_number || vendorData?.user_info?.phone_number || 'Enter your phone number'}</div>
                 )}
               </div>
             </div>
@@ -391,7 +514,7 @@ export default function Profile() {
                       />
                     ) : (
                       <div className="flex-1 text-sm text-[#777980]">
-                        {vendorData?.address || vendorData?.VendorVerification?.address || 'Enter your address'}
+                        {vendorData?.vendor_verification?.address || vendorData?.user_info?.address || 'Enter your address'}
                       </div>
                     )}
                   </div>
@@ -410,10 +533,10 @@ export default function Profile() {
                       type="text"
                       className="flex-1 text-sm bg-transparent outline-none"
                       placeholder="Enter business website"
-                      defaultValue={vendorData?.VendorVerification?.business_website || ''}
+                      defaultValue={vendorData?.vendor_verification?.business_website || ''}
                     />
                   ) : (
-                    <div className="flex-1 text-sm text-[#777980]">{vendorData?.VendorVerification?.business_website || 'Enter business website'}</div>
+                    <div className="flex-1 text-sm text-[#777980]">{vendorData?.vendor_verification?.business_website || 'Enter business website'}</div>
                   )}
                 </div>
               </div>
@@ -441,7 +564,7 @@ export default function Profile() {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <div className="text-sm text-[#777980]">{vendorData?.VendorVerification?.vendor_type || watch('vendorType') || 'Select vendor type'}</div>
+                    <div className="text-sm text-[#777980]">{vendorData?.vendor_verification?.vendor_type || watch('vendorType') || 'Select vendor type'}</div>
                   )}
                 </div>
               </div>
@@ -455,10 +578,10 @@ export default function Profile() {
                       type="text"
                       className="flex-1 text-sm bg-transparent outline-none"
                       placeholder="Enter business tax ID"
-                      defaultValue={vendorData?.VendorVerification?.TIN || ''}
+                      defaultValue={vendorData?.vendor_verification?.TIN || ''}
                     />
                   ) : (
-                    <div className="flex-1 text-sm text-[#777980]">{vendorData?.VendorVerification?.TIN || 'Enter business tax ID'}</div>
+                    <div className="flex-1 text-sm text-[#777980]">{vendorData?.vendor_verification?.TIN || 'Enter business tax ID'}</div>
                   )}
                 </div>
               </div>
@@ -477,13 +600,13 @@ export default function Profile() {
                   if (vendorData) {
                     console.log('Cancel button clicked, resetting form to:', vendorData);
                     
-                    const firstName = vendorData.first_name || vendorData.name || '';
-                    const email = vendorData.email || '';
-                    const phoneNumber = vendorData.phone_number || '';
-                    const address = vendorData.address || vendorData.VendorVerification?.address || '';
-                    const businessWebsite = vendorData.VendorVerification?.business_website || '';
-                    const vendorType = vendorData.VendorVerification?.vendor_type || '';
-                    const taxId = vendorData.VendorVerification?.TIN || '';
+                    const firstName = vendorData.vendor_verification?.first_name || vendorData.user_info?.first_name || '';
+                    const email = vendorData.user_info?.email || '';
+                    const phoneNumber = vendorData.vendor_verification?.phone_number || vendorData.user_info?.phone_number || '';
+                    const address = vendorData.vendor_verification?.address || vendorData.user_info?.address || '';
+                    const businessWebsite = vendorData.vendor_verification?.business_website || '';
+                    const vendorType = vendorData.vendor_verification?.vendor_type || '';
+                    const taxId = vendorData.vendor_verification?.TIN || '';
                     
                     setValue('firstName', firstName);
                     setValue('email', email);
@@ -502,10 +625,10 @@ export default function Profile() {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || avatarUploading}
               className="md:mt-4 bg-blueColor text-white py-2 md:py-3 px-5 md:px-8 rounded-lg hover:bg-[#0051bc] transition-colors disabled:opacity-50"
             >
-              {loading ? 'Saving...' : 'Save'}
+              {loading || avatarUploading ? 'Saving...' : 'Save'}
             </button>
           </div>
         )}

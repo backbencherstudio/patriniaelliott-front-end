@@ -3,8 +3,8 @@ import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { toast, Toaster } from 'react-hot-toast'
-import { UserService } from '@/service/user/user.service'
 import { VendorService } from '@/service/vendor/vendor.service'
+import { useVendorApi } from '@/hooks/useVendorApi'
 
 interface VerificationFormData {
   mobile: string
@@ -13,17 +13,26 @@ interface VerificationFormData {
 interface PackageData {
   id: string
   name: string
-  description: string
-  price: string
+  description?: string
+  price?: string | number
+  computed_price?: number
+  discount?: number
+  duration?: string | null
+  min_capacity?: number
+  max_capacity?: number
   type: string
-  address: string
-  city: string
-  country: string
-  max_guests: number
-  bathrooms: number
-  bedrooms: any // Can be number, array, or object
-  package_files: Array<{ file_url: string }>
+  service_fee?: string | number
+  user_id?: string
+  user?: { id: string; name: string; type?: string }
+  package_files: Array<{ id?: string; file_url: string; file?: string; file_alt?: string }>
+  package_trip_plans?: Array<{ id: string; title: string; description?: string }>
+  package_policies?: Array<{
+    id: string
+    description?: string
+    package_policies?: Array<{ title: string; description: string }>
+  }>
   created_at: string
+  approved_at?: string | null
   status: number
 }
 
@@ -32,6 +41,7 @@ export default function UserVerification() {
   const [docBack, setDocBack] = useState<File | null>(null)
   const [docPassport, setDocPassport] = useState<File | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const [packages, setPackages] = useState<PackageData[]>([])
   const [loading, setLoading] = useState(true)
   
@@ -45,6 +55,8 @@ export default function UserVerification() {
       mobile: ''
     }
   })
+
+  const { handleApiCall } = useVendorApi()
 
   const handleFileChange = (setter: (file: File | null) => void, files: FileList | null) => {
     if (files && files[0]) {
@@ -103,16 +115,16 @@ export default function UserVerification() {
       await VendorService.uploadVendorDocuments(docFormData as any)
 
       toast.success('ID documents submitted successfully!')
-      
-      // Reset form
+
+      // Reset form values but keep button disabled after success
       setDocFront(null)
       setDocBack(null)
       setDocPassport(null)
-      
+      setSubmitted(true)
+      // keep submitting=true to disable button
     } catch (error) {
       console.error('Error submitting verification:', error)
       toast.error('Failed to submit documents. Please try again.')
-    } finally {
       setSubmitting(false)
       isSubmittingRef.current = false
     }
@@ -244,13 +256,26 @@ export default function UserVerification() {
 
             {/* Submit Button */}
             <div className="flex justify-end mt-6">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="px-8 py-3 bg-[#0068ef] text-white rounded-lg text-base font-medium hover:bg-[#0051bd] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {submitting ? 'Submitting...' : 'Submit Documents'}
-              </button>
+              {submitted ? (
+                <button
+                  type="button"
+                  disabled
+                  className="px-8 py-3 bg-[#38c976] text-white rounded-lg text-base font-medium opacity-90 cursor-default flex items-center gap-2"
+                >
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill="white"/>
+                  </svg>
+                  Submitted
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-8 py-3 bg-[#0068ef] text-white rounded-lg text-base font-medium hover:bg-[#0051bd] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Submitting...' : 'Submit Documents'}
+                </button>
+              )}
             </div>
           </div>
 
@@ -276,21 +301,22 @@ export default function UserVerification() {
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-lg font-medium text-[#22262e]">{pkg.name}</h3>
                       <span className={`px-2 py-1 rounded text-xs ${
-                        pkg.status === 1 
-                          ? 'bg-[#ffa23a]/10 text-[#ffa23a]' 
-                          : 'bg-[#38c976]/10 text-[#38c976]'
+                        pkg.approved_at 
+                          ? 'bg-[#38c976]/10 text-[#38c976]' 
+                          : 'bg-[#ffa23a]/10 text-[#ffa23a]'
                       }`}>
-                        {pkg.status === 1 ? 'Pending' : 'Approved'}
+                        {pkg.approved_at ? 'Approved' : 'Pending'}
                       </span>
                     </div>
-                    
-                    <div className="text-sm text-[#777980] mb-2">
-                      {safeRender(pkg.city)}{pkg.city && pkg.country ? ', ' : ''}{safeRender(pkg.country)}
-                    </div>
-                    
+                    {/* Basic meta */}
                     <div className="text-sm text-[#070707] mb-2">
-                      Type: {safeRender(pkg.type)} | Price: ${safeRender(pkg.price)}
+                      Type: {safeRender(pkg.type)} | Price: $
+                      {pkg.computed_price ?? pkg.price ?? '-'}
+                      {pkg.discount ? ` (-${pkg.discount}%)` : ''}
                     </div>
+                    {pkg.user?.name && (
+                      <div className="text-xs text-[#777980] mb-2">Vendor: {pkg.user.name}</div>
+                    )}
                     
                     {pkg.description && (
                       <div className="text-sm text-[#4a4c56] mb-3 line-clamp-2">
@@ -299,16 +325,19 @@ export default function UserVerification() {
                     )}
                     
                     <div className="grid grid-cols-2 gap-2 text-xs text-[#777980] mb-3">
-                      <div>Max Guests: {safeRender(pkg.max_guests)}</div>
-                      <div>Bathrooms: {safeRender(pkg.bathrooms)}</div>
-                      <div>Bedrooms: {safeRender(pkg.bedrooms)}</div>
+                      <div>Min Capacity: {safeRender(pkg.min_capacity)}</div>
+                      <div>Max Capacity: {safeRender(pkg.max_capacity)}</div>
+                      <div>Service Fee: {pkg.service_fee ? `$${pkg.service_fee}` : '-'}</div>
                       <div>Created: {new Date(pkg.created_at).toLocaleDateString()}</div>
                     </div>
+                    {pkg.approved_at && (
+                      <div className="text-xs text-[#777980] mb-3">Approved: {new Date(pkg.approved_at).toLocaleDateString()}</div>
+                    )}
                     
                     {pkg.package_files && pkg.package_files.length > 0 && (
                       <div className="grid grid-cols-4 gap-2">
                         {pkg.package_files.slice(0, 4).map((file, idx) => (
-                          <div key={idx} className="w-full h-16 bg-gray-100 rounded">
+                          <div key={idx} className="w-full h-16 bg-gray-100 rounded ">
                             <Image
                               src={file.file_url}
                               alt={`Package image ${idx + 1}`}
@@ -323,6 +352,18 @@ export default function UserVerification() {
                         ))}
                       </div>
                     )}
+
+                    {/* Policies (flattened key-value) */}
+                    {/* {pkg.package_policies && pkg.package_policies.length > 0 && (
+                      <div className="mt-3 text-xs text-[#4a4c56] space-y-1">
+                        {pkg.package_policies.flatMap((p) => p.package_policies || []).map((p, i) => (
+                          <div key={i} className="flex justify-between gap-2">
+                            <span className="text-[#777980] capitalize">{p.title.replace(/_/g,' ')}</span>
+                            <span>{p.description}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )} */}
                   </div>
                 ))}
               </div>

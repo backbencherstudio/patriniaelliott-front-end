@@ -13,6 +13,8 @@ function ReviewDetails({
     data,
   } :any) {
 
+    console.log("check review data",data);
+    
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -26,7 +28,7 @@ function ReviewDetails({
             {/* Left - Image */}
             <div className="h-[250px] col-span-4  md:h-full">
               <Image
-                src={data?.reservation?.package_image || "/empty.png"}
+                src={data?.reservation?.package_image?.url || "/empty.png"}
                 alt="Room"
                 width={500}
                 height={500}

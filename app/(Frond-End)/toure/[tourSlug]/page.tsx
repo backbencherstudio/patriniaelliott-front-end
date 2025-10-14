@@ -37,6 +37,9 @@ const singletour = vendorPackage ? vendorPackage : {}
     console.log(error);
 
   }
+
+  console.log(vendorPackage,"tourData");
+  
   return (
     <div>
       <div className=" container">

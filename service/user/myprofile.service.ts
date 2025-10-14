@@ -1,7 +1,7 @@
 import { CookieHelper } from "../../helper/cookie.helper";
 import { Fetch } from "../../lib/Fetch";
 
-const buildAuthHeader = (context: any = null) => {
+const buildAuthHeader = (context: any = null, isFormData: boolean = false) => {
   const tokenKeys = ["tourAccessToken", "token", "accessToken", "authToken", "vendorToken", "userToken"];
   let token: string | null = null;
   for (const key of tokenKeys) {
@@ -14,7 +14,7 @@ const buildAuthHeader = (context: any = null) => {
   if (!token) return null;
   return {
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       Authorization: `Bearer ${token}`,
     },
   };
@@ -37,6 +37,30 @@ export const MyProfileService = {
       throw new Error("Authentication token not found. Please login again.");
     }
     return await Fetch.patch("/user-profile/update", data, config);
+  },
+
+  // PATCH /user-profile/update → update authenticated user profile with avatar
+  updateMeWithAvatar: async (data: any, avatarFile: File | null, context: any = null) => {
+    const config = buildAuthHeader(context, true); // isFormData = true
+    if (!config) {
+      throw new Error("Authentication token not found. Please login again.");
+    }
+    
+    const formData = new FormData();
+    
+    // Add all profile data fields
+    Object.keys(data).forEach(key => {
+      if (data[key] !== null && data[key] !== undefined) {
+        formData.append(key, data[key]);
+      }
+    });
+    
+    // Add avatar file if provided
+    if (avatarFile) {
+      formData.append('avatar', avatarFile);
+    }
+    
+    return await Fetch.patch("/user-profile/update", formData, config);
   },
 
   // POST /auth/change-password → change authenticated user's password

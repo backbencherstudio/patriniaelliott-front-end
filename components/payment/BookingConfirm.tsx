@@ -106,6 +106,8 @@ const router = useRouter()
     setIsOpen(false)
     router.push("/")
   }
+  console.log("responseData",responseData);
+  
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className=" " asChild></DialogTrigger>
@@ -160,19 +162,19 @@ const router = useRouter()
             <h3 className=" text-2xl font-medium text-headerColor">Booking details</h3>
             <div className=" space-y-3">
               <div className=" text-sm text-grayColor1 flex justify-between">
-                <p>Booking code:</p><p>{responseData?.booking?.invoice_number}</p>
+                <p>Booking code:</p><p>{responseData?.booking_details?.id}</p>
               </div>
               <div className=" text-sm text-grayColor1 flex justify-between">
-                <p>package type:</p><p>{responseData?.booking?.type}</p>
+                <p>package type:</p><p>{responseData?.package_details?.type}</p>
               </div>
               <div className=" text-sm text-grayColor1 flex justify-between">
                 <p>Date:</p><p>{formattedDate}</p>
               </div>
               <div className=" text-sm text-grayColor1 flex justify-between">
-                <p>Total:</p><p>${responseData?.booking?.total_amount}</p>
+                <p>Total:</p><p>${responseData?.booking_details?.total}</p>
               </div>
               <div className=" text-sm text-grayColor1 flex justify-between">
-                <p>Payment method:</p><p> card</p>
+                <p>Payment method:</p><p> {responseData?.booking_details?.payment_method}</p>
               </div>
             </div>
           </div>
