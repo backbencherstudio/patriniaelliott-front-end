@@ -1,12 +1,12 @@
 'use client';
 
+import { useUserType } from '@/hooks/useUserType';
 import { X } from "lucide-react";
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
-import { useUserType } from '@/hooks/useUserType';
 
 interface NavItem {
   icon: string;
@@ -69,18 +69,17 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       items = items.filter(item => !hiddenForUser.has(item.href));
       // Add User Verification item
       items = [...items, ...userNavItems];
-      console.log('User type detected: user - hiding vendor financial menus, showing User Verification');
+     
     } else if (isVendor) {
       // For vendors: keep base menus and add Pending Request
       items = [...items, ...vendorNavItems];
-      console.log('User type detected: vendor - showing Pending Request menu');
+     
     } else if (isAdmin) {
       // For admins: show all menus
       items = [...items, ...userNavItems, ...vendorNavItems];
-      console.log('User type detected: admin - showing all menus');
+    
     } else {
-      // For unknown user types or null, show all menus as fallback
-      console.log('User type not detected or unknown:', userType, '- showing all available menus as fallback');
+      // For unknown user types or null, show all menus as fallbac
       items = [...items, ...userNavItems, ...vendorNavItems];
     }
 
@@ -110,7 +109,7 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         xl:rounded-[12px] p-5 w-full overflow-y-auto
       `}>
         <div className="flex justify-end xl:hidden cursor-pointer">
-          <button onClick={onClose}><X /></button>
+          <button aria-label="Close" onClick={onClose}><X /></button>
         </div>
 
         {/* Debug Panel - Remove in production */}

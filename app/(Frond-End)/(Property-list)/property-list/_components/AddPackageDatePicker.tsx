@@ -219,7 +219,7 @@ export default function AddPackageDatePicker({ handleOpenDatePicker, handleSelec
               }) : "Select Date"}</h3>
             </div>
             {checkIn && (
-              <button className="text-[#475467] text-xl p-1" onClick={clearCheckIn}>
+              <button aria-label="Clear check-in" className="text-[#475467] text-xl p-1" onClick={clearCheckIn}>
                 <IoMdClose />
               </button>
             )}
@@ -234,7 +234,7 @@ export default function AddPackageDatePicker({ handleOpenDatePicker, handleSelec
               }) : "Select Date"}</h3>
             </div>
             {checkOut && (
-              <button className="text-[#475467] text-xl p-1" onClick={clearCheckOut}>
+              <button aria-label="Clear check-out" className="text-[#475467] text-xl p-1" onClick={clearCheckOut}>
                 <IoMdClose />
               </button>
             )}
@@ -244,7 +244,7 @@ export default function AddPackageDatePicker({ handleOpenDatePicker, handleSelec
       <div className={`flex ${location.pathname.split("/")[1] === "cruise" ? "gap-20":""} bg-white`}>
         <div className="flex-1 lg:flex flex-col justify-between">
           <div className="flex items-center justify-between text-base lg:text-[22.8px]">
-            <button onClick={handlePrevMonth} className="text-[#1A1A1A9C] w-[34.15px] h-[34.15px] lg:w-[54.15px] lg:h-[54.15px] flex items-center justify-center">
+            <button aria-label="Previous month" onClick={handlePrevMonth} className="text-[#1A1A1A9C] w-[34.15px] h-[34.15px] lg:w-[54.15px] lg:h-[54.15px] flex items-center justify-center">
               <FaChevronLeft />
             </button>
             <div>
@@ -252,7 +252,7 @@ export default function AddPackageDatePicker({ handleOpenDatePicker, handleSelec
               {currentDate.getFullYear()}
             </div>
 
-            <button onClick={handleNextMonth} className="text-orange-500 w-[34.15px] h-[34.15px] lg:w-[54.15px] lg:h-[54.15px] flex items-center justify-center">
+            <button aria-label="Next month" onClick={handleNextMonth} className="text-orange-500 w-[34.15px] h-[34.15px] lg:w-[54.15px] lg:h-[54.15px] flex items-center justify-center">
               <FaChevronRight />
             </button>
           </div>
@@ -299,15 +299,15 @@ export default function AddPackageDatePicker({ handleOpenDatePicker, handleSelec
             })}
           </div>
           <div className="flex justify-end items-center gap-5 mt-4">
-            <div className="text-sm lg:text-[16px] underline cursor-pointer" onClick={handleClearDate}>Clear dates</div>
-            <div className="bg-[#0E457D] text-white px-[18px] lg:px-[24px] py-[6px] lg:py-[10px] rounded-xl cursor-pointer" onClick={() => { handleOpenDatePicker(); handleCheckInCheckOutDate([checkIn, checkOut]) }}>Close</div>
+            <div aria-label="Clear dates" className="text-sm lg:text-[16px] underline cursor-pointer" onClick={handleClearDate}>Clear dates</div>
+            <div aria-label="Close" className="bg-[#0E457D] text-white px-[18px] lg:px-[24px] py-[6px] lg:py-[10px] rounded-xl cursor-pointer" onClick={() => { handleOpenDatePicker(); handleCheckInCheckOutDate([checkIn, checkOut]) }}>Close</div>
           </div>
         </div>
         {location.pathname.split("/")[1] === "cruise" && (
           <div className="flex-1 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between text-base lg:text-[22.8px]">
-                <button onClick={handlePrevMonth} className="text-[#1A1A1A9C] w-[34.15px] h-[34.15px] lg:w-[54.15px] lg:h-[54.15px] flex items-center justify-center">
+                <button aria-label="Previous month" onClick={handlePrevMonth} className="text-[#1A1A1A9C] w-[34.15px] h-[34.15px] lg:w-[54.15px] lg:h-[54.15px] flex items-center justify-center">
                   <FaChevronLeft />
                 </button>
                 <div>
@@ -315,7 +315,7 @@ export default function AddPackageDatePicker({ handleOpenDatePicker, handleSelec
                   {nextCurrentDate.getFullYear()}
                 </div>
 
-                <button onClick={handleNextMonth} className="text-orange-500 w-[34.15px] h-[34.15px] lg:w-[54.15px] lg:h-[54.15px] flex items-center justify-center">
+                <button aria-label="Next month" onClick={handleNextMonth} className="text-orange-500 w-[34.15px] h-[34.15px] lg:w-[54.15px] lg:h-[54.15px] flex items-center justify-center">
                   <FaChevronRight />
                 </button>
               </div>
@@ -363,8 +363,8 @@ export default function AddPackageDatePicker({ handleOpenDatePicker, handleSelec
               </div>
             </div>
             <div className="flex justify-end items-center gap-5 mt-4">
-              <div className="text-sm lg:text-[16px] underline cursor-pointer" onClick={handleClearDate}>Clear dates</div>
-              <div className="bg-[#0E457D] text-white px-[18px] lg:px-[24px] py-[6px] lg:py-[10px] rounded-xl cursor-pointer" onClick={() => { handleOpenDatePicker(); handleCheckInCheckOutDate([checkIn, checkOut]) }}>Close</div>
+              <div aria-label="Clear dates" className="text-sm lg:text-[16px] underline cursor-pointer" onClick={handleClearDate}>Clear dates</div>
+              <div aria-label="Close" className="bg-[#0E457D] text-white px-[18px] lg:px-[24px] py-[6px] lg:py-[10px] rounded-xl cursor-pointer" onClick={() => { handleOpenDatePicker(); handleCheckInCheckOutDate([checkIn, checkOut]) }}>Close</div>
             </div>
           </div>
         )}

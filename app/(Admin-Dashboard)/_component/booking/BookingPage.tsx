@@ -172,6 +172,7 @@ export default function BookingPage() {
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">
             {["all", "hotel", "apartment", "tour"].map((role) => (
               <button
+              aria-label={role}
                 key={role}
                 onClick={() =>
                   setSelectedRole(role as "all" | "hotel" | "apartment" | "tour")
@@ -189,7 +190,7 @@ export default function BookingPage() {
           {/* Date Range Dropdown */}
           <div className=" mt-4 md:mt-0 justify-end flex gap-2">
             <div>
-              <button onClick={handleExportPDF} className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">Export as PDF</button>
+              <button aria-label="Export as PDF" onClick={handleExportPDF} className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">Export as PDF</button>
             </div>
             <div className=" items-center flex gap-1  md:gap-2 text-sm text-[#0068ef] border p-2 rounded">
               <Image
@@ -199,6 +200,7 @@ export default function BookingPage() {
                 height={14}
               />
               <select
+                aria-label="Date Range"
                 value={dateRange}
                 onChange={(e) =>
                   setDateRange(e.target.value as "all" | "7" | "15" | "30")
@@ -221,6 +223,7 @@ export default function BookingPage() {
             loading={loading}
             totalPages={totalPages || 0}
             itemsPerPage={itemsPerPage}
+            aria-label="Booking Table"
             onPageChange={(page) => setCurrentPage(page)}
           />
         </div>

@@ -164,6 +164,7 @@ export default function Payment1() {
           <h2 className="text-[#22262e] text-2xl font-medium">Add payment cards</h2>
           {cards.length > 0 && (
             <button 
+              aria-label="Refresh Cards"
               onClick={fetchCards}
               disabled={loading}
               className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
@@ -221,6 +222,7 @@ export default function Payment1() {
                       )}
                     </div>
                     <button 
+                      aria-label="Delete Card"
                       onClick={() => handleDeleteCard(card)}
                       className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-colors disabled:opacity-50"
                       title="Delete card"

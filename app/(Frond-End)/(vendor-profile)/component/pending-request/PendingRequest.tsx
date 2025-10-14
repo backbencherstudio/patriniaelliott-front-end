@@ -186,7 +186,7 @@ export default function PendingRequest() {
             <input type="file" accept="image/*" onChange={e=>setDocPassport(e.target.files?.[0]||null)} className="p-2 border rounded" />
             <label className="text-sm">Mobile number</label>
             <input value={mobile} onChange={e=>setMobile(e.target.value)} placeholder="01XXXXXXXXX" className="p-2 border rounded" />
-            <button disabled={submittingDocs} onClick={handleSubmitDocuments} className="mt-2 px-4 py-2 rounded bg-[#0068ef] text-white disabled:opacity-60">{submittingDocs? 'Submitting...' : 'Submit'}</button>
+            <button aria-label="Submit Documents" disabled={submittingDocs} onClick={handleSubmitDocuments} className="mt-2 px-4 py-2 rounded bg-[#0068ef] text-white disabled:opacity-60">{submittingDocs? 'Submitting...' : 'Submit'}</button>
           </div>
           <div className="lg:col-span-2 bg-white rounded-xl p-4">
             <div className="text-lg font-medium text-[#22262e] mb-3">Already submitted package</div>
@@ -265,6 +265,7 @@ export default function PendingRequest() {
           <div className="flex flex-wrap gap-2 md:gap-4">
             {['All Properties', 'Pending', 'Approved'].map((tab) => (
               <button
+                aria-label={`Filter ${tab}`}
                 key={tab}
                 onClick={() => setActiveTab(tab as typeof activeTab)}
                 className={`px-2 md:px-4 py-2 border-b-2 cursor-pointer text-sm md:text-base ${activeTab === tab

@@ -52,6 +52,7 @@ export default function EditTourDialog({
               User Id <BiEditAlt className="text-grayColor1 text-xl" />
             </label>
             <input
+          
               className="block w-full border border-grayColor1/80 rounded-md text-base py-2 px-2 lg:py-3 lg:px-3"
               placeholder="#0002"
               {...register("userId")}
@@ -96,7 +97,8 @@ export default function EditTourDialog({
 
           <div className="pt-4 flex justify-end">
             <button
-              type="submit"
+                aria-label="Save Changes"
+                type="submit"
               className="bg-primaryColor cursor-pointer text-white px-6 py-2 rounded-md"
             >
               Save Changes

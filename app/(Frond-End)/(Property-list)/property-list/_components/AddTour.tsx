@@ -67,6 +67,7 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
               />
               {/* Delete Button */}
               <button
+                aria-label="Delete"
                 onClick={() => onImageDelete(idx)}
                 className="absolute cursor-pointer top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                 title="Delete"
@@ -741,7 +742,6 @@ const AddTour = () => {
                     ))}
                   </ul>
                 </div> */}
-
                   {/* Extra Services */}
                   <div className="space-y-3 border p-2 rounded-md">
                     <div className="flex md:flex-col items-center gap-4 justify-between">
@@ -779,6 +779,8 @@ const AddTour = () => {
                         />
 
                       </div>
+
+                      
                     )}
                     {showExtraService && (
                       <div className="space-x-3">

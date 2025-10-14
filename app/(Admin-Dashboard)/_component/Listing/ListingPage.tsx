@@ -168,6 +168,7 @@ setEditLoading(true)
           <div className="flex justify-between md:justify-start gap-2 whitespace-nowrap md:gap-4">
             {["All", "Hotel", "Apartment", "Tour"].map((role) => (
               <button
+                aria-label="Role"
                 key={role}
                 onClick={() =>
                   setSelectedRole(
@@ -188,7 +189,7 @@ setEditLoading(true)
           {/* Date Range Dropdown */}
           <div className=" mt-4 md:mt-0 justify-end flex gap-2">
             <div>
-              <button onClick={handleExportPDF} className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">
+              <button aria-label="Export as PDF" onClick={handleExportPDF} className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">
                 Export as PDF
               </button>
             </div>
@@ -200,6 +201,7 @@ setEditLoading(true)
                 height={14}
               />
               <select
+                aria-label="Date range"
                 value={dateRange}
                 onChange={(e) =>
                   setDateRange(e.target.value as "all" | "7" | "15" | "30")

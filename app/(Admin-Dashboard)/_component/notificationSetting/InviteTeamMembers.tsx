@@ -50,6 +50,7 @@ export default function InviteTeamMembers() {
 
           {index === 0 && (
             <button
+              aria-label="Send invites"
               onClick={handleSendInvites}
               type="button"
               className="bg-blue-600 whitespace-nowrap hover:bg-blue-700 text-white text-xs md:text-sm lg:text-base font-medium px-2 py-2 lg:py-3.5 rounded-md cursor-pointer flex items-center space-x-2"
@@ -62,6 +63,7 @@ export default function InviteTeamMembers() {
       ))}
 
       <button
+        aria-label="Add another"
         onClick={handleAddField}
         type="button"
         className="text-secondaryColor/90 cursor-pointer text-base mt-2 flex items-center space-x-2"

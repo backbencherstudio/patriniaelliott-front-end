@@ -74,6 +74,7 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
       ) : (
         <div className="flex gap-1">
           <button 
+          aria-label="Accept"
             onClick={handleAccept} 
             disabled={loading}
             className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px] disabled:opacity-50"
@@ -100,6 +101,7 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
             </svg>
           </button>
           <button 
+          aria-label="Reject"
             onClick={handleReject} 
             disabled={loading}
             className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px] disabled:opacity-50"

@@ -83,9 +83,9 @@ export default function RefundConfirmation({
         </div>
 
         <div className="flex justify-center w-full gap-4 mt-4">
-          <button onClick={handleRefund} className="bg-[#0068EF] w-full py-2.5 rounded-md text-white cursor-pointer  block">Refund</button>
+          <button aria-label="Refund" onClick={handleRefund} className="bg-[#0068EF] w-full py-2.5 rounded-md text-white cursor-pointer  block">Refund</button>
           <button
-            
+            aria-label="Cancel"
             className="text-red-500 block border border-red-500  w-full rounded-md cursor-pointer hover:bg-red-50"
             onClick={() => onOpenChange(false)}
           >

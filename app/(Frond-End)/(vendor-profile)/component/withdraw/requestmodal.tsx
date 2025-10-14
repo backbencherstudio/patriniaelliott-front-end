@@ -84,6 +84,7 @@ export default function RequestPopup({ open, onClose }: any) {
 
           <div className="w-full">
             <button
+              aria-label="Send Withdraw Request"
               type="submit"
               className="w-full pl-5 pr-5 py-5 bg-[#d6ae29] rounded-[50px] outline outline-[#d2d2d5] text-center cursor-pointer hover:bg-[#c19f25] transition-colors"
             >

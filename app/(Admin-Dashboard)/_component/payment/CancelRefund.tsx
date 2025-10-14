@@ -75,13 +75,13 @@ export default function CancelRefund({
 
         <div className="flex justify-center w-full gap-4 mt-4">
           <button
-            
+            aria-label="Back"
             className="text-red-500 block border border-red-500  w-full rounded-md cursor-pointer hover:bg-red-50"
             onClick={() => onOpenChange(false)}
           >
             Back
           </button>
-          <button onClick={handleRefund} disabled={loading} className="bg-redColor disabled:cursor-not-allowed disabled:bg-red-500/50 w-full flex items-center justify-center gap-2 py-2.5 rounded-md text-white cursor-pointer  ">
+          <button aria-label="Confirm" onClick={handleRefund} disabled={loading} className="bg-redColor disabled:cursor-not-allowed disabled:bg-red-500/50 w-full flex items-center justify-center gap-2 py-2.5 rounded-md text-white cursor-pointer  ">
             {loading ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading...</span>  : "Confirm"}
           </button>
       

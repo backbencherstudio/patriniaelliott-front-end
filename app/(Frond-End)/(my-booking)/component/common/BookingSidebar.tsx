@@ -4,6 +4,8 @@ import { X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { UserService } from '@/service/user/user.service';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 
@@ -28,7 +30,26 @@ const navItems: NavItem[] = [
 
 const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
-    const isActive = (href: string): boolean => {
+  const router = useRouter();
+  
+  const handleLogout = async () => {
+    try {
+      // Call logout service which will clear all data
+      UserService?.logout();
+      
+      // Redirect to home page after logout
+      router.push('/');
+      
+      // Close sidebar
+      onClose();
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if there's an error, redirect to home page
+      router.push('/');
+    }
+  };
+  
+  const isActive = (href: string): boolean => {
     if (href === "/profile-info") {
       return pathname === "/profile-info";
     }
@@ -54,7 +75,7 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         xl:rounded-[12px] p-5 w-full overflow-y-auto
       `}>
         <div className="flex justify-end xl:hidden cursor-pointer">
-          <button onClick={onClose}><X /></button>
+          <button aria-label="Close" onClick={onClose}><X /></button>
         </div>
 
         {/* Account Section */}
@@ -63,6 +84,7 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <nav className="flex flex-col gap-1">
             {navItems.slice(0, 5).map((item, idx) => (
               <Link
+                aria-label={item.label}
                 key={idx}
                 href={item.href}
                 onClick={onClose}
@@ -94,6 +116,7 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <nav className="flex flex-col gap-1">
             {navItems.slice(5).map((item, idx) => (
                <Link
+                aria-label={item.label}
                 key={idx}
                 href={item.href}
                 onClick={onClose}
@@ -118,16 +141,16 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
         {/* Log out section */}
           <div className="mt-auto pt-4">
-          <Link
-            href="/logout"
-            onClick={onClose}
-            className="flex items-center gap-3 px-3 py-3 border border-grayColor1/20 rounded-lg transition-colors duration-200 hover:bg-gray-50"
+          <button
+            aria-label="Log out"
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-3 border border-grayColor1/20 rounded-lg transition-colors duration-200 hover:bg-gray-50 w-full"
           >
             <div className={`w-[30px] flex justify-center items-center   h-[30px] flex-shrink-0 rounded-full  bg-[#FFFBEE]  shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]`}>
               <Image src="/admin/logout.svg" alt="Log out" width={20} height={20} />
             </div>
             <span className="text-base font-normal text-[#111111]">Log out account</span>
-          </Link>
+          </button>
         </div>
       </div>
     </div>

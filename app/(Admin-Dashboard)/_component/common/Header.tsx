@@ -29,21 +29,26 @@ const Header: React.FC<HeaderProps> = ({
 }: HeaderProps) => {
   const [isShow, seIsShow] = useState<boolean>(false);
   const router = useRouter();
- const hanldeLogout =async()=>{
-         try {
-          const res = await UserService?.logout()
-           router?.push("/login")
-         } catch (error) {
-          console.log(error.message);
-          
-         }
-      }
+ const hanldeLogout = async () => {
+   try {
+     // Call logout service which will clear all data
+     UserService?.logout();
+     
+     // Redirect to home page after logout
+     router?.push('/');
+   } catch (error) {
+     console.error('Logout error:', error);
+     // Even if there's an error, redirect to home page
+     router?.push('/');
+   }
+ }
   return (
     <nav className="bg-primaryColor py-3">
       <div className=" container px-5   relative flex justify-between mb-1 z-50">
         {/* Mobile menu button */}
         <div className=" flex items-center">
           <button
+            aria-label="Menu"
             onClick={onMenuClick}
             className=" p-2 lg:hidden text-[#4A4C56]"
           >
@@ -60,7 +65,7 @@ const Header: React.FC<HeaderProps> = ({
         {/* Notification and Profile Group */}
         <div className="flex items-center gap-5 justify-end  relative sm:ml-0">
           <div className="flex items-center gap-4">
-            <button className=" cursor-pointer relative ">
+            <button aria-label="Notification" className=" cursor-pointer relative ">
               <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-redColor "></span>
               <IoNotificationsOutline  className="text-whiteColor text-base lg:text-2xl" />
             </button>

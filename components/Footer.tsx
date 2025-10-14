@@ -38,7 +38,7 @@ export default function Footer() {
                 placeholder="Enter your email"
                 className="px-4 py-3 text-base rounded-l-md rounded-[8px] border border-[#EDFAFF]/50 bg-[#EDFAFF]/10 text-[#D2D2D5] w-full  focus:outline-none"
               />
-              <button className=" absolute top-1/2 -translate-1/2 -right-13  bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 text-base leading-[150%] rounded-md font-medium">
+              <button aria-label="Sign Up" className=" absolute top-1/2 -translate-1/2 -right-13  bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 text-base leading-[150%] rounded-md font-medium">
                 Sign Up →
               </button>
             </div>
@@ -51,7 +51,7 @@ export default function Footer() {
           <ul className="space-y-3 text-base leading-[150%]">
             {quickLinks.map(({ name, slug }) => (
               <li key={slug}>
-                <Link href={slug} className="hover:text-yellow-400">
+                <Link aria-label={name} href={slug} className="hover:text-yellow-400">
                   {name}
                 </Link>
               </li>
@@ -64,13 +64,14 @@ export default function Footer() {
           <ul className="space-y-4 text-base leading-[150%]">
             <li className=" flex gap-3 items-center">
               <FaPhone />
-              <Link href="tel:602-774-4735" className="hover:text-yellow-400">
+              <Link aria-label="Phone" href="tel:602-774-4735" className="hover:text-yellow-400">
                 602-774-4735
               </Link>
             </li>
             <li className=" flex gap-3 items-center">
               <IoMdMail />
               <Link
+                aria-label="Email"
                 href="mailto:hello@travelinfo.com"
                 className="hover:text-yellow-400"
               >
@@ -89,24 +90,28 @@ export default function Footer() {
           <h3 className="text-lg font-semibold mb-4">Follow Us on</h3>
           <div className="flex space-x-4">
             <Link
+              aria-label="Facebook"
               href="#"
               className="bg-white text-[#000F75] rounded-full p-2 hover:bg-yellow-400"
             >
               <FaFacebookF className="text-blackColor" />
             </Link>
             <Link
+              aria-label="Youtube"
               href="#"
               className="bg-white text-[#000F75] rounded-full p-2 hover:bg-yellow-400"
             >
               <FaYoutube className="text-blackColor" />
             </Link>
             <Link
+              aria-label="Linkedin"
               href="#"
               className="bg-white text-[#000F75] rounded-full p-2 hover:bg-yellow-400"
             >
               <FaLinkedinIn className="text-blackColor" />
             </Link>
             <Link
+              aria-label="Twitter"
               href="#"
               className="bg-white text-[#000F75] rounded-full p-2 hover:bg-yellow-400"
             >
