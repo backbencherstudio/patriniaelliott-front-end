@@ -61,7 +61,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
+        hostname: "wives-draw-physician-tied.trycloudflare.com",
       },
       {
         protocol: "https",
