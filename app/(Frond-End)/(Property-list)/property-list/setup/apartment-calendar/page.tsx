@@ -141,6 +141,12 @@ export default function Page() {
       general: propertyData?.general ?? [],
       entertainment: propertyData?.entertainment ?? [],
       cooking_cleaning: propertyData?.cooking_cleaning ?? [],
+      house_rules: propertyData?.house_rules ?? {
+        no_smoking: false,
+        parties_allowed: false,
+        no_pets: false,
+        no_children: false,
+      },
     };
 
     const check_in = {
