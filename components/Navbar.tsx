@@ -38,9 +38,6 @@ export default function Navbar() {
   };
   const endpoint ="/auth/me"
       const {data,loading,error}= useFetchData(endpoint)
-
-  console.log("data",data);
-  console.log("error==============",error);
   
   return (
     <header className="bg-primaryColor py-4 ">

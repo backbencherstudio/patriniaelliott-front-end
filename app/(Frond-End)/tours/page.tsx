@@ -30,7 +30,7 @@ function TourePage() {
   const buildQueryParams = () => {
     const params = new URLSearchParams();
     const itemsPerPage = 6
-    // Always include these parameters
+    // Always include these parameterss
     params.append('type', 'tour');
     params.append('limit', itemsPerPage.toString());
     params.append('page', currentPage.toString());

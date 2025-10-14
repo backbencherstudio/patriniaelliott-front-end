@@ -72,7 +72,7 @@ interface entertainmentType {
 }
 
 
-type tripType={
+type tripType = {
     title: string;
     description: string;
     time: number;
@@ -80,7 +80,7 @@ type tripType={
 }
 
 
-type tripPlanType={
+type tripPlanType = {
     tripPlan: tripType[];
     images: File[];
     id: string | null;
@@ -88,13 +88,13 @@ type tripPlanType={
 }
 
 
-type package_policy_type={
-    title:string;
-    description:string;
+type package_policy_type = {
+    title: string;
+    description: string;
 }
 
 
-type tourType={
+type tourType = {
     title: string;
     description: string;
     tourImages: File[];
@@ -105,12 +105,17 @@ type tourType={
     duration: number;
     durationType: string;
     price: number;
-    discount:number;
-    service_fee:number;
-    policy_description:string;
+    discount: number;
+    service_fee: number;
+    policy_description: string;
     package_policies: package_policy_type[];
-    extra_service: string[];
+    extra_service: {
+        name: string,
+        price: string
+    }[]
     language: string[];
+    minTraveller: number;
+    maxTraveller: number;
 }
 
 interface parkingType {
@@ -129,7 +134,6 @@ interface houseRuleType {
 }
 
 interface standardRatePlanType {
-    cancellation_policy: string[];
     price_per_group_size: {
         occupancy: string;
         price: string;
@@ -141,6 +145,7 @@ interface formDataType {
     isMultiple?: boolean;
     tourType?: string;
     name?: string;
+    property_description?: string;
     about_property?: string;
     host_name?: string;
     about_host?: string;
@@ -155,7 +160,14 @@ interface formDataType {
     max_guests: number;
     bedrooms: bedroomsType[],
     number_of_guest_allowed: number;
+    checkinPolicy:string;
+    checkoutPolicy: string;
+    specialCheckinPolicy: string;
+    childrenExtra: string;
+    refundPolicy: string;
+    nonRefundPolicy: string;
     bathrooms: number;
+    apartment_size: string;
     general: generalType;
     cooking_cleaning: cookingCleaningType;
     entertainment: entertainmentType;
@@ -171,20 +183,19 @@ interface formDataType {
     price?: number;
     price_per_night?: number;
     standard_rate_plan: standardRatePlanType;
-    non_refundable_rate_plan: string[];
     guest_check_in: {
         asSoon: boolean;
         date?: string;
     };
-    start_date:string;
-    end_date:string;
+    start_date: string;
+    end_date: string;
     maxReservation: boolean;
-    extra_services:{
-        name:string;
-        price:number;
+    extra_services: {
+        name: string;
+        price: number;
     }[];
     calendar_start_date: string;
     calendar_end_date: string;
-    total_bedroom : number;
+    total_bedroom: number;
     tour_plan: tourType;
 }

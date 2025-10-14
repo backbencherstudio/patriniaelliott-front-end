@@ -109,7 +109,7 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         xl:rounded-[12px] p-5 w-full overflow-y-auto
       `}>
         <div className="flex justify-end xl:hidden cursor-pointer">
-          <button onClick={onClose}><X /></button>
+          <button aria-label="Close" onClick={onClose}><X /></button>
         </div>
 
         {/* Debug Panel - Remove in production */}

@@ -39,6 +39,12 @@ export default function page() {
     const [occupancy, setOccupancy] = useState([{ occupancy: "3", price: "150" }]);
     const [cancelPolicies, setCancelPolicies] = useState(["Guests can cancel their bookings for free up to 1 day before their arrival", "Guests who cancel within 24 hours will have their cancellation fee waived"])
     const [refundPolicies, setRefundPolicies] = useState(["Guests will pay 10% less than the standard rate for a non- refundable rate", "Guests can't cancel their bookings for free anytime"])
+    const [checkinPolicy,setCheckinPolicy] = useState('');
+    const [checkoutPolicy,setCheckoutPolicy] = useState('');
+    const [specialCheckinPolicy,setSpecialCheckinPolicy] = useState('');
+    const [childrenExtra,setChildrenExtra] = useState('');
+    const [refundPolicy,setRefundPolicy] = useState('');
+    const [nonRefundPolicy,setNonRefundPolicy] = useState('');
 
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,66 +60,21 @@ export default function page() {
             booking_method: guestBooking,
             price_per_night: guestPrice,
             standard_rate_plan: {
-                cancellation_policy: cancelPolicies,
                 price_per_group_size: occupancy
             },
-            non_refundable_rate_plan: refundPolicies,
             guest_check_in: {
                 asSoon: guestCheckIn === "as_soon_as_possible",
             },
-            maxReservation: reservation30 === "yes"
+            maxReservation: reservation30 === "yes",
+            nonRefundPolicy: nonRefundPolicy,
+            refundPolicy: refundPolicy,
+            childrenExtra: childrenExtra,
+            specialCheckinPolicy: specialCheckinPolicy,
+            checkinPolicy,
+            checkoutPolicy
         })
 
-        const updatedProperty = {
-            ...JSON.parse(localStorage.getItem("propertyData")),
-            booking_method: guestBooking,
-            price_per_night: guestPrice,
-            standard_rate_plan: {
-                cancellation_policy: cancelPolicies,
-                price_per_group_size: occupancy
-            },
-            non_refundable_rate_plan: refundPolicies,
-            guest_check_in: {
-                asSoon: guestCheckIn === "as_soon_as_possible",
-            },
-            maxReservation: reservation30 === "yes"
-        };
-        localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
-
         router.push("/property-list/setup/apartment-calendar")
-    }
-
-    const handleCancelPolicyChange = (value: string, index: number) => {
-        setCancelPolicies(prev => {
-            const newPolicies = [...prev];
-            newPolicies[index] = value;
-            return newPolicies;
-        });
-    }
-
-    const addNewCancelPolicy = () => {
-        setCancelPolicies(prev => [...prev, ""])
-    }
-
-    const deleteCancelPolicy = (id: number) => {
-        setCancelPolicies(prev => prev.filter((_, index) => index !== id));
-
-    }
-    const handleRefundPolicyChange = (value: string, index: number) => {
-        setRefundPolicies(prev => {
-            const newPolicies = [...prev];
-            newPolicies[index] = value;
-            return newPolicies;
-        });
-    }
-
-    const addNewRefundPolicy = () => {
-        setRefundPolicies(prev => [...prev, ""])
-    }
-
-    const deleteRefundPolicy = (id: number) => {
-        setRefundPolicies(prev => prev.filter((_, index) => index !== id));
-
     }
     const handleOccupancyChange = (value: string, index: number) => {
         setOccupancy(prev => {
@@ -330,24 +291,32 @@ export default function page() {
                             <div className="space-y-6 bg-white p-5 rounded-lg flex-1">
                                 <div>
                                     <CreateBlog
-                                        content=""
-                                        onContentChange={(data) => console.log(data)}
+                                        content={checkinPolicy}
+                                        onContentChange={(data) => {setCheckinPolicy(data);console.log(data)}}
                                         title="Check-in policy"
                                         subtitle="Check-in"
                                     />
                                 </div>
                                 <div>
                                     <CreateBlog
-                                        content=""
-                                        onContentChange={(data) => console.log(data)}
+                                        content={checkoutPolicy}
+                                        onContentChange={(data) => setCheckoutPolicy(data)}
+                                        title="Check-out policy"
+                                        subtitle="Check-out"
+                                    />
+                                </div>
+                                <div>
+                                    <CreateBlog
+                                        content={specialCheckinPolicy}
+                                        onContentChange={(data) => setSpecialCheckinPolicy(data)}
                                         title="Special check in instructions"
                                         subtitle="Special check in instructions"
                                     />
                                 </div>
                                 <div>
                                     <CreateBlog
-                                        content=""
-                                        onContentChange={(data) => console.log(data)}
+                                        content={childrenExtra}
+                                        onContentChange={(data) => setChildrenExtra(data)}
                                         title="children and extra beds"
                                         subtitle="Children and extra beds"
                                     />
@@ -378,8 +347,8 @@ export default function page() {
                                             <div className="space-y-2">
                                                 <div>
                                                     <CreateBlog
-                                                        content=""
-                                                        onContentChange={(data) => console.log(data)}
+                                                        content={refundPolicy}
+                                                        onContentChange={(data) => setRefundPolicy(data)}
                                                         title=""
                                                         subtitle=""
                                                     />
@@ -488,8 +457,8 @@ export default function page() {
                                             <div className="space-y-2">
                                                 <div>
                                                     <CreateBlog
-                                                        content=""
-                                                        onContentChange={(data) => console.log(data)}
+                                                        content={nonRefundPolicy}
+                                                        onContentChange={(data) => setNonRefundPolicy(data)}
                                                         title=""
                                                         subtitle=""
                                                     />

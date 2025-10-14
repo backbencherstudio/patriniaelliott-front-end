@@ -94,10 +94,10 @@ export default function Page() {
 
   // hydrate price from localStorage (safe parse)
   useEffect(() => {
-   const nightly = listProperty?.type === "Tour"
-   ? listProperty?.tour_plan?.price
-   : listProperty?.price_per_night;
-   setPrice(Number(nightly) || 0);
+    const nightly = listProperty?.type === "Tour"
+      ? listProperty?.tour_plan?.price
+      : listProperty?.price_per_night;
+    setPrice(Number(nightly) || 0);
   }, []);
 
   const daysNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -141,6 +141,12 @@ export default function Page() {
       general: propertyData?.general ?? [],
       entertainment: propertyData?.entertainment ?? [],
       cooking_cleaning: propertyData?.cooking_cleaning ?? [],
+      house_rules: propertyData?.house_rules ?? {
+        no_smoking: false,
+        parties_allowed: false,
+        no_pets: false,
+        no_children: false,
+      },
     };
 
     const check_in = {
@@ -162,17 +168,37 @@ export default function Page() {
       fd.append('meting_points', String(propertyData?.tour_plan?.meetingPoint ?? ''));
       fd.append('language', JSON.stringify(propertyData?.tour_plan?.language));
       // fd.append('cancellation_policy', JSON.stringify(propertyData?.tour_plan?.cancellation_policy));
-      fd.append('discount',String(propertyData?.tour_plan?.discount))
-      fd.append('policy_description',String(propertyData?.tour_plan?.policy_description));
-      fd.append('package_policies',JSON.stringify(propertyData?.tour_plan?.package_policies));
-      fd.append('service_fee',String(propertyData?.tour_plan?.service_fee));
-      fd.append('trip_plans', JSON.stringify(propertyData?.tour_plan?.tripPlan?.[0]?.tripPlan));
+      fd.append('discount', String(propertyData?.tour_plan?.discount))
+      fd.append('policy_description', String(propertyData?.tour_plan?.policy_description));
+      fd.append('package_policies', JSON.stringify(propertyData?.tour_plan?.package_policies));
+      fd.append('service_fee', String(propertyData?.tour_plan?.service_fee));
+      const trip_plan = [];
+      for (let i = 0; i < listProperty?.tour_plan?.tripPlan?.length; i++) {
+        const title = `Day ${i + 1}`;
+        const details = listProperty?.tour_plan?.tripPlan[i]?.tripPlan?.map((trip) => {
+          return {
+            title: trip.title,
+            description: trip.description,
+            time: trip.time,
+            ticket: trip.ticket,
+          };
+        });
+        trip_plan.push({
+          title,
+          day_wise_data: details,
+        });
+      }
+
+      fd.append('trip_plans', JSON.stringify(trip_plan))
+
       fd.append('extra_services', JSON.stringify(propertyData?.tour_plan?.extra_service));
       propertyData?.tour_plan?.tourImages?.forEach(img =>
         fd.append('package_files', img)
       )
-      propertyData?.tour_plan?.tripPlan?.[0]?.images?.forEach(img =>
-        fd.append('trip_plans_images', img)
+      propertyData?.tour_plan?.tripPlan?.forEach((item, idx) =>
+        item?.images?.forEach(img =>
+          fd.append(`trip_plans_${idx}_images`, img)
+        )
       )
       fd.append("calendar_start_date", toISODate(startDate));
       fd.append("calendar_end_date", toISODate(endDate));
@@ -200,7 +226,7 @@ export default function Page() {
       fd.append("bathrooms", String(propertyData?.bathrooms ?? "0"));
       fd.append(
         "max_capacity",
-        propertyData?.max_guests ? String(Number(propertyData.max_guests)) : "1"
+        propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
       );
       fd.append("check_in", JSON.stringify(check_in));
       fd.append("check_out", JSON.stringify(check_out));
@@ -210,10 +236,36 @@ export default function Page() {
       );
       fd.append(
         "max_guests",
-        propertyData?.max_guests ? String(Number(propertyData.max_guests)) : "1"
+        propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
       );
       fd.append("calendar_start_date", toISODate(startDate));
       fd.append("calendar_end_date", toISODate(endDate));
+      fd.append("package_policies", JSON.stringify([
+        {
+          title: 'check in',
+          description: listProperty?.checkinPolicy,
+        },
+        {
+          title: 'check out',
+          description: listProperty?.checkoutPolicy,
+        },
+        {
+          title: 'Special check in instructions',
+          description: listProperty?.specialCheckinPolicy,
+        },
+        {
+          title: 'children and extra beds',
+          description: listProperty?.childrenExtra,
+        },
+        {
+          title: 'Cancellation policy',
+          description: listProperty?.refundPolicy,
+        },
+        {
+          title: 'Non-refundable policy',
+          description: listProperty?.nonRefundPolicy,
+        },
+      ]))
     }
 
     const endpoint = "/admin/vendor-package";

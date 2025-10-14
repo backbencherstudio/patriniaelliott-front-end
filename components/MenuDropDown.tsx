@@ -12,13 +12,27 @@ import { IoIosArrowDown } from "react-icons/io";
 
 import { cn } from "@/lib/utils";
 import { UserService } from "@/service/user/user.service";
+import { useRouter } from "next/navigation";
 function MenuDropDown({ setMenuOpen, data }: any) {
   const pathname = usePathname();
+  const router = useRouter();
+  
   const hanldeLogout = async () => {
     try {
-      const res = await UserService?.logout()
+      // Call logout service which will clear all data
+      UserService?.logout();
+      
+      // Redirect to home page after logout
+      router.push('/');
+      
+      // Close any open menus
+      if (setMenuOpen) {
+        setMenuOpen(false);
+      }
     } catch (error) {
-      console.log(error.message);
+      console.error('Logout error:', error);
+      // Even if there's an error, redirect to home page
+      router.push('/');
     }
   }
   return (

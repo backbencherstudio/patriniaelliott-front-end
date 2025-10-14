@@ -78,6 +78,7 @@ export default function ChangePassword() {
                   className="w-full bg-transparent border-none outline-none text-[#333] text-sm font-normal font-['Inter']"
                 />
                 <button 
+                  aria-label={showOldPassword ? "Hide Password" : "Show Password"}
                   type="button"
                   onClick={() => setShowOldPassword(!showOldPassword)}
                   className="w-5 h-5 relative hover:opacity-100 transition-opacity"
@@ -110,6 +111,7 @@ export default function ChangePassword() {
                   className="w-full bg-transparent border-none outline-none text-[#333] text-sm font-normal font-['Inter']"
                 />
                 <button 
+                  aria-label={showNewPassword ? "Hide Password" : "Show Password"}
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                   className="w-5 h-5 relative hover:opacity-100 transition-opacity"
@@ -143,6 +145,7 @@ export default function ChangePassword() {
                     className="w-full bg-transparent border-none outline-none text-[#333] text-sm font-normal font-['Inter']"
                   />
                   <button 
+                    aria-label={showConfirmPassword ? "Hide Password" : "Show Password"}
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="w-5 h-5 relative hover:opacity-100 transition-opacity"
@@ -160,6 +163,7 @@ export default function ChangePassword() {
             </div>
           </div>
           <button
+            aria-label="Update Password"
             type="submit"
             disabled={submitting}
             className="px-6 py-3.5 bg-[#0068ef] rounded-lg inline-flex justify-center items-center gap-1.5 overflow-hidden hover:bg-[#0056cc] transition-colors disabled:opacity-50"

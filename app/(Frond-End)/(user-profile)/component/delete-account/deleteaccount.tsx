@@ -35,6 +35,7 @@ export default function DeleteAccount() {
           </div>
           
           <button 
+            aria-label="Delete Account"
             onClick={() => setShowModal(true)}
             className="bg-[#fe5050] text-white px-8 py-3 rounded-lg font-medium shadow-sm cursor-pointer hover:bg-[#e54646] transition-colors"
             disabled={loading}

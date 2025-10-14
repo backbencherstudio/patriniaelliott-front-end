@@ -22,8 +22,8 @@ export default function ConfirmDeleteModal({ open, onClose, onConfirm, title = '
             </div>
             <div className="p-5 text-[#4a4c56] text-sm">{message}</div>
             <div className="p-5 pt-0 flex justify-end gap-3">
-              <button onClick={()=>onClose(false)} className="px-4 py-2 rounded border">Cancel</button>
-              <button disabled={!!loading} onClick={()=>onConfirm()} className="px-5 py-2 rounded bg-[#fe5050] text-white hover:bg-[#e04848] disabled:opacity-60">{loading ? 'Deleting...' : 'Delete'}</button>
+              <button aria-label="Cancel Delete" onClick={()=>onClose(false)} className="px-4 py-2 rounded border">Cancel</button>
+              <button aria-label="Confirm Delete" disabled={!!loading} onClick={()=>onConfirm()} className="px-5 py-2 rounded bg-[#fe5050] text-white hover:bg-[#e04848] disabled:opacity-60">{loading ? 'Deleting...' : 'Delete'}</button>
             </div>
           </div>
         </div>
