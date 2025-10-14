@@ -252,8 +252,8 @@ export default function page() {
             check_out_from: checkOut.from,
             check_out_untill: checkOut.until,
             bedrooms: [...bedrooms],
-            bathrooms: numberOfGuest,
-            number_of_guest_allowed: numberOfBathRooms,
+            bathrooms: numberOfBathRooms,
+            number_of_guest_allowed: numberOfGuest,
             total_bedroom: totalBedRooms,
             extra_services: services,
             apartment_size: apartmentsize

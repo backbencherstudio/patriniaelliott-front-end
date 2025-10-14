@@ -174,12 +174,12 @@ export default function Page() {
             title: trip.title,
             description: trip.description,
             time: trip.time,
-            notes: trip.ticket,
+            ticket: trip.ticket,
           };
         });
         trip_plan.push({
           title,
-          details,
+          day_wise_data: details,
         });
       }
 
@@ -189,8 +189,10 @@ export default function Page() {
       propertyData?.tour_plan?.tourImages?.forEach(img =>
         fd.append('package_files', img)
       )
-      propertyData?.tour_plan?.tripPlan?.[0]?.images?.forEach(img =>
-        fd.append('trip_plans_images', img)
+      propertyData?.tour_plan?.tripPlan?.forEach((item, idx) =>
+        item?.images?.forEach(img =>
+          fd.append(`trip_plans_${idx}_images`, img)
+        )
       )
       fd.append("calendar_start_date", toISODate(startDate));
       fd.append("calendar_end_date", toISODate(endDate));
@@ -218,7 +220,7 @@ export default function Page() {
       fd.append("bathrooms", String(propertyData?.bathrooms ?? "0"));
       fd.append(
         "max_capacity",
-        propertyData?.max_guests ? String(Number(propertyData.max_guests)) : "1"
+        propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
       );
       fd.append("check_in", JSON.stringify(check_in));
       fd.append("check_out", JSON.stringify(check_out));
@@ -228,11 +230,11 @@ export default function Page() {
       );
       fd.append(
         "max_guests",
-        propertyData?.max_guests ? String(Number(propertyData.max_guests)) : "1"
+        propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
       );
       fd.append("calendar_start_date", toISODate(startDate));
       fd.append("calendar_end_date", toISODate(endDate));
-      fd.append("package_policies",JSON.stringify([
+      fd.append("package_policies", JSON.stringify([
         {
           title: 'check in',
           description: listProperty?.checkinPolicy,
@@ -270,9 +272,9 @@ export default function Page() {
           toast.success("Property setup completed.");
         }
         localStorage.removeItem("propertyData");
-        // setTimeout(() => {
-        //   router.push("/user-verification");
-        // }, 1000);
+        setTimeout(() => {
+          router.push("/user-verification");
+        }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");
       }
