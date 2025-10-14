@@ -13,6 +13,8 @@ export default function Page() {
     const { listProperty, updateListProperty } = usePropertyContext();
     const [formData, setFormData] = useState({});
     const [user, setUser] = useState(null);
+    const [tourInto,setTourIntro] = useState('');
+    const [aboutHost,setAboutHost] = useState('');
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -46,6 +48,9 @@ export default function Page() {
     useEffect(()=>{
         if(!listProperty?.type){
             router?.push('/property-list')
+        }else{
+            setTourIntro(listProperty?.about_property);
+            setAboutHost(listProperty?.about_host);
         }
     },[]) 
     
@@ -91,7 +96,7 @@ export default function Page() {
                                         </div>
                                     </div>
                                     <div>
-                                        <textarea name="propertyintro" required id="propertyintro" placeholder="Enter tour introduction" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none"></textarea>
+                                        <textarea name="propertyintro" required id="propertyintro" placeholder="Enter tour introduction" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" value={tourInto} onChange={(e)=>setTourIntro(e.target.value)}></textarea>
                                     </div>
                                 </div>
 
@@ -107,7 +112,7 @@ export default function Page() {
 
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostabout" className="text-[#070707]">About the host</label>
-                                    <textarea name="hostabout" id="hostabout" placeholder="Write about the host" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" />
+                                    <textarea name="hostabout" id="hostabout" placeholder="Write about the host" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" value={aboutHost} onChange={(e)=>setAboutHost(e.target?.value)}/>
                                 </div>
                             </div>
 

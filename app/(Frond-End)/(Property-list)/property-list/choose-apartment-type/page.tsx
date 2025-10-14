@@ -37,15 +37,14 @@ export default function page() {
     useEffect(()=>{
         if(!listProperty?.type){
             router.push('/property-list')
+            return;
         }
-        else if(listProperty?.type === 'Tour'){
-            setSelectedApartmentType('one day')
+        if(listProperty?.type === 'Tour'){
+            setSelectedApartmentType(listProperty?.tourType || 'one day')
         }else{
-            console.log("Type : ",listProperty?.type)
-            setSelectedApartmentType('one')
+            setSelectedApartmentType(listProperty?.type || 'one')
         }
     },[])
-
 
     return (
         <div className="py-15 md:py-30 flex items-center justify-center bg-[#F6F7F7]">
