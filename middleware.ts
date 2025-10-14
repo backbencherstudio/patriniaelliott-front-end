@@ -21,10 +21,10 @@ const PROTECTED_ROUTES = [
   '/delete-account',
   '/vendor-verification',
   '/property-list',
-  '/apartment',
-  '/hotel',
-  '/toure/:path*/booking'  // Tour booking pages require login
-  // Note: /toure and /tours removed from protected routes to allow public access
+  '/toure/:path*/booking',  // Tour booking pages require login
+  '/apartment/:path*/booking',  // Apartment booking pages require login
+  '/hotel/:path*/booking'   // Hotel booking pages require login
+  // Note: /toure, /tours, /apartment, /hotel removed from protected routes to allow public access
 ];
 
 // Define admin-only routes
@@ -154,10 +154,10 @@ export const config = {
     '/delete-account/:path*',
     '/vendor-verification/:path*',
     '/property-list/:path*',
-    '/apartment/:path*',
-    '/hotel/:path*',
     '/toure/:path*/booking',  // Tour booking pages require login
-    // Note: /toure and /tours removed from matcher to allow public access
+    '/apartment/:path*/booking',  // Apartment booking pages require login
+    '/hotel/:path*/booking',   // Hotel booking pages require login
+    // Note: /toure, /tours, /apartment, /hotel removed from matcher to allow public access
     
     // Public auth routes
     '/login',
