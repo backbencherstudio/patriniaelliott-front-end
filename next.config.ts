@@ -65,6 +65,14 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
+      },
+      {
+        protocol: "https",
+        hostname: "commodities-suzuki-straight-makers.trycloudflare.com",
+      },
+      {
+        protocol: "https",
         hostname: "wives-draw-physician-tied.trycloudflare.com",
       },
     ],

@@ -23,6 +23,7 @@ import { Check } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from "react";
 import AddExtraServices from "../_components/AddExtraServices";
+import PolicyEditor from '../../_components/PolicyEditor'
 
 
 export default function page() {
@@ -79,7 +80,8 @@ export default function page() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [propertyName, setPropertyName] = useState("")
-    const [propertyDescription, setPropertyDescription] = useState("")
+    const [propertyDescription, setPropertyDescription] = useState("");
+    const [apartmentsize,setApartmentsize] = useState('');
     // Temporary state while adding/editing a bedroom
     const [newBedroomTitle, setNewBedroomTitle] = useState("");
     const [totalBedRooms,setTotalBedRooms] = useState(0)
@@ -213,6 +215,7 @@ export default function page() {
 
         updateListProperty({
             name: propertyName,
+            property_description: propertyDescription,
             general: {
                 wifi: guestGeneral.free_wifi,
                 air_conditioning: guestGeneral.air_condition,
@@ -249,10 +252,11 @@ export default function page() {
             check_out_from: checkOut.from,
             check_out_untill: checkOut.until,
             bedrooms: [...bedrooms],
-            bathrooms: numberOfGuest,
-            number_of_guest_allowed: numberOfBathRooms,
+            bathrooms: numberOfBathRooms,
+            number_of_guest_allowed: numberOfGuest,
             total_bedroom: totalBedRooms,
-            extra_services: services
+            extra_services: services,
+            apartment_size: apartmentsize
         })
 
         router.push("/property-list/setup/apartment-photos")
@@ -273,10 +277,10 @@ export default function page() {
                                     <label htmlFor="property-name" className="block text-[#070707] font-medium mb-3">Property Name</label>
                                         <input type="text" name="property-name" id="property-name" placeholder="Enter property name" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" onChange={(e)=>setPropertyName(e.target.value)} />
                                 </div>
-                                {/* <div>
+                                <div>
                                     <label htmlFor="property-description" className="block text-[#070707] font-medium mb-3">Property Description</label>
-                                        <textarea name="property-description" id="property-description" placeholder="Enter property description" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" />
-                                </div> */}
+                                       <PolicyEditor content={propertyDescription} onContentChange={(data)=>setPropertyDescription(data)}/> 
+                                </div>
                                 <div className="space-y-3">
                                     <label htmlFor="bedrooms" className="block text-[#070707] font-medium">Bedrooms</label>
                                     {bedrooms.map((room, idx) => (
@@ -437,7 +441,7 @@ export default function page() {
                                         <span className="text-[#777980] text-sm">(optional)</span>
                                     </div>
                                     <div className="flex flex-col lg:flex-row gap-2">
-                                        <input type="number" id="apartmentsize" name="apartmentsize" className="flex-1 outline-none border border-[#E9E9EA] rounded-[8px] p-4 text-[#777980] text-sm flex items-center" />
+                                        <input type="number" id="apartmentsize" value={apartmentsize} onChange={(e)=>setApartmentsize(e.target.value)} name="apartmentsize" className="flex-1 outline-none border border-[#E9E9EA] rounded-[8px] p-4 text-[#777980] text-sm flex items-center" />
                                         <div className="w-[165px]">
                                             <Dropdownmenu data={[{ code: "square_meter", name: "Square meters" }]} handleSelect={handleApartmentSizeType} selectedData={selectedApartmentSizeType} title="type" showTitle={false} />
                                         </div>
