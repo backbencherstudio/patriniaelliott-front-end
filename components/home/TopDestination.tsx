@@ -60,11 +60,9 @@ function TopDestination() {
     }
   }, []); 
 
-  console.log("data==============",data);
   return (
     <section className=' container '>
         <div className="mt-24 mb-20">
-        
         <h2 className=' text-3xl lg:text-5xl font-medium text-blackColor text-center'>Top Destinations</h2>
         <div className=" relative">
            <div >
@@ -136,7 +134,7 @@ function TopDestination() {
               <div className=" w-full flex justify-center flex-col items-center ">
                 <div className=" xl:w-[190px] lg:w-[170px] lg:h-[170px] h-[120px] md:w-[156px] md:h-[156px] w-[120px] xl:h-[190px] rounded-full overflow-hidden">
                 <CustomImage
-                    src={getSlideSrc(des?.img, index)}
+                    src={getSlideSrc(`${process.env.NEXT_PUBLIC_API_ENDPOINT}${des?.img}`, index)}
                     alt={`des ${index + 1}`}
                     loading="lazy"
                     width={220}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
  // adjust this path as needed
@@ -48,11 +48,7 @@ export default function Banner() {
           slidesPerView={1}
           loop={true}
           speed={800}
-          autoplay={{
-            delay: 5000,
-            disableOnInteraction: false,
-          }}
-          modules={[Navigation, Autoplay, Pagination]}
+          modules={[Navigation, Pagination]}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
           onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex + 1)}
           className="w-full"

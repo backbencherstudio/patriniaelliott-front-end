@@ -13,7 +13,7 @@ import CustomButton from "../reusable/CustomButton";
 function Accommodation() {
   const [currentIndex, setCurrentIndex] = useState(1);
   const swiperRef = useRef<any>(null);
-  const [activeTab, setActiveTab] = useState<'apartment' | 'hotel' | 'tour'>('apartment');
+  const [activeTab, setActiveTab] = useState<'apartment' | 'hotel'>('apartment');
   const endpoint = `/admin/vendor-package?type=${activeTab}&limit=${10}&page=${1}`
   const { data, loading, error } = useFetchData(endpoint);
   const packageData = data ? data?.data : []
@@ -37,13 +37,13 @@ function Accommodation() {
             Our Popular Accommodation
           </h2>
           <div className="flex justify-center text-center mx-auto  ">
-            {['apartment', 'hotel',"tour"].map(tab => (
+            {['apartment', 'hotel'].map(tab => (
               <button
                 aria-label={tab}
                 key={tab}
                 className={`text-2xl cursor-pointer font-medium px-4 pb-2 transition border-b-[2px] border-[#A5A5AB] ${activeTab === tab ? ' border-b-2 border-secondaryColor text-secondaryColor ' : 'text-[#A5A5AB]'
                   }`}
-                onClick={() => setActiveTab(tab as 'apartment' | 'hotel' | 'tour')}
+                onClick={() => setActiveTab(tab as 'apartment' | 'hotel')}
               >
                 {tab}
               </button>
@@ -98,7 +98,7 @@ function Accommodation() {
             </Swiper>
           </div>
           <div>
-            {!error && (!loading && <Link aria-label="View All Apartments" href={`/${activeTab}s`}>
+            {!error && packageData?.length > 0 && (!loading && <Link aria-label="View All Apartments" href={`/${activeTab}s`}>
               <CustomButton>View All {activeTab}</CustomButton>
             </Link>)}
           </div>
