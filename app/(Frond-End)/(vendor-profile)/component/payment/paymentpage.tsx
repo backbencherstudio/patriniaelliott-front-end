@@ -200,7 +200,7 @@ export default function PaymentPage() {
       }
     }
     fetchAccounts()
-  }, [handleApiCall])
+  }, [])
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -544,6 +544,10 @@ export default function PaymentPage() {
                     <button
                       aria-label="Complete Verification"
                       onClick={() => {
+                        // Begin polling for verification while the onboarding is completed in the new tab
+                        if (account.account_id) {
+                          setPollingAccountId(account.account_id)
+                        }
                         window.open(account.onboarding_url, '_blank', 'noopener,noreferrer')
                       }}
                       className="w-full px-4 py-2 bg-[#0068ef] text-white text-sm font-medium rounded-lg hover:bg-[#0051bc] transition-colors flex items-center justify-center gap-2"
