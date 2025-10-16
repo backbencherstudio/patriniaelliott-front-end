@@ -79,6 +79,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "buffer-highly-outlets-tubes.trycloudflare.com",
       },
+      {
+        protocol: "https",
+        hostname: "val-jewel-atlas-sagem.trycloudflare.com",
+      },
+      {
+        protocol: "https",
+        hostname: "buffer-highly-outlets-tubes.trycloudflare.com",
+      },
+{
+        protocol: "https",
+        hostname: "blind-domain-lat-net.trycloudflare.com",
+      },
     ],
   },
 };

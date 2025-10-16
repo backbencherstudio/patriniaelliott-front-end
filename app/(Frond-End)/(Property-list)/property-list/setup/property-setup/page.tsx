@@ -23,7 +23,8 @@ import { Check } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from "react";
 import AddExtraServices from "../_components/AddExtraServices";
-import PolicyEditor from '../../_components/PolicyEditor'
+import PolicyEditor from '../../_components/PolicyEditor';
+import toast, { Toaster } from "react-hot-toast";
 
 
 export default function page() {
@@ -81,10 +82,10 @@ export default function page() {
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [propertyName, setPropertyName] = useState("")
     const [propertyDescription, setPropertyDescription] = useState("");
-    const [apartmentsize,setApartmentsize] = useState('');
+    const [apartmentsize, setApartmentsize] = useState('');
     // Temporary state while adding/editing a bedroom
     const [newBedroomTitle, setNewBedroomTitle] = useState("");
-    const [totalBedRooms,setTotalBedRooms] = useState(0)
+    const [totalBedRooms, setTotalBedRooms] = useState(0)
     const [newBedCounts, setNewBedCounts] = useState<bedTypes>({
         single_bed: 0,
         double_bed: 0,
@@ -94,7 +95,7 @@ export default function page() {
 
     const increaseNewBed = (type: string) => {
         setNewBedCounts((prev) => ({ ...prev, [type]: prev[type] + 1 }));
-        setTotalBedRooms(prev => prev+1)
+        setTotalBedRooms(prev => prev + 1)
     };
 
     const decreaseNewBed = (type: string) => {
@@ -113,7 +114,7 @@ export default function page() {
         setDialogOpen(true);
     };
 
-    const handleExtraServices=(data:{name:string,price:number}[])=>{
+    const handleExtraServices = (data: { name: string, price: number }[]) => {
         setServices(data);
     }
 
@@ -130,7 +131,10 @@ export default function page() {
     };
 
     const saveBedroom = () => {
-        if (!newBedroomTitle) return;
+        if (!newBedroomTitle) {
+            toast.error("Please enter bedroom title");
+            return;
+        };
 
         const newBedroom = {
             title: newBedroomTitle,
@@ -159,7 +163,7 @@ export default function page() {
             extra_large_bed: 0,
         });
         setEditingIndex(null);
-        console.log("Total bedrooms : ",totalBedRooms)
+        console.log("Total bedrooms : ", totalBedRooms)
     };
 
     const deleteBedroom = (index: number) => {
@@ -264,6 +268,7 @@ export default function page() {
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7] relative">
+            <Toaster />
             <div className="py-15 px-4 max-w-[1320px] w-full space-y-[48px]">
                 <div className="flex gap-6 w-full">
                     <form className="flex-1 space-y-5" onSubmit={(e) => handleSubmitForm(e)}>
@@ -275,11 +280,11 @@ export default function page() {
                                 <h3>Property Details</h3>
                                 <div>
                                     <label htmlFor="property-name" className="block text-[#070707] font-medium mb-3">Property Name</label>
-                                        <input type="text" name="property-name" id="property-name" placeholder="Enter property name" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" onChange={(e)=>setPropertyName(e.target.value)} />
+                                    <input type="text" name="property-name" id="property-name" placeholder="Enter property name" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" onChange={(e) => setPropertyName(e.target.value)} />
                                 </div>
                                 <div>
                                     <label htmlFor="property-description" className="block text-[#070707] font-medium mb-3">Property Description</label>
-                                       <PolicyEditor content={propertyDescription} onContentChange={(data)=>setPropertyDescription(data)}/> 
+                                    <PolicyEditor content={propertyDescription} onContentChange={(data) => setPropertyDescription(data)} />
                                 </div>
                                 <div className="space-y-3">
                                     <label htmlFor="bedrooms" className="block text-[#070707] font-medium">Bedrooms</label>
@@ -441,7 +446,7 @@ export default function page() {
                                         <span className="text-[#777980] text-sm">(optional)</span>
                                     </div>
                                     <div className="flex flex-col lg:flex-row gap-2">
-                                        <input type="number" id="apartmentsize" value={apartmentsize} onChange={(e)=>setApartmentsize(e.target.value)} name="apartmentsize" className="flex-1 outline-none border border-[#E9E9EA] rounded-[8px] p-4 text-[#777980] text-sm flex items-center" />
+                                        <input type="number" id="apartmentsize" value={apartmentsize} onChange={(e) => setApartmentsize(e.target.value)} name="apartmentsize" className="flex-1 outline-none border border-[#E9E9EA] rounded-[8px] p-4 text-[#777980] text-sm flex items-center" />
                                         <div className="w-[165px]">
                                             <Dropdownmenu data={[{ code: "square_meter", name: "Square meters" }]} handleSelect={handleApartmentSizeType} selectedData={selectedApartmentSizeType} title="type" showTitle={false} />
                                         </div>
@@ -639,7 +644,7 @@ export default function page() {
                         <div className="flex gap-6 w-full">
                             <div className="space-y-5 bg-white p-6 rounded-lg flex-1">
                                 <h3 className="text-[#23262F] text-2xl font-medium">Add Extra Services</h3>
-                                <AddExtraServices 
+                                <AddExtraServices
                                     services={services}
                                     handleExtraServices={handleExtraServices}
                                 />
