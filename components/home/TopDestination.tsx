@@ -129,7 +129,7 @@ function TopDestination() {
         >
           {data?.map((des, index) => (
             <SwiperSlide key={index}>
-              <Link href={`/toure/${des?.package_id}`}>
+              <Link href={`/toure/${des?.id}`}>
               <div className=" w-full flex justify-center flex-col items-center ">
                 <div className=" xl:w-[190px] lg:w-[170px] lg:h-[170px] h-[120px] md:w-[156px] md:h-[156px] w-[120px] xl:h-[190px] rounded-full overflow-hidden">
                 <CustomImage

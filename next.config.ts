@@ -1,17 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Remove problematic CSS optimization that causes critters error
+  // Keep only safe experimental options
   experimental: {
-    optimizePackageImports: ['react-icons'],
-    optimizeCss:true
+    optimizePackageImports: ['react-icons']
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   poweredByHeader: false,
-  // Optimize font loading
-  optimizeFonts: true,
   images: {
     remotePatterns: [
       {
@@ -57,6 +54,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "backend.naamstay.com",
+      },
+      {
+        protocol: "https",
         hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
       },
       {
@@ -65,11 +66,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
+        hostname: "blind-domain-lat-net.trycloudflare.com",
       },
       {
         protocol: "https",
-        hostname: "commodities-suzuki-straight-makers.trycloudflare.com",
+        hostname: "buffer-highly-outlets-tubes.trycloudflare.com",
       },
       {
         protocol: "https",

@@ -28,11 +28,11 @@ export default function page() {
 
     const data = searchParams.get('data');
 
-    useEffect(()=>{
-        if(!listProperty?.type){
+    useEffect(() => {
+        if (!listProperty?.type) {
             router.push('/property-list')
         }
-    },[])
+    }, [])
 
     return (
         <div className="py-15 md:py-30 flex items-center justify-center bg-[#F6F7F7]">
@@ -40,21 +40,23 @@ export default function page() {
                 <div className="space-y-[32px] bg-white p-6 rounded-[24px]">
                     <div className="space-y-3 flex flex-col lg:flex-row space-x-3">
                         <h3 className="text-[#23262F] text-sm sm:text-2xl font-medium">Follow a few steps to create your listing now!</h3>
-                        <div className="flex gap-1 bg-[#FFFBEE] rounded-[12px] p-4 text-[#070707]">
+                        {listProperty?.type !== 'Hotel'&&<div className="flex gap-1 bg-[#FFFBEE] rounded-[12px] p-4 text-[#070707]">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path d="M14.6673 8.00065C14.6673 4.31875 11.6825 1.33398 8.00065 1.33398C4.31875 1.33398 1.33398 4.31875 1.33398 8.00065C1.33398 11.6825 4.31875 14.6673 8.00065 14.6673C11.6825 14.6673 14.6673 11.6825 14.6673 8.00065Z" stroke="#070707" stroke-width="0.75" />
                                 <path d="M8.16081 11.334V8.00065C8.16081 7.68638 8.16081 7.52925 8.06314 7.43158C7.96554 7.33398 7.80841 7.33398 7.49414 7.33398" stroke="#070707" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M7.99414 5.33398H8.00014" stroke="#070707" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            {(listProperty?.type === 'Tour') ? <div>
-                                <p className="text-[10px] sm:text-[14px]">You have selected {data} tour.</p>
-                            </div>
+                            {listProperty?.type === 'Tour' ?
+                                <div>
+                                    <p className="text-[10px] sm:text-[14px]">You have selected {data} tour.</p>
+                                </div>
                                 :
                                 <div>
                                     <p className="text-[10px] sm:text-[14px]">You have selected {data} apartment where guests can book </p>
                                     <p>the entire place.</p>
-                                </div>}
-                        </div>
+                                </div>
+                            }
+                        </div>}
                     </div>
                     <div className="flex flex-col sm:flex-row gap-[32px]">
                         <div>
