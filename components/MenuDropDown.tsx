@@ -95,7 +95,7 @@ function MenuDropDown({ setMenuOpen, data }: any) {
                     </Link>
                       </DropdownMenuItem>
                         <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
-            <Link aria-label="Vendor Account"  onClick={() => setMenuOpen(false)} href="/profile-info" className="w-full flex items-center gap-2.5">
+            <Link aria-label="Vendor Account"  onClick={() => setMenuOpen(false)} href="/payment-method" className="w-full flex items-center gap-2.5">
                           <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                             <Image
                               src="/admin/vendor.svg"

@@ -15,8 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import HomeAllFilter from "../filter/HomeAllFilter";
-
-const destinations = ["Japan", "London", "Nepal", "China", "India"];
+import { countryList } from "@/DemoAPI/country";
 
 export default function TourSearch({ typesearch }: any) {
   const router = useRouter();
@@ -42,24 +41,8 @@ export default function TourSearch({ typesearch }: any) {
    const [loading, setLoading]=useState(true);
        const [error, setError]=useState(null);
       const {token} = useToken()
-      const [selectedDestinations, setSelectedDestinations] = useState<string[]>(
-    []
-  );
-       const fetchData = async()=>{
-        setLoading(true)
-        try {
-          const response = await UserService.getData(`/application/packages/top-destinations?limit=${10}&page=${1}`,token)
-          setSelectedDestinations(response.data.data)
-        } catch (error) {
-          setError(error)
-        } finally {
-          setLoading(false)
-        }
-       }
-         useEffect(()=>{
-        fetchData()
-       },[])
-
+      const [selectedDestinations, setSelectedDestinations] = useState(  );
+       
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -195,22 +178,22 @@ export default function TourSearch({ typesearch }: any) {
               onChange={(e) => setLocationInput(e.target.value)}
             />
             <ul className="mt-2 max-h-60 overflow-auto">
-              {selectedDestinations
+              {countryList
                 .filter((item :any) =>
-                  item.country?.toLowerCase().includes(locationInput.toLowerCase())
+                  item.name?.toLowerCase().includes(locationInput.toLowerCase())
                 )
                 .map((loc :any) => (
                   <li
-                    key={loc?.package_id}
+                    key={loc?.code}
                     aria-label="Location item"
                     className="cursor-pointer p-2 hover:bg-gray-100 rounded"
                     onClick={() => {
-                      setSelectedLocation(loc?.country);
+                      setSelectedLocation(loc?.name);
                       setLocationPopoverOpen(false);
                       setLocationInput("");
                     }}
                   >
-                    {loc?.country}
+                    {loc?.name}
                   </li>
                 ))}
             </ul>

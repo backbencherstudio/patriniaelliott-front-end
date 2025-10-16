@@ -4,7 +4,6 @@ import BudgetFilter from './BudgetFilter';
 import DateFilter from './DateFilter';
 import DestinationSearch from './DestinationSearch';
 import FreeCancellationFilter from './FreeCancellationChange';
-import PopularAreaFilter from './PopularAreaFilter';
 import PopularDestinationFilter from './PopularDestinationFilter';
 import RatingFilter from './RatingFilter';
 
@@ -53,9 +52,9 @@ export default function FilterSidebar({toure}:any) {
          <MealPlanFilter/>
       </div> */}
 
-      <div>
+      {/* <div>
         { !toure &&  <PopularAreaFilter/>}
-      </div>
+      </div> */}
 </div>
       
     </div>

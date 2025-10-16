@@ -76,7 +76,7 @@ async function ApartmnetDetailsPage(props: {
     console.log(error);
 
   }
-console.log(hotelData,"vendorPackage");
+console.log(vendorPackage,"vendorPackage");
   return (
     <div>
       <div className=" container">

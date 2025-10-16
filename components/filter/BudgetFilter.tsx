@@ -7,7 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import FilterHeading from "./FilterHeading";
 
 const BudgetFilter = () => {
-  const MIN = 0;
+  const MIN = 1;
   const MAX = 5000;
 
   const [minValue, setMinValue] = useState(MIN);

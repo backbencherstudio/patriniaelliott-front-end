@@ -35,7 +35,7 @@ export default function DestinationSearch() {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="Search Destination"
+        placeholder="Search Packages Name"
         className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 text-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-green-500"
       />
     </div>

@@ -37,8 +37,7 @@ export default function Navbar() {
     return pathname.startsWith(href);
   };
   const endpoint ="/auth/me"
-      const {data,loading}= useFetchData(endpoint)
-
+      const {data,loading,error}= useFetchData(endpoint)
   
   return (
     <header className="bg-primaryColor py-4 ">
@@ -76,7 +75,7 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {token ? (
+          {token && data?.success  ? (
             <>
               <Link
                 aria-label="List your proparty"
@@ -85,7 +84,7 @@ export default function Navbar() {
               >
                 List your proparty
               </Link>
-             <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data}/>
+             <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data }/>
             </>
           ) : (
             <>
@@ -113,7 +112,7 @@ export default function Navbar() {
         {/* Mobile Menu Toggle */}
         <div className="lg:hidden flex items-center gap-2">
           <div className="md:hidden">
-          {token ? <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data}/> : <div className=" flex items-center gap-3">
+          {token && data?.success ? <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data}/> : <div className=" flex items-center gap-3">
                 <Link aria-label="Login" href="/login" className="text-white text-base" onClick={() => setMenuOpen(false)}>
                   Login
                 </Link>
@@ -191,8 +190,8 @@ export default function Navbar() {
           </div>
           {/* Auth Buttons */}
           <div className="mt-4 flex flex-col text-center gap-3">
-            
-              <>
+
+              {token && data?.success ? <>
                 <Link
                   aria-label="List your proparty"
                   href={token ? "/property-list" : "/login"}
@@ -201,7 +200,16 @@ export default function Navbar() {
                 >
                   List your proparty
                 </Link>      
-              </>
+              </> : <>
+                <Link
+                  aria-label="Login"
+                  href="/login"
+                  className="text-white text-base"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              </>}
            
           </div>
         </div>
