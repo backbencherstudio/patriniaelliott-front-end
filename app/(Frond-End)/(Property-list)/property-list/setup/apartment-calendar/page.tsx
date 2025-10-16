@@ -279,7 +279,7 @@ export default function Page() {
         }
         localStorage.removeItem("propertyData");
         setTimeout(() => {
-          router.push("/user-verification");
+          router.push("/payment-method");
         }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");
