@@ -70,7 +70,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "val-jewel-atlas-sagem.trycloudflare.com",
+        hostname: "blind-domain-lat-net.trycloudflare.com",
       },
       {
         protocol: "https",
