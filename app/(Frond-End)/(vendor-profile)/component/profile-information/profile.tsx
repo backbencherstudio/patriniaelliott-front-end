@@ -208,7 +208,7 @@ export default function Profile() {
         return;
       }
 
-      // Prepare update data for the new API structure
+      // Prepare update data for the new API structuree
       const updateData: any = {
         first_name: data.firstName,
         phone_number: data.phoneNumber,
