@@ -70,7 +70,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "buffer-highly-outlets-tubes.trycloudflare.com",
+        hostname: "blind-domain-lat-net.trycloudflare.com",
       },
     ],
   },
