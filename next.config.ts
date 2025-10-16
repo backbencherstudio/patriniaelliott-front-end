@@ -73,7 +73,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "wives-draw-physician-tied.trycloudflare.com",
+        hostname: "val-jewel-atlas-sagem.trycloudflare.com",
+      },
+      {
+        protocol: "https",
+        hostname: "buffer-highly-outlets-tubes.trycloudflare.com",
       },
       {
         protocol: "https",
