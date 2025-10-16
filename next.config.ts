@@ -54,19 +54,15 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "backend.naamstay.com",
+      },
+      {
+        protocol: "https",
         hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
       },
       {
         protocol: "https",
         hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
-      },
-      {
-        protocol: "https",
-        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
-      },
-      {
-        protocol: "https",
-        hostname: "commodities-suzuki-straight-makers.trycloudflare.com",
       },
       {
         protocol: "https",
@@ -79,14 +75,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "val-jewel-atlas-sagem.trycloudflare.com",
-      },
-      {
-        protocol: "https",
-        hostname: "buffer-highly-outlets-tubes.trycloudflare.com",
-      },
-{
-        protocol: "https",
-        hostname: "blind-domain-lat-net.trycloudflare.com",
       },
     ],
   },
