@@ -64,6 +64,7 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
           <div className=" inline-flex justify-between items-center">
             <div className="text-[#22262e] text-lg md:text-2xl font-medium leading-normal">Review and submit your details</div>
             <button
+              aria-label="Edit Step 1"
               onClick={() => onStepClick(1)}
               className="text-[#0068ef] py-1.5 px-1.5 gap-1 rounded border border-[#0068ef] flex items-center  cursor-pointer hover:bg-[#f5f8ff] transition-colors"
             >
@@ -110,6 +111,7 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
           <div className=" inline-flex justify-between items-center">
             <div className="text-[#22262e] text-lg md:text-2xl font-medium leading-normal">Owner's details</div>
             <button
+              aria-label="Edit Step 2"
               onClick={() => onStepClick(2)}
               className="text-[#0068ef] py-1.5 px-1.5 gap-1 rounded border border-[#0068ef] flex items-center  cursor-pointer hover:bg-[#f5f8ff] transition-colors"
             >
@@ -146,6 +148,7 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
           <div className=" inline-flex justify-between items-center">
             <div className="text-[#22262e] text-lg md:text-2xl font-medium leading-normal">Manager's details</div>
             <button
+              aria-label="Edit Step 3"
               onClick={() => onStepClick(3)}
               className="text-[#0068ef] py-1.5 px-1.5 gap-1 rounded border border-[#0068ef] flex items-center  cursor-pointer hover:bg-[#f5f8ff] transition-colors"
             >
@@ -177,6 +180,7 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
 
       <div className="flex justify-end items-center gap-4 mt-3">
         <button
+          aria-label="Previous Step"
           onClick={onBack}
           disabled={isSubmitting}
           className="px-8 py-3 rounded-lg border border-[#0068ef] flex items-center gap-1.5 text-[#0068ef] text-base font-medium cursor-pointer hover:bg-[#f5f8ff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -184,6 +188,7 @@ export default function Step4({ onNext, onBack, currentStep, onStepClick, formDa
           Back
         </button>
         <button
+          aria-label="Submit Verification"
           onClick={handleSubmit}
           disabled={isSubmitting}
           className="px-8 py-3 bg-[#0068ef] rounded-lg flex items-center gap-1.5 text-white text-base font-medium cursor-pointer hover:bg-[#0051bd] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

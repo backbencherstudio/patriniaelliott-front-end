@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import Select from "react-select";
 import TourPlan from "./TourPlan";
+import PolicyEditor from '../_components/PolicyEditor'
 
 const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -51,7 +52,7 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
 
       {/* Image Thumbnails */}
       <div className="mt-4 flex flex-wrap gap-4 justify-start items-start">
-        {images.map((file, idx) => {
+        {images?.map((file, idx) => {
           const imageUrl =
             file instanceof File || file instanceof Blob
               ? URL.createObjectURL(file)
@@ -66,6 +67,7 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
               />
               {/* Delete Button */}
               <button
+                aria-label="Delete"
                 onClick={() => onImageDelete(idx)}
                 className="absolute cursor-pointer top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                 title="Delete"
@@ -83,7 +85,7 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
 /** Helpers */
 const getSelectedOptions = (languages, selectedLanguages) => {
   return languages.filter((lang) =>
-    selectedLanguages.some((selected) => selected === lang.value)
+    selectedLanguages?.some((selected) => selected === lang.value)
   );
 };
 
@@ -142,6 +144,8 @@ const AddTour = () => {
   const [images, setImages] = useState([]);
   const [travellerTypes, setTravellerTypes] = useState([]);
   const [showExtraService, setShowExtraService] = useState(false);
+  const [description, setDescription] = useState('');
+  const [isDescription, setIsDescription] = useState(false);
   const [tourPlan, setTourPlan] = useState([
     {
       id: null,
@@ -177,7 +181,7 @@ const AddTour = () => {
   const handleImageUpdate = (dayIndex, acceptedFiles) => {
     setImages((prev) => {
       const uniqueFiles = acceptedFiles.filter(
-        (file) => !prev.some((existingFile) => existingFile.name === file.name)
+        (file) => !prev?.some((existingFile) => existingFile.name === file.name)
       );
       return [...prev, ...uniqueFiles];
     });
@@ -228,9 +232,15 @@ const AddTour = () => {
       return;
     }
 
+    if (description?.length < 13) {
+      console.log("Description : ", description)
+      setIsDescription(true);
+      return;
+    }
+
     const tourData = {
       title: data?.name,
-      description: data?.description,
+      description: description,
       tourImages: images,
       meetingPoint: selectedMeetingPoint,
       tripPlan: tourPlan,
@@ -301,275 +311,325 @@ const AddTour = () => {
     }
   }, [selectedRegion]);
 
+  useEffect(() => {
+    setValue('name', listProperty?.tour_plan?.title)
+    setDescription(listProperty?.tour_plan?.description)
+    setImages(listProperty?.tour_plan?.tourImages || [])
+    setSelectedMeetingPoint(listProperty?.tour_plan?.meetingPoint);
+    setValue('policy_description', listProperty?.tour_plan?.policy_description)
+    listProperty?.tour_plan?.package_policies?.forEach(item => {
+      if (item?.title === 'transportation') {
+        setValue('transportation', item?.description)
+      }
+      if (item?.title === 'meals') {
+        setValue('meals', item?.description)
+      }
+      if (item?.title === 'guide_tours') {
+        setValue('guide', item?.description)
+      }
+      if (item?.title === 'add_ons') {
+        setValue('addOns', item?.description)
+      }
+      if (item?.title === 'cancellation_policy') {
+        setValue('cancellation_policy', item?.description)
+      }
+    })
+    setValue('city', listProperty?.tour_plan?.city);
+    setValue('min_traveller', listProperty?.tour_plan?.minTraveller?.toString())
+    setValue('max_traveller', listProperty?.tour_plan?.maxTraveller?.toString())
+    setValue('duration', listProperty?.tour_plan?.duration?.toString())
+    setValue('price', listProperty?.tour_plan?.price?.toString())
+    setValue('discount', listProperty?.tour_plan?.discount?.toString())
+    setValue('service_fee', listProperty?.tour_plan?.service_fee?.toString());
+    setExtraServices(listProperty?.tour_plan?.extra_service || [])
+    setSelectedLanguages(listProperty?.tour_plan?.language);
+    setTourPlan(listProperty?.tour_plan?.tripPlan || [
+      {
+        id: null,
+        day: 1,
+        tripPlan: [
+          {
+            title: "",
+            description: "",
+            time: 0,
+            ticket: "free",
+          },
+        ],
+        images: [],
+      },
+    ])
+  }, [])
+
   return (
     <section className="container">
-    <div className="flex flex-col gap-4">
-      <Toaster position="top-right" />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="bg-white min-h-screen pt-8  pb-6 rounded-lg flex flex-col gap-4">
-          <div className="md:grid md:grid-cols-3 gap-8 ">
-            {/* LEFT */}
-            <div className="flex flex-col gap-8 col-span-2">
-              <h3 className="text-2xl font-semibold text-[#080613]">
-                Tour Details
-              </h3>
+      <div className="flex flex-col gap-4">
+        <Toaster position="top-right" />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="bg-white min-h-screen pt-8  pb-6 rounded-lg flex flex-col gap-4">
+            <div className="md:grid md:grid-cols-3 gap-8 ">
+              {/* LEFT */}
+              <div className="flex flex-col gap-8 col-span-2">
+                <h3 className="text-2xl font-semibold text-[#080613]">
+                  Tour Details
+                </h3>
 
-              {/* Tour Title */}
-              <div>
-                <label className="block text-gray-500 text-base font-medium mb-2">
-                  Tour Title
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter your tour title"
-                  {...register("name", { required: "Package name is required" })}
-                  className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                  aria-invalid={!!errors.name}
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
-                )}
-              </div>
+                {/* Tour Title */}
+                <div>
+                  <label className="block text-gray-500 text-base font-medium mb-2">
+                    Tour Title
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter your tour title"
+                    {...register("name", { required: "Package name is required" })}
+                    className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                    aria-invalid={!!errors.name}
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+                  )}
+                </div>
 
-              {/* Description */}
-              <div>
-                <label className="block text-gray-500 text-base font-medium mb-2">
-                  Tour Description
-                </label>
-                <textarea
+                {/* Description */}
+                <div>
+                  <label className="block text-gray-500 text-base font-medium mb-2">
+                    Tour Description
+                  </label>
+                  {/* <textarea
                   placeholder="Enter tour description"
                   {...register("description", { required: "Description is required" })}
                   className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
                   aria-invalid={!!errors.description}
-                />
-                {errors.description && (
-                  <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>
-                )}
-              </div>
+                /> */}
+                  <PolicyEditor content={description} onContentChange={(data) => setDescription(data)} />
+                  {isDescription && (
+                    <p className="text-red-500 text-xs mt-1">Tour description is required.</p>
+                  )}
+                </div>
 
-              {/* Upload Images */}
-              <div className="w-full">
-                <div className="p-4 bg-[#F0F4F9] rounded-lg flex flex-col gap-3">
-                  <div className="w-full">
-                    <h2 className="text-base font-medium text-[#4A4C56] mb-2">
-                      Upload Images
-                    </h2>
-                    <ImageUploader
-                      images={images}
-                      onImageDrop={(acceptedFiles) => handleImageUpdate(0, acceptedFiles)}
-                      onImageDelete={(imageIndex) => handleImageDelete(0, imageIndex)}
-                    />
+                {/* Upload Images */}
+                <div className="w-full">
+                  <div className="p-4 bg-[#F0F4F9] rounded-lg flex flex-col gap-3">
+                    <div className="w-full">
+                      <h2 className="text-base font-medium text-[#4A4C56] mb-2">
+                        Upload Images
+                      </h2>
+                      <ImageUploader
+                        images={images}
+                        onImageDrop={(acceptedFiles) => handleImageUpdate(0, acceptedFiles)}
+                        onImageDelete={(imageIndex) => handleImageDelete(0, imageIndex)}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Meeting Point */}
-              <div>
-                <label className="block text-gray-500 text-base font-medium mb-2">
-                  Meeting Point
-                </label>
-                <input
-                  aria-placeholder="Select a meeting point"
-                  className="w-full border p-2 rounded-sm"
-                  value={selectedMeetingPoint}
-                  onChange={(value) => {
-                    setSelectedMeetingPoint(value.target.value);
-                  }}
-                  placeholder="Enter meeting point"
-                />
-              </div>
+                {/* Meeting Point */}
+                <div>
+                  <label className="block text-gray-500 text-base font-medium mb-2">
+                    Meeting Point
+                  </label>
+                  <input
+                    aria-placeholder="Select a meeting point"
+                    className="w-full border p-2 rounded-sm"
+                    value={selectedMeetingPoint}
+                    onChange={(value) => {
+                      setSelectedMeetingPoint(value.target.value);
+                    }}
+                    placeholder="Enter meeting point"
+                  />
+                </div>
 
-              <div className="space-y-2 border p-4 rounded-md">
-                <label className="text-2xl block font-semibold text-[#080613]">
-                  Policies
-                </label>
-                <textarea
-                  className="w-full border p-2 rounded-sm resize-none h-[100px] outline-none"
-                  placeholder="Policy description"
-                  {...register('policy_description', { required: "Enter policy description" })}
-                ></textarea>
-                <div>
-                  <label className="block text-gray-500 text-base font-medium mb-2">
-                    Transportation
+                <div className="space-y-2 border p-4 rounded-md">
+                  <label className="text-2xl block font-semibold text-[#080613]">
+                    Policies
                   </label>
-                  <input
-                    type="text"
-                    className="w-full border p-2 rounded-sm outline-none"
-                    placeholder="Enter transportation policies"
-                    {...register('transportation', { required: 'Enter transportation policy' })}
-                  />
-                  {errors.transportation && (
-                    <p className="text-red-500 text-xs mt-1">{errors.transportation.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-gray-500 text-base font-medium mb-2">
-                    Meals
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border p-2 rounded-sm outline-none"
-                    placeholder="Enter meals policies"
-                    {...register('meals', { required: 'Enter meals policy' })}
-                  />
-                  {errors.meals && (
-                    <p className="text-red-500 text-xs mt-1">{errors.meals.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-gray-500 text-base font-medium mb-2">
-                    Guided Tours
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border p-2 rounded-sm outline-none"
-                    placeholder="Enter guided tours policies"
-                    {...register('guide', { required: 'Enter guide policy' })}
-                  />
-                  {errors.guide && (
-                    <p className="text-red-500 text-xs mt-1">{errors.guide.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-gray-500 text-base font-medium mb-2">
-                    Add-Ons
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border p-2 rounded-sm outline-none"
-                    placeholder="Enter add-ons policies"
-                    {...register('addOns', { required: 'Enter add-ons policy' })}
-                  />
-                  {errors.addOns && (
-                    <p className="text-red-500 text-xs mt-1">{errors.addOns.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-gray-500 text-base font-medium mb-2">
-                    Cancellation policy
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border p-2 rounded-sm outline-none"
-                    placeholder="Enter cancellation policies"
-                    {...register('cancellation_policy', { required: 'Enter cancellation policy' })}
-                  />
-                  {errors.cancellation_policy && (
-                    <p className="text-red-500 text-xs mt-1">{errors.cancellation_policy.message}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Trip Plan */}
-              <div className="flex flex-col gap-4">
-                <h3 className="text-2xl font-semibold text-[#080613]">Trip Plan</h3>
-                <TourPlan
-                  tourPlan={tourPlan}
-                  setTourPlan={setTourPlan}
-                  packageType="tour"
-                />
-              </div>
-            </div>
-
-            {/* RIGHT */}
-            <div className="p-4 bg-secondaryColor/5 border border-secondaryColor rounded-2xl h-fit mt-4 md:mt-0">
-              <div className="flex flex-col gap-4">
-                <div className="flex-1 border p-2 rounded-md">
-                  <label className="block text-[#444] text-xl font-medium mb-4">
-                    Destination
-                  </label>
-                  <div className="space-y-3">
-                    <Dropdownmenu data={regions} handleSelect={handleRegionChange} selectedData={selectedRegion} title="Country/Region" showTitle={true} />
-                  </div>
-                  <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
+                  <textarea
+                    className="w-full border p-2 rounded-sm resize-none h-[100px] outline-none"
+                    placeholder="Policy description"
+                    {...register('policy_description', { required: "Enter policy description" })}
+                  ></textarea>
                   <div>
-                    <label className="block text-[#444] text-base font-medium mb-4">
-                      City
+                    <label className="block text-gray-500 text-base font-medium mb-2">
+                      Transportation
                     </label>
                     <input
                       type="text"
-                      placeholder="Enter cancellation policy"
-                      onChange={(e) => setCancelPolicy(e.target.value)}
-                      {...register("city", { required: "Enter name of the city." })}
-                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                      className="w-full border p-2 rounded-sm outline-none"
+                      placeholder="Enter transportation policies"
+                      {...register('transportation', { required: 'Enter transportation policy' })}
                     />
+                    {errors.transportation && (
+                      <p className="text-red-500 text-xs mt-1">{errors.transportation.message}</p>
+                    )}
                   </div>
-                  {errors.city && (
-                    <p className="text-red-500 text-xs mt-1">{errors.city.message}</p>
-                  )}
+                  <div>
+                    <label className="block text-gray-500 text-base font-medium mb-2">
+                      Meals
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border p-2 rounded-sm outline-none"
+                      placeholder="Enter meals policies"
+                      {...register('meals', { required: 'Enter meals policy' })}
+                    />
+                    {errors.meals && (
+                      <p className="text-red-500 text-xs mt-1">{errors.meals.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-gray-500 text-base font-medium mb-2">
+                      Guided Tours
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border p-2 rounded-sm outline-none"
+                      placeholder="Enter guided tours policies"
+                      {...register('guide', { required: 'Enter guide policy' })}
+                    />
+                    {errors.guide && (
+                      <p className="text-red-500 text-xs mt-1">{errors.guide.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-gray-500 text-base font-medium mb-2">
+                      Add-Ons
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border p-2 rounded-sm outline-none"
+                      placeholder="Enter add-ons policies"
+                      {...register('addOns', { required: 'Enter add-ons policy' })}
+                    />
+                    {errors.addOns && (
+                      <p className="text-red-500 text-xs mt-1">{errors.addOns.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-gray-500 text-base font-medium mb-2">
+                      Cancellation policy
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border p-2 rounded-sm outline-none"
+                      placeholder="Enter cancellation policies"
+                      {...register('cancellation_policy', { required: 'Enter cancellation policy' })}
+                    />
+                    {errors.cancellation_policy && (
+                      <p className="text-red-500 text-xs mt-1">{errors.cancellation_policy.message}</p>
+                    )}
+                  </div>
                 </div>
 
-                <div className="flex flex-col 2xl:flex-row gap-4">
-                  <div className="flex-1">
-                    <label className="block text-[#444] text-base font-medium mb-4">
-                      Minimum Travellers
-                    </label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      placeholder="Enter min. travellers"
-                      {...register("min_traveller", {
-                        required: "Min. travellers is required",
-                        min: { value: 1, message: "Must be at least 1" },
-                        pattern: {
-                          value: /^[1-9]\d*$/,
-                          message: "Must be a valid number"
-                        }
-                      })}
-                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                      aria-invalid={!!errors.min_traveller}
-                    />
-                    {errors.min_traveller && (
-                      <p className="text-red-500 text-xs mt-1">{errors.min_traveller.message}</p>
-                    )}
-                  </div>
-
-                  <div className="flex-1">
-                    <label className="block text-[#444] text-base font-medium mb-4">
-                      Maximum Travellers
-                    </label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      placeholder="Enter max. travellers"
-                      {...register("max_traveller", {
-                        required: "Maximum travellers is required",
-                        min: { value: 1, message: "Must be at least 1" },
-                        pattern: {
-                          value: /^[1-9]\d*$/,
-                          message: "Must be a valid number"
-                        }
-                      })}
-                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                      aria-invalid={!!errors.max_traveller}
-                    />
-                    {errors.max_traveller && (
-                      <p className="text-red-500 text-xs mt-1">{errors.max_traveller.message}</p>
-                    )}
-                  </div>
+                {/* Trip Plan */}
+                <div className="flex flex-col gap-4">
+                  <h3 className="text-2xl font-semibold text-[#080613]">Trip Plan</h3>
+                  <TourPlan
+                    tourPlan={tourPlan}
+                    setTourPlan={setTourPlan}
+                    packageType="tour"
+                  />
                 </div>
+              </div>
 
-                {/* Duration + Type */}
-                <div className="flex flex-col 2xl:flex-row gap-4">
-                  <div className="flex-1">
-                    <label className="block text-[#444] text-base font-medium mb-4">
-                      Tour Duration
+              {/* RIGHT */}
+              <div className="p-4 bg-secondaryColor/5 border border-secondaryColor rounded-2xl h-fit mt-4 md:mt-0">
+                <div className="flex flex-col gap-4">
+                  <div className="flex-1 border p-2 rounded-md">
+                    <label className="block text-[#444] text-xl font-medium mb-4">
+                      Destination
                     </label>
-                    <input
-                      type="number"
-                      min="1"
-                      placeholder="Write duration"
-                      {...register("duration", { required: "Package duration is required" })}
-                      className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                      aria-invalid={!!errors.duration}
-                    />
-                    {errors.duration && (
-                      <p className="text-red-500 text-xs mt-1">{errors.duration.message}</p>
+                    <div className="space-y-3">
+                      <Dropdownmenu data={regions} handleSelect={handleRegionChange} selectedData={selectedRegion} title="Country/Region" showTitle={true} />
+                    </div>
+                    <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
+                    <div>
+                      <label className="block text-[#444] text-base font-medium mb-4">
+                        City
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Enter cancellation policy"
+                        onChange={(e) => setCancelPolicy(e.target.value)}
+                        {...register("city", { required: "Enter name of the city." })}
+                        className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                      />
+                    </div>
+                    {errors.city && (
+                      <p className="text-red-500 text-xs mt-1">{errors.city.message}</p>
                     )}
                   </div>
-                  {/* <div className="flex-1">
+
+                  <div className="flex flex-col 2xl:flex-row gap-4">
+                    <div className="flex-1">
+                      <label className="block text-[#444] text-base font-medium mb-4">
+                        Minimum Travellers
+                      </label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        placeholder="Enter min. travellers"
+                        {...register("min_traveller", {
+                          required: "Min. travellers is required",
+                          min: { value: 1, message: "Must be at least 1" },
+                          pattern: {
+                            value: /^[1-9]\d*$/,
+                            message: "Must be a valid number"
+                          }
+                        })}
+                        className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                        aria-invalid={!!errors.min_traveller}
+                      />
+                      {errors.min_traveller && (
+                        <p className="text-red-500 text-xs mt-1">{errors.min_traveller.message}</p>
+                      )}
+                    </div>
+
+                    <div className="flex-1">
+                      <label className="block text-[#444] text-base font-medium mb-4">
+                        Maximum Travellers
+                      </label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        placeholder="Enter max. travellers"
+                        {...register("max_traveller", {
+                          required: "Maximum travellers is required",
+                          min: { value: 1, message: "Must be at least 1" },
+                          pattern: {
+                            value: /^[1-9]\d*$/,
+                            message: "Must be a valid number"
+                          }
+                        })}
+                        className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                        aria-invalid={!!errors.max_traveller}
+                      />
+                      {errors.max_traveller && (
+                        <p className="text-red-500 text-xs mt-1">{errors.max_traveller.message}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Duration + Type */}
+                  <div className="flex flex-col 2xl:flex-row gap-4">
+                    <div className="flex-1">
+                      <label className="block text-[#444] text-base font-medium mb-4">
+                        Tour Duration
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="Write duration"
+                        {...register("duration", { required: "Package duration is required" })}
+                        className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                        aria-invalid={!!errors.duration}
+                      />
+                      {errors.duration && (
+                        <p className="text-red-500 text-xs mt-1">{errors.duration.message}</p>
+                      )}
+                    </div>
+                    {/* <div className="flex-1">
                     <label className="block text-gray-500 text-base font-medium mb-4">
                       Duration Type
                     </label>
@@ -586,54 +646,54 @@ const AddTour = () => {
                       <p className="text-red-500 text-xs mt-1">{errors.duration_type.message}</p>
                     )}
                   </div> */}
-                </div>
+                  </div>
 
-                {/* Price */}
-                <div className="space-y-2">
-                  <label className="block text-[#444] text-base font-medium">Tour Price ($)</label>
-                  <input
-                    type="number"
-                    placeholder="Price"
-                    {...register("price", { required: true })}
-                    className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                    aria-invalid={!!errors.price}
-                  />
-                  {errors.price && (
-                    <p className="text-red-500 text-xs mt-1">{`${errors.price.message}`}</p>
-                  )}
-                </div>
+                  {/* Price */}
+                  <div className="space-y-2">
+                    <label className="block text-[#444] text-base font-medium">Tour Price ($)</label>
+                    <input
+                      type="number"
+                      placeholder="Price"
+                      {...register("price", { required: true })}
+                      className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                      aria-invalid={!!errors.price}
+                    />
+                    {errors.price && (
+                      <p className="text-red-500 text-xs mt-1">{`${errors.price.message}`}</p>
+                    )}
+                  </div>
 
-                <div className="space-y-2">
-                  <label className="block text-[#444] text-base font-medium">Discount (%)</label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="Discount"
-                    {...register("discount", { required: true })}
-                    className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                    aria-invalid={!!errors.discount}
-                  />
-                  {errors.discount && (
-                    <p className="text-red-500 text-xs mt-1">{`${errors.discount.message}`}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-[#444] text-base font-medium">Service fee ($)</label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="Service fee"
-                    {...register("service_fee", { required: true })}
-                    className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                    aria-invalid={!!errors.service_fee}
-                  />
-                  {errors.service_fee && (
-                    <p className="text-red-500 text-xs mt-1">{`${errors.service_fee.message}`}</p>
-                  )}
-                </div>
+                  <div className="space-y-2">
+                    <label className="block text-[#444] text-base font-medium">Discount (%)</label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Discount"
+                      {...register("discount", { required: true })}
+                      className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                      aria-invalid={!!errors.discount}
+                    />
+                    {errors.discount && (
+                      <p className="text-red-500 text-xs mt-1">{`${errors.discount.message}`}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-[#444] text-base font-medium">Service fee ($)</label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Service fee"
+                      {...register("service_fee", { required: true })}
+                      className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                      aria-invalid={!!errors.service_fee}
+                    />
+                    {errors.service_fee && (
+                      <p className="text-red-500 text-xs mt-1">{`${errors.service_fee.message}`}</p>
+                    )}
+                  </div>
 
-                {/* Cancellation Policy */}
-                {/* <div className="space-y-3">
+                  {/* Cancellation Policy */}
+                  {/* <div className="space-y-3">
                   <div className="flex md:flex-col lg:flex-row items-center gap-4 justify-between">
                     <label className="block text-[#444] text-base font-medium">Cancellation Policy</label>
                     {!showCancellation && (
@@ -682,114 +742,123 @@ const AddTour = () => {
                     ))}
                   </ul>
                 </div> */}
+                  {/* Extra Services */}
+                  <div className="space-y-3 border p-2 rounded-md">
+                    <div className="flex md:flex-col items-center gap-4 justify-between">
+                      <label className="block text-[#444] text-base font-medium">Extra Services</label>
+                      {!showExtraService && (
+                        <button
+                          type="button"
+                          className="border border-[#061D35] bg-[#061D35] text-white hover:text-[#061D35] hover:bg-transparent duration-300 transition-colors px-3 py-1 cursor-pointer rounded-md"
+                          onClick={() => setShowExtraService((prev) => !prev)}
+                        >
+                          Add extra services
+                        </button>
+                      )}
+                    </div>
+                    {showExtraService && (
+                      <div className="flex gap-4">
+                        <input
+                          type="text"
+                          value={extraService?.name}
+                          placeholder="Enter extra service"
+                          onChange={(e) =>
+                            setExtraService((prev) => ({ ...prev, name: e.target.value }))
+                          }
+                          className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
+                        />
 
-                {/* Extra Services */}
-                <div className="space-y-3 border p-2 rounded-md">
-                  <div className="flex md:flex-col items-center gap-4 justify-between">
-                    <label className="block text-[#444] text-base font-medium">Extra Services</label>
-                    {!showExtraService && (
-                      <button
-                        type="button"
-                        className="border border-[#061D35] bg-[#061D35] text-white hover:text-[#061D35] hover:bg-transparent duration-300 transition-colors px-3 py-1 cursor-pointer rounded-md"
-                        onClick={() => setShowExtraService((prev) => !prev)}
-                      >
-                        Add extra services
-                      </button>
+                        <input
+                          type="text"
+                          value={extraService.price}
+                          placeholder="Enter price"
+                          onChange={(e) =>
+                            setExtraService((prev) => ({ ...prev, price: e.target.value }))
+                          }
+                          className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600 max-w-[150px]"
+                        />
+
+                      </div>
+
+                      
                     )}
+                    {showExtraService && (
+                      <div className="space-x-3">
+                        <button
+                          type="button"
+                          className="border border-[#061D35] bg-[#061D35] text-white hover:text-[#061D35] hover:bg-transparent duration-300 transition-colors px-3 py-1 cursor-pointer rounded-md"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleExtraServices();
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button
+                          type="button"
+                          className="border border-[#061D35] px-3 py-1 cursor-pointer rounded-md"
+                          onClick={() => setShowExtraService(false)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                    <ul className="list-disc pl-4">
+                      {extraServices?.map((service, index) => (
+                        <li key={index}>{service.name} {service?.price}</li>
+                      ))}
+                    </ul>
                   </div>
-                  {showExtraService && (
-                    <div className="flex gap-4">
-                      <input
-                        type="text"
-                        value={extraService.name}
-                        placeholder="Enter extra service"
-                        onChange={(e) =>
-                          setExtraService((prev) => ({ ...prev, name: e.target.value }))
-                        }
-                        className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
-                      />
 
-                      <input
-                        type="text"
-                        value={extraService.price}
-                        placeholder="Enter price"
-                        onChange={(e) =>
-                          setExtraService((prev) => ({ ...prev, price: e.target.value }))
-                        }
-                        className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600 max-w-[150px]"
-                      />
-
-                    </div>
-                  )}
-                  {showExtraService && (
-                    <div className="space-x-3">
-                      <button
-                        type="button"
-                        className="border border-[#061D35] bg-[#061D35] text-white hover:text-[#061D35] hover:bg-transparent duration-300 transition-colors px-3 py-1 cursor-pointer rounded-md"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleExtraServices();
-                        }}
-                      >
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        className="border border-[#061D35] px-3 py-1 cursor-pointer rounded-md"
-                        onClick={() => setShowExtraService(false)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
-                  <ul className="list-disc pl-4">
-                    {extraServices.map((service, index) => (
-                      <li key={index}>{service.name} {service?.price}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Language */}
-                <div>
-                  <label className="block text-[#444] text-base font-medium mb-4">
-                    Language
-                  </label>
-                  <Select
-                    isMulti
-                    options={languages.map((lang) => ({
-                      value: lang.code,
-                      label: lang.name,
-                    }))}
-                    value={getSelectedOptions(
-                      languages.map((lang) => ({
+                  {/* Language */}
+                  <div>
+                    <label className="block text-[#444] text-base font-medium mb-4">
+                      Language
+                    </label>
+                    <Select
+                      isMulti
+                      options={languages.map((lang) => ({
                         value: lang.code,
                         label: lang.name,
-                      })),
-                      selectedLanguages
-                    )}
-                    onChange={handleLanguageChange}
-                    placeholder="Select language"
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                  />
+                      }))}
+                      value={getSelectedOptions(
+                        languages.map((lang) => ({
+                          value: lang.code,
+                          label: lang.name,
+                        })),
+                        selectedLanguages
+                      )}
+                      onChange={handleLanguageChange}
+                      placeholder="Select language"
+                      className="react-select-container"
+                      classNamePrefix="react-select"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Actions */}
-          <div className="flex flex-col-reverse md:flex-row justify-center items-center gap-4">
-            <button
-              type="submit"
-              className="border cursor-pointer border-[#061D35] px-16 py-3 rounded-full bg-[#061D35] text-base font-semibold text-white hover:bg-white hover:text-[#061D35]"
-              disabled={loading}
-            >
-              Next
-            </button>
+            {/* Actions */}
+            <div className="flex flex-col-reverse md:flex-row justify-center items-center gap-4">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="border cursor-pointer border-[#061D35] px-16 py-3 rounded-full text-base font-semibold text-[#061D35] hover:bg-white hover:text-[#061D35]"
+                disabled={loading}
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                className="border cursor-pointer border-[#061D35] px-16 py-3 rounded-full bg-[#061D35] text-base font-semibold text-white hover:bg-white hover:text-[#061D35]"
+                disabled={loading}
+              >
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
     </section>
   );
 };

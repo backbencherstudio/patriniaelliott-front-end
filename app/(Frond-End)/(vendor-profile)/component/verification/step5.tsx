@@ -32,6 +32,7 @@ export default function Step5({ onEdit }: Step5Props) {
           </p>
         </div>
         <button 
+          aria-label="Edit Verification Details"
           onClick={onEdit}
           className="px-8 py-3 rounded-lg border border-[#0068ef] flex items-center gap-1.5 text-[#0068ef] text-base font-medium cursor-pointer hover:bg-[#f5f8ff] transition-colors"
         >

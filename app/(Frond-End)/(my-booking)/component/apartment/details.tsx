@@ -81,6 +81,7 @@ export default function Details({ apartment,back }: DetailsProps) {
           </div>
         </div>
         <button 
+          aria-label="Write a review"
           onClick={()=>setShowReviewModal(true)}
           className="self-end px-6 py-3 border border-blueColor cursor-pointer rounded-lg outline-offset-[-1px] outline-[#0068ef] flex items-center gap-2 hover:bg-[#0068ef] group transition-colors"
         >

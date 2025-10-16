@@ -5,7 +5,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useToken } from "@/hooks/useToken";
 import usericon from "@/public/icon/user.svg";
+import { UserService } from "@/service/user/user.service";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -13,8 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import HomeAllFilter from "../filter/HomeAllFilter";
-
-const destinations = ["Japan", "London", "Nepal", "China", "India"];
+import { countryList } from "@/DemoAPI/country";
 
 export default function TourSearch({ typesearch }: any) {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function TourSearch({ typesearch }: any) {
     null,
     null,
   ]);
+
   const [appliedDateRange, setAppliedDateRange] = useState<
     [Date | null, Date | null]
   >([null, null]);
@@ -36,6 +38,11 @@ export default function TourSearch({ typesearch }: any) {
   const [openFilter, setOpenFilter] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+   const [loading, setLoading]=useState(true);
+       const [error, setError]=useState(null);
+      const {token} = useToken()
+      const [selectedDestinations, setSelectedDestinations] = useState(  );
+       
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -70,17 +77,16 @@ export default function TourSearch({ typesearch }: any) {
   }, []);
   type Room = {
     id: number;
-    adults: number;
-    children: number;
+    people: number;
   };
 
   const [rooms, setRooms] = useState<Room[]>([
-    { id: 1, adults: 2, children: 0 },
+    { id: 1, people: 2 },
   ]);
 
   const handleChange = (
     index: number,
-    type: "adults" | "children",
+    type: "people",
     action: "increment" | "decrement"
   ) => {
     setRooms((prev) =>
@@ -91,7 +97,7 @@ export default function TourSearch({ typesearch }: any) {
               [type]:
                 action === "increment"
                   ? room[type] + 1
-                  : Math.max(room[type] - 1, type === "adults" ? 1 : 0),
+                  : Math.max(room[type] - 1, type === "people" ? 1 : 0),
             }
           : room
       )
@@ -100,18 +106,16 @@ export default function TourSearch({ typesearch }: any) {
   const addRoom = () => {
     setRooms((prev) => [
       ...prev,
-      { id: prev.length + 1, adults: 2, children: 0 },
+      { id: prev.length + 1, people: 2 },
     ]);
   };
-  const totalAdults = rooms.reduce((acc, r) => acc + r.adults, 0);
-  const totalChildren = rooms.reduce((acc, r) => acc + r.children, 0);
+  const totalPeople = rooms.reduce((acc, r) => acc + r.people, 0);
 
   const handleSearch = () => {
     const query = new URLSearchParams({
       destinations: selectedLocation || "",
       rooms: rooms.length.toString(),
-      adults: totalAdults.toString(),
-      children: totalChildren.toString(),
+      people: totalPeople.toString(),
     });
 
     if (appliedDateRange[0]) {
@@ -130,6 +134,7 @@ export default function TourSearch({ typesearch }: any) {
     }
   };
 
+
   return (
     <div className="bg-white relative rounded-[12px] px-4 py-[14px] flex items-center flex-col lg:flex-row  justify-center lg:justify-between  shadow-md !w-full">
       {/* ✅ Location */}
@@ -143,6 +148,7 @@ export default function TourSearch({ typesearch }: any) {
         >
           <PopoverTrigger asChild>
             <Button
+              aria-label="Location"
               variant="ghost"
               className="flex hover:bg-transparent cursor-pointer items-center justify-start  lg:border-r border-black/20 rounded-none  h-auto px-2"
             >
@@ -151,6 +157,7 @@ export default function TourSearch({ typesearch }: any) {
                 width={20}
                 height={20}
                 alt="image"
+                loading="lazy"
                 className="w-5 h-5"
               />
               <div>
@@ -165,26 +172,28 @@ export default function TourSearch({ typesearch }: any) {
           </PopoverTrigger>
           <PopoverContent className="w-60 p-2">
             <input
+              aria-label="Location input"
               placeholder="Type your destination"
               value={locationInput}
               onChange={(e) => setLocationInput(e.target.value)}
             />
             <ul className="mt-2 max-h-60 overflow-auto">
-              {destinations
-                .filter((item) =>
-                  item.toLowerCase().includes(locationInput.toLowerCase())
+              {countryList
+                .filter((item :any) =>
+                  item.name?.toLowerCase().includes(locationInput.toLowerCase())
                 )
-                .map((loc) => (
+                .map((loc :any) => (
                   <li
-                    key={loc}
+                    key={loc?.code}
+                    aria-label="Location item"
                     className="cursor-pointer p-2 hover:bg-gray-100 rounded"
                     onClick={() => {
-                      setSelectedLocation(loc);
+                      setSelectedLocation(loc?.name);
                       setLocationPopoverOpen(false);
                       setLocationInput("");
                     }}
                   >
-                    {loc}
+                    {loc?.name}
                   </li>
                 ))}
             </ul>
@@ -199,6 +208,7 @@ export default function TourSearch({ typesearch }: any) {
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
+              aria-label="Date filter"
               variant="ghost"
               className="flex hover:bg-transparent cursor-pointer items-start justify-start lg:border-r !pr-4  !pl-8 border-black/20 rounded-none flex-col h-auto "
             >
@@ -262,6 +272,7 @@ export default function TourSearch({ typesearch }: any) {
             />
             <div className="text-right mt-2">
               <button
+                aria-label="Apply"
                 className="bg-secondaryColor  py-2  text-black font-medium px-4  rounded-md cursor-pointer"
                 onClick={() => {
                   setAppliedDateRange(dateRange);
@@ -282,7 +293,7 @@ export default function TourSearch({ typesearch }: any) {
       <div className=" lg:border-0 border-b border-blackColor/20 w-full py-2 lg:py-0 flex justify-center">
         <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
           <PopoverTrigger asChild>
-            <div className="flex flex-col items-start px-2 cursor-pointer lg:border-r !pl-6 !pr-8 border-black/20 rounded-none">
+            <div aria-label="Guest" className="flex flex-col items-start px-2 cursor-pointer lg:border-r !pl-6 !pr-8 border-black/20 rounded-none">
               <div className="flex items-center gap-3 text-sm">
                 <Image
                   src={usericon}
@@ -296,7 +307,7 @@ export default function TourSearch({ typesearch }: any) {
                   <p className="text-black text-sm !mb-0 whitespace-nowrap">
                     {`${rooms.length} Room${
                       rooms.length > 1 ? "s" : ""
-                    }, ${totalAdults} Adults, ${totalChildren} Children`}
+                    }, ${totalPeople} People`}
                   </p>
                 </div>
               </div>
@@ -314,35 +325,37 @@ export default function TourSearch({ typesearch }: any) {
               {rooms.map((room, index) => (
                 <div
                   key={room.id}
+                  aria-label="Room"
                   className="border border-yellow-400 rounded-lg  mb-4"
                 >
                   <div className="flex justify-between bg-secondaryColor/12 items-center text-sm font-semibold p-2 mb-3">
                     <p>Room {room.id}</p>
                     <span className="text-grayColor1 font-normal text-sm ">
-                      {room.adults} Adult{room.adults > 1 ? "s" : ""},{" "}
-                      {room.children} Child
+                      {room.people} People{room.people > 1 ? "s" : ""},{" "}
                     </span>
                   </div>
                   <div className="flex justify-between items-center px-4 pb-3">
                     <div>
-                      <p className="text-sm font-medium text-black">Adults</p>
+                      <p className="text-sm font-medium text-black">People</p>
                       <p className="text-xs text-muted-foreground">15+ years</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
+                        aria-label="Decrement"
                         onClick={() =>
-                          handleChange(index, "adults", "decrement")
+                          handleChange(index, "people", "decrement")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
                         <Minus size={16} />
                       </button>
                       <span className="w-4 text-center text-sm">
-                        {room.adults}
+                        {room.people}
                       </span>
                       <button
+                        aria-label="Increment"
                         onClick={() =>
-                          handleChange(index, "adults", "increment")
+                          handleChange(index, "people", "increment")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
@@ -351,37 +364,38 @@ export default function TourSearch({ typesearch }: any) {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center px-4 pb-3">
+                  {/* <div className="flex justify-between items-center px-4 pb-3">
                     <div>
-                      <p className="text-sm font-medium text-black">Children</p>
+                      <p className="text-sm font-medium text-black">People</p>
                       <p className="text-xs text-muted-foreground">1–9 years</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() =>
-                          handleChange(index, "children", "decrement")
+                          handleChange(index, "people", "decrement")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
                         <Minus size={16} />
                       </button>
                       <span className="w-4 text-center text-sm">
-                        {room.children}
+                        {room.people}
                       </span>
                       <button
                         onClick={() =>
-                          handleChange(index, "children", "increment")
+                            handleChange(index, "people", "increment")
                         }
                         className="rounded-full border cursor-pointer  p-1.5 border-gray-300 text-black"
                       >
                         <Plus size={16} />
                       </button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               ))}
 
               <button
+                aria-label="Add another room"
                 onClick={addRoom}
                 className="w-full bg-secondaryColor cursor-pointer flex items-center justify-center py-2 text-black font-semibold text-sm rounded-md mb-3"
               >
@@ -400,6 +414,7 @@ export default function TourSearch({ typesearch }: any) {
           ref={buttonRef}
           variant="outline"
           size="icon"
+          aria-label="Filter"
           onClick={() => setOpenFilter((prev) => !prev)}
           className="bg-white border rounded-full w-10 h-10"
         >
@@ -408,6 +423,7 @@ export default function TourSearch({ typesearch }: any) {
 
         <div className=" ">
           <button
+            aria-label="Search"
             onClick={handleSearch}
             className="bg-secondaryColor cursor-pointer flex justify-center items-center text-black w-10 h-10 p-2 rounded-md"
           >

@@ -29,7 +29,7 @@ const FilterHeader = ({ data, title }: { data: any[], title: string }) => {
   return (
     <div className="items-center mb-4">
       <h4 className="text-2xl font-semibold text-headerColor">
-        {title} found: {data.length} available {title}
+        {title} found: {data?.length} available {title}
       </h4>
 
       <div className="flex gap-3 mt-2">

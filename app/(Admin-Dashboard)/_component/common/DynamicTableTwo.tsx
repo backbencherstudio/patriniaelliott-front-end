@@ -86,12 +86,13 @@ export default function DynamicTableTwo({
                   {(onView || onDelete) && (
                     <td className="px-4 py-3 flex gap-4">
                       {onView && (
-                        <span
+                        <button
                           className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
+                          aria-label="View details"
                           onClick={() => onView(row)}
                         >
                           View details
-                        </span>
+                        </button>
                       )}
                       {onDelete && (
                         
@@ -122,6 +123,7 @@ export default function DynamicTableTwo({
       {totalPages > 1 && (
         <div className="flex justify-end mt-6 gap-2">
           <button
+            aria-label="Previous"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
             className="px-3 py-1 border rounded disabled:opacity-40"
@@ -131,6 +133,7 @@ export default function DynamicTableTwo({
           {getPagination().map((page, i) => (
             <button
               key={i}
+              aria-label="Page number"
               onClick={() => typeof page === "number" && onPageChange(page)}
               disabled={page === "..."}
               className={`px-2 py-1 rounded  text-sm ${
@@ -141,6 +144,7 @@ export default function DynamicTableTwo({
             </button>
           ))}
           <button
+            aria-label="Next"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="px-3 py-1 border rounded disabled:opacity-40"

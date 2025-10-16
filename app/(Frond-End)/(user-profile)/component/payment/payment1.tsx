@@ -164,6 +164,7 @@ export default function Payment1() {
           <h2 className="text-[#22262e] text-2xl font-medium">Add payment cards</h2>
           {cards.length > 0 && (
             <button 
+              aria-label="Refresh Cards"
               onClick={fetchCards}
               disabled={loading}
               className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
@@ -180,8 +181,6 @@ export default function Payment1() {
         <div className="flex justify-center items-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0068ef]"></div>
         </div>
-      ) : error ? (
-        <div className="text-red-500 text-center py-4">{error}</div>
       ) : cards.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cards.map((card) => {
@@ -221,6 +220,7 @@ export default function Payment1() {
                       )}
                     </div>
                     <button 
+                      aria-label="Delete Card"
                       onClick={() => handleDeleteCard(card)}
                       className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-colors disabled:opacity-50"
                       title="Delete card"

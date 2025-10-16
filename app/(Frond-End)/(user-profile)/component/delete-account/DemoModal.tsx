@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/dialog";
 import { useForm } from 'react-hook-form';
 import { MyProfileService } from '@/service/user/myprofile.service';
+import { DataClearHelper } from '@/helper/data-clear.helper';
 import { useState } from 'react';
 
 export function DialogDemo({ onClose, showModal, email }: any) {
@@ -29,13 +30,20 @@ export function DialogDemo({ onClose, showModal, email }: any) {
         password: data.password,
         feedback: data.feedback,
       });
+      
+      // Clear all user data comprehensively after successful account deletion
+      console.log('🧹 Account deleted successfully, clearing all user data...');
+      DataClearHelper.clearAllUserData();
+      
       onClose(false);
-      // Optionally redirect after deletion
+      
+      // Redirect to home page after clearing all data
       if (typeof window !== 'undefined') {
         window.location.href = '/';
       }
     } catch (e) {
-      // no-op; UI validations can be added later
+      console.error('❌ Error deleting account:', e);
+      // Handle error appropriately - you might want to show a toast notification here
     } finally {
       setSubmitting(false);
     }
@@ -98,6 +106,7 @@ export function DialogDemo({ onClose, showModal, email }: any) {
             {/* Action Buttons */}
             <div className="flex justify-end gap-3 mt-3">
               <button 
+                aria-label="Cancel Delete"
                 type="button"
                 onClick={() => onClose(false)}  // Close modal on click
                 className="md:px-6 py-2.5 px-4 rounded-lg border border-[#777980] text-[#777980] text-lg font-medium font-['Inter'] hover:bg-[#f5f5f5] transition-colors cursor-pointer"
@@ -105,6 +114,7 @@ export function DialogDemo({ onClose, showModal, email }: any) {
                 Cancel
               </button>
               <button 
+                aria-label="Confirm Delete Account"
                 type="submit"
                 disabled={submitting}
                 className="md:px-6 py-2.5 px-4 bg-[#fe5050] rounded-lg text-white text-lg font-medium font-['Inter'] hover:bg-[#e54646] transition-colors cursor-pointer disabled:opacity-60"

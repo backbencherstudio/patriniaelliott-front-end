@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /.pnp
+.env
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,7 +11,7 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# testing 
 /coverage
 
 # next.js
@@ -32,7 +33,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-
+.env
 # vercel
 .vercel
 

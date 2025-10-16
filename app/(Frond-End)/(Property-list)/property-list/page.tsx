@@ -22,8 +22,14 @@ function page() {
     };
     // localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
 
-    router.push('/property-list/choose-apartment-type');
+    if(select === "Hotel"){
+      router.push('/property-list/apartmentinfo');
+    }else{
+      router.push('/property-list/choose-apartment-type');
+    }
   };
+
+  
 
   return (
     <div className="py-15 md:py-30 flex items-center justify-center bg-[#F6F7F7] px-4">

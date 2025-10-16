@@ -1,14 +1,14 @@
 'use client'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useMyProfile } from '@/hooks/useMyProfile';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from 'react-hook-form';
+import { toast, Toaster } from 'react-hot-toast';
 import { LuPencilLine } from 'react-icons/lu';
 import './my-profile-select.css';
-import { useMyProfile } from '@/hooks/useMyProfile';
-import { toast, Toaster } from 'react-hot-toast';
 
 interface CustomDateInputProps {
   value?: string;
@@ -223,7 +223,7 @@ export default function MyProfile() {
   };
 
   const formValues = watch();
-  console.log('Current form values:', formValues);
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col gap-6">
@@ -295,6 +295,7 @@ export default function MyProfile() {
         <div className="flex  justify-between mb-8 md:gap-4">
           <h2 className="text-xl md:text-2xl font-medium">Personal Information</h2>
           <button
+            aria-label={isEditing ? "Cancel Edit" : "Edit Profile"}
             type="button"
             className="flex items-center gap-1 md:gap-2 bg-blue-600 whitespace-nowrap text-white px-2 py-1.5 rounded"
             onClick={() => {
@@ -554,24 +555,24 @@ export default function MyProfile() {
           <div className="flex flex-col gap-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <label className="text-base">First name(s) <span className="text-red-500">*</span></label>
+                <label className="text-base">First name</label>
                 <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
                   <input
                     type="text"
                     placeholder="Elisabeth"
-                    {...register('passportFirstName', { required: true })}
+                    {...register('passportFirstName')}
                     className="w-full text-gray-500 outline-none h-full leading-[56px]"
                     disabled={!isEditing}
                   />
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-base">Last name(s) <span className="text-red-500">*</span></label>
+                <label className="text-base">Last name</label>
                 <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
                   <input
                     type="text"
                     placeholder="Sarah"
-                    {...register('passportLastName', { required: true })}
+                    {...register('passportLastName')}
                     className="w-full text-gray-500 outline-none h-full leading-[56px]"
                     disabled={!isEditing}
                   />
@@ -584,11 +585,10 @@ export default function MyProfile() {
           {/* Country & Passport */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-base">Issuing country <span className="text-red-500">*</span></label>
+              <label className="text-base">Issuing country</label>
               <Controller
                 name="issuingCountry"
                 control={control}
-                rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                   <Select value={value} onValueChange={onChange} disabled={!isEditing}>
                     <SelectTrigger className="select-input h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
@@ -606,12 +606,12 @@ export default function MyProfile() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-base">Passport number <span className="text-red-500">*</span></label>
+              <label className="text-base">Passport number</label>
               <div className="h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
                 <input
                   type="text"
                   placeholder="Enter document number"
-                  {...register('passportNumber', { required: true })}
+                  {...register('passportNumber')}
                   className="w-full text-gray-500 outline-none h-full leading-[56px]"
                   disabled={!isEditing}
                 />
@@ -622,11 +622,10 @@ export default function MyProfile() {
           {/* Expiration Date */}
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
-              <label className="text-base">Expiration date <span className="text-red-500">*</span></label>
+              <label className="text-base">Expiration date</label>
               <Controller
                 name="passportExpiryDate"
                 control={control}
-                rules={{ required: "Expiration date is required" }}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
                     selected={value}
@@ -647,9 +646,6 @@ export default function MyProfile() {
                   />
                 )}
               />
-              {errors.passportExpiryDate && (
-                <span className="text-red-500 text-sm">{errors.passportExpiryDate.message}</span>
-              )}
             </div>
             <p className="text-sm text-gray-500">We'll store this data safely and remove It after two years of inactivity.</p>
           </div>
@@ -682,13 +678,14 @@ export default function MyProfile() {
             </div>
             <p className="text-gray-700">
               I consent to "TravelBooking" storing my passport information in accordance with the 
-              <span className="text-blue-600 ml-1">privacy statement</span>.
+              <span className="text-blue-600 ml-1">privacy statement</span>. (Optional)
             </p>
           </div>
 
           {/* Save Button */}
           {isEditing && (
             <button
+              aria-label="Save Profile Changes"
               type="submit"
               className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors"
             >

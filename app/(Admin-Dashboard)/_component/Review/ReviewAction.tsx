@@ -11,7 +11,7 @@ function ReviewAction({ status, onView, onDelete, data }: any) {
           >
             View details
           </span>{" "}
-          <button>
+          <button aria-label="Delete">
             {" "}
             <Image
               onClick={() => onDelete(data.id)}
@@ -25,7 +25,7 @@ function ReviewAction({ status, onView, onDelete, data }: any) {
         </div>
       ) : (
         <div className="flex gap-1">
-          <button className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px]">
+          <button aria-label="Approve" className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="17"
@@ -48,6 +48,7 @@ function ReviewAction({ status, onView, onDelete, data }: any) {
             </svg>
           </button>
           <button
+            aria-label="Delete"
             onClick={() => onDelete(data.id)}
             className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]"
           >

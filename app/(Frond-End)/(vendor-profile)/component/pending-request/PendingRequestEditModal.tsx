@@ -124,9 +124,9 @@ export default function PendingRequestEditModal({ open, onClose, data, onSave }:
             </div>
           </div>
           <div className="p-4 border-t flex justify-end gap-3">
-            <button onClick={()=>onClose(false)} className="px-4 py-2 rounded border">Close</button>
+            <button aria-label="Close Modal" onClick={()=>onClose(false)} className="px-4 py-2 rounded border">Close</button>
             {dirty && (
-              <button onClick={handleSave} className="px-5 py-2 rounded bg-[#0068ef] text-white hover:bg-[#0051bd]">Save</button>
+              <button aria-label="Save Changes" onClick={handleSave} className="px-5 py-2 rounded bg-[#0068ef] text-white hover:bg-[#0051bd]">Save</button>
             )}
           </div>
         </div>

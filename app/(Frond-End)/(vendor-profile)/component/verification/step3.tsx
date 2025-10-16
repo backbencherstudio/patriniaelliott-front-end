@@ -114,6 +114,7 @@ export default function Step3({
       {/* Footer Buttons */}
       <div className="flex justify-end items-center gap-4 mt-8">
         <button
+          aria-label="Previous Step"
           type="button"
           onClick={onBack}
           className="px-8 py-3 rounded-lg border border-[#0068ef] flex items-center gap-1.5 text-[#0068ef] text-base font-medium cursor-pointer hover:bg-[#f5f8ff] transition-colors"
@@ -121,6 +122,7 @@ export default function Step3({
           Back
         </button>
         <button
+          aria-label="Next Step"
           type="button"
           onClick={onNext}
           className="px-8 py-3 bg-[#0068ef] rounded-lg flex items-center gap-1.5 text-white text-base font-medium cursor-pointer hover:bg-[#0051bd] transition-colors"

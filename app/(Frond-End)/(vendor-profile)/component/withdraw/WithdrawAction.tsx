@@ -17,12 +17,13 @@ export default function WithdrawAction({ onView, onDelete, transaction }: Withdr
   return (
     <div className="flex items-center gap-8">
       <button
+        aria-label="View Transaction Details"
         className="text-xs underline text-[#777980] hover:text-[#0068ef] cursor-pointer"
         onClick={() => onView(transaction)}
       >
         View details
       </button>
-      <button  onClick={() => onDelete(transaction.transactionId)}>
+      <button aria-label="Delete Transaction" onClick={() => onDelete(transaction.transactionId)}>
 
       <Image
        

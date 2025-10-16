@@ -4,12 +4,17 @@ import { TokenProvider } from "@/hooks/useToken";
 import type { Metadata } from "next";
 import { Inter } from 'next/font/google';
 import "./globals.css";
- 
-// If loading a variable font, you don't need to specify the font weight
-const inter = Inter({ subsets: ['latin'] })
+
+// Font opttimization with display=swap
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: AppConfig().app.name,
   description: AppConfig().app.slogan,
+  robots: 'index, follow',
 };
 
 export default function RootLayout({
@@ -18,14 +23,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      
-      <body className={`${inter.className}`} >
+    <html lang="en">
+      <body className={inter.className}>
         <TokenProvider>
-        <CustomToastContainer/>
-        {children}
+          <CustomToastContainer />
+          {children}
         </TokenProvider>
-        </body>
+      </body>
     </html>
   );
 }

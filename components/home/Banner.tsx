@@ -1,33 +1,42 @@
 'use client';
 
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
  // adjust this path as needed
 import { heroSlides } from '@/DemoAPI/heroSlide';
-import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
+import CustomImage from '../reusable/CustomImage';
 import AllSearch from './AllSearch';
 
 export default function Banner() {
      const [currentIndex, setCurrentIndex] = useState(1);
   const swiperRef = useRef<any>(null);
 
-  const goNext = () => swiperRef.current?.slideNext();
-  const goPrev = () => swiperRef.current?.slidePrev();
+  const goNext = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  }, []);
+
+  const goPrev = useCallback(() => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  }, []);
   return (
      <section className=''>
       <div className="relative w-full">
         {/* Desktop Navigation */}
         <div className="">
           <div className="container  flex justify-between">
-            <button onClick={goPrev}>
+            <button aria-label="Previous" onClick={goPrev}>
               <div className="absolute top-[50%] -translate-1/2 z-10 left-10 lg:left-50 flex items-center cursor-pointer justify-center w-10 h-10 rounded-full bg-white/20 border border-white backdrop-blur-[5px]">
                 <FaChevronLeft className="text-white" />
               </div>
             </button>
-            <button onClick={goNext}>
+            <button aria-label="Next" onClick={goNext}>
               <div className="absolute top-[50%] -translate-1/2 right-0 lg:right-50 z-10 flex items-center justify-center cursor-pointer w-10 h-10 rounded-full bg-white/20 border border-white backdrop-blur-[5px]">
                 <FaChevronRight className="text-white" />
               </div>
@@ -38,13 +47,8 @@ export default function Banner() {
         <Swiper
           slidesPerView={1}
           loop={true}
-          speed={1500}
-          autoplay={{
-            delay: 30000000,
-            disableOnInteraction: false,
-          }}
-        
-          modules={[Navigation, Autoplay, Pagination]}
+          speed={800}
+          modules={[Navigation, Pagination]}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
           onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex + 1)}
           className="w-full"
@@ -52,11 +56,13 @@ export default function Banner() {
           {heroSlides.map((banner, index) => (
             <SwiperSlide key={index}>
               <div className="relative w-full">
-                <Image
+                <CustomImage
                   src={banner.imageUrl}
                   alt={`Banner ${index + 1}`}
+                  name={`Banner ${index + 1}`}
                   width={1920}
                   height={700}
+                  loading='lazy'
                   className="w-full h-[500px] md:h-[450px] lg:h-[500px] xl:h-auto object-cover"
                 />
                 <div className="absolute inset-0 " />

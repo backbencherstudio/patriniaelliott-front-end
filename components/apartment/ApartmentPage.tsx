@@ -9,7 +9,6 @@ import { useState } from 'react';
 import BigCardSkleton from "./BigCardSkleton";
 
 
-
 function ApartmentPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const searchParams = useSearchParams();
@@ -17,7 +16,9 @@ function ApartmentPage() {
     const endDate = searchParams.get("endDate");
     const min = searchParams.get("min");
     const max = searchParams.get("max");
-       const destinations = searchParams.get("destinations");
+    const people = searchParams.get("people");
+    const rooms = searchParams.get("rooms");
+    const destinations = searchParams.get("destinations");
     const searchName = searchParams.get("q");
     // Get all ratings parameters (multiple ratings can be selected)
     const allParams = Array.from(searchParams.entries());
@@ -33,13 +34,15 @@ function ApartmentPage() {
         params.append('type', 'apartment');
         params.append('limit', itemsPerPage.toString());
         params.append('page', currentPage.toString());
-         if (destinations) params.append('destinations', destinations);
+        if (destinations) params.append('destinations', destinations);
+        if (people) params.append('max_capacity', people);
+        if (rooms) params.append('total_bedrooms', rooms);
         // Only add parameters that have values
         if (startDate) params.append('duration_start', startDate);
         if (endDate) params.append('duration_end', endDate);
         if (min) params.append('budget_start', min);
         if (max) params.append('budget_end', max);
-         if (searchName) params.append('q', searchName);
+        if (searchName) params.append('q', searchName);
         // Add each rating as a separate parameter
         if (ratings && ratings.length > 0) {
             ratings.forEach(rating => {
@@ -53,7 +56,7 @@ function ApartmentPage() {
     const { data, loading, error } = useFetchData(endpoint);
     const totalPages = data?.meta?.totalPages
     const packageData = data ? data?.data : []
-
+console.log("data==============aosf",packageData);
     return (
         <div>
             <FilterHeader title="Apartment" data={packageData} />
@@ -65,11 +68,12 @@ function ApartmentPage() {
                             <BigCardSkleton key={i} />
                         ))}
                     </div>
-                    : packageData.length < 0 ? <div>Not found data !</div> : packageData.map((tour: any, index) => (
+                    : packageData.length > 0 ? packageData.map((tour: any, index) => (
                         <div key={index} className=" py-4">
                             <ApartmentCard hotel={tour} />
                         </div>
-                    ))}
+                    )) : <div className="text-center text-2xl font-bold text-grayColor1 py-10">Not found data !</div>
+                }
             </div>
 
             {/* Pagination Controls */}

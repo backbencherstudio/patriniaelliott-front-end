@@ -73,6 +73,7 @@ function ListingApproveAction({ status, onOptimisticUpdate , handleViewDetails }
       ) : (
         <div className="flex gap-1">
           <button 
+            aria-label="Approve"
             onClick={handleApprove} 
             disabled={loading}
             className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px] disabled:opacity-50"
@@ -99,6 +100,7 @@ function ListingApproveAction({ status, onOptimisticUpdate , handleViewDetails }
             </svg>
           </button>
           <button 
+            aria-label="Reject"
             onClick={handleReject} 
             disabled={loading}
             className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px] disabled:opacity-50"

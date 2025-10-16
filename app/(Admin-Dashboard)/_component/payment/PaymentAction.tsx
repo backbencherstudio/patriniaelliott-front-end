@@ -12,7 +12,7 @@ function PaymentAction({ status, onView,onAccept,onCancel }: any) {
           </span>
         ) : (
           <div className="flex gap-1">
-            <button onClick={()=>onAccept(status)} className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px]">
+            <button aria-label="Accept" onClick={()=>onAccept(status)} className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="17"
@@ -34,7 +34,7 @@ function PaymentAction({ status, onView,onAccept,onCancel }: any) {
                 />
               </svg>
             </button>
-            <button onClick={()=>onCancel(status)}  className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]">
+            <button aria-label="Cancel" onClick={()=>onCancel(status)}  className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="17"
