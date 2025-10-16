@@ -22,7 +22,11 @@ function page() {
     };
     // localStorage.setItem("propertyData", JSON.stringify(updatedProperty));
 
-    router.push('/property-list/choose-apartment-type');
+    if(select === "Hotel"){
+      router.push('/property-list/apartmentinfo');
+    }else{
+      router.push('/property-list/choose-apartment-type');
+    }
   };
 
   
