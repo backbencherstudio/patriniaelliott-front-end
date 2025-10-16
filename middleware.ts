@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { UserService } from './service/user/user.service';
+import { AppConfig } from './config/app.config';
 
-// Function to get user details from API
+// Function to get user details from API using fetch (Edge-compatible)
 async function getUserDetails(token: string) {
   try {
-     const response = await UserService.getData("/auth/me",token)
-    return response?.data?.data; // Assuming the API returns { data: { user details } }
+    const baseUrl = AppConfig().app.apiUrl;
+    const res = await fetch(`${baseUrl}/auth/me`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      // Ensure no caching issues during middleware calls
+      cache: 'no-store'
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.data ?? null;
   } catch (error) {
     console.error('Error fetching user details:', error);
     return null;
