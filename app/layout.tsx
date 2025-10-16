@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Inter } from 'next/font/google';
 import "./globals.css";
 
-// Font optimization with display=swap
+// Font opttimization with display=swap
 const inter = Inter({ 
   subsets: ['latin'],
   display: 'swap',
