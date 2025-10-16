@@ -14,7 +14,6 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
     // Optimistic update - immediately update UI
     try {
       const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"approved"},token)
-      console.log("accept",res);
       
       if(res.data.success){
         toast.success(res.data.message || "Booking approved successfully")

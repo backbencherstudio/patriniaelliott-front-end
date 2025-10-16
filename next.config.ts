@@ -54,6 +54,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "backend.naamstay.com",
+      },
+      {
+        protocol: "https",
         hostname: "workflow-footage-delivers-carolina.trycloudflare.com",
       },
       {
@@ -62,15 +66,15 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "humanitarian-crimes-too-producing.trycloudflare.com",
-      },
-      {
-        protocol: "https",
-        hostname: "commodities-suzuki-straight-makers.trycloudflare.com",
-      },
-      {
-        protocol: "https",
         hostname: "blind-domain-lat-net.trycloudflare.com",
+      },
+      {
+        protocol: "https",
+        hostname: "backend.naamstay.comhttps",
+      },
+      {
+        protocol: "https",
+        hostname: "blind-domain-lat-net.trycloudflare.comhttps",
       },
     ],
   },

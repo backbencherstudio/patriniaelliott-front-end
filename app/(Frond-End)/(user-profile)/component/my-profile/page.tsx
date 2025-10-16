@@ -678,7 +678,7 @@ export default function MyProfile() {
             </div>
             <p className="text-gray-700">
               I consent to "TravelBooking" storing my passport information in accordance with the 
-              <span className="text-blue-600 ml-1">privacy statement</span>.
+              <span className="text-blue-600 ml-1">privacy statement</span>. (Optional)
             </p>
           </div>
 
