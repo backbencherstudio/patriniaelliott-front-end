@@ -60,16 +60,11 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     console.log('isUser:', isUser, 'isVendor:', isVendor, 'isAdmin:', isAdmin, 'isUnknown:', isUnknown);
 
     if (isUser) {
-      // For users: hide withdraw-balance, transection-history, payment-method
-      const hiddenForUser = new Set([
-        '/withdraw-balance',
-        '/transection-history',
-        '/payment-method',
-      ]);
-      items = items.filter(item => !hiddenForUser.has(item.href));
-      // Add User Verification item
-      items = [...items, ...userNavItems];
-     
+      // For users: show only Payment Method and User Verification
+      items = [
+        { icon: '/vendor/payment.svg', label: 'Payment Method', href: '/payment-method' },
+        ...userNavItems,
+      ];
     } else if (isVendor) {
       // For vendors: keep base menus and add Pending Request
       items = [...items, ...vendorNavItems];

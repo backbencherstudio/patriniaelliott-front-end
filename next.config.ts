@@ -1,17 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Remove problematic CSS optimization that causes critters error
+  // Keep only safe experimental options
   experimental: {
-    optimizePackageImports: ['react-icons'],
-    optimizeCss:true
+    optimizePackageImports: ['react-icons']
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   poweredByHeader: false,
-  // Optimize font loading
-  optimizeFonts: true,
   images: {
     remotePatterns: [
       {
@@ -73,7 +70,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "val-jewel-atlas-sagem.trycloudflare.com",
+        hostname: "blind-domain-lat-net.trycloudflare.com",
       },
       {
         protocol: "https",

@@ -1,6 +1,7 @@
 'use client'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useVendorApi } from '@/hooks/useVendorApi'
 import { VendorService } from '@/service/vendor/vendor.service'
@@ -40,9 +41,11 @@ const paymentMethods = [
 ]
 
 export default function PaymentPage() {
+  const router = useRouter()
   const [showSaveButton, setShowSaveButton] = useState(false)
   const [accounts, setAccounts] = useState<PaymentAccount[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const [pollingAccountId, setPollingAccountId] = useState<string | null>(null)
   
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     defaultValues: {
@@ -60,6 +63,17 @@ export default function PaymentPage() {
     acc?.payment_method?.toLowerCase() === 'stripe' &&
     (acc?.status === 'verified' || acc?.business_type === 'individual')
   )
+
+  // Redirect when account becomes verified
+  useEffect(() => {
+    const anyVerified = accounts.some(
+      (acc) => acc?.payment_method?.toLowerCase() === 'stripe' && acc?.status === 'verified'
+    )
+    if (anyVerified) {
+      toast.success('Stripe verification completed')
+      router.push('/user-verification')
+    }
+  }, [accounts, router])
 
   // Function to check Stripe account status
   const checkStripeAccountStatus = async (accountId: string) => {
@@ -232,6 +246,8 @@ export default function PaymentPage() {
               
               // Add to accounts list
               setAccounts(prev => [updatedAccount, ...prev])
+              // Begin polling for verification status after opening onboarding
+              setPollingAccountId(accountId)
               toast.success('Stripe onboarding link generated! Click the card to complete verification.')
             } else {
               console.error('Failed to get onboarding link:', onboardingRes)
@@ -262,6 +278,29 @@ export default function PaymentPage() {
   }
 
   const handleFieldFocus = () => setShowSaveButton(true)
+
+  // Poll Stripe account status after onboarding begins
+  useEffect(() => {
+    if (!pollingAccountId) return
+    let isCancelled = false
+    const interval = setInterval(async () => {
+      try {
+        const status = await checkStripeAccountStatus(pollingAccountId)
+        if (!isCancelled && status === 'verified') {
+          clearInterval(interval)
+          setPollingAccountId(null)
+          toast.success('Stripe verification completed')
+          router.push('/user-verification')
+        }
+      } catch (e) {
+        // noop
+      }
+    }, 4000)
+    return () => {
+      isCancelled = true
+      clearInterval(interval)
+    }
+  }, [pollingAccountId, router])
 
   return (
     <>

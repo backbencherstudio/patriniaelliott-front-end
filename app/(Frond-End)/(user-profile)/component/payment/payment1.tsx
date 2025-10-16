@@ -181,8 +181,6 @@ export default function Payment1() {
         <div className="flex justify-center items-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0068ef]"></div>
         </div>
-      ) : error ? (
-        <div className="text-red-500 text-center py-4">{error}</div>
       ) : cards.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cards.map((card) => {
