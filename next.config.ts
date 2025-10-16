@@ -73,7 +73,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "wives-draw-physician-tied.trycloudflare.com",
+        hostname: "blind-domain-lat-net.trycloudflare.com",
       },
     ],
   },
