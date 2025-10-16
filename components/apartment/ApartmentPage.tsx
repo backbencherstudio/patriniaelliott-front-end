@@ -56,7 +56,7 @@ function ApartmentPage() {
     const { data, loading, error } = useFetchData(endpoint);
     const totalPages = data?.meta?.totalPages
     const packageData = data ? data?.data : []
-
+console.log("data==============aosf",packageData);
     return (
         <div>
             <FilterHeader title="Apartment" data={packageData} />

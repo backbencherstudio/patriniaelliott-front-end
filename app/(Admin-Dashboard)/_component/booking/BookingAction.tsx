@@ -11,13 +11,9 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
   
   const handleAccept = async() => {
     setLoading(true)
-    
     // Optimistic update - immediately update UI
-    
-    
     try {
       const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"approved"},token)
-      console.log("accept",res);
       
       if(res.data.success){
         toast.success(res.data.message || "Booking approved successfully")
@@ -44,8 +40,6 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
     onOptimisticUpdate?.(status?.id, "cancel", "cancel");
     try {
       const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"cancel"},token)
-      console.log("reject",res);
-      
       if(res.data.success){
         toast.success(res.data.message || "Booking rejected successfully")
       }else{
@@ -74,7 +68,7 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
       ) : (
         <div className="flex gap-1">
           <button 
-          aria-label="Accept"
+            aria-label="Accept"
             onClick={handleAccept} 
             disabled={loading}
             className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px] disabled:opacity-50"

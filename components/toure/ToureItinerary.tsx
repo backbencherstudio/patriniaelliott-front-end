@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useState } from "react";
+import CustomImage from "../reusable/CustomImage";
 
 interface DayDetails {
   title: string;
@@ -116,6 +117,9 @@ function TourItinerary({vendorPackage}) {
     },
   ];
 
+  console.log(vendorPackage?.package_trip_plans,"vendorPackage");
+  
+
   return (
     <div className=" ">
       <h2 className="text-2xl lg:text-[32px] font-medium mb-8">
@@ -127,7 +131,7 @@ function TourItinerary({vendorPackage}) {
         <div className="absolute left-6 top-8 bottom-0 w-0.5 border-l-2 border-dashed border-secondaryColor z-0"></div>
 
         <div className="space-y-0">
-          {itineraryData.map((day, index) => {
+          {vendorPackage?.package_trip_plans?.map((day, index) => {
           
 
             return (
@@ -182,10 +186,10 @@ function TourItinerary({vendorPackage}) {
                           <div className="flex flex-1 items-center">
                             <div className="text-left flex-1">
                               <h3 className="text-lg text-headerColor font-medium">
-                                {day.title}
+                                {day?.title}
                               </h3>
                               <p className="text-sm text-descriptionColor">
-                                {day.time} <span className=" text-headerColor font-semibold">({day.transport})</span>
+                                {day?.time} <span className=" text-headerColor font-semibold">({day?.description})</span>
                               </p>
                             </div>
                           </div>
@@ -194,20 +198,27 @@ function TourItinerary({vendorPackage}) {
                         <AccordionContent className="px-4 pb-4 pt-0 ">
                           <div className="space-y-4 mt-2">
                             <ul className="space-y-3 list-disc pl-5">
-                              {day.activities.map((activity, actIndex) => (
+                              {day?.day_wise_data?.map((activity, actIndex) => (
                                 <li key={actIndex} className="text-grayColor1">
                                   <span className="font-medium text-headerColor">
-                                    {activity.title}:
+                                    {activity?.title}:
                                   </span>{" "}
-                                  {activity.description}
+                                  {activity?.description} <span className=" text-descriptionColor font-semibold">[{activity?.time} - hours]</span>
+                                  <div className="mt-1">
+                                     <span className="font-medium text-headerColor">
+                                  Ticket:
+                                </span>{" "}
+                                {activity?.ticket}
+                                  </div>
                                 </li>
                               ))}
-                              <li className="text-grayColor1">
-                                <span className="font-medium text-headerColor">
-                                  Accommodation:
-                                </span>{" "}
-                                {day.accommodation}
-                              </li>
+                              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                {day?.package_trip_plan_images?.map((image, imgIndex) => (
+                                  <div key={imgIndex} className="w-full h-full">
+                                    <CustomImage src={image?.image_url} alt={image?.name} width={100} height={100} name={image?.name} className="w-full h-full object-cover" />
+                                  </div>
+                                ))}
+                              </div>
                             </ul>
                           </div>
                         </AccordionContent>
@@ -217,7 +228,7 @@ function TourItinerary({vendorPackage}) {
                 </Accordion>
 
                 {/* Add spacing between days */}
-                {index < itineraryData.length - 1 && (
+                {index < vendorPackage?.package_trip_plans?.length - 1 && (
                   <div className="h-4"></div>
                 )}
               </div>

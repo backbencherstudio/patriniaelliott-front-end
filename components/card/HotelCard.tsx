@@ -1,6 +1,5 @@
 "use client";
-
-import Image from "next/image";
+    
 import Link from "next/link";
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
@@ -9,8 +8,9 @@ import { IoBedOutline, IoLocationSharp } from "react-icons/io5";
 
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import CustomImage from "../reusable/CustomImage";
 const HotelCard = ({ hotel }: any) => {
-  const { id, name, type, reviews, amenities,total_bedrooms, bedrooms, bathrooms, roomFiles, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
+  const { id, name, type, reviews, amenities,total_bedrooms, bedrooms, bathrooms, room_photos, rating_summary, cancellation_policy, breakfast_available, price, address } = hotel;
   const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
 
   const getSlideSrc = (src: string, index: number) => {
@@ -30,7 +30,7 @@ const HotelCard = ({ hotel }: any) => {
       {/* Left - Hotel Image */}
       <div className=" col-span-3 relative">
         {
-          roomFiles?.length >= 2 ?
+          room_photos?.length >= 2 ?
             <Swiper
               slidesPerView={1}
               loop={true}
@@ -48,9 +48,9 @@ const HotelCard = ({ hotel }: any) => {
                 bulletActiveClass: 'hero-bullet-active',
               }}>
               {
-                roomFiles?.slice(0, 4).map((file: any, index: number) => (
+                room_photos?.slice(0, 4).map((file: any, index: number) => (
                   <SwiperSlide key={index} className="w-full lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden ">
-                    <Image
+                    <CustomImage
                       src={getSlideSrc(file, index)}
                       alt={name}
                       width={400}
@@ -64,7 +64,7 @@ const HotelCard = ({ hotel }: any) => {
             </Swiper>
             :
             <div className="lg:!h-[240px] !rounded-lg !h-[200px] overflow-hidden  w-full">
-              <Image
+              <CustomImage
                 src={"/empty.png"}
                 alt={name}
                 width={400}
@@ -142,22 +142,22 @@ const HotelCard = ({ hotel }: any) => {
               viewBox="0 0 18 18"
               fill="none"
             >
-              <g clip-path="url(#clip0_5471_6109)">
+              <g clipPath="url(#clip0_5471_6109)">
                 <path
                   d="M8.71184 3.28863L8.86617 2.21929C8.95554 1.60009 8.6412 0.992609 8.08415 0.707922C7.36483 0.340282 6.48369 0.62539 6.11605 1.3447L3.68359 5.48745V9.96289"
                   stroke="#D6AE29"
-                  stroke-width="1.05271"
-                  stroke-miterlimit="10"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.05271"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
                 <path
                   d="M14.8885 16.3994L15.583 17.4521M5.17755 16.3994L4.48308 17.4521M2.33444 3.68441L1.58997 2.93994M1.57628 5.41759H0.523438M6.45333 5.2933L10.0645 5.98387L10.1695 5.43475C10.3602 4.43756 9.70636 3.47458 8.70917 3.2839C7.71198 3.09322 6.749 3.74702 6.55832 4.74421L6.45333 5.2933ZM17.4707 9.96293H2.59534V12.4029C2.80774 12.4029 2.97993 12.575 2.97993 12.7874V14.0751C2.97993 15.3588 4.02053 16.3994 5.30419 16.3994H14.7619C16.0456 16.3994 17.0862 15.3588 17.0862 14.0751V12.7874C17.0862 12.575 17.2584 12.4029 17.4708 12.4029V9.96293H17.4707Z"
                   stroke="#D6AE29"
-                  stroke-width="1.05271"
-                  stroke-miterlimit="10"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.05271"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </g>
               <defs>

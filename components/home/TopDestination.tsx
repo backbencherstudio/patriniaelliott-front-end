@@ -2,28 +2,27 @@
 
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Skeleton } from "../ui/skeleton";
-import Link from "next/link";
 import CustomImage from "../reusable/CustomImage";
+import { Skeleton } from "../ui/skeleton";
 
 function TopDestination() {
        const [currentIndex, setCurrentIndex] = useState(1);
        const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
        const [loading, setLoading]=useState(true);
        const [error, setError]=useState(null);
-       const [data, setData]=useState(null);
-      const endpoint = `/application/packages/top-destinations?limit=${10}&page=${1}`
+       const [data, setData]=useState([]);
       const {token} = useToken()
       
        const fetchData = async()=>{
         setLoading(true)
         try {
-          const response = await UserService.getData(endpoint,token)
-          setData(response.data.data)
+          const response = await UserService.getData(`/application/packages/top-destinations?limit=${10}&page=${1}`,token)
+          setData(response.data.data || [])
         } catch (error) {
           setError(error)
         } finally {
@@ -33,7 +32,7 @@ function TopDestination() {
 
          useEffect(()=>{
         fetchData()
-       },[endpoint])
+       },[token])
 
   const getSlideSrc = (src: string | null | undefined, index: number) => {
     if (!src || src === "null" || src === "undefined") return "/empty.png";
@@ -47,8 +46,7 @@ function TopDestination() {
       return next;
     });
   };
-
-      const swiperRef = useRef<any>(null);
+  const swiperRef = useRef<any>(null);
     
        const goNext = useCallback(() => {
     if (swiperRef.current) {
@@ -61,14 +59,15 @@ function TopDestination() {
       swiperRef.current.slidePrev();
     }
   }, []); 
+
   return (
     <section className=' container '>
         <div className="mt-24 mb-20">
-        
         <h2 className=' text-3xl lg:text-5xl font-medium text-blackColor text-center'>Top Destinations</h2>
         <div className=" relative">
            <div >
-          <div className="container justify-center lg:justify-between  flex gap-15">
+       {
+      data?.length > 0 && !loading && !error && <div className="container justify-center lg:justify-between  flex gap-15">
             <button aria-label="Previous" onClick={goPrev}>
               <div className="absolute -bottom-20  lg:top-[50%] -translate-1/2 z-10 xl:-left-10 flex items-center cursor-pointer justify-center w-10 h-10 rounded-full bg-white/20 border border-secondaryColor backdrop-blur-[5px] hover:bg-secondaryColor  shadow shadow-stone-300 transition-all">
                 <FaChevronLeft className="text-blackColor" />
@@ -80,6 +79,8 @@ function TopDestination() {
               </div>
             </button>
           </div>
+       }    
+       
         </div>
           <div className=" mt-12">
         {loading ? (
@@ -127,13 +128,13 @@ function TopDestination() {
           onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex + 1)}
           className="w-full"
         >
-          {data?.map((des, index) => (
+          {data?.length > 0 ? data?.map((des, index) => (
             <SwiperSlide key={index}>
               <Link href={`/toure/${des?.id}`}>
               <div className=" w-full flex justify-center flex-col items-center ">
                 <div className=" xl:w-[190px] lg:w-[170px] lg:h-[170px] h-[120px] md:w-[156px] md:h-[156px] w-[120px] xl:h-[190px] rounded-full overflow-hidden">
                 <CustomImage
-                    src={getSlideSrc(des?.img, index)}
+                    src={getSlideSrc(`${process.env.NEXT_PUBLIC_API_ENDPOINT}${des?.img}`, index)}
                     alt={`des ${index + 1}`}
                     loading="lazy"
                     width={220}
@@ -149,7 +150,7 @@ function TopDestination() {
               </div>
               </Link>
             </SwiperSlide>
-          ))}
+          )) : <div className="text-center text-2xl font-bold text-grayColor1 py-10">No data found !</div>}
         </Swiper>
         )}
         </div>

@@ -66,7 +66,7 @@ function HotelPage() {
 
     const endpoint = `/application/packages?${buildQueryParams()}`
     useEffect(() => {
-        if (!endpoint) return; // Skip if URL or token is missing
+        if (!endpoint) return; 
 
         const fetchData = async () => {
             try {
@@ -83,7 +83,7 @@ function HotelPage() {
         };
         fetchData();
     }, [endpoint]);
-
+console.log("data==============",data);
 
     return (
         <div>
