@@ -84,7 +84,7 @@ const ListingToureCard = ({
             </div>
             </div>
             <div className="col-span-1 p-4 rounded-2xl bg-secondaryColor/15 mt-4 lg:mt-0">
-                <TotalReviewStats averageRating={data?.rating_summary}/>
+                <TotalReviewStats averageRating={data?.averageRating} totalReviews={data?.totalReviews}/>
             </div>
             </div>
            

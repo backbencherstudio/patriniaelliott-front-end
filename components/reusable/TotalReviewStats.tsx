@@ -5,10 +5,11 @@ import React, { useEffect, useRef } from "react";
 import { FaStar } from "react-icons/fa";
 
 interface TotalReviewStatsProps {
-  averageRating: any;
+  averageRating?: any;
+  totalReviews?: any;
 }
 
-const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) => {
+const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating, totalReviews }) => {
   const ratingRef = useRef<HTMLDivElement | null>(null);
   const circlePathRef = useRef<SVGCircleElement | null>(null);
 
@@ -17,7 +18,7 @@ const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) =>
 
   useEffect(() => {
     // Ensure we have a valid number for the rating
-    const ratingValue = Number(averageRating?.averageRating) || 0;
+    const ratingValue = Number(averageRating) || 0;
     
     if (ratingRef.current) {
       const ratingNumber = { val: 0 };
@@ -48,7 +49,7 @@ const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) =>
         }
       );
     }
-  }, [averageRating?.averageRating]);
+  }, [averageRating]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-1">
@@ -90,7 +91,7 @@ const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) =>
                           <FaStar
                             key={i}
                             className={
-                              i < Math.round(Number(averageRating?.averageRating) || 0)
+                              i < Math.round(Number(averageRating) || 0)
                                 ? "text-[#FAAD14]"
                                 : "text-gray-300"
                             }
@@ -99,7 +100,7 @@ const TotalReviewStats: React.FC<TotalReviewStatsProps> = ({ averageRating }) =>
                       </div>
                     </div>
                     <p className="text-gray-500 text-base mt-1">
-                      From {averageRating?.totalReviews} reviews
+                      From {totalReviews} reviews
                     </p>
                   </div>
                   <div>

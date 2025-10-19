@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   Select,
@@ -12,6 +12,7 @@ import {
 import useFetchData from "@/hooks/useFetchData";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FaRegStar } from "react-icons/fa";
 import { toast } from "react-toastify";
 import DynamicTableWithPagination from "../common/DynamicTable";
@@ -32,46 +33,52 @@ export default function ReviewPage() {
   >("All");
   const [dateRange, setDateRange] = useState<"all" | "7" | "15" | "30">("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false)
-  const [reviewData, setReviewData] = useState<any>([])
+  const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const handleViewDetails = (user: any) => {
     setSelectedData(user);
     setIsModalOpen(true);
   };
-  const handleDelete = async(id: any) => {
-    try {
-      const res = await UserService.deleteData(`/admin/reviews/${id}`,token);
-      if (res?.data?.success) {
-        toast.success(res?.data?.message)
-        const updateUser = reviewData?.filter((item: any) => item.id !== id)
-        setReviewData(updateUser)
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  // React Query for fetching reviews data
+  const getReviewsData = async () => {
+    const response = await UserService.getData(`/admin/reviews?page=${currentPage}&limit=${10}`, token);
+    return response?.data;
   };
 
- const {data:reviewDataData,loading:reviewLoading} = useFetchData(`/admin/reviews/statistics`)
+  const { data: reviewsResponse, error: apiError, isLoading } = useQuery({
+    queryKey: ["reviewsData", currentPage],
+    queryFn: getReviewsData,
+    enabled: !!token,
+  });
 
-useEffect(()=>{
-  const fetchData = async()=>{
-    setLoading(true)
-try {
-  const res = await UserService.getData(`/admin/reviews?page=${currentPage}&limit=${10}`,token)
-  setReviewData(res?.data?.data)
-} catch (error) {
-  console.log(error);
-  
-}finally{
-  setLoading(false)
-}
+  // React Query for fetching review statistics
+  const {data: reviewDataData, loading: reviewLoading} = useFetchData(`/admin/reviews/statistics`);
 
-}
-if(token){
-  fetchData()
-}
-},[currentPage,token])    
+  // Delete review mutation
+  const deleteReviewMutation = useMutation({
+    mutationFn: async (reviewId: string) => {
+      setDeletingReviewId(reviewId);
+      const response = await UserService.deleteData(`/admin/reviews/${reviewId}`, token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Review deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["reviewsData"] });
+      setDeletingReviewId(null);
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to delete review. Please try again.");
+      setDeletingReviewId(null);
+    }
+  });
+
+  const handleDelete = (id: any) => {
+    deleteReviewMutation.mutate(id);
+  };    
  
+
+  const reviewData = reviewsResponse?.data || [];
+  const totalPages = reviewsResponse?.pagination?.total_pages || 0;
 
 const columns = [
     { label: "User Name", accessor: "user", width:"168px" ,
@@ -119,7 +126,13 @@ const columns = [
       accessor: "status",
       width:"125px",
       formatter: (value, row) => (
-        <ReviewAction onView={handleViewDetails}  onDelete={handleDelete}  status={value} data={row} />
+        <ReviewAction 
+          onView={handleViewDetails}  
+          onDelete={handleDelete}  
+          status={value} 
+          data={row}
+          isDeleting={deleteReviewMutation.isPending && deletingReviewId === row.id}
+        />
       ),
     },
 ];
@@ -206,8 +219,8 @@ const columns = [
             data={reviewData}
             columns={columns}
             currentPage={currentPage}
-            loading={loading }
-            totalPages={reviewData?.pagination?.total_pages || 0}
+            loading={isLoading || !reviewData}
+            totalPages={totalPages}
             itemsPerPage={10}
             onPageChange={(page) => setCurrentPage(page)}
           />
