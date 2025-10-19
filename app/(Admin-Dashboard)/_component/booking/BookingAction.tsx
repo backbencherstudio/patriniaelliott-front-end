@@ -2,59 +2,46 @@
 
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-function BookingAction({ status, onView, onOptimisticUpdate }: any) {
+function BookingAction({ status, onView, onOptimisticUpdate }: {status:any, onView:any, onOptimisticUpdate?:any}) {
   const {token}=useToken()
-  const [loading, setLoading]= useState(false)
-  
-  const handleAccept = async() => {
-    setLoading(true)
-    // Optimistic update - immediately update UI
-    try {
-      const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"approved"},token)
-      
-      if(res.data.success){
-        toast.success(res.data.message || "Booking approved successfully")
-        // Refresh data to ensure consistency
+  const queryClient = useQueryClient();
+  const approveBookingMutation = useMutation({
+    mutationFn: async () => {
+      const response = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"approved"},token);
+      return response;
+    },
+      onSuccess: (data) => {
+      toast.success(data?.data?.message || "Booking approved successfully")
       onOptimisticUpdate?.(status?.id, "Confirmed", "Full Paid");
-      }else{
-        toast.error(res.data.message || "Booking approved failed")
-        // Revert optimistic update on failure
-        onOptimisticUpdate?.(status?.id, status?.status ,status?.payment_status);
-      }
-    } catch (error) {
-      toast.error("Something went wrong")
+      queryClient.invalidateQueries({ queryKey: ["bookingData"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Something went wrong")
       // Revert optimistic update on error
       onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
-    } finally {
-      setLoading(false)
     }
-  }
+  })
   
-  const handleReject = async() => {
-    setLoading(true)
+  const rejectBookingMutation = useMutation({
+    mutationFn: async () => {
+      const response = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"cancel"},token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Booking rejected successfully")
+      onOptimisticUpdate?.(status?.id, "cancel", "cancel");
+      queryClient.invalidateQueries({ queryKey: ["bookingData"] });
+    },
     
-    // Optimistic update - immediately update UI
-    onOptimisticUpdate?.(status?.id, "cancel", "cancel");
-    try {
-      const res = await UserService.updateData(`/admin/booking/${status?.id}`,{status:"cancel"},token)
-      if(res.data.success){
-        toast.success(res.data.message || "Booking rejected successfully")
-      }else{
-        toast.error(res.data.message || "Booking rejected failed")
-        // Revert optimistic update on failure
-        onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
-      }
-    } catch (error) {
-      toast.error("Something went wrong")
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Something went wrong")
       // Revert optimistic update on error
       onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
-    } finally {
-      setLoading(false)
     }
-  }
+  })  
   
   return (
     <div>
@@ -69,8 +56,8 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
         <div className="flex gap-1">
           <button 
             aria-label="Accept"
-            onClick={handleAccept} 
-            disabled={loading}
+            onClick={() => approveBookingMutation.mutate()} 
+            disabled={approveBookingMutation.isPending}
             className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px] disabled:opacity-50"
           >
             <svg
@@ -96,8 +83,8 @@ function BookingAction({ status, onView, onOptimisticUpdate }: any) {
           </button>
           <button 
           aria-label="Reject"
-            onClick={handleReject} 
-            disabled={loading}
+            onClick={() => rejectBookingMutation.mutate()} 
+            disabled={rejectBookingMutation.isPending}
             className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px] disabled:opacity-50"
           >
             <svg

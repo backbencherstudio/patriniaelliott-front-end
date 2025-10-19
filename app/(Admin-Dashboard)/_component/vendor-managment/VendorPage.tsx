@@ -4,9 +4,10 @@ import cancelIcon from '@/public/dashboard/icon/cross.svg';
 import pendingIcon from '@/public/dashboard/icon/loading.svg';
 import tikIcon from '@/public/dashboard/icon/tik.svg';
 import { UserService } from '@/service/user/user.service';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import DynamicTableWithPagination from '../common/DynamicTable';
 import DocumentDetails from './DocumentDetails';
 import VendorDocumentAction from './VendorDocumentAction';
@@ -16,14 +17,36 @@ function VendorPage() {
     const { token } = useToken()
     const [currentPage, setCurrentPage] = useState(1)
     const [limit, setLimit] = useState(10)
-    const [totalPages, setTotalPages] = useState(0)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedData, setSelectedData] = useState<any>(null)
-    const [loading, setLoading] = useState(false)
-    const [data, setData] = useState<any>([])
+    const queryClient = useQueryClient();
+    // React Query for fetching vendor documents data
+    const getVendorDocumentsData = async () => {
+        const response = await UserService?.getData(`/admin/vendor-user-verification/documents?status=all&page=${currentPage}&limit=${limit}`, token);
+        return response?.data;
+    };
+
+    const { data: vendorData, error: apiError, isLoading } = useQuery({
+        queryKey: ["vendorDocumentsData", currentPage, limit],
+        queryFn: getVendorDocumentsData,
+        enabled: !!token,
+    });
+
+    const data = vendorData?.data || [];
+    const totalPages = vendorData?.meta?.totalPages || 0;
+
     const handleOptimisticUpdate = (id: any, status: any) => {
-    setData((prev) => prev.map((item: any) => item.id === id ? { ...item, status : status } : item));
-  };
+        // Update the cache optimistically
+        queryClient.setQueryData(["vendorDocumentsData", currentPage, limit], (oldData: any) => {
+            if (!oldData) return oldData;
+            return {
+                ...oldData,
+                data: oldData.data.map((item: any) => 
+                    item.id === id ? { ...item, status: status } : item
+                )
+            };
+        });
+    };
     const columns = [
         { label: "Name", accessor: "user", width: "150px", formatter: (value) => `${value?.name}`, },
         {
@@ -57,24 +80,6 @@ function VendorPage() {
         setIsModalOpen(true)
     }
 
-    const fetchData = async () => {
-        setLoading(true)
-        try {
-            const response = await UserService?.getData(`/admin/vendor-user-verification/documents?status=all&page=${currentPage}&limit=${limit}`, token);
-            const resData = response?.data?.data || []
-            setData(resData);
-            setTotalPages(response?.data?.meta?.totalPages || 0)
-            setLoading(false)
-        } catch (error) {
-            setLoading(false)
-            console.log("check error", error);
-        }
-    }
-    useEffect(() => {
-        if (token) {
-            fetchData();
-        }
-    }, [token, currentPage, limit]); 
 
     return (
         <div className="flex flex-col gap-5">
@@ -133,7 +138,7 @@ function VendorPage() {
                         data={data}
                         columns={columns}
                         currentPage={currentPage}
-                        loading={loading}
+                        loading={isLoading || !data}
                         totalPages={totalPages || 0}
                         itemsPerPage={limit}
                         onPageChange={(page) => setCurrentPage(page)}

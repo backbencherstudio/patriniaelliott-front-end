@@ -1,63 +1,57 @@
 import { useToken } from '@/hooks/useToken'
 import { UserService } from '@/service/user/user.service'
-import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 
 function VendorDocumentAction({value,row,onView,handleOptimisticUpdate}:{value:any,row:any,onView:any,handleOptimisticUpdate:any}) {
-    const [loading,setLoading]=useState(false)
-      const {token}=useToken()
+    const {token}=useToken()
+    const queryClient = useQueryClient()
   
-  const handleApprove = async() => {
-    setLoading(true)
-    // Optimistic update - immediately update UI
-    
-    
-    try {
-      const res = await UserService.updateStatuseChange(`/admin/vendor-user-verification/documents/${row?.id}/approve`,token)
-      
-      if(res.data.success){
-        toast.success(res.data.message || "Listing approved successfully")
-        handleOptimisticUpdate?.(row?.id, "approved");
-        // Refresh data to ensure consistency
-      }else{
-        toast.error(res.data.message || "Listing approved failed")
-        // Revert optimistic update on failure
-        handleOptimisticUpdate?.(row?.id, row?.status);
-      }
-    } catch (error) {
-      toast.error("Something went wrong")
-       console.log("check error",error);
+  // React Query mutation for approving vendor document
+  const approveDocumentMutation = useMutation({
+    mutationFn: async () => {
+      const response = await UserService.updateStatuseChange(`/admin/vendor-user-verification/documents/${row?.id}/approve`, token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Listing approved successfully");
+      handleOptimisticUpdate?.(row?.id, "approved");
+      queryClient.invalidateQueries({ queryKey: ["vendorDocumentsData"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+      console.log("check error", error);
       // Revert optimistic update on error
       handleOptimisticUpdate?.(row?.id, row?.status);
-    } finally {
-      setLoading(false)
     }
-  }
+  });
+
+  const handleApprove = () => {
+    approveDocumentMutation.mutate();
+  };
   
-  const handleReject = async() => {
-    setLoading(true)
-    // Optimistic update - immediately update UI
-    try {
-      const res = await UserService.updateStatuseChange(`/admin/vendor-user-verification/documents/${row?.id}/reject`,token)
-      
-      if(res.data.success){
-        toast.success(res.data.message || "Listing rejected successfully")
-          handleOptimisticUpdate?.(row?.id, "Cancel");
-      }else{
-        toast.error(res.data.message || "Listing rejected failed")
-        // Revert optimistic update on failure
-        handleOptimisticUpdate?.(row?.id, row?.status);
-      }
-    } catch (error) {
-      toast.error(error?.message || "Something went wrong")
-      console.log("check error",error);
-      
+  // React Query mutation for rejecting vendor document
+  const rejectDocumentMutation = useMutation({
+    mutationFn: async () => {
+      const response = await UserService.updateStatuseChange(`/admin/vendor-user-verification/documents/${row?.id}/reject`, token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Listing rejected successfully");
+      handleOptimisticUpdate?.(row?.id, "Cancel");
+      queryClient.invalidateQueries({ queryKey: ["vendorDocumentsData"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+      console.log("check error", error);
       // Revert optimistic update on error
       handleOptimisticUpdate?.(row?.id, row?.status);
-    } finally {
-      setLoading(false)
     }
-  }
+  });
+
+  const handleReject = () => {
+    rejectDocumentMutation.mutate();
+  };
   return (
     <div className='flex items-center gap-2'>
         {value == "pending" &&
@@ -65,7 +59,7 @@ function VendorDocumentAction({value,row,onView,handleOptimisticUpdate}:{value:a
           <button 
             aria-label="Approve"
             onClick={handleApprove} 
-            disabled={loading}
+            disabled={approveDocumentMutation.isPending}
             className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px] disabled:opacity-50"
           >
             <svg
@@ -92,7 +86,7 @@ function VendorDocumentAction({value,row,onView,handleOptimisticUpdate}:{value:a
           <button 
             aria-label="Reject"
             onClick={handleReject} 
-            disabled={loading}
+            disabled={rejectDocumentMutation.isPending}
             className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px] disabled:opacity-50"
           >
             <svg

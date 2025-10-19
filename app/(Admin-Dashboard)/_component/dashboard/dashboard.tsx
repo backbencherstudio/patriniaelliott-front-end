@@ -1,12 +1,16 @@
 "use client";
+import Loader from "@/components/reusable/Loader";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { toast } from "react-toastify";
 import DynamicTableWithPagination from "../common/DynamicTable";
 import Usermodal from "../modal/usermodal";
 import StateSection from "./StateSection";
+import { Loader2 } from "lucide-react";
 
 interface UserData {
   id: string;
@@ -20,38 +24,37 @@ interface UserData {
 
 
 export default function Dashboard() {
-
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
   const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
     "all"
   );
-  const [data, setData] = useState<any>([]);
   const { token } = useToken();
   const [selectedRole, setSelectedRole] = React.useState<
     "All" | "vendor" | "user"
   >("All");
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(false);
-   const [editLoading,setEditLoading]=useState(false)
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const endpoint = selectedRole === "All" ? `/admin/user/all-users?limit=${itemsPerPage}&page=${currentPage}` : `/admin/user/all-users?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
-        setLoading(true);
-        const data = await UserService?.getData(endpoint, token);
-        setData(data?.data?.data || []);
-        setTotalPages(data?.data?.pagination?.totalPages || 0);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData()
-  }, [selectedRole, currentPage]);
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  // React Query for fetching users data
+  const getUsersData = async () => {
+    const endpoint = selectedRole === "All" 
+      ? `/admin/user/all-users?limit=${itemsPerPage}&page=${currentPage}` 
+      : `/admin/user/all-users?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`;
+    
+    const response = await UserService?.getData(endpoint, token);
+    return response?.data;
+  };
+
+  const { data: usersData, error: apiError, isLoading } = useQuery({
+    queryKey: ["usersData", selectedRole, currentPage, itemsPerPage],
+    queryFn: getUsersData,
+    enabled: !!token,
+  });
+
+  const data = usersData?.data || [];
+  const totalPages = usersData?.pagination?.totalPages || 0;
 
   const columns = [
     // { label: "User ID", accessor: "id" },
@@ -63,26 +66,44 @@ export default function Dashboard() {
       label: "Join Date", accessor: "created_at",width : "150px",
       formatter: (value) => new Date(value).toLocaleDateString(),
     },
+    {
+      label: "Action", accessor: "actions",width : "150px",
+      formatter: (_, row) => (
+        <div className="flex items-center gap-2">
+          <button aria-label="View"  onClick={() => handleViewDetails(row)}
+        className="text-primaryColor  underline transition-all cursor-pointer" >
+             View details
+          </button>
+         <button aria-label="Delete" disabled={deletingUserId === row.id} className="hover:text-redColor text-[#777980] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"  onClick={() => handleDelete(row.id)}>
+           {deletingUserId === row.id ? <Loader2 size={18} className="text-primaryColor" /> : <RiDeleteBin6Line
+              size={18} className="text-redColor" />}
+           </button>
+          </div>
+      ),
+    },
 
 
   ];
-  const handleDelete = async (userId: string) => {
-setEditLoading(true)
-    try {
+  // React Query mutation for deleting user
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      setDeletingUserId(userId);
       const response = await UserService.deleteData(`/admin/user/${userId}`, token);
-      if (response?.data?.success) {
-        toast.success(response?.data?.message)
-        const updateUser = data.filter((item: any) => item.id !== userId)
-        setData(updateUser)
-         setEditLoading(false)
-      }
-    } catch (error) {
-      console.log("error", error);
-      setEditLoading(false)
-    }finally{
-      setEditLoading(false)
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "User deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["usersData"] });
+      setDeletingUserId(null);
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to delete user. Please try again.");
+      setDeletingUserId(null);
     }
+  });
 
+  const handleDelete = (userId: string) => {
+    deleteUserMutation.mutate(userId);
   };
 
   const handleViewDetails = async (user: UserData) => {
@@ -100,7 +121,7 @@ setEditLoading(true)
     setIsModalOpen(false);
     setSelectedUser(null);
   };
-console.log("check selected user",selectedUser);
+
 
   return (
     <div className="flex flex-col gap-5">
@@ -176,12 +197,11 @@ console.log("check selected user",selectedUser);
             data={data}
             currentPage={currentPage}
             itemsPerPage={8}
-            loading={loading || !data}
+            loading={isLoading || !data}
             totalPages={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
-            onView={(user) => handleViewDetails(user)}
-            onDelete={(id) => handleDelete(id)}
-            editLoading={editLoading}
+           
+            editLoading={deletingUserId !== null}
           />
         </div>
       </div>

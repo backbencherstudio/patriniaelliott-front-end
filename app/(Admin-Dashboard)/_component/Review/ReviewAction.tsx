@@ -1,6 +1,7 @@
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 
-function ReviewAction({ status, onView, onDelete, data }: any) {
+function ReviewAction({ status, onView, onDelete, data, isDeleting }: any) {
   return (
     <div>
       {status?.text == "Approved" || status?.text == "Rejected" ? (
@@ -11,16 +12,19 @@ function ReviewAction({ status, onView, onDelete, data }: any) {
           >
             View details
           </span>{" "}
-          <button aria-label="Delete">
-            {" "}
-            <Image
-              onClick={() => onDelete(data.id)}
-              src="/dashboard/icon/delete.svg"
-              alt="delete"
-              width={16}
-              height={16}
-              className="cursor-pointer"
-            />
+          <button aria-label="Delete" disabled={isDeleting}>
+            {isDeleting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Image
+                onClick={() => onDelete(data.id)}
+                src="/dashboard/icon/delete.svg"
+                alt="delete"
+                width={16}
+                height={16}
+                className="cursor-pointer"
+              />
+            )}
           </button>
         </div>
       ) : (
@@ -50,28 +54,33 @@ function ReviewAction({ status, onView, onDelete, data }: any) {
           <button
             aria-label="Delete"
             onClick={() => onDelete(data.id)}
-            className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px]"
+            disabled={isDeleting}
+            className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px] disabled:opacity-50"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="17"
-              height="16"
-              viewBox="0 0 17 16"
-              fill="none"
-            >
-              <path
-                d="M10.3336 10L6.33398 6M6.33441 10L10.334 6"
-                stroke="#FE5050"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M15.0013 7.9987C15.0013 4.3168 12.0165 1.33203 8.33464 1.33203C4.65274 1.33203 1.66797 4.3168 1.66797 7.9987C1.66797 11.6806 4.65274 14.6654 8.33464 14.6654C12.0165 14.6654 15.0013 11.6806 15.0013 7.9987Z"
-                stroke="#FE5050"
-                stroke-width="1.5"
-              />
-            </svg>
+            {isDeleting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="17"
+                height="16"
+                viewBox="0 0 17 16"
+                fill="none"
+              >
+                <path
+                  d="M10.3336 10L6.33398 6M6.33441 10L10.334 6"
+                  stroke="#FE5050"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M15.0013 7.9987C15.0013 4.3168 12.0165 1.33203 8.33464 1.33203C4.65274 1.33203 1.66797 4.3168 1.66797 7.9987C1.66797 11.6806 4.65274 14.6654 8.33464 14.6654C12.0165 14.6654 15.0013 11.6806 15.0013 7.9987Z"
+                  stroke="#FE5050"
+                  stroke-width="1.5"
+                />
+              </svg>
+            )}
           </button>
         </div>
       )}

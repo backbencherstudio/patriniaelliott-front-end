@@ -26,8 +26,6 @@ export default function ConfirmRefundDetails({
   onOpenChange,
 }: RefundDetailsModalProps) {
   const invoiceRef = useRef<HTMLDivElement>(null);
- 
-    console.log("response payment",data);
   const resultObject :any = {};
 
  data?.timeline?.forEach((item :any) => {
