@@ -65,21 +65,6 @@ export default function ListingPage() {
     setIsEdit(true);
   };
 
-  const handleOptimisticUpdate = (id: any, status: any, payment_status: any) => {
-    // Update the cache optimistically
-    queryClient.setQueryData(["listingData", apiRole, currentPage, itemsPerPage], (oldData: any) => {
-      if (!oldData) return oldData;
-      return {
-        ...oldData,
-        data: oldData.data.map((item: any) => 
-          item.id === id ? { ...item, status: status } : item
-        )
-      };
-    });
-  };
-
-  
-
   const columns = [
     { label: "User ID", accessor: "displayId", width:"100px" },
     { label: "Property name", accessor: "name", },
@@ -103,7 +88,7 @@ export default function ListingPage() {
     {
       label: "Approval",
       accessor: "status",
-        formatter: (_, row) => <ListingApproveAction status={row} onOptimisticUpdate={handleOptimisticUpdate} handleViewDetails={handleViewDetails} />,
+        formatter: (_, row) => <ListingApproveAction status={row}  handleViewDetails={handleViewDetails} />,
     },
     {
       label: "Action",

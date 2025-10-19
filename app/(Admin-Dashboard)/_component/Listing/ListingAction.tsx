@@ -21,7 +21,7 @@ function ListingAction({ onView, data,onEdit,onDelete ,editLoading }: any) {
   <button
   aria-label="View Details"
     onClick={() => onView(data)}
-    className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+    className="px-4 flex gap-2 text-sm w-full items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
                border-l-2 border-transparent 
                hover:text-blackColor hover:border-secondaryColor hover:bg-secondaryColor/20 
                transition-all duration-100 ease-in-out"
@@ -36,7 +36,7 @@ function ListingAction({ onView, data,onEdit,onDelete ,editLoading }: any) {
   aria-label="Edit"
      onClick={() => onEdit(data)}
     
-    className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+    className="px-4 flex gap-2 text-sm w-full items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
                border-l-2 border-transparent 
                hover:text-blackColor hover:border-secondaryColor hover:bg-secondaryColor/20 
                transition-all duration-100 ease-in-out"
@@ -51,7 +51,7 @@ function ListingAction({ onView, data,onEdit,onDelete ,editLoading }: any) {
   aria-label="Delete"
    disabled={editLoading}
     onClick={() => onDelete(data?.id)}
-    className="px-4 flex gap-2 text-sm items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+    className="px-4 flex gap-2 text-sm w-full items-center py-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
                border-l-2 border-transparent 
                hover:text-blackColor hover:border-secondaryColor hover:bg-secondaryColor/20 
                transition-all duration-100 ease-in-out"

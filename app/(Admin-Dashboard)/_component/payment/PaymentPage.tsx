@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
 import {
@@ -10,9 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useFetchData from "@/hooks/useFetchData";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import CancelRefund from "./CancelRefund";
 import CancelRefundDetails from "./CancelRefundDetails";
@@ -24,53 +24,63 @@ import RefundConfirmation from "./RefundConfirmation";
 
 export default function PaymentPage() {
   const [isModalOpen, setIsModalOpen] = useState<any>(false);
-  const [isEdit, setIsEdit] = useState<any>(false);
   const [cancel, setCancel] = useState<any>(false);
   const [cancelRefund, setCancelRefund] = useState<any>(false);
-  const [paymentData, setPaymentData] = useState<any>([]);
-  const [paymentHistory, setPaymentHistory] = useState<any>();
-  const [payment, setPayment] = useState<
-    "all" | "PayPal" | "Credit Card" | "Stripe"
-  >("all");
   const [selectedData, setSelectedData] = useState<any | null>(null);
   const [selectedRole, setSelectedRole] = useState<
     "all" | "order" | "refund"
   >("all");
   const [dateRange, setDateRange] = useState<"all" | "7" | "15" | "30">("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
- const endpoint = `/dashboard/payments/transactions?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`;
-  const { data, loading, error } = useFetchData(endpoint);
-  const totalPages = data?.data?.transactions?.pagination?.totalPages || 0;
+  const itemsPerPage = 1;
   const {token} = useToken();
-  useEffect(()=>{
-    if (data?.data) {
-        setPaymentData(data?.data?.transactions?.data);
-        setPaymentHistory(data?.data?.statistics);
-    }
-  },[data])
+
+  // React Query for fetching payment data
+  const getPaymentData = async () => {
+    const endpoint = `/dashboard/payments/transactions?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`;
+    const response = await UserService.getData(endpoint, token);
+    return response?.data;
+  };
+
+  const { data: paymentResponse, error: apiError, isLoading } = useQuery({
+    queryKey: ["paymentData", selectedRole, currentPage, itemsPerPage],
+    queryFn: getPaymentData,
+    enabled: !!token,
+  });
+
+  // React Query for fetching individual transaction details
+  const getTransactionDetails = async (transactionId: string) => {
+    const response = await UserService.getData(`/dashboard/payments/transactions/${transactionId}`, token);
+    return response?.data?.data;
+  };
+
+
+  const data = paymentResponse?.data;
+  const totalPages = data?.transactions?.pagination?.totalPages || 0;
+  const paymentData = data?.transactions?.data || [];
+  const paymentHistory = data?.statistics;
   const handleViewDetails = async (user: any) => {
-     try {
-      const response = await UserService.getData(`/dashboard/payments/transactions/${user?.id}`,token);
-  
-      setSelectedData(response?.data?.data);
+    try {
+      // Use React Query to fetch transaction details
+      const response = await getTransactionDetails(user?.id);
+      setSelectedData(response);
       setIsModalOpen(true);
     } catch (error) {
-      console.log("error",error);
+      console.log("error", error);
     }
-   
   };
+
   const handleAccept = (user: any) => {
     setSelectedData(user);
     setCancel(true);
   };
+
   const handleCancel = (user: any) => {
-      setSelectedData(user);
+    setSelectedData(user);
     setCancelRefund(true);
   };
-  const handleOptimisticUpdate = (id: any, status: any) => {
-    setPaymentData((prev) => prev.map((item: any) => item.id === id ? { ...item, status } : item));
-  };
+
+
   const columns = [
     { label: "Booking ID", accessor: "booking_id" },
     { label: "Guest Name", accessor: "user",formatter: (value) => `${value?.name}` },
@@ -90,7 +100,7 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleViewDetails} status={row} />
+        <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleCancel} status={row} />
       ),
     },
   ];
@@ -113,7 +123,7 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-       <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleViewDetails} status={row} />
+       <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleCancel} status={row} />
       ),
     },
   ];
@@ -137,34 +147,34 @@ export default function PaymentPage() {
       label: "Action",
       accessor: "status",
       formatter: (_, row) => (
-       <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleViewDetails} status={row} />
+       <PaymentAction onView={handleViewDetails} onAccept={handleAccept} onCancel={handleCancel} status={row} />
       ),
     },
   ];
-  console.log(paymentHistory);
+
   
   const stats = [
     {
       title: "Total Bookings",
-      value: `${paymentHistory?.total_bookings} transactions`,
+      value: `${paymentHistory?.total_bookings || 0} transactions`,
       icon: "/dashboard/icon/all.svg",
       color: "#C9A634",
     },
     {
       title: "Total Commission",
-      value: `$${paymentHistory?.total_commission}`,
+      value: `$${paymentHistory?.total_commission || 0 }`,
       icon: "/dashboard/icon/commission.svg",
       color: "#C9A634",
     },
     {
       title: "Total Withdrawal",
-      value: `$${paymentHistory?.total_withdraw}`,
+      value: `$${paymentHistory?.total_withdraw || 0}`,
       icon: "/dashboard/icon/withdrawal.svg",
       color: "#C9A634",
     },
     {
       title: "Refunds Issued",
-      value: `$${paymentHistory?.total_refund}`,
+      value: `$${paymentHistory?.total_refund || 0}`,
       icon: "/dashboard/icon/refunds.svg",
       color: "#C9A634",
     },
@@ -275,7 +285,7 @@ export default function PaymentPage() {
               data={paymentData}
               currentPage={currentPage}
               itemsPerPage={itemsPerPage}
-              loading={loading}
+              loading={isLoading || !paymentData}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
@@ -286,7 +296,7 @@ export default function PaymentPage() {
               data={paymentData}
               currentPage={currentPage}
               itemsPerPage={itemsPerPage}
-              loading={loading}
+              loading={isLoading || !paymentData}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
@@ -297,7 +307,7 @@ export default function PaymentPage() {
               data={paymentData}
               currentPage={currentPage}
               itemsPerPage={itemsPerPage}
-              loading={loading}
+              loading={isLoading || !paymentData}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
@@ -325,15 +335,14 @@ export default function PaymentPage() {
           )}
       {cancel && selectedData &&
             <RefundConfirmation
-             onOptimisticUpdate={handleOptimisticUpdate}
               open={cancel}
               data={selectedData}
               onOpenChange={setCancel}
+            
             />
         }
       {cancelRefund && selectedData &&
             <CancelRefund
-             onOptimisticUpdate={handleOptimisticUpdate}
               open={cancelRefund}
               data={selectedData}
               onOpenChange={setCancelRefund}
