@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 
-import useFetchData from "@/hooks/useFetchData";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import DynamicTableWithPagination from "../common/DynamicTable";
@@ -17,7 +17,6 @@ import DateCheck from "./DateCheck";
 
 
 export default function BookingPage() {
-
   const [isModalOpen, setIsModalOpen] = React.useState<any>(false);
   const [selectedUser, setSelectedUser] = React.useState<any | null>(null);
   const [selectedRole, setSelectedRole] = React.useState<
@@ -25,17 +24,29 @@ export default function BookingPage() {
   >("all");
   const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
-
-  const endpoint = `/admin/booking?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`
-  const { data, loading, error } = useFetchData(endpoint);
-  const totalPages = data?.pagination?.total_pages || 0;
   const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
     "all"
   );
 
-  // Local state for optimistic updates - store all updates
-  const {token}=useToken()
-  const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, any>>({});
+  const {token} = useToken();
+  const queryClient = useQueryClient();
+
+  // React Query for fetching booking data
+  const getBookingData = async () => {
+    const endpoint = `/admin/booking?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`;
+    const response = await UserService.getData(endpoint, token);
+    return response?.data;
+  };
+
+  const { data: bookingResponse, error: apiError, isLoading } = useQuery({
+    queryKey: ["bookingData", selectedRole, currentPage, itemsPerPage],
+    queryFn: getBookingData,
+    enabled: !!token,
+  });
+
+  const data = bookingResponse;
+  const totalPages = data?.pagination?.total_pages || 0;
+
 
   const handleViewDetails = async   (user: any) => {
   try {
@@ -48,21 +59,26 @@ export default function BookingPage() {
    
   };
 
-  // Clear optimistic updates when page or role changes
-  useEffect(() => {
-    setOptimisticUpdates({});
-  }, [currentPage, selectedRole]);
 
-  // Optimistic update function - accumulate updates
-  const handleOptimisticUpdate = useCallback((bookingId: string, newStatus: string, payment_status: string) => {
-    setOptimisticUpdates(prev => ({
-      ...prev,
-      [bookingId]: {
-        status: newStatus,
-        payment_status: payment_status
-      }
-    }));
-  }, []);
+  // // Optimistic update function - update React Query cache
+  // const handleOptimisticUpdate = useCallback((bookingId: string, newStatus: string, payment_status: string) => {
+  //   // Update the cache optimistically
+  //   queryClient.setQueryData(["bookingData", selectedRole, currentPage, itemsPerPage], (oldData: any) => {
+  //     if (!oldData) return oldData;
+  //     return {
+  //       ...oldData,
+  //       data: oldData.data.map((booking: any) => 
+  //         booking.id === bookingId 
+  //           ? { 
+  //               ...booking, 
+  //               status: { text: newStatus },
+  //               payment: { status: payment_status }
+  //             } 
+  //           : booking
+  //       )
+  //     };
+  //   });
+  // }, [queryClient, selectedRole, currentPage, itemsPerPage]);
 
   const handleExportPDF = () => {
     const doc = new jsPDF();
@@ -127,7 +143,7 @@ export default function BookingPage() {
       formatter: (value, row) => <BookingAction 
         onView={handleViewDetails} 
         status={row} 
-        onOptimisticUpdate={handleOptimisticUpdate}
+       
       />, 
     },
     {
@@ -138,23 +154,8 @@ export default function BookingPage() {
     },
   ];
   
-  // Apply optimistic updates to data
-  const bookingData = data?.data?.map((booking: any) => {
-    const optimisticUpdate = optimisticUpdates[booking.id];
-    if (optimisticUpdate) {
-      return {
-        ...booking,
-        status: {
-                text: optimisticUpdate.status,
-            },
-        payment: {
-                status: optimisticUpdate.payment_status,
-            },
-      };
-    }
-    return booking;
-  });
-  ;
+  // Use the data directly from React Query cache (optimistic updates are handled in cache)
+  const bookingData = data?.data || [];
 
   return (
     <div className="flex flex-col gap-5">
@@ -220,7 +221,7 @@ export default function BookingPage() {
             columns={columns}
             data={bookingData}
             currentPage={currentPage}
-            loading={loading}
+            loading={isLoading || !bookingData}
             totalPages={totalPages || 0}
             itemsPerPage={itemsPerPage}
             aria-label="Booking Table"
