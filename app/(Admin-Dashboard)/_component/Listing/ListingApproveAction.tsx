@@ -2,64 +2,58 @@
 
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-function ListingApproveAction({ status, onOptimisticUpdate , handleViewDetails }: any) {
+function ListingApproveAction({ status, onOptimisticUpdate , handleViewDetails }: {status:any, onOptimisticUpdate?:any, handleViewDetails?:any}) {
   const {token}=useToken()
-  const [loading, setLoading]= useState(false)
+  const queryClient = useQueryClient()
   
-  const handleApprove = async() => {
-    setLoading(true)
-    // Optimistic update - immediately update UI
-    
-    
-    try {
-      const res = await UserService.createStatuseChange(`/admin/listing-management/${status?.id}/approve`,token)
-      
-      if(res.data.success){
-        toast.success(res.data.message || "Listing approved successfully")
-        onOptimisticUpdate?.(status?.id, "Available", "Available");
-        // Refresh data to ensure consistency
-      }else{
-        toast.error(res.data.message || "Listing approved failed")
-        // Revert optimistic update on failure
-        onOptimisticUpdate?.(status?.id, status?.status ,status?.payment_status);
-      }
-    } catch (error) {
-      toast.error("Something went wrong")
-       console.log("check error",error);
+  // React Query mutation for approving listing
+  const approveListingMutation = useMutation({
+    mutationFn: async () => {
+      const response = await UserService.createStatuseChange(`/admin/listing-management/${status?.id}/approve`, token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Listing approved successfully");
+      onOptimisticUpdate?.(status?.id, "Available", "Available");
+      queryClient.invalidateQueries({ queryKey: ["listingData"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+      console.log("check error", error);
       // Revert optimistic update on error
-      onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
-    } finally {
-      setLoading(false)
+      onOptimisticUpdate?.(status?.id, status?.status, status?.payment_status);
     }
-  }
+  });
+
+  const handleApprove = () => {
+    approveListingMutation.mutate();
+  };
   
-  const handleReject = async() => {
-    setLoading(true)
-    // Optimistic update - immediately update UI
-    try {
-      const res = await UserService.createStatuseChange(`/admin/listing-management/${status?.id}/reject`,token)
-      
-      if(res.data.success){
-        toast.success(res.data.message || "Listing rejected successfully")
-          onOptimisticUpdate?.(status?.id, "Cancel", "Cancel");
-      }else{
-        toast.error(res.data.message || "Listing rejected failed")
-        // Revert optimistic update on failure
-        onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
-      }
-    } catch (error) {
-      toast.error(error?.message || "Something went wrong")
-      console.log("check error",error);
-      
+  // React Query mutation for rejecting listing
+  const rejectListingMutation = useMutation({
+    mutationFn: async () => {
+      const response = await UserService.createStatuseChange(`/admin/listing-management/${status?.id}/reject`, token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Listing rejected successfully");
+      onOptimisticUpdate?.(status?.id, "Cancel", "Cancel");
+      queryClient.invalidateQueries({ queryKey: ["listingData"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+      console.log("check error", error);
       // Revert optimistic update on error
-      onOptimisticUpdate?.(status?.id, status?.status,status?.payment_status);
-    } finally {
-      setLoading(false)
+      onOptimisticUpdate?.(status?.id, status?.status, status?.payment_status);
     }
-  }
+  });
+
+  const handleReject = () => {
+    rejectListingMutation.mutate();
+  };
   
   return (
     <div>
@@ -75,7 +69,7 @@ function ListingApproveAction({ status, onOptimisticUpdate , handleViewDetails }
           <button 
             aria-label="Approve"
             onClick={handleApprove} 
-            disabled={loading}
+            disabled={approveListingMutation.isPending}
             className=" cursor-pointer py-1 px-[6px] bg-[#38c976]/10 rounded-[8px] disabled:opacity-50"
           >
             <svg
@@ -102,7 +96,7 @@ function ListingApproveAction({ status, onOptimisticUpdate , handleViewDetails }
           <button 
             aria-label="Reject"
             onClick={handleReject} 
-            disabled={loading}
+            disabled={rejectListingMutation.isPending}
             className="bg-[#fe5050]/10 cursor-pointer py-1 px-[6px] rounded-[8px] disabled:opacity-50"
           >
             <svg
