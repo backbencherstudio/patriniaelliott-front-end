@@ -66,7 +66,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "blind-domain-lat-net.trycloudflare.com",
+        hostname: "reports-burton-general-besides.trycloudflare.com",
       },
       {
         protocol: "https",
@@ -74,7 +74,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "blind-domain-lat-net.trycloudflare.comhttps",
+        hostname: "reports-burton-general-besides.trycloudflare.comttps",
       },
     ],
   },

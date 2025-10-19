@@ -24,7 +24,7 @@ function ApartmentImage({vendorPackage}:{vendorPackage:any}) {
       <div className="lg:grid grid-cols-6 gap-6">
           <div className=" col-span-4 h-auto lg:h-[536px] rounded-2xl overflow-hidden">
             <Image
-              src={getSlideSrc(vendorPackage?.roomFiles[0], 0)}
+              src={getSlideSrc(vendorPackage?.roomFiles?.[0], 0)}
               alt={"image"}
               width={900}
               height={600}
@@ -35,7 +35,7 @@ function ApartmentImage({vendorPackage}:{vendorPackage:any}) {
           <div className="  col-span-2 flex  lg:flex-col gap-3 mt-3 lg:mt-0 lg:gap-6 mb-12 md:mb-14 lg:mb-20">
             <div className=" lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={getSlideSrc(vendorPackage?.roomFiles[1], 1)}
+                src={getSlideSrc(vendorPackage?.roomFiles?.[1], 1)}
                 alt={"image"}
                 width={900}
                 height={600}
@@ -45,7 +45,7 @@ function ApartmentImage({vendorPackage}:{vendorPackage:any}) {
             </div>
             <div className=" relative lg:h-[255px] rounded-2xl overflow-hidden">
               <Image
-                src={getSlideSrc(vendorPackage?.roomFiles[2], 2)}
+                src={getSlideSrc(vendorPackage?.roomFiles?.[2], 2)}
                 alt={"image"}
                 width={900}
                 height={600}
@@ -53,7 +53,7 @@ function ApartmentImage({vendorPackage}:{vendorPackage:any}) {
                 className=" w-full h-full object-cover"
               />
               {
-                vendorPackage?.roomFiles.length > 3 && 
+                vendorPackage?.roomFiles?.length > 3 && 
                  <div className=" absolute top-0 left-0 w-full h-full bg-black/50">
                 <div className=" flex justify-center h-full items-center">
                   <button onClick={()=>setIsOpen(true)}  className="cursor-pointer flex flex-col items-center">

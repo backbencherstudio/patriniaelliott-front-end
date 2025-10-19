@@ -121,13 +121,15 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
       } catch (error) {
         console.log(error);
         toast.error("Booking failed. Please try again.");
+        const currentUrl = window.location.pathname + window.location.search;
+        router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
       } finally {
         setLoading(false);
       }
     } else {
       const currentUrl = window.location.pathname + window.location.search;
       router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
-      setLoading(false);
+      setLoading(false);  
     }
   };
   return (

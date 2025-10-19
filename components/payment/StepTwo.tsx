@@ -56,7 +56,7 @@ export default function StepTwo({totalAmount }:any) {
     <div className="mt-6">
       {/* <PaymentForm totalAmount={totalAmount} data={data}/> */}
       <div className="mb-6 flex justify-end lg:pr-10">
-      {cardData?.data  && <Link href={addCardHref} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gap-2 bg-primaryColor hover:bg-primaryColor/90 transition-colors"> <FaPlus/> Add New Card</Link>}
+      {cardData?.data?.length > 0  && <Link href={addCardHref} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gap-2 bg-primaryColor hover:bg-primaryColor/90 transition-colors"> <FaPlus/> Add New Card</Link>}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
         {cardLoading ? (

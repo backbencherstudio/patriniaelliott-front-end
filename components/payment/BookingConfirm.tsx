@@ -96,6 +96,8 @@ const router = useRouter()
       
       // Save the PDF
       pdf.save(`booking-invoice-${responseData?.booking?.invoice_number || 'invoice'}.pdf`);
+
+      router.push("/")
       
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -136,14 +138,14 @@ const router = useRouter()
                 <p className="text-sm text-grayColor1 mt-1">Hosted by </p>
                 <div className="flex items-center gap-2 mt-1">
                   <Image
-                    src={responseData?.package?.host?.avatar ? responseData?.host?.package?.avatar : "/profile.png"}
+                    src={responseData?.user.avatar ? responseData?.user?.avatar : "/profile.png"}
                     alt="hosted"
                     width={24}
                     height={24}
                     className=" rounded-full"
                   />
                   <h5 className="text-sm font-semibold text-headerColor ">
-                    {responseData?.package?.host?.name}
+                    {responseData?.user?.name}
                   </h5>
                 </div>
               </div>
@@ -171,7 +173,7 @@ const router = useRouter()
                 <p>Date:</p><p>{formattedDate}</p>
               </div>
               <div className=" text-sm text-grayColor1 flex justify-between">
-                <p>Total:</p><p>${responseData?.booking_details?.total}</p>
+                <p>Total:</p><p>${Math.round(responseData?.booking_details?.computed_price)}</p>
               </div>
               <div className=" text-sm text-grayColor1 flex justify-between">
                 <p>Payment method:</p><p> {responseData?.booking_details?.payment_method}</p>

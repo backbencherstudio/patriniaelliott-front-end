@@ -79,6 +79,8 @@ const BookingForm = ({ singleApartments, type }: any) => {
         } catch (error) {
           console.log(error);
           toast.error(error?.response?.data?.message?.message);
+          const currentUrl = window.location.pathname + window.location.search;
+      router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
           setLoading(false);
       }finally{
         setLoading(false);
