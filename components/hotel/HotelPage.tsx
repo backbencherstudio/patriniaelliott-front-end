@@ -39,7 +39,6 @@ function HotelPage() {
     // Build query parameters dynamically
     const buildQueryParams = () => {
         const params = new URLSearchParams();
-
         // Always include these parameters
         params.append('type', 'hotel');
         params.append('limit', itemsPerPage.toString());
@@ -53,14 +52,12 @@ function HotelPage() {
         if (endDate) params.append('duration_end', endDate);
         if (min) params.append('budget_start', min);
         if (max) params.append('budget_end', max);
-
         // Add each rating as a separate parameter
         if (ratings && ratings.length > 0) {
             ratings.forEach(rating => {
                 params.append('ratings', rating);
             });
         }
-
         return params.toString();
     };
 
@@ -83,22 +80,27 @@ function HotelPage() {
         };
         fetchData();
     }, [endpoint]);
-console.log("data==============",data);
+
 
     return (
         <div>
             <FilterHeader title="Hotel" data={data} />
 
             <div className="">
-                {loading ? <div className="grid grid-cols-1 gap-5 pb-10">
+                {loading ? 
+                <div className="grid grid-cols-1 gap-5 pb-10">
                     {Array.from({ length: 5 }, (_, i) => (
                         <BigCardSkleton key={i} />
                     ))}
-                </div> : data?.length > 0 ? data?.map((tour: any, index) => (
+                </div> 
+                : 
+                data?.length > 0 ? data?.map((tour: any, index) => (
                     <div key={index} className=" py-4">
                         <HotelCard hotel={tour} />
                     </div>
-                )) : <div className="text-center text-2xl font-bold text-grayColor1 py-10">Not found data !</div>
+                )) 
+                : 
+                <div className="text-center text-2xl font-bold text-grayColor1 py-10">Not found data !</div>
                 }
             </div>
 

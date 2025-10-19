@@ -49,6 +49,7 @@ export default function Navbar() {
           {menuItems.map((item) => (
             <Link
               key={item.slug}
+              prefetch={true}
               aria-label={item.en}
               href={item.slug}
               className={cn(
@@ -80,6 +81,7 @@ export default function Navbar() {
               <Link
                 aria-label="List your proparty"
                 href="/property-list"
+                prefetch={true}
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
               >
                 List your proparty
@@ -90,16 +92,18 @@ export default function Navbar() {
             <>
             <Link
                 aria-label="List your proparty"
+                  prefetch={true}
                 href={token ? "/property-list" : "/login"}
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
               >
                 List your proparty
               </Link>
-              <Link aria-label="Login" href="/login" className="text-white text-base">
+                <Link aria-label="Login" prefetch={true} href="/login" className="text-white text-base">
                 Login
               </Link>
               <Link
                 aria-label="Sign up"
+                  prefetch={true}
                 href="/registration"
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-2 md:px-6 py-2 rounded"
               >
@@ -113,10 +117,11 @@ export default function Navbar() {
         <div className="lg:hidden flex items-center gap-2">
           <div className="md:hidden">
           {token && data?.success ? <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data}/> : <div className=" flex items-center gap-3">
-                <Link aria-label="Login" href="/login" className="text-white text-base" onClick={() => setMenuOpen(false)}>
+              <Link prefetch={true} aria-label="Login" href="/login" className="text-white text-base" onClick={() => setMenuOpen(false)}>
                   Login
                 </Link>
                 <Link
+                prefetch={true}
                   aria-label="Sign up"
                   href="/registration"
                   className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base md:px-4 px-2 py-1 rounded"
@@ -165,6 +170,7 @@ export default function Navbar() {
             <Link
               key={item.slug}
               aria-label={item.en}
+              prefetch={true}
               href={item.slug}
               className={cn(
                 "block text-base py-2",
@@ -194,6 +200,7 @@ export default function Navbar() {
               {token && data?.success ? <>
                 <Link
                   aria-label="List your proparty"
+                prefetch={true}
                   href={token ? "/property-list" : "/login"}
                   onClick={() => setMenuOpen(false)}
                   className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
@@ -203,6 +210,7 @@ export default function Navbar() {
               </> : <>
                 <Link
                   aria-label="Login"
+                  prefetch={true}
                   href="/login"
                   className="text-white text-base"
                   onClick={() => setMenuOpen(false)}
