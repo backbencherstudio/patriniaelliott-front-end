@@ -140,7 +140,6 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-
       {/* Overlay */}
       {menuOpen && (
         <div
@@ -148,7 +147,6 @@ export default function Navbar() {
           onClick={() => setMenuOpen(false)}
         />
       )}
-
       {/* Mobile Slide-in Menu */}
       <div
         className={cn(
@@ -196,7 +194,6 @@ export default function Navbar() {
           </div>
           {/* Auth Buttons */}
           <div className="mt-4 flex flex-col text-center gap-3">
-
               {token && data?.success ? <>
                 <Link
                   aria-label="List your proparty"
