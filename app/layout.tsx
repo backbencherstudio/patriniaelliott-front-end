@@ -1,6 +1,7 @@
 import CustomToastContainer from "@/components/CustomToast/CustomToastContainer";
 import { AppConfig } from "@/config/app.config";
 import { TokenProvider } from "@/hooks/useToken";
+import QueryProvider from "@/provider/QueryProvider";
 import type { Metadata } from "next";
 import { Inter } from 'next/font/google';
 import "./globals.css";
@@ -24,10 +25,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <TokenProvider>
-          <CustomToastContainer />
-          {children}
-        </TokenProvider>
+        <QueryProvider>
+          <TokenProvider>
+            <CustomToastContainer />
+            {children}
+          </TokenProvider>
+        </QueryProvider>
       </body>
     </html>
   );
