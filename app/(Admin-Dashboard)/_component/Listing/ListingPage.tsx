@@ -133,7 +133,6 @@ export default function ListingPage() {
     doc.setFontSize(20);
     doc.setFont("helvetica", "bold");
     doc.text("Property Listings Report", 14, 20);
-    
     // Add subtitle with filter info
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");

@@ -212,8 +212,8 @@ const BookingForm = ({ singleApartments, type }: any) => {
             <span>${basePrice}</span>
           </div>
           <div className="flex justify-between border-b border-grayColor1/20 py-2 text-base text-headerColor">
-            <span className=" text-descriptionColor">{singleApartments?.discount}% campaign discount</span>
-            <span>- ${discountPrice}</span>
+            <span className=" text-descriptionColor">{singleApartments?.discount || 0}% campaign discount</span>
+            <span>- ${discountPrice || 0}</span>
           </div>
           
           {selectedExtraServices.map((service) => (
@@ -225,15 +225,22 @@ const BookingForm = ({ singleApartments, type }: any) => {
         </div>
         <div className="flex justify-between mt-4 text-base">
           <span>Total</span>
-          <span>${totalPrice}</span>
+          <span>${totalPrice || 0}</span>
         </div>
       </div>
 
       {/* Book Now Button */}
+       <div>
+        { totalDays == 0 && (
+          <div className="text-center text-sm text-gray-500">
+            <p className="text-red-500">Please select a start and end date</p>
+          </div>
+        )}
+      </div>
       <button
         onClick={ handleBook}
         disabled={totalDays === 0 || loading}
-        className="w-full py-3 bg-secondaryColor disabled:bg-grayColor1 disabled:cursor-not-allowed text-blackColor font-medium cursor-pointer rounded-full mt-6 text-base hover:bg-secondaryColor transition"
+        className="w-full py-3 bg-secondaryColor disabled:bg-grayColor1 disabled:cursor-not-allowed text-blackColor font-medium cursor-pointer rounded-full mt-4 text-base hover:bg-secondaryColor transition"
       >
        {loading ? "Loading..." : "Book Now"}
       </button>
