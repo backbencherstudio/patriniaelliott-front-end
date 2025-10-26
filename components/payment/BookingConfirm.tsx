@@ -43,7 +43,7 @@ const router = useRouter()
       // Add package details
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(responseData?.package?.name || 'Package Name', margin, yPosition);
+      pdf.text(responseData?.package_details?.name || 'Package Name', margin, yPosition);
       yPosition += 15;
       
       // Add amenities
@@ -60,13 +60,13 @@ const router = useRouter()
       pdf.text('Hosted by', margin, yPosition);
       yPosition += 8;
       pdf.setFont('helvetica', 'bold');
-      pdf.text(responseData?.package?.host?.name || 'Host Name', margin, yPosition);
+      pdf.text(responseData?.user?.name || 'Host Name', margin, yPosition);
       yPosition += 8;
       
       // Add rating
-      if (responseData?.feedback?.rating) {
+      if (responseData?.rating_summary?.average) {
         pdf.setFont('helvetica', 'normal');
-        pdf.text(`Rating: ${responseData.feedback.rating} (${responseData.feedback.review_count || 0} reviews)`, margin, yPosition);
+        pdf.text(`Rating: ${responseData?.rating_summary?.average} (${responseData?.rating_summary?.total_reviews || 0} reviews)`, margin, yPosition);
         yPosition += 20;
       }
       
@@ -81,11 +81,11 @@ const router = useRouter()
       pdf.setFont('helvetica', 'normal');
       
       const bookingDetails = [
-        ['Booking code:', responseData?.booking?.invoice_number || 'N/A'],
-        ['Package type:', responseData?.booking?.type || 'N/A'],
+        ['Booking code:', responseData?.booking_details?.id || 'N/A'],
+        ['Package type:', responseData?.package_details?.type || 'N/A'],
         ['Date:', formattedDate],
-        ['Total:', `$${responseData?.booking?.total_amount || '0'}`],
-        ['Payment method:', 'Card']
+        ['Total:', `$${responseData?.booking_details?.total || '0'}`],
+        ['Payment method:', responseData?.booking_details?.payment_method || 'card']
       ];
       
       bookingDetails.forEach(([label, value]) => {
@@ -95,7 +95,7 @@ const router = useRouter()
       });
       
       // Save the PDF
-      pdf.save(`booking-invoice-${responseData?.booking?.invoice_number || 'invoice'}.pdf`);
+      pdf.save(`booking-invoice-${responseData?.booking_details?.id || 'invoice'}.pdf`);
 
       router.push("/")
       
@@ -151,9 +151,9 @@ const router = useRouter()
               </div>
               <div>
                 <p className="flex items-center gap-1 text-sm text-headerColor mt-2">
-                  <FaStar size={18} className="text-yellow-400" /> {responseData?.feedback?.rating || 0}{" "}
+                  <FaStar size={18} className="text-yellow-400" /> {responseData?.rating_summary?.average || 0}{" "}
                   <span className="text-grayColor1">
-                    ({responseData?.feedback?.review_count || 0} reviews)
+                    ({responseData?.rating_summary?.total_reviews || 0} reviews)
                   </span>
                 </p>
               </div>

@@ -1,17 +1,28 @@
 "use client";
 
+import { useToken } from "@/hooks/useToken";
+import { UserService } from "@/service/user/user.service";
 import { LucideCalendarDays } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaArrowRightLong, FaStar } from "react-icons/fa6";
 
 const BookingSummary = ({activeTab,setActiveTab,setTotalAmount}:any) => {
- 
+  const {token} = useToken()
   const [bookingData, setBookingData] = useState<any>()
   useEffect(()=>{
     const data = localStorage.getItem("bookingDetails")
     setBookingData(JSON.parse(data))
   },[])
+
+  const fetchBookingData = async () => {
+    if(!token) return
+    const data = await UserService?.getData(`/booking/cmh7j5l2z000ltzwkzxv3a118`,token)
+    console.log("check booking data",data)
+  }
+  useEffect(()=>{
+    fetchBookingData()
+  },[token])
   
   // Show loading state if no apartment data
   if (!bookingData) {

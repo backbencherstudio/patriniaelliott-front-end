@@ -45,7 +45,6 @@ function Page() {
                  <span className={`absolute -bottom-[13px] left-0 w-full h-[2px] ${activeTab === 'step2' ? 'bg-secondaryColor' : 'hidden'}`} />
               </TabsTrigger>
             </TabsList>
-
             <TabsContent value="step1">
               <StepOne data={data?.data} guests={guests} setGuests={setGuests} />
             </TabsContent>
