@@ -13,12 +13,8 @@ function Page() {
         const [guests, setGuests] = useState([
     { firstName: "", lastName: "", email: "", phone: "" },
   ]);
-      const [singleApartment, setSingleApartment] = useState(null);
       const endpoint ="/auth/me"
       const {data,loading}= useFetchData(endpoint)
-
-console.log("check user data",data);
-
       const [totalAmount, setTotalAmount] = useState(0)
       
   return (

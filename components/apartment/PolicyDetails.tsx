@@ -1,7 +1,7 @@
 import { PoliciesData } from "@/DemoAPI/Policies"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 
-function PolicyDetails() {
+function PolicyDetails({ vendorPackage }: { vendorPackage: any }) {
   return (
     <div>
       <h1 className=' text-2xl lg:text-[32px] font-medium text-blackColor'>Policies</h1>
@@ -14,31 +14,26 @@ function PolicyDetails() {
           
             className=" space-y-2 "
           >
-            {PoliciesData.map((item) => (
+              {vendorPackage?.package_policies?.data?.flatMap((item) => 
+            item?.package_policies?.map((data ,index) => (
               <AccordionItem
-                key={item.id}
-               value={item.id}
-                className={`px-3  rounded-xl bg-bgColor  border border-[#DADDE3] `}
+                key={data?.id}
+                value={index +1} // Ensure value is string
+                className="px-3 rounded-xl bg-bgColor border border-[#DADDE3]"
               >
-                <AccordionTrigger
-                  className={`py-3  cursor-pointer text-left text-base text-grayColor1 font-medium hover:no-underline `}
-                >
-                  <h4 className={` text-base lg:text-lg font-medium  text-headerColor`}>
-                    {item.title}
+                <AccordionTrigger className="py-3 cursor-pointer text-left text-base text-grayColor1 font-medium hover:no-underline">
+                  <h4 className="text-base lg:text-lg font-medium text-headerColor">
+                    {data?.title}
                   </h4>
-                 
                 </AccordionTrigger>
-                <AccordionContent className="text-base pr-8 text-grayColor1   ">
-                  {item.items.map((data)=>(
-                    <ul className="list-disc list-inside text-base pl-4">
-                        <li className="">{data}</li>
-                    </ul>
-                  ))}
+                <AccordionContent className="text-base pr-8 text-grayColor1">
+                  <p dangerouslySetInnerHTML={{ __html: data?.description }}></p>
                 </AccordionContent>
               </AccordionItem>
-            ))}
+            ))
+          )}
           </Accordion>
-      </div>
+        </div>
     </div>
   )
 }

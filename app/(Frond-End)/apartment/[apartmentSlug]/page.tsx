@@ -117,7 +117,7 @@ console.log(vendorPackage,"vendorPackage");
       <div className=" py-14 lg:py-20 ">
         <div className="lg:grid flex flex-col-reverse grid-cols-6 gap-8 container">
           <div className=" col-span-4 ">
-            <PolicyDetails />
+            <PolicyDetails vendorPackage={vendorPackage} />
             <ReviewSection singleApartment={vendorPackage} />
 
           </div>

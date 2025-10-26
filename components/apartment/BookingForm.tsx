@@ -46,8 +46,20 @@ const BookingForm = ({ singleApartments, type }: any) => {
     }
   };
 
+
   const handleBook = async() => {
     setLoading(true);
+    
+    // Fix timezone issue by formatting dates properly
+    const formatDateForAPI = (date: Date | null) => {
+      if (!date) return "";
+      // Get local date components to avoid timezone issues
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const data = {
   type: singleApartments?.type,
   first_name: singleApartments?.user?.first_name,
@@ -56,8 +68,8 @@ const BookingForm = ({ singleApartments, type }: any) => {
   booking_items: [
     {
       package_id: singleApartments?.id,
-      start_date: startDate?.toISOString() || "",
-      end_date: endDate?.toISOString() || "",
+      start_date: formatDateForAPI(startDate),
+      end_date: formatDateForAPI(endDate),
       quantity: 1
     }
   ],
@@ -79,8 +91,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
         } catch (error) {
           console.log(error);
           toast.error(error?.response?.data?.message?.message);
-          const currentUrl = window.location.pathname + window.location.search;
-      router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+      // router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
           setLoading(false);
       }finally{
         setLoading(false);

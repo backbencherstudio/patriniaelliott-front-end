@@ -173,7 +173,7 @@ const router = useRouter()
                 <p>Date:</p><p>{formattedDate}</p>
               </div>
               <div className=" text-sm text-grayColor1 flex justify-between">
-                <p>Total:</p><p>${Math.round(responseData?.booking_details?.computed_price)}</p>
+                <p>Total:</p><p>${Math.round(responseData?.booking_details?.total)}</p>
               </div>
               <div className=" text-sm text-grayColor1 flex justify-between">
                 <p>Payment method:</p><p> {responseData?.booking_details?.payment_method}</p>
