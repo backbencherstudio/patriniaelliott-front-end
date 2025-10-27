@@ -74,7 +74,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "presenting-hope-propecia-pet.trycloudflare.comttps",
+        hostname: "cache-staff-merchant-privacy.trycloudflare.com",
       },
     ],
   },

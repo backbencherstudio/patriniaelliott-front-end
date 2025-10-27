@@ -1,4 +1,3 @@
-import { PoliciesData } from "@/DemoAPI/Policies"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 
 function PolicyDetails({ vendorPackage }: { vendorPackage: any }) {
@@ -17,7 +16,7 @@ function PolicyDetails({ vendorPackage }: { vendorPackage: any }) {
               {vendorPackage?.package_policies?.data?.flatMap((item) => 
             item?.package_policies?.map((data ,index) => (
               <AccordionItem
-                key={data?.id}
+                key={item?.id + index}
                 value={index +1} // Ensure value is string
                 className="px-3 rounded-xl bg-bgColor border border-[#DADDE3]"
               >

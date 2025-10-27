@@ -24,12 +24,11 @@ const BookingForm = ({ singleApartments, type }: any) => {
     totalDays,
     basePrice,
     totalPrice,
-    handleBookNow
   } = useBookingContext();
 
   const router = useRouter();
   const { token } = useToken();
-  const { price, rating } = singleApartments;
+  const { price, rating_summary } = singleApartments;
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setSingleApartment(singleApartments);
@@ -45,7 +44,6 @@ const BookingForm = ({ singleApartments, type }: any) => {
       setSelectedExtraServices(updatedServices);
     }
   };
-
 
   const handleBook = async() => {
     setLoading(true);
@@ -90,7 +88,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
           toast.success(response?.data?.message);
            localStorage.setItem("bookingId", response?.data?.data?.booking?.id);
            setSingleApartment(singleApartments);
-           handleBookNow();
+
             router.push(type === "apartment" ? `/apartment/${singleApartments?.id}/booking` : `/hotel/${singleApartments?.id}/booking`);
               setLoading(false);
         }else{
@@ -181,9 +179,9 @@ const BookingForm = ({ singleApartments, type }: any) => {
       {/* Rating */}
       <div>
         <div className="flex gap-2 items-center">
-          <span className="text-headerColor text-sm">{rating}</span>
+          <span className="text-headerColor text-sm">{Number(rating_summary?.averageRating ?? 0).toFixed(1)}</span>
           <div className="flex gap-1">
-            <Rating rating={rating} />
+            <Rating rating={Number(rating_summary?.averageRating ?? 0).toFixed(1)} />
           </div>
         </div>
         <div className="flex mt-1 items-center gap-2 text-sm text-[#0068EF]">

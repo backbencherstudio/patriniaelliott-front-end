@@ -107,7 +107,7 @@ console.log(vendorPackage,"vendorPackage");
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
           {hotelData.map((tour: any, index) => (
-            <div key={tour.title}>
+            <div key={tour.id}>
               <AccommodationCard tour={tour} />
             </div>
           ))}
