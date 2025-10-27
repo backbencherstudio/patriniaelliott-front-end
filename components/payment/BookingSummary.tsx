@@ -34,6 +34,8 @@ const BookingSummary = ({ activeTab, setActiveTab, setTotalAmount }: any) => {
   // Show loading state if no apartment data
   if (!bookingData) {
     return (
+      <div>
+      {
       !bookingLoading ?
         <Card className="max-w-md border border-yellow-400 rounded-xl shadow-md">
           <CardContent className="p-5 space-y-4">
@@ -59,6 +61,8 @@ const BookingSummary = ({ activeTab, setActiveTab, setTotalAmount }: any) => {
             <p className="text-grayColor1 text-lg">No booking data available</p>
             <p className="text-sm text-grayColor1 mt-2">Please select an apartment and configure your booking first.</p>
           </div>
+        </div>
+        }
         </div>
     );
   }
