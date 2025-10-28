@@ -360,21 +360,31 @@ export default function PaymentPage() {
     }
   }, [pollingAccountId, router, handleApiCall])
 
+  const PaymentMethodIcon = memo(({ method }: { method: string }) => {
+    const [fallback, setFallback] = useState(false)
+    const iconSrc = fallback ? '/icon/payment.svg' : `/icon/${method.toLowerCase()}.svg`
+    return (
+      <img
+        src={iconSrc}
+        alt={method}
+        width={20}
+        height={20}
+        onError={() => {
+          if (!fallback) setFallback(true)
+        }}
+        style={{ display: 'block' }}
+      />
+    )
+  })
+  PaymentMethodIcon.displayName = 'PaymentMethodIcon'
+
   const AccountCard = memo(({ account, setPollingAccountId }: { account: PaymentAccount; setPollingAccountId: (id: string | null) => void }) => {
     return (
       <div className="border border-[#e9e9ea] rounded-lg p-4 hover:shadow-md transition-shadow">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${account.status === 'verified' ? 'bg-[#38c976]/10' : 'bg-[#0068ef]/10'}`}>
-              <Image
-                src={`/icon/${account.payment_method.toLowerCase()}.svg`}
-                alt={account.payment_method}
-                width={20}
-                height={20}
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = '/icon/payment.svg'
-                }}
-              />
+              <PaymentMethodIcon method={account.payment_method} />
             </div>
             <div>
               <h3 className="text-lg font-medium text-[#22262e]">{account.name}</h3>
@@ -444,6 +454,16 @@ export default function PaymentPage() {
           </div>
         )}
       </div>
+    )
+  }, (prev, next) => {
+    // Re-render card only when meaningful fields change; icon only depends on payment_method
+    return (
+      prev.account.id === next.account.id &&
+      prev.account.payment_method === next.account.payment_method &&
+      prev.account.name === next.account.name &&
+      prev.account.status === next.account.status &&
+      prev.account.onboarding_url === next.account.onboarding_url &&
+      prev.account.business_type === next.account.business_type
     )
   })
   AccountCard.displayName = 'AccountCard'
