@@ -1,5 +1,5 @@
 "use client";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import complete from "@/public/auth/completeicon.png";
 import jsPDF from "jspdf";
 import Image from "next/image";
@@ -124,20 +124,34 @@ const router = useRouter()
   }
 };
   const hanldeCancelBooking = () => {
-    setIsOpen(false)
-    router.push("/")
+    if (responseData?.package_details?.type === "tour") {
+      router.push(`/toure/${responseData?.package_details?.id}`)
+    }else if (responseData?.package_details?.type === "apartment") {
+      router.push(`/apartment/${responseData?.package_details?.id}`)
+    }else if (responseData?.package_details?.type === "hotel") {
+      router.push(`/hotel/${responseData?.package_details?.id}`)
+    }else{
+      router.push("/my-account")
+    }
   }
   
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <div className="bookingchage">
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) {
+        hanldeCancelBooking();
+      } else {
+        setIsOpen(true);
+      }
+    }}>
       <DialogTrigger className=" " asChild></DialogTrigger>
 
-      <DialogContent className="sm:max-w-[662px] text-center p-10 h-[90%] overflow-y-auto close">
+      <DialogContent aria-describedby="congratulation" className="sm:max-w-[662px] text-center p-10 h-[90%] overflow-y-auto close">
         <div className="bg-white p-8 rounded-lg">
-          <h2 className=" text-headerColor font-semibold text-5xl">
+          <DialogTitle aria-describedby="congratulation" className=" text-headerColor font-semibold text-5xl">
             {" "}
             Congratulation!
-          </h2>
+          </DialogTitle>   
           <div className="flex justify-center">
             <Image src={complete} width={182} height={182} alt="complete" />
           </div>
@@ -221,5 +235,6 @@ const router = useRouter()
         </div>
       </DialogContent>
     </Dialog>
+    </div>
   );
 }

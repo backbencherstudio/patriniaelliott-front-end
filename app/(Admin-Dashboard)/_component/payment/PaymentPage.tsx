@@ -53,8 +53,6 @@ export default function PaymentPage() {
     const response = await UserService.getData(`/dashboard/payments/transactions/${transactionId}`, token);
     return response?.data?.data;
   };
-
-
   const data = paymentResponse?.data;
   const totalPages = data?.transactions?.pagination?.totalPages || 0;
   const paymentData = data?.transactions?.data || [];
@@ -79,7 +77,6 @@ export default function PaymentPage() {
     setSelectedData(user);
     setCancelRefund(true);
   };
-
 
   const columns = [
     { label: "Booking ID", accessor: "booking_id" },
@@ -151,8 +148,6 @@ export default function PaymentPage() {
       ),
     },
   ];
-
-  
   const stats = [
     {
       title: "Total Bookings",
@@ -179,8 +174,6 @@ export default function PaymentPage() {
       color: "#C9A634",
     },
   ];
-
-
   
   return (
     <div className="flex flex-col gap-5">

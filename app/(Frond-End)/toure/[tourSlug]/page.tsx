@@ -7,7 +7,7 @@ import { UserService } from "@/service/user/user.service";
 
 import { ChevronRight } from "lucide-react";
 import { cookies } from "next/headers";
-import { toast } from "react-toastify";
+
 
 async function BookingDetailsPage(props: {
   params: Promise<{ tourSlug: string }>;
@@ -22,7 +22,7 @@ async function BookingDetailsPage(props: {
     const res = await UserService.getData(`/admin/vendor-package/${tourSlug}`, token);
     vendorPackage = res?.data?.data ?? {};
   } catch (error) {
-    toast.error(error?.response?.data?.message?.message || "Something went wrong");
+    console.log(error?.response?.data?.message?.message || "Something went wrong");
   }
 const singletour = vendorPackage ? vendorPackage : {}
   let tourData: any = [];
@@ -30,7 +30,7 @@ const singletour = vendorPackage ? vendorPackage : {}
     const res = await UserService.getData(`/admin/vendor-package?type=tour&limit=${6}&page=${1}`, token);
     tourData = res?.data?.data ?? [];
   } catch (error) {
-    toast.error(error?.response?.data?.message?.message || "Something went wrong");
+    console.log(error?.message || "Something went wrong");
   }
   
   return (
@@ -60,7 +60,7 @@ const singletour = vendorPackage ? vendorPackage : {}
       <div className=" bg-bgColor relative lg:mt-15 py-12 lg:py-20">
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
           {tourData.map((tour: any, index) => (
-            <div key={tour.title}>
+            <div key={tour?.id}>
               <TourCard tour={tour} />
             </div>
           ))}
