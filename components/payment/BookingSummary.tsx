@@ -68,8 +68,6 @@ const BookingSummary = ({ activeTab, setActiveTab, setTotalAmount }: any) => {
   }
 
 
-
-
   return (
 
     <div className="rounded-xl border border-secondaryColor bg-secondaryColor/5 p-4 shadow-md text-sm font-medium text-gray-800">
@@ -171,15 +169,15 @@ const BookingSummary = ({ activeTab, setActiveTab, setTotalAmount }: any) => {
           <div className="space-y-3 text-base">
             <div className="flex justify-between">
               <span className=" text-descriptionColor">
-                ${bookingData?.booking_items?.price} × {bookingData?.booking_items?.quantity} nights
+                ${bookingData?.price_breakdown?.package_price} × {bookingData?.booking_items?.quantity} nights
               </span>
-              <span>${Number(bookingData?.booking_items?.price) * Number(bookingData?.booking_items?.quantity)}</span>
+              <span>${Number(bookingData?.price_breakdown?.package_price) * Number(bookingData?.booking_items?.quantity)}</span>
             </div>
 
             {/* Example static discount - make dynamic later */}
             <div className="flex justify-between text-base text-headerColor">
               <span className=" text-descriptionColor">{bookingData?.booking_items?.package?.discount || 0}% campaign discount</span>
-              <span>- ${bookingData?.booking_items?.package?.discount || 0}</span>
+              <span>- ${bookingData?.price_breakdown?.discount_amount || 0}</span>
             </div>
 
             <div className="flex text-base text-headerColor  justify-between">
@@ -204,7 +202,7 @@ const BookingSummary = ({ activeTab, setActiveTab, setTotalAmount }: any) => {
           {/* Total */}
           <div className="flex justify-between mt-4 text-base font-semibold text-black border-t pt-3">
             <span>Total</span>
-            <span>${bookingData?.total_amount || 0}</span>
+            <span>${bookingData?.price_breakdown?.final_total || 0}</span>
           </div>
         </div>
         {/* Proceed Button */}

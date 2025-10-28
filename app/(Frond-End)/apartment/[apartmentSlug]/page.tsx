@@ -8,6 +8,7 @@ import { UserService } from "@/service/user/user.service";
 import { ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import { cookies } from "next/headers";
+import { toast } from "react-toastify";
 const BookingForm = dynamic(() => import('@/components/apartment/BookingForm'), {
   loading: () => (
     <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
@@ -64,7 +65,7 @@ async function ApartmnetDetailsPage(props: {
     
     vendorPackage = res?.data?.data ?? {};
   } catch (error) {
-    console.log(error);
+    toast.error(error?.response?.data?.message?.message || "Something went wrong");
 
   }
   let hotelData: any = [];
@@ -73,10 +74,10 @@ async function ApartmnetDetailsPage(props: {
     
     hotelData = res?.data?.data ?? [];
   } catch (error) {
-    console.log(error);
+    toast.error(error?.response?.data?.message?.message || "Something went wrong");
 
   }
-console.log(vendorPackage,"vendorPackage");
+
   return (
     <div>
       <div className=" container">

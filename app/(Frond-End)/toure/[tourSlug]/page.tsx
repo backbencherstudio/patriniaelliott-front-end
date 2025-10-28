@@ -7,38 +7,31 @@ import { UserService } from "@/service/user/user.service";
 
 import { ChevronRight } from "lucide-react";
 import { cookies } from "next/headers";
+import { toast } from "react-toastify";
 
 async function BookingDetailsPage(props: {
   params: Promise<{ tourSlug: string }>;
 }) {
   const params = await props.params;
   const { tourSlug } = params;
-
   const tokenStore = await cookies();
   const token = tokenStore.get("tourAccessToken")?.value;
-
   // Fetch server-side without causing side effects during render
   let vendorPackage: any = {};
   try {
     const res = await UserService.getData(`/admin/vendor-package/${tourSlug}`, token);
     vendorPackage = res?.data?.data ?? {};
   } catch (error) {
-    console.log(error);
-
+    toast.error(error?.response?.data?.message?.message || "Something went wrong");
   }
 const singletour = vendorPackage ? vendorPackage : {}
-// console.log(singletour);
-// console.log(singletour?.package_files);
   let tourData: any = [];
   try {
     const res = await UserService.getData(`/admin/vendor-package?type=tour&limit=${6}&page=${1}`, token);
     tourData = res?.data?.data ?? [];
   } catch (error) {
-    console.log(error);
-
+    toast.error(error?.response?.data?.message?.message || "Something went wrong");
   }
-
-  console.log(vendorPackage,"tourData");
   
   return (
     <div>

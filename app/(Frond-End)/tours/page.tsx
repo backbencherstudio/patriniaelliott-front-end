@@ -13,7 +13,7 @@ function TourePage() {
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
   const searchName = searchParams.get("q");
-  const destinations = searchParams.get("destinations");
+  const destinations = searchParams.getAll("destinations");
   const people = searchParams.get("people");
   const rooms = searchParams.get("rooms");
   const min = searchParams.get("min");
@@ -32,7 +32,12 @@ function TourePage() {
     params.append('limit', itemsPerPage.toString());
     params.append('page', currentPage.toString());
     if (searchName) params.append('q', searchName);
-    if (destinations) params.append('destinations', destinations);
+    // Add each destination as a separate parameter
+    if (destinations && destinations.length > 0) {
+      destinations.forEach(destination => {
+        params.append('destinations', destination);
+      });
+    }
     if (people) params.append('max_capacity', people);
     if (rooms) params.append('total_bedrooms', rooms);
     // Only add parameters that have values

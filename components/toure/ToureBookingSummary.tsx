@@ -30,7 +30,6 @@ const { token } = useToken()
       enabled: !!bookingId,
     })
 
-    console.log("============check",bookingData);
     
  if (!bookingData) return null;
 
@@ -110,9 +109,9 @@ const { token } = useToken()
             </div>
 
             <p className="flex items-center gap-1 text-sm text-headerColor mt-2">
-              <FaStar className="text-yellow-400" /> {bookingData?.rating_summary?.averageRating || 0}{" "}
+              <FaStar className="text-yellow-400" /> {bookingData?.rating_summary?.average.toFixed(1) || 0}{" "}
               <span className="text-grayColor1">
-                ({bookingData?.rating_summary?.totalReviews || 0} reviews)
+                ({bookingData?.rating_summary?.total_reviews || 0} reviews)
               </span>
             </p>
           </div>
@@ -165,23 +164,23 @@ const { token } = useToken()
               Package 1 <X size={16}/> {bookingData?.booking_items?.quantity}
             </span>
             <span>
-              ${(bookingData?.total_amount)}
+              ${(bookingData?.price_breakdown?.package_total || 0)}
             </span>
           </div>
           <div className="flex justify-between text-base text-descriptionColor border-b border-grayColor1/20 py-2">
             <span className=" text-descriptionColor">{bookingData?.booking_items?.package?.discount}% campaign discount</span>
-            <span>- ${(bookingData?.total_amount* bookingData?.booking_items?.package?.discount) / 100 }</span>
+            <span>- ${(bookingData?.price_breakdown.discount_amount)}</span>
           </div>
           
           <div className="flex text-descriptionColor justify-between text-base border-b border-grayColor1/20 py-2">
             <span className=" ">Service fee</span>
-            <span> ${bookingData?.booking_items?.package?.service_fee}</span>
+            <span> ${bookingData?.booking_items?.package?.service_fee || 0}</span>
           </div>
           
         </div>
         <div className="flex justify-between mt-4 font-medium text-base">
           <span>Total</span>
-          <span>${((bookingData?.total_amount - (bookingData?.total_amount* bookingData?.booking_items?.package?.discount) / 100 ) + Number(bookingData?.booking_items?.package?.service_fee))}</span>
+          <span>${bookingData?.price_breakdown?.final_total || 0}</span>
         </div>
       </div>
       
