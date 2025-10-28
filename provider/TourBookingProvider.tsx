@@ -52,7 +52,6 @@ export const ToureBookingProvider = ({ children }: { children: React.ReactNode }
   const calculateTotal = () => {
     return (travelprice + Number(singleToure?.service_fee));
   };
-
   const totalPrice = calculateTotal();
 
   // Context value
