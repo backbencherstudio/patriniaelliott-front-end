@@ -2,6 +2,7 @@
 
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import gsap from "gsap";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -13,42 +14,31 @@ import ReviewList from "./ReviewList";
 const ReviewSection = ({ singleApartment }) => {
   const { token } = useToken()
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const progressRefs = useRef<HTMLDivElement[]>([]);
   const ratingRef = useRef<HTMLDivElement>(null);
   const [currentPage, setCurrentPage] = useState(1)
-  const [reviewData, setReviewData] = useState(null);
-  const [reviewList, setReviewList] = useState([]);
-  const [reviewLoading, setReviewLoading] = useState(false);
-  const [reviewError, setReviewError] = useState(null);
-  const [loading, setLoading] = useState(false)
-  const [dloading, setDLoading] = useState(false)
+  const [comment, setComment] = useState("");
+  const [starValue, setStarValue] = useState(0);
   const circlePathRef = useRef<SVGCircleElement>(null); // Updated to circle
 
-  useEffect(() => {
-    const fetchReviewData = async () => {
-      if (!singleApartment?.id) {
-        setReviewData(null);
-        return;
-      }
-      setReviewLoading(true);
-      setReviewError(null);
+  // Fetch reviews using React Query
+  const { 
+    data: reviewData, 
+    isLoading: reviewLoading, 
+    error: reviewError 
+  } = useQuery({
+    queryKey: ['reviews', singleApartment?.id, currentPage],
+    queryFn: async () => {
+      if (!singleApartment?.id) return null;
+      const endpoint = `/admin/vendor-package/${singleApartment.id}/reviews?page=${currentPage}&limit=${10}`;
+      const response = await UserService.getData(endpoint, token);
+      return response?.data?.data;
+    },
+    enabled: !!singleApartment?.id && !!token,
+  });
 
-      try {
-        const endpoint = `/admin/vendor-package/${singleApartment.id}/reviews?page=${currentPage}&limit=${10}`;
-        const response = await UserService.getData(endpoint, token)
-        const data = response?.data?.data
-        setReviewData(data);
-        setReviewList(data?.reviews)
-      } catch (error) {
-        console.error('Error fetching review data:', error);
-        setReviewError(error.message);
-      } finally {
-        setReviewLoading(false);
-      }
-    };
-    fetchReviewData();
-  }, [singleApartment?.id, currentPage]);
-  const [comment, setComment] = useState("");
+  const reviewList = reviewData?.reviews || [];
 const [reviewStats, setReviewStats] = useState([
   { rating: 5, count: singleApartment?.rating_summary?.ratingDistribution?.["5"] ?? 0},
   { rating: 4, count: singleApartment?.rating_summary?.ratingDistribution?.["4"] ?? 0},
@@ -57,7 +47,6 @@ const [reviewStats, setReviewStats] = useState([
   { rating: 1, count: singleApartment?.rating_summary?.ratingDistribution?.["1"] ?? 0},
 ]);
 
-  const [starValue, setStarValue] = useState(0);
   const totalReviews = reviewStats.reduce((acc, item) => acc + item.count, 0);
 
 
@@ -67,55 +56,63 @@ const [reviewStats, setReviewStats] = useState([
       ? ratingNu?.toFixed(1)
       : "0.0";
 
-  const handleReviewComment = async () => {
-    setLoading(true)
+  // Create review mutation
+  const createReviewMutation = useMutation({
+    mutationFn: async (data: { rating_value: number; comment: string }) => {
+      const endpoint = `/admin/vendor-package/${singleApartment?.id}/reviews`;
+      return await UserService.createData(endpoint, data, token);
+    },
+    onSuccess: (res) => {
+      if (res?.data?.success) {
+        toast.success(res?.data?.message);
+        setComment("");
+        setStarValue(0);
+        // Invalidate and refetch reviews
+        queryClient.invalidateQueries({ queryKey: ['reviews', singleApartment?.id] });
+      } else {
+        toast.warning(res?.data?.message);
+      }
+    },
+    onError: (error) => {
+      console.log(error.message);
+      toast.error("please select a rating");
+    },
+  });
+
+  // Delete review mutation
+  const deleteReviewMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const endpoint = `/admin/vendor-package/${singleApartment?.id}/reviews/${id}`;
+      return await UserService.deleteData(endpoint, token);
+    },
+    onSuccess: (res) => {
+      if (res?.data?.success) {
+        toast.success(res?.data?.message);
+        setComment("");
+        setStarValue(0);
+        // Invalidate and refetch reviews
+        queryClient.invalidateQueries({ queryKey: ['reviews', singleApartment?.id] });
+      } else {
+        toast.warning(res?.data?.message);
+      }
+    },
+    onError: (error) => {
+      console.log(error.message);
+      toast.error("Failed to delete review");
+    },
+  });
+  const handleReviewComment = () => {
     const data = {
       rating_value: starValue,
       comment: comment,
-    }
+    };
+    createReviewMutation.mutate(data);
+  };
 
-    const endpoint = `/admin/vendor-package/${singleApartment?.id}/reviews`
-    try {
-      const res = await UserService?.createData(endpoint, data, token)
-      if (res?.data?.success) {
-        toast.success(res?.data?.message)
-        setComment("")
-        setStarValue(0)
-        setLoading(false)
-        setReviewList((prev) => [...prev, res?.data?.data])
-      } else {
-        toast.warning(res?.data?.message)
-      }
-      console.log("create response", res);
-    } catch (error) {
-      console.log(error.message);
-      setLoading(false)
-    }finally{
-      setLoading(false)
-    }
-  }
-  const handleDeleteComment = async (id) => {
-    setDLoading(true)
-    const endpoint = `/admin/vendor-package/${singleApartment?.id}/reviews/${id}`
-    try {
-      const res = await UserService?.deleteData(endpoint, token)
-      if (res?.data?.success) {
-        toast.success(res?.data?.message)
-        setComment("")
-        setStarValue(0)
-        setDLoading(false)
-        setReviewList((prev) => prev.filter((item) => item.id !== id))
-      } else {
-        toast.warning(res?.data?.message)
-      }
-      console.log("delete response", res);
-    } catch (error) {
-      console.log(error.message);
-      setDLoading(false)
-    }finally{
-      setDLoading(false)
-    }
-  }
+  const handleDeleteComment = (id: string) => {
+    deleteReviewMutation.mutate(id);
+  };
+
 
   useEffect(() => {
     if (progressRefs.current.length > 0) {
@@ -198,8 +195,12 @@ const [reviewStats, setReviewStats] = useState([
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
-            <button onClick={handleReviewComment} disabled={loading} className="bg-secondaryColor disabled:bg-grayColor1 disabled:cursor-not-allowed cursor-pointer hover:bg-secondaryColor text-headerColor text-sm font-medium px-4 py-2 rounded-[4px] ">
-              Submit
+            <button 
+              onClick={handleReviewComment} 
+              disabled={createReviewMutation.isPending} 
+              className="bg-secondaryColor disabled:bg-grayColor1 disabled:cursor-not-allowed cursor-pointer hover:bg-secondaryColor text-headerColor text-sm font-medium px-4 py-2 rounded-[4px] "
+            >
+              {createReviewMutation.isPending ? "Submitting..." : "Submit"}
             </button>
           </div>
         </div>

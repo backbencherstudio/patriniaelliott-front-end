@@ -24,12 +24,11 @@ const BookingForm = ({ singleApartments, type }: any) => {
     totalDays,
     basePrice,
     totalPrice,
-    handleBookNow
   } = useBookingContext();
 
   const router = useRouter();
   const { token } = useToken();
-  const { price, rating } = singleApartments;
+  const { price, rating_summary } = singleApartments;
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setSingleApartment(singleApartments);
@@ -48,6 +47,24 @@ const BookingForm = ({ singleApartments, type }: any) => {
 
   const handleBook = async() => {
     setLoading(true);
+    // Fix timezone issue by formatting dates properly
+    const formatDateForAPI = (date: Date | null) => {
+      if (!date) return "";
+      // Get local date components to avoid timezone issues
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    // Format extra services for API
+    const formatExtraServices = () => {
+      return selectedExtraServices.map(service => ({
+        extra_service_id: service.id,
+        quantity: service.quantity || 1
+      }));
+    };
+
     const data = {
   type: singleApartments?.type,
   first_name: singleApartments?.user?.first_name,
@@ -56,12 +73,13 @@ const BookingForm = ({ singleApartments, type }: any) => {
   booking_items: [
     {
       package_id: singleApartments?.id,
-      start_date: startDate?.toISOString() || "",
-      end_date: endDate?.toISOString() || "",
-      quantity: 1
+      start_date: formatDateForAPI(startDate),
+      end_date: formatDateForAPI(endDate),
+      quantity: totalDays
     }
   ],
- booking_travellers:[]
+  booking_travellers: [],
+  booking_extra_services: formatExtraServices()
 }
     if (token) {
       try {
@@ -70,7 +88,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
           toast.success(response?.data?.message);
            localStorage.setItem("bookingId", response?.data?.data?.booking?.id);
            setSingleApartment(singleApartments);
-           handleBookNow();
+
             router.push(type === "apartment" ? `/apartment/${singleApartments?.id}/booking` : `/hotel/${singleApartments?.id}/booking`);
               setLoading(false);
         }else{
@@ -79,8 +97,7 @@ const BookingForm = ({ singleApartments, type }: any) => {
         } catch (error) {
           console.log(error);
           toast.error(error?.response?.data?.message?.message);
-          const currentUrl = window.location.pathname + window.location.search;
-      router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+      // router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
           setLoading(false);
       }finally{
         setLoading(false);
@@ -162,9 +179,9 @@ const BookingForm = ({ singleApartments, type }: any) => {
       {/* Rating */}
       <div>
         <div className="flex gap-2 items-center">
-          <span className="text-headerColor text-sm">{rating}</span>
+          <span className="text-headerColor text-sm">{Number(rating_summary?.averageRating ?? 0).toFixed(1)}</span>
           <div className="flex gap-1">
-            <Rating rating={rating} />
+            <Rating rating={Number(rating_summary?.averageRating ?? 0).toFixed(1)} />
           </div>
         </div>
         <div className="flex mt-1 items-center gap-2 text-sm text-[#0068EF]">
@@ -212,8 +229,8 @@ const BookingForm = ({ singleApartments, type }: any) => {
             <span>${basePrice}</span>
           </div>
           <div className="flex justify-between border-b border-grayColor1/20 py-2 text-base text-headerColor">
-            <span className=" text-descriptionColor">{singleApartments?.discount}% campaign discount</span>
-            <span>- ${discountPrice}</span>
+            <span className=" text-descriptionColor">{singleApartments?.discount || 0}% campaign discount</span>
+            <span>- ${discountPrice || 0}</span>
           </div>
           
           {selectedExtraServices.map((service) => (
@@ -225,15 +242,22 @@ const BookingForm = ({ singleApartments, type }: any) => {
         </div>
         <div className="flex justify-between mt-4 text-base">
           <span>Total</span>
-          <span>${totalPrice}</span>
+          <span>${totalPrice || 0}</span>
         </div>
       </div>
 
       {/* Book Now Button */}
+       <div>
+        { totalDays == 0 && (
+          <div className="text-center text-sm text-gray-500">
+            <p className="text-red-500">Please select a start and end date</p>
+          </div>
+        )}
+      </div>
       <button
         onClick={ handleBook}
         disabled={totalDays === 0 || loading}
-        className="w-full py-3 bg-secondaryColor disabled:bg-grayColor1 disabled:cursor-not-allowed text-blackColor font-medium cursor-pointer rounded-full mt-6 text-base hover:bg-secondaryColor transition"
+        className="w-full py-3 bg-secondaryColor disabled:bg-grayColor1 disabled:cursor-not-allowed text-blackColor font-medium cursor-pointer rounded-full mt-4 text-base hover:bg-secondaryColor transition"
       >
        {loading ? "Loading..." : "Book Now"}
       </button>

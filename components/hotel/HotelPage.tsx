@@ -2,12 +2,13 @@
 
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import BigCardSkleton from "../apartment/BigCardSkleton";
 import HotelCard from "../card/HotelCard";
-import PaginationPage from "../reusable/PaginationPage";
 import FilterHeader from "../filter/FilterHeader";
+import PaginationPage from "../reusable/PaginationPage";
 
 
 
@@ -23,10 +24,6 @@ function HotelPage() {
     const people = searchParams.get("people");
     const rooms = searchParams.get("rooms");
     const { token } = useToken()
-    const [data, setData] = useState(null);
-    const [pagination, setPagination] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     // Get all ratings parameters (multiple ratings can be selected)
     const allParams = Array.from(searchParams.entries());
     const ratings = allParams
@@ -61,33 +58,27 @@ function HotelPage() {
         return params.toString();
     };
 
-    const endpoint = `/application/packages?${buildQueryParams()}`
-    useEffect(() => {
-        if (!endpoint) return; 
+    // React Query for fetching hotel data
+    const getHotelData = async () => {
+        const endpoint = `/application/packages?${buildQueryParams()}`;
+        const response = await UserService.getData(endpoint, token);
+        return response?.data;
+    };
 
-        const fetchData = async () => {
-            try {
-                setLoading(true); // Set loading to true when starting request
-                const response = await UserService.getData(endpoint, token)
-                setData(response.data?.data); // Save the response data
-                console.log(response.data?.data);
-                setPagination(response?.data?.data?.meta)
-            } catch (err) {
-                setError(err.message || "Something went wrong"); // Handle error
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [endpoint]);
+    const { data: hotelResponse, isLoading } = useQuery({
+        queryKey: ["hotelData", currentPage, startDate, endDate, searchName, destinations, min, max, people, rooms, ratings],
+        queryFn: getHotelData,
+    });
 
+    const data = hotelResponse?.data || [];
+    const pagination = hotelResponse?.meta;
 
     return (
         <div>
             <FilterHeader title="Hotel" data={data} />
 
             <div className="">
-                {loading ? 
+                {isLoading ? 
                 <div className="grid grid-cols-1 gap-5 pb-10">
                     {Array.from({ length: 5 }, (_, i) => (
                         <BigCardSkleton key={i} />

@@ -1,6 +1,7 @@
 "use client";
 
-import useFetchData from "@/hooks/useFetchData";
+import { UserService } from "@/service/user/user.service";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
@@ -14,9 +15,21 @@ function Accommodation() {
   const [currentIndex, setCurrentIndex] = useState(1);
   const swiperRef = useRef<any>(null);
   const [activeTab, setActiveTab] = useState<'apartment' | 'hotel'>('apartment');
-  const endpoint = `/admin/vendor-package?type=${activeTab}&limit=${10}&page=${1}`
-  const { data, loading, error } = useFetchData(endpoint);
-  const packageData = data ? data?.data : []
+
+  // React Query for fetching accommodation data
+  const getAccommodationData = async () => {
+    const endpoint = `/admin/vendor-package?type=${activeTab}&limit=${10}&page=${1}`;
+    const response = await UserService.getData(endpoint, "");
+    return response?.data;
+  };
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["accommodationData", activeTab],
+    queryFn: getAccommodationData,
+  });
+
+  const packageData = data?.data || [];
+
   const goNext = useCallback(() => {
     if (swiperRef.current) {
       swiperRef.current.slideNext();
@@ -51,14 +64,14 @@ function Accommodation() {
           </div>
           <div className="relative">
             {/* Swiper Navigation Buttons */}
-            {!error && (!loading && <button
+            {!error && (!isLoading && <button
               aria-label="Previous"
               onClick={goPrev}
               className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 left-0 xl:-left-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
             >
               <FaChevronLeft className="text-black text-sm" />
             </button>)}
-            {!error && (!loading && <button
+            {!error && (!isLoading && <button
               aria-label="Next"
               onClick={goNext}
               className="absolute z-10 top-1/2 cursor-pointer -translate-y-1/2 right-0 xl:-right-14 w-10 h-10 rounded-full bg-white/70 border border-gray-300 backdrop-blur-md flex items-center justify-center shadow hover:bg-yellow-400 transition"
@@ -85,7 +98,7 @@ function Accommodation() {
               onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex + 1)}
               className="w-full"
             >
-              {loading ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-10">
+              {isLoading ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-10">
                 {Array.from({ length: 3 }, (_, i) => (
                   <CardSkeleton key={i} />
                 ))}
@@ -98,7 +111,7 @@ function Accommodation() {
             </Swiper>
           </div>
           <div>
-            {!error && packageData?.length > 0 && (!loading && <Link aria-label="View All Apartments" href={`/${activeTab}s`}>
+            {!error && packageData?.length > 0 && (!isLoading && <Link aria-label="View All Apartments" href={`/${activeTab}s`}>
               <CustomButton>View All {activeTab}</CustomButton>
             </Link>)}
           </div>

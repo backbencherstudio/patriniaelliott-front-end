@@ -66,7 +66,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "reports-burton-general-besides.trycloudflare.com",
+        hostname: "presenting-hope-propecia-pet.trycloudflare.com",
       },
       {
         protocol: "https",
@@ -74,7 +74,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "reports-burton-general-besides.trycloudflare.comttps",
+        hostname: "cache-staff-merchant-privacy.trycloudflare.com",
       },
     ],
   },
