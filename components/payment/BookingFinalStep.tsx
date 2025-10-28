@@ -1,5 +1,5 @@
 "use client";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
 import { useState } from "react";
@@ -21,11 +21,6 @@ const handleConfirm = async() => {
 
     if(response?.data?.success){
         toast.success(response?.data?.data?.message);
-        localStorage.removeItem("bookingDetails");
-        localStorage.removeItem("toure_booking_travel_price");
-        localStorage.removeItem("toure_booking_single_toure");
-        localStorage.removeItem("toure_booking_end_date");
-        localStorage.removeItem("toure_booking_start_date");
         setIsConfirmOpen(true)
     }else{
         toast.error(response?.response?.data?.message);
@@ -44,8 +39,8 @@ const handleConfirm = async() => {
     <Dialog  open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className=" " asChild></DialogTrigger>
       
-      <DialogContent className="sm:max-w-[300px] text-center !px-5 py-7  close">
-        <h3 className="text-lg font-semibold ">Are you sure you want to confirm this booking?</h3>
+      <DialogContent aria-describedby="confirm-booking" className="sm:max-w-[300px] text-center !px-5 py-7  close">
+        <div className="text-lg font-semibold "> <DialogTitle aria-describedby="confirm-booking">Are you sure you want to confirm this booking?</DialogTitle></div>
         <div className="flex items-center justify-between py-2 ">
           
           <button onClick={()=>setIsOpen(false)} className="bg-redColor cursor-pointer hover:shadow-md transition-all hover:shadow-redColor/20 text-whiteColor px-4 py-2 rounded-full">Cancel</button>

@@ -39,8 +39,8 @@ function ApartmentPage() {
         if (people) params.append('max_capacity', people);
         if (rooms) params.append('total_bedrooms', rooms);
         // Only add parameters that have values
-        if (startDate) params.append('duration_start', startDate);
-        if (endDate) params.append('duration_end', endDate);
+        if (startDate) params.append('start_date', startDate);
+        if (endDate) params.append('end_date', endDate);
         if (min) params.append('budget_start', min);
         if (max) params.append('budget_end', max);
         if (searchName) params.append('q', searchName);
@@ -52,7 +52,6 @@ function ApartmentPage() {
         }
         return params.toString();
     };
-
     // React Query for fetching apartment data
     const getApartmentData = async () => {
         const endpoint = `/application/packages?${buildQueryParams()}`;
