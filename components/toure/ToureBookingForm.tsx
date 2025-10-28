@@ -228,6 +228,15 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
               </p>
             </div>
           </div>
+          <DatePicker
+            id="start-date-picker"
+            selected={startDate}
+            onChange={setStartDate}
+            placeholderText="Select a date"
+            className="hidden"
+            minDate={singlToureDetails?.calendar_configuration?.calendar_start_date ? new Date(singlToureDetails.calendar_configuration.calendar_start_date) : new Date()}
+            maxDate={singlToureDetails?.calendar_configuration?.calendar_end_date ? new Date(singlToureDetails.calendar_configuration.calendar_end_date) : null}
+          />
         </div>
       </div>
 

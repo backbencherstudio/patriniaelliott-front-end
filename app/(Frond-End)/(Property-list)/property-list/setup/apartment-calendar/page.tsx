@@ -223,21 +223,21 @@ export default function Page() {
       fd.append("address", String(propertyData?.street ?? ""));
       fd.append("postal_code", String(propertyData?.zip_code ?? ""));
       fd.append("bedrooms", JSON.stringify(propertyData?.bedrooms ?? "0")); // fixed
-      fd.append("bathrooms", String(propertyData?.bathrooms ?? "0"));
-      fd.append(
-        "max_capacity",
-        propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
-      );
+      // fd.append("bathrooms", String(propertyData?.bathrooms ?? "0"));
+      // fd.append(
+      //   "max_capacity",
+      //   propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
+      // );
       fd.append("check_in", JSON.stringify(check_in));
       fd.append("check_out", JSON.stringify(check_out));
       fd.append(
         "breakfast_available",
         String(Boolean(propertyData?.breakfast_available))
       );
-      fd.append(
-        "max_guests",
-        propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
-      );
+      // fd.append(
+      //   "max_guests",
+      //   propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
+      // );
       fd.append("calendar_start_date", toISODate(startDate));
       fd.append("calendar_end_date", toISODate(endDate));
       fd.append("package_policies", JSON.stringify([
