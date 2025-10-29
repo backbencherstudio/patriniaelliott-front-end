@@ -24,7 +24,6 @@ function TourePage() {
     .map(([, value]) => value);
   const itemsPerPage = 6
   const { token } = useToken()
-  
   const buildQueryParams = () => {
     const params = new URLSearchParams();
     // Always include these parameters
@@ -45,14 +44,12 @@ function TourePage() {
         if (endDate) params.append('end_date', endDate);
     if (min) params.append('budget_start', min);
     if (max) params.append('budget_end', max);
-
     // Add each rating as a separate parameter
     if (ratings && ratings.length > 0) {
       ratings.forEach(rating => {
         params.append('ratings', rating);
       });
     }
-
     return params.toString();
   };
 
