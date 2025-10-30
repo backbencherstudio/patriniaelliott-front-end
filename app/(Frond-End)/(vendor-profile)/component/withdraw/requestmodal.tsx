@@ -22,7 +22,6 @@ export default function RequestPopup({ open, onClose }: any) {
   } = useForm<WithdrawFormData>()
 
   const onSubmit = (data: WithdrawFormData) => {
-    console.log(data)
     onClose()
   }
 

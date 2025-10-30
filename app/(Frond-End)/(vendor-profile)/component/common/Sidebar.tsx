@@ -56,8 +56,7 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const getNavItems = (): NavItem[] => {
     let items = [...baseNavItems];
 
-    console.log('Current user type:', userType);
-    console.log('isUser:', isUser, 'isVendor:', isVendor, 'isAdmin:', isAdmin, 'isUnknown:', isUnknown);
+    
 
     if (isUser) {
       // For users: show only Payment Method and User Verification
@@ -78,7 +77,6 @@ const VendorSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       items = [...items, ...userNavItems, ...vendorNavItems];
     }
 
-    console.log('Final navigation items:', items.map(item => item.label));
     return items;
   };
 

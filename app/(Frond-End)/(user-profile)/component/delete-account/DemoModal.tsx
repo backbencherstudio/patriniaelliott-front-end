@@ -32,7 +32,6 @@ export function DialogDemo({ onClose, showModal, email }: any) {
       });
       
       // Clear all user data comprehensively after successful account deletion
-      console.log('🧹 Account deleted successfully, clearing all user data...');
       DataClearHelper.clearAllUserData();
       
       onClose(false);
@@ -42,7 +41,6 @@ export function DialogDemo({ onClose, showModal, email }: any) {
         window.location.href = '/';
       }
     } catch (e) {
-      console.error('❌ Error deleting account:', e);
       // Handle error appropriately - you might want to show a toast notification here
     } finally {
       setSubmitting(false);
