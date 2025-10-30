@@ -48,12 +48,15 @@ const Header: React.FC<HeaderProps> = ({
    try {
      // Call logout service which will clear all data
      UserService?.logout();
-     // Redirect to home page after logout
-     router?.push('/');
+    // Redirect to home page after logout
+    router?.replace('/');
+    // Force hard redirect to ensure full reset
+    if (typeof window !== 'undefined') window.location.href = '/';
    } catch (error) {
      console.error('Logout error:', error);
-     // Even if there's an error, redirect to home page
-     router?.push('/');
+    // Even if there's an error, redirect to home page
+    router?.replace('/');
+    if (typeof window !== 'undefined') window.location.href = '/';
    }
  }
 

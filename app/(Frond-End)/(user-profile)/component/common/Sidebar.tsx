@@ -3,7 +3,8 @@
 import { X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { UserService } from '@/service/user/user.service';
 import React from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 
@@ -27,7 +28,8 @@ const navItems: NavItem[] = [
 ];
 const ProfileSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   
-   const pathname = usePathname();
+  const pathname = usePathname();
+  const router = useRouter();
     const isActive = (href: string): boolean => {
     if (href === "/profile-info") {
       return pathname === "/profile-info";
@@ -54,7 +56,7 @@ const ProfileSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <button aria-label="Close" onClick={onClose}><X /></button>
         </div>
 
-        {/* Account Section */}
+        {/* Account Section ==500 */}
         <div className="mb-4">
           <h2 className="text-sm font-normal text-gray-500 mb-3">My Booking</h2>
           <nav className="flex flex-col gap-1">
@@ -108,17 +110,31 @@ const ProfileSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Log out section */}
-          <div className="mt-auto pt-4">
-          <Link
-            href="/logout"
-            onClick={onClose}
-            className="flex items-center gap-3 px-3 py-3 border border-grayColor1/20 rounded-lg transition-colors duration-200 hover:bg-gray-50"
+        <div className="mt-auto pt-4">
+          <button
+            aria-label="Log out"
+            onClick={async () => {
+              try {
+                // Clear all auth and app data, then redirect user to landing
+                UserService?.logout();
+                router.replace('/');
+                // Force hard redirect to ensure full reset
+                if (typeof window !== 'undefined') window.location.href = '/';
+              } catch (error) {
+                // Even if there's an error, redirect to home page
+                router.replace('/');
+                if (typeof window !== 'undefined') window.location.href = '/';
+              } finally {
+                onClose();
+              }
+            }}
+            className="flex items-center gap-3 px-3 py-3 border border-grayColor1/20 rounded-lg transition-colors duration-200 hover:bg-gray-50 w-full text-left"
           >
             <div className={`w-[30px] flex justify-center items-center   h-[30px] flex-shrink-0 rounded-full  bg-[#FFFBEE]  shadow-[0px_-0.3px_5.5px_rgba(0,0,0,0.04)]`}>
               <Image src="/admin/logout.svg" alt="Log out" width={20} height={20} />
             </div>
             <span className="text-base font-normal text-[#111111]">Log out account</span>
-          </Link>
+          </button>
         </div>
       </div>
     </div>
