@@ -79,6 +79,7 @@ export default function MyProfile() {
   const [isIssuingCountryOpen, setIsIssuingCountryOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -185,6 +186,7 @@ export default function MyProfile() {
 
   const onSubmit = async (data: FormData) => {
     try {
+      setSubmitting(true);
       const payload = {
         first_name: data.firstName,
         last_name: data.lastName,
@@ -218,6 +220,8 @@ export default function MyProfile() {
       toast.success('Profile updated successfully!');
     } catch (error) {
       toast.error('Failed to update profile. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -686,9 +690,10 @@ export default function MyProfile() {
             <button
               aria-label="Save Profile Changes"
               type="submit"
-              className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors"
+              disabled={submitting}
+              className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors disabled:opacity-50"
             >
-              Save
+              {submitting ? 'Saving...' : 'Save'}
             </button>
           )}
         </div>
