@@ -1,6 +1,6 @@
 'use client'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useVendorApi } from '@/hooks/useVendorApi'
@@ -46,6 +46,8 @@ export default function PaymentPage() {
   const [accounts, setAccounts] = useState<PaymentAccount[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [pollingAccountId, setPollingAccountId] = useState<string | null>(null)
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false)
+  const [completedVerifications, setCompletedVerifications] = useState<Set<string>>(new Set())
   
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     defaultValues: {
@@ -64,6 +66,39 @@ export default function PaymentPage() {
     (acc?.status === 'verified' || acc?.business_type === 'individual')
   )
 
+  // Load completed verifications from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('completedVerifications')
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored)
+        setCompletedVerifications(new Set(parsed))
+      } catch (error) {
+        console.error('Error parsing completed verifications:', error)
+      }
+    }
+  }, [])
+
+  // Check for any accounts that might have been completed but not tracked
+  useEffect(() => {
+    if (completedVerifications.size > 0 && accounts.length > 0) {
+      // This will trigger a re-evaluation of account statuses
+      const updatedAccounts = accounts.map(account => {
+        if (account.payment_method?.toLowerCase() === 'stripe' && account.account_id) {
+          const isCompleted = completedVerifications.has(account.account_id)
+          if (isCompleted && account.status !== 'verified') {
+            // Force re-check this account
+            return { ...account, status: 'pending' as const }
+          }
+        }
+        return account
+      })
+      if (JSON.stringify(updatedAccounts) !== JSON.stringify(accounts)) {
+        setAccounts(updatedAccounts)
+      }
+    }
+  }, [completedVerifications, accounts])
+
   // Redirect when account becomes verified
   useEffect(() => {
     const anyVerified = accounts.some(
@@ -76,7 +111,7 @@ export default function PaymentPage() {
   }, [accounts, router])
 
   // Function to check Stripe account status
-  const checkStripeAccountStatus = async (accountId: string) => {
+  const checkStripeAccountStatus = async (accountId: string, completedVerificationsSet: Set<string>) => {
     try {
       console.log('Checking Stripe account status for:', accountId)
       // Use the correct API endpoint with account ID as path parameter
@@ -88,14 +123,19 @@ export default function PaymentPage() {
         console.log('Account data from status API:', accountData)
         
         // Check if account is verified based on Stripe status
-        const isVerified = accountData.details_submitted && accountData.charges_enabled
+        const stripeVerified = accountData.details_submitted && accountData.charges_enabled
+        const userCompletedVerification = completedVerificationsSet.has(accountId)
+        
         console.log('Account verification check:', {
           details_submitted: accountData.details_submitted,
           charges_enabled: accountData.charges_enabled,
-          isVerified: isVerified
+          stripeVerified: stripeVerified,
+          userCompletedVerification: userCompletedVerification,
+          isVerified: stripeVerified && userCompletedVerification
         })
         
-        return isVerified ? 'verified' : 'pending'
+        // Only return verified if both Stripe is ready AND user has completed verification
+        return (stripeVerified && userCompletedVerification) ? 'verified' : 'pending'
       }
       return 'pending'
     } catch (error) {
@@ -104,7 +144,7 @@ export default function PaymentPage() {
     }
   }
 
-  // Fetch existing payment accounts
+  // Fetch existing payment accounts - only once on mount
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
@@ -119,7 +159,7 @@ export default function PaymentPage() {
               if (account.payment_method?.toLowerCase() === 'stripe' && account.account_id) {
                 try {
                   // Check account status first
-                  const statusResult = await checkStripeAccountStatus(account.account_id)
+                  const statusResult = await checkStripeAccountStatus(account.account_id, completedVerifications)
                   console.log('Account status for', account.account_id, ':', statusResult)
                   
                   // Fetch onboarding link if not verified
@@ -192,15 +232,18 @@ export default function PaymentPage() {
           
           setAccounts(accountsWithOnboarding)
           console.log('Payment accounts loaded with onboarding links:', accountsWithOnboarding)
+          setHasLoadedOnce(true)
         } else {
           console.log('No payment accounts found or API response format unexpected')
+          setHasLoadedOnce(true)
         }
       } catch (error) {
         console.error('Error fetching payment accounts:', error)
+        setHasLoadedOnce(true)
       }
     }
     fetchAccounts()
-  }, [handleApiCall])
+  }, [completedVerifications]) // Re-run when completedVerifications changes
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -285,12 +328,27 @@ export default function PaymentPage() {
     let isCancelled = false
     const interval = setInterval(async () => {
       try {
-        const status = await checkStripeAccountStatus(pollingAccountId)
-        if (!isCancelled && status === 'verified') {
-          clearInterval(interval)
-          setPollingAccountId(null)
-          toast.success('Stripe verification completed')
-          router.push('/user-verification')
+        // Check if Stripe account is ready (without user completion check)
+        const statusRes: any = await handleApiCall(VendorService.getPaymentAccountStatus, pollingAccountId)
+        if (statusRes?.data?.success && statusRes?.data?.data) {
+          const accountData = statusRes.data.data
+          const stripeReady = accountData.details_submitted && accountData.charges_enabled
+          
+          if (!isCancelled && stripeReady) {
+            // Mark this account as completed by user
+            setCompletedVerifications(prev => {
+              const newSet = new Set(prev)
+              newSet.add(pollingAccountId)
+              // Save to localStorage
+              localStorage.setItem('completedVerifications', JSON.stringify([...newSet]))
+              return newSet
+            })
+            
+            clearInterval(interval)
+            setPollingAccountId(null)
+            toast.success('Stripe verification completed')
+            router.push('/user-verification')
+          }
         }
       } catch (e) {
         // noop
@@ -300,7 +358,115 @@ export default function PaymentPage() {
       isCancelled = true
       clearInterval(interval)
     }
-  }, [pollingAccountId, router])
+  }, [pollingAccountId, router, handleApiCall])
+
+  const PaymentMethodIcon = memo(({ method }: { method: string }) => {
+    const [fallback, setFallback] = useState(false)
+    const iconSrc = fallback ? '/icon/payment.svg' : `/icon/${method.toLowerCase()}.svg`
+    return (
+      <img
+        src={iconSrc}
+        alt={method}
+        width={20}
+        height={20}
+        onError={() => {
+          if (!fallback) setFallback(true)
+        }}
+        style={{ display: 'block' }}
+      />
+    )
+  })
+  PaymentMethodIcon.displayName = 'PaymentMethodIcon'
+
+  const AccountCard = memo(({ account, setPollingAccountId }: { account: PaymentAccount; setPollingAccountId: (id: string | null) => void }) => {
+    return (
+      <div className="border border-[#e9e9ea] rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${account.status === 'verified' ? 'bg-[#38c976]/10' : 'bg-[#0068ef]/10'}`}>
+              <PaymentMethodIcon method={account.payment_method} />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-[#22262e]">{account.name}</h3>
+              <p className="text-sm text-[#777980] capitalize">{account.payment_method}</p>
+            </div>
+          </div>
+        </div>
+
+        {account.payment_method.toLowerCase() === 'stripe' && account.onboarding_url && account.status !== 'verified' && (
+          <div className={`mt-4 p-3 rounded-lg border ${account.business_type === 'individual'
+            ? 'bg-gradient-to-r from-[#38c976]/5 to-[#38c976]/10 border-[#38c976]/20'
+            : 'bg-gradient-to-r from-[#0068ef]/5 to-[#0068ef]/10 border-[#0068ef]/20'}`}>
+            <div className="flex items-center gap-2 mb-2">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${account.business_type === 'individual' ? 'bg-[#38c976]' : 'bg-[#0068ef]'}`}>
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className={`text-sm font-medium ${account.business_type === 'individual' ? 'text-[#38c976]' : 'text-[#0068ef]'}`}>
+                Complete Verification
+              </span>
+            </div>
+            <p className="text-xs text-[#777980] mb-3">
+              Click below to complete your Stripe account verification and start receiving payments.
+            </p>
+
+            {account.business_type === 'individual' ? (
+              <div className="w-full px-4 py-2 bg-[#38c976] text-white text-sm font-medium rounded-full opacity-60 cursor-not-allowed flex items-center justify-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Complete
+              </div>
+            ) : (
+              <button
+                aria-label="Complete Verification"
+                onClick={() => {
+                  if (account.account_id) {
+                    setPollingAccountId(account.account_id)
+                  }
+                  window.open(account.onboarding_url!, '_blank', 'noopener,noreferrer')
+                }}
+                className="w-full px-4 py-2 bg-[#0068ef] text-white text-sm font-medium rounded-lg hover:bg-[#0051bc] transition-colors flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Complete
+              </button>
+            )}
+          </div>
+        )}
+
+        {account.payment_method.toLowerCase() === 'stripe' && account.status === 'verified' && (
+          <div className="mt-4 p-3 bg-[#38c976]/5 border border-[#38c976]/20 rounded-lg">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-[#38c976] rounded-full flex items-center justify-center">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className="text-sm font-medium text-[#38c976]">Account Verified</span>
+            </div>
+            <p className="text-xs text-[#777980] mt-1">
+              Your Stripe account is fully verified and ready to receive payments.
+            </p>
+          </div>
+        )}
+      </div>
+    )
+  }, (prev, next) => {
+    // Re-render card only when meaningful fields change; icon only depends on payment_method
+    return (
+      prev.account.id === next.account.id &&
+      prev.account.payment_method === next.account.payment_method &&
+      prev.account.name === next.account.name &&
+      prev.account.status === next.account.status &&
+      prev.account.onboarding_url === next.account.onboarding_url &&
+      prev.account.business_type === next.account.business_type
+    )
+  })
+  AccountCard.displayName = 'AccountCard'
 
   return (
     <>
@@ -431,14 +597,14 @@ export default function PaymentPage() {
     </form>
       )}
 
-    {/* Payment Accounts List */}
-    <div className="md:px-6 px-4 py-6 bg-white rounded-2xl flex flex-col gap-6">
-      <div>
-        <h2 className="text-[#070707] text-2xl font-medium">Your Payment Accounts</h2>
-        <p className="text-[#777980] text-sm mt-1">Manage your existing payment accounts and methods.</p>
-      </div>
+     {/* Payment Accounts List */}
+     <div className="md:px-6 px-4 py-6 bg-white rounded-2xl flex flex-col gap-6 mt-6">
+       <div>
+         <h2 className="text-[#070707] text-2xl font-medium">Your Payment Accounts</h2>
+         <p className="text-[#777980] text-sm mt-1">Manage your existing payment accounts and methods.</p>
+       </div>
 
-      {loading ? (
+      {!hasLoadedOnce && loading ? (
         <div className="flex items-center justify-center py-8">
           <div className="text-[#777980]">Loading payment accounts...</div>
         </div>
@@ -452,142 +618,11 @@ export default function PaymentPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {accounts.map((account) => (
-            <div key={account.id} className="border border-[#e9e9ea] rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${account.status === 'verified' ? 'bg-[#38c976]/10' : 'bg-[#0068ef]/10'}`}>
-                    <Image
-                      src={`/icon/${account.payment_method.toLowerCase()}.svg`}
-                      alt={account.payment_method}
-                      width={20}
-                      height={20}
-                      onError={(e) => {
-                        // Fallback to a generic payment icon if specific icon not found
-                        (e.currentTarget as HTMLImageElement).src = '/icon/payment.svg'
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-[#22262e]">{account.name}</h3>
-                    <p className="text-sm text-[#777980] capitalize">{account.payment_method}</p>
-                  </div>
-                </div>
-                {/* <div className={`px-2 py-1 text-xs rounded-full ${
-                  account.status === 'verified'
-                    ? 'bg-[#38c976]/10 text-[#38c976]' 
-                    : account.status === 'pending'
-                    ? 'bg-[#ffa23a]/10 text-[#ffa23a]'
-                    : 'bg-[#fe5050]/10 text-[#fe5050]'
-                }`}>
-                  {account.status === 'verified' ? 'Verified' : 
-                   account.status === 'pending' ? 'Pending' : 'Unverified'}
-                </div> */}
-              </div>
-              
-              {/* <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-[#777980]">ID:</span>
-                  <span className="text-[#22262e] font-mono text-xs">{account.id}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#777980]">User ID:</span>
-                  <span className="text-[#22262e] font-mono text-xs">{account.user_id}</span>
-                </div>
-              </div> */}
-
-              {/* Debug info for Stripe accounts */}
-              {/* {account.payment_method.toLowerCase() === 'stripe' && (
-                <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-                  <div>Debug: business_type = {account.business_type}</div>
-                  <div>Debug: status = {account.status || 'null'}</div>
-                  <div>Debug: is_verified = {account.is_verified ? 'true' : 'false'}</div>
-                  <div>Debug: account_id = {account.account_id}</div>
-                  <div>Debug: onboarding_url = {account.onboarding_url ? 'present' : 'null'}</div>
-                  <div>Debug: bank_routing_number = {account.bank_routing_number || 'null'}</div>
-                  <div>Debug: bank_status = {account.bank_status || 'null'}</div>
-                  <div>Debug: bank_last4 = {account.bank_last4 || 'null'}</div>
-                  <div>Debug: bank_name = {account.bank_name || 'null'}</div>
-                  
-
-
-                  <div className="mt-1 text-[10px] opacity-70">If null, the status API may not include external_accounts.</div>
-                </div>
-              )} */}
-
-              {/* Stripe Onboarding Link Card - conditional styling and action */}
-              {account.payment_method.toLowerCase() === 'stripe' && account.onboarding_url && account.status !== 'verified' && (
-                <div className={`mt-4 p-3 rounded-lg border ${account.business_type === 'individual'
-					? 'bg-gradient-to-r from-[#38c976]/5 to-[#38c976]/10 border-[#38c976]/20'
-					: 'bg-gradient-to-r from-[#0068ef]/5 to-[#0068ef]/10 border-[#0068ef]/20'}`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${account.business_type === 'individual' ? 'bg-[#38c976]' : 'bg-[#0068ef]'}`}>
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className={`text-sm font-medium ${account.business_type === 'individual' ? 'text-[#38c976]' : 'text-[#0068ef]'}`}>
-                      Complete Verification
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#777980] mb-3">
-                    Click below to complete your Stripe account verification and start receiving payments.
-                  </p>
-
-                  {account.business_type === 'individual' ? (
-                    <div className="w-full px-4 py-2 bg-[#38c976] text-white text-sm font-medium rounded-full opacity-60 cursor-not-allowed flex items-center justify-center gap-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Complete
-                    </div>
-                  ) : (
-                    <button
-                      aria-label="Complete Verification"
-                      onClick={() => {
-                        window.open(account.onboarding_url, '_blank', 'noopener,noreferrer')
-                      }}
-                      className="w-full px-4 py-2 bg-[#0068ef] text-white text-sm font-medium rounded-lg hover:bg-[#0051bc] transition-colors flex items-center justify-center gap-2"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                      Complete
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {/* Verified Stripe Account */}
-              {account.payment_method.toLowerCase() === 'stripe' && account.status === 'verified' && (
-                <div className="mt-4 p-3 bg-[#38c976]/5 border border-[#38c976]/20 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-[#38c976] rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-sm font-medium text-[#38c976]">Account Verified</span>
-                  </div>
-                  <p className="text-xs text-[#777980] mt-1">
-                    Your Stripe account is fully verified and ready to receive payments.
-                  </p>
-                </div>
-              )}
-              
-              {/* Action buttons removed as requested */}
-              {/* <div className="mt-4 pt-3 border-t border-[#e9e9ea] flex gap-2">
-                <button className="flex-1 px-3 py-2 text-sm border border-[#0068ef] text-[#0068ef] rounded-lg hover:bg-[#0068ef]/5 transition-colors">
-                  Edit
-                </button>
-                <button className="flex-1 px-3 py-2 text-sm border border-[#fe5050] text-[#fe5050] rounded-lg hover:bg-[#fe5050]/5 transition-colors">
-                  Delete
-                </button>
-              </div> */}
-            </div>
+            <AccountCard key={account.id} account={account} setPollingAccountId={setPollingAccountId} />
           ))}
         </div>
-      )}
-    </div>
+       )}
+     </div>
     </>
   )
 }

@@ -86,7 +86,7 @@ const ListingPropartyCard = ({
             </div>
             </div>
             <div className=" p-4 rounded-2xl bg-secondaryColor/15 mt-4 lg:mt-0">
-                    <TotalReviewStats averageRating={data?.rating_summary}/>
+                    <TotalReviewStats averageRating={data?.averageRating} totalReviews={data?.totalReviews}/>
             </div>
           </div>
         </div>

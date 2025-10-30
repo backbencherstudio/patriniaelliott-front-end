@@ -8,47 +8,47 @@ import {
 } from "@/components/ui/dialog";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
 interface RefundConfirmationModalProps {
-  onOptimisticUpdate: (id: any, status: any) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  data:any;
+  data: any;
 }
 
 export default function RefundConfirmation({
-  onOptimisticUpdate,
   open,
   onOpenChange,
   data,
 }: RefundConfirmationModalProps) {
   const [partialRefund, setPartialRefund] = useState(false);
   const {token} = useToken()
+  const queryClient = useQueryClient()
 
-  const handleRefund = async () => {
-    const formdata={
-    status:"approved",
-     partial_refund:partialRefund,
+  // React Query mutation for refund confirmation
+  const refundConfirmationMutation = useMutation({
+    mutationFn: async () => {
+      const formdata = {
+        status: "approved",
+        partial_refund: partialRefund,
+      };
+      const response = await UserService.createData(`/dashboard/payments/transactions/refund-request/${data?.booking_id}`, formdata, token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Refunded successfully");
+      onOpenChange(false);
+      queryClient.invalidateQueries({ queryKey: ["paymentData"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Refund failed");
     }
-    console.log(formdata);
-    
-    try {
-      const res = await UserService.createData(`/dashboard/payments/transactions/refund-request/${data?.booking_id}`,formdata ,token)
-      console.log(res);
-      if(res.data.success){
-        toast.success(res.data.message || "Refunded successfully")
-        onOptimisticUpdate(data?.booking_id, "approved")
-      }else{
-        toast.error(res.data.message || "Refunded failed")
-      }
-    } catch (error) {
-      console.log(error);
-      onOptimisticUpdate(data?.booking_id, "cancel")
-    }finally{
-      onOpenChange(false)
-    }
+  });
+
+  const handleRefund = () => {
+    refundConfirmationMutation.mutate();
   };
 
   return (
@@ -83,7 +83,14 @@ export default function RefundConfirmation({
         </div>
 
         <div className="flex justify-center w-full gap-4 mt-4">
-          <button aria-label="Refund" onClick={handleRefund} className="bg-[#0068EF] w-full py-2.5 rounded-md text-white cursor-pointer  block">Refund</button>
+          <button 
+            aria-label="Refund" 
+            onClick={handleRefund} 
+            disabled={refundConfirmationMutation.isPending}
+            className="bg-[#0068EF] disabled:cursor-not-allowed disabled:opacity-50 w-full py-2.5 rounded-md text-white cursor-pointer block"
+          >
+            {refundConfirmationMutation.isPending ? "Processing..." : "Refund"}
+          </button>
           <button
             aria-label="Cancel"
             className="text-red-500 block border border-red-500  w-full rounded-md cursor-pointer hover:bg-red-50"

@@ -3,7 +3,8 @@
 import ApartmentCard from "@/components/card/ApartmentCard";
 import FilterHeader from "@/components/filter/FilterHeader";
 import PaginationPage from "@/components/reusable/PaginationPage";
-import useFetchData from "@/hooks/useFetchData";
+import { UserService } from "@/service/user/user.service";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useState } from 'react';
 import BigCardSkleton from "./BigCardSkleton";
@@ -38,8 +39,8 @@ function ApartmentPage() {
         if (people) params.append('max_capacity', people);
         if (rooms) params.append('total_bedrooms', rooms);
         // Only add parameters that have values
-        if (startDate) params.append('duration_start', startDate);
-        if (endDate) params.append('duration_end', endDate);
+        if (startDate) params.append('start_date', startDate);
+        if (endDate) params.append('end_date', endDate);
         if (min) params.append('budget_start', min);
         if (max) params.append('budget_end', max);
         if (searchName) params.append('q', searchName);
@@ -51,18 +52,27 @@ function ApartmentPage() {
         }
         return params.toString();
     };
+    // React Query for fetching apartment data
+    const getApartmentData = async () => {
+        const endpoint = `/application/packages?${buildQueryParams()}`;
+        const response = await UserService.getData(endpoint, "");
+        return response?.data;
+    };
 
-    const endpoint = `/application/packages?${buildQueryParams()}`
-    const { data, loading, error } = useFetchData(endpoint);
-    const totalPages = data?.meta?.totalPages
-    const packageData = data ? data?.data : []
+    const { data: apartmentResponse, isLoading } = useQuery({
+        queryKey: ["apartmentData", currentPage, startDate, endDate, min, max, people, rooms, destinations, searchName, ratings],
+        queryFn: getApartmentData,
+    });
+
+    const totalPages = apartmentResponse?.meta?.totalPages;
+    const packageData = apartmentResponse?.data || [];
 
     return (
         <div>
             <FilterHeader title="Apartment" data={packageData} />
 
             <div className="">
-                {loading ?
+                {isLoading ?
                     <div className="grid grid-cols-1 gap-5 pb-10">
                         {Array.from({ length: 5 }, (_, i) => (
                             <BigCardSkleton key={i} />
@@ -77,7 +87,7 @@ function ApartmentPage() {
             </div>
 
             {/* Pagination Controls */}
-            {!loading && <PaginationPage totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+            {!isLoading && <PaginationPage totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
         </div>
     );
 }

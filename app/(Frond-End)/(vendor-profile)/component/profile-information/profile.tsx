@@ -1,6 +1,7 @@
 "use client"
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import AsyncButton from "@/components/reusable/AsyncButton";
 import Image from "next/image";
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
@@ -351,7 +352,7 @@ export default function Profile() {
             <div className="flex   gap-3 w-full md:w-auto items-start md:justify-between">
               <div className="flex flex-col gap-4">
                 <div className="text-2xl font-medium text-[#070707]">Profile Information</div>
-                <div className="text-sm text-[#777980]">Update your info and get started as a vendor.</div>
+                <div className="text-sm text-[#777981]">Update your info and get started as a vendor.</div>
               </div>
                             <div className="flex gap-2">
                 {/* Debug button for development */}
@@ -627,14 +628,15 @@ export default function Profile() {
             >
               Cancel
             </button>
-            <button
+            <AsyncButton
               aria-label="Save Changes"
-              type="submit"
+              onClick={handleSubmit(onSubmit)}
               disabled={loading || avatarUploading}
               className="md:mt-4 bg-blueColor text-white py-2 md:py-3 px-5 md:px-8 rounded-lg hover:bg-[#0051bc] transition-colors disabled:opacity-50"
+              loadingText="Saving..."
             >
-              {loading || avatarUploading ? 'Saving...' : 'Save'}
-            </button>
+              Save
+            </AsyncButton>
           </div>
         )}
       </form>

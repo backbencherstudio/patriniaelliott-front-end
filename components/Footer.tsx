@@ -12,11 +12,11 @@ import { IoMdMail } from "react-icons/io";
 const quickLinks = [
   { name: "Home", slug: "/" },
   { name: "Tours", slug: "/tours" },
-  { name: "Cruises", slug: "/cruises" },
-  { name: "Packages", slug: "/packages" },
-  { name: "Reservations", slug: "/reservations" },
-  { name: "Blog", slug: "/blog" },
-  { name: "About", slug: "/Linkbout" },
+  // { name: "Cruises", slug: "/cruises" },
+  // { name: "Packages", slug: "/packages" },
+  // { name: "Reservations", slug: "/reservations" },
+  // { name: "Blog", slug: "/blog" },
+  { name: "About", slug: "/about-us" },
   { name: "Contact Us", slug: "/contact" },
 ];
 export default function Footer() {

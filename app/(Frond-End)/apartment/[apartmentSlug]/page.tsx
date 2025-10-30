@@ -8,6 +8,7 @@ import { UserService } from "@/service/user/user.service";
 import { ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import { cookies } from "next/headers";
+import { toast } from "react-toastify";
 const BookingForm = dynamic(() => import('@/components/apartment/BookingForm'), {
   loading: () => (
     <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
@@ -64,7 +65,7 @@ async function ApartmnetDetailsPage(props: {
     
     vendorPackage = res?.data?.data ?? {};
   } catch (error) {
-    console.log(error);
+    toast.error(error?.response?.data?.message?.message || "Something went wrong");
 
   }
   let hotelData: any = [];
@@ -73,10 +74,10 @@ async function ApartmnetDetailsPage(props: {
     
     hotelData = res?.data?.data ?? [];
   } catch (error) {
-    console.log(error);
+    toast.error(error?.response?.data?.message?.message || "Something went wrong");
 
   }
-console.log(hotelData,"vendorPackage");
+
   return (
     <div>
       <div className=" container">
@@ -107,7 +108,7 @@ console.log(hotelData,"vendorPackage");
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
           {hotelData.map((tour: any, index) => (
-            <div key={tour.title}>
+            <div key={tour.id}>
               <AccommodationCard tour={tour} />
             </div>
           ))}
@@ -117,7 +118,7 @@ console.log(hotelData,"vendorPackage");
       <div className=" py-14 lg:py-20 ">
         <div className="lg:grid flex flex-col-reverse grid-cols-6 gap-8 container">
           <div className=" col-span-4 ">
-            <PolicyDetails />
+            <PolicyDetails vendorPackage={vendorPackage} />
             <ReviewSection singleApartment={vendorPackage} />
 
           </div>

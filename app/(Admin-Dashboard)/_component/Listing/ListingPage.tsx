@@ -1,11 +1,11 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
-import useFetchData from "@/hooks/useFetchData";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
@@ -29,19 +29,28 @@ export default function ListingPage() {
   );
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const [lisntingData, setListingData]=useState<any>([]);
   const {token} = useToken();
+  const queryClient = useQueryClient();
+
   // Normalize role for API (lowercase)
   const apiRole = selectedRole.toLowerCase();
-  const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}`;
-  const { data, loading, error } = useFetchData(endpoint);
-  const [editLoading,setEditLoading]=useState(false)
+
+  // React Query for fetching listing data
+  const getListingData = async () => {
+    const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}`;
+    const response = await UserService.getData(endpoint, token);
+    return response?.data;
+  };
+
+  const { data: listingResponse, error: apiError, isLoading } = useQuery({
+    queryKey: ["listingData", apiRole, currentPage, itemsPerPage],
+    queryFn: getListingData,
+    enabled: !!token,
+  });
+
+  const data = listingResponse;
   const totalPages = data?.pagination?.totalPages || 0;
-  useEffect(()=>{
-    if (data?.data) {
-      setListingData(data?.data);
-    }
-  },[data])
+  const lisntingData = data?.data || [];
   const handleViewDetails = async(user: any) => {
      try {
       const response = await UserService.getData(`/admin/listing-management/${user?.id}`,token);
@@ -54,10 +63,6 @@ export default function ListingPage() {
   const handleEdite = (user: any) => {
     setSelectedData(user);
     setIsEdit(true);
-  };
-
-  const handleOptimisticUpdate = (id: any, status: any, payment_status: any) => {
-    setListingData((prev) => prev.map((item: any) => item.id === id ? { ...item, status : status } : item));
   };
 
   const columns = [
@@ -83,7 +88,7 @@ export default function ListingPage() {
     {
       label: "Approval",
       accessor: "status",
-      formatter: (_, row) => <ListingApproveAction status={row} onOptimisticUpdate={handleOptimisticUpdate} handleViewDetails={handleViewDetails} />,
+        formatter: (_, row) => <ListingApproveAction status={row}  handleViewDetails={handleViewDetails} />,
     },
     {
       label: "Action",
@@ -93,61 +98,119 @@ export default function ListingPage() {
           onEdit={handleEdite}
           onView={handleViewDetails}
           onDelete={handleDelete}
-          editLoading={editLoading}
+          editLoading={deleteListingMutation.isPending}
           data={row}
         />
       ),
     },
   ];
-const handleDelete = async(id: any) => {
-setEditLoading(true)
-  try {
-    const response = await UserService.deleteData(`/admin/listing-management/${id}`,token);
-    
-  if (response?.data?.success) {
-    toast.success(response?.data?.message);
-    setListingData((prev) => prev.filter((item) => item.id !== id));
-    setEditLoading(false)
-  } else {
-    toast.error(response?.data?.message);
-  }
-  } catch (error) {
-    console.log("error",error);
-    setEditLoading(false)
-  }finally{
-    setEditLoading(false)
-  }
-};
+  // React Query mutation for deleting listing
+  const deleteListingMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await UserService.deleteData(`/admin/listing-management/${id}`, token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Listing deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["listingData"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to delete listing. Please try again.");
+    }
+  });
+
+  const handleDelete = (id: any) => {
+    deleteListingMutation.mutate(id);
+  };
 
   // Prefer API data; fallback to demo data
   const listingItems = (data?.data && data.data.length ? data.data : []);
 
   const handleExportPDF = () => {
     const doc = new jsPDF();
-    doc.text("Property Listings", 14, 15);
+    
+    // Add header with title and date
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("Property Listings Report", 14, 20);
+    // Add subtitle with filter info
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Filter: ${selectedRole === "All" ? "All Properties" : selectedRole}`, 14, 30);
+    doc.text(`Generated on: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`, 14, 36);
+    doc.text(`Total Records: ${listingItems.length}`, 14, 42);
+    
+    // Add a line separator
+    doc.setLineWidth(0.5);
+    doc.line(14, 48, 196, 48);
 
-    const tableColumn = columns
-      .filter((col) => col.label !== "Action" && col.label !== "Status")
-      .map((col) => col.label);
+    // Prepare table columns (excluding Action and Status columns)
+    const tableColumn = [
+      "ID",
+      "Property Name", 
+      "Type",
+      "Location",
+      "Price (per night)",
+      "Join Date"
+    ];
 
+    // Prepare table rows with better data formatting
     const tableRows = listingItems.map((item: any) => [
-      item.id || item.userId || "-",
-      item.propertyName || item.name || item.property?.name || "-",
-      item.type || item.category || "-",
+      item.displayId || item.id || "-",
+      item.name || item.propertyName || "-",
+      item.type || "-",
       item.location?.city || item.location?.name || item.location || "-",
       `$${item.price ?? item.price_per_night ?? item.base_price ?? 0}`,
-      item.joinDate || (item.created_at ? dayjs(item.created_at).format("YYYY-MM-DD") : "-")
+      item.created_at ? dayjs(item.created_at).format("YYYY-MM-DD") : "-"
     ]);
 
+    // Add table with improved styling
     (autoTable as any)(doc, {
       head: [tableColumn],
       body: tableRows,
-      startY: 20,
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [0, 104, 239] },
+      startY: 55,
+      styles: { 
+        fontSize: 9,
+        cellPadding: 3,
+        overflow: 'linebreak',
+        halign: 'left'
+      },
+      headStyles: { 
+        fillColor: [0, 104, 239],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        halign: 'center'
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245]
+      },
+      columnStyles: {
+        0: { halign: 'center', cellWidth: 20 }, // ID
+        1: { cellWidth: 40 }, // Property Name
+        2: { halign: 'center', cellWidth: 25 }, // Type
+        3: { cellWidth: 35 }, // Location
+        4: { halign: 'right', cellWidth: 25 }, // Price
+        5: { halign: 'center', cellWidth: 25 } // Join Date
+      },
+      margin: { left: 14, right: 14 },
+      tableWidth: 'auto'
     });
 
-    doc.save("property_listings.pdf");
+    // Add footer with page info
+    const pageCount = (doc as any).getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Page ${i} of ${pageCount}`, 14, (doc as any).internal.pageSize.height - 10);
+      doc.text("Generated by Admin Dashboard", (doc as any).internal.pageSize.width - 60, (doc as any).internal.pageSize.height - 10);
+    }
+
+    // Generate filename with timestamp
+    const timestamp = dayjs().format("YYYY-MM-DD_HH-mm-ss");
+    const filename = `property_listings_${selectedRole.toLowerCase()}_${timestamp}.pdf`;
+    
+    doc.save(filename);
   };
 
   return (
@@ -232,7 +295,7 @@ setEditLoading(true)
             data={lisntingData}
             columns={columns}
             currentPage={currentPage}
-            loading={loading}
+            loading={isLoading || !lisntingData}
             totalPages={totalPages || 0}
             itemsPerPage={itemsPerPage}
             onPageChange={(page) => setCurrentPage(page)}
@@ -258,7 +321,7 @@ setEditLoading(true)
               open={isEdit}
               data={selectedData}
               listingData={lisntingData}
-              setListingData={setListingData}
+              setListingData={() => {}} // No longer needed with React Query
               onOpenChange={setIsEdit}
             />
           )}
@@ -267,7 +330,7 @@ setEditLoading(true)
               open={isEdit}
               data={selectedData}
               listingData={lisntingData}
-              setListingData={setListingData}
+              setListingData={() => {}} // No longer needed with React Query
               onOpenChange={setIsEdit}
             />
         )}

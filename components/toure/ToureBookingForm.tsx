@@ -19,11 +19,8 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
     endDate,
     setEndDate,
     servicefee,
-    totalDay,
-    totalPrice,
     calculateTotal,
-    handleBookNow,
-    bookingData,
+
     discountNumber,
     travelprice,
     setTravelPrice,
@@ -36,8 +33,7 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
 
   const router = useRouter();
   const { token } = useToken();
-  const { title, cancellation, duration, reviews, price, rating, image, location } =
-    singlToureDetails;
+  const {  price, } = singlToureDetails;
 
   // Initialize dates only once when component mounts
   useEffect(() => {
@@ -115,7 +111,6 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
           toast.success(response?.data?.message);
           localStorage.setItem("bookingId", response?.data?.data?.booking?.id);
           setSingleToure(singlToureDetails);
-          handleBookNow();
           router.push(`/toure/${singlToureDetails?.id}/booking`);
         }
       } catch (error) {
@@ -127,7 +122,7 @@ const ToureBookingForm = ({ singlToureDetails }: any) => {
     } else {
       const currentUrl = window.location.pathname + window.location.search;
       router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
-      setLoading(false);
+      setLoading(false);  
     }
   };
   return (

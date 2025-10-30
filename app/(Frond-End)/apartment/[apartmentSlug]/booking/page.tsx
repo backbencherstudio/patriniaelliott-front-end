@@ -13,12 +13,8 @@ function Page() {
         const [guests, setGuests] = useState([
     { firstName: "", lastName: "", email: "", phone: "" },
   ]);
-      const [singleApartment, setSingleApartment] = useState(null);
       const endpoint ="/auth/me"
       const {data,loading}= useFetchData(endpoint)
-
-console.log("check user data",data);
-
       const [totalAmount, setTotalAmount] = useState(0)
       
   return (
@@ -49,7 +45,6 @@ console.log("check user data",data);
                  <span className={`absolute -bottom-[13px] left-0 w-full h-[2px] ${activeTab === 'step2' ? 'bg-secondaryColor' : 'hidden'}`} />
               </TabsTrigger>
             </TabsList>
-
             <TabsContent value="step1">
               <StepOne data={data?.data} guests={guests} setGuests={setGuests} />
             </TabsContent>

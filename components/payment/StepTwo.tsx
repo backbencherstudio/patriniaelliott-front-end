@@ -1,6 +1,6 @@
-import useFetchData from "@/hooks/useFetchData";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -11,16 +11,37 @@ import { toast } from "react-toastify";
 import BookingFinalStep from "./BookingFinalStep";
 import PaymentSkleton from "./PaymentSkleton";
 export default function StepTwo({totalAmount }:any) {
-   const endpoint ="/auth/me"
-   const {data}= useFetchData(endpoint)
-  const customerId = data?.data?.stripe_customer_id
- const [isOpen, setIsOpen] = useState(false)
   const { token } = useToken()
+  const [isOpen, setIsOpen] = useState(false)
+  
+  // React Query for fetching user auth data
+  const getAuthData = async () => {
+    const response = await UserService.getData("/auth/me", token);
+    return response?.data;
+  };
+
+  const { data } = useQuery({
+    queryKey: ["authData"],
+    queryFn: getAuthData,
+    enabled: !!token,
+  });
+
+  const customerId = data?.data?.stripe_customer_id
   const [paymentID, setPaymentID] = useState("")
   const [paymentMethodId, setPaymentMethodId] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittingCardId, setSubmittingCardId] = useState<string | number | null>(null);
-  const {data:cardData, loading:cardLoading}= useFetchData(`/user-profile/cards/${customerId}`)
+  // React Query for fetching card data
+  const getCardData = async () => {
+    const response = await UserService.getData(`/user-profile/cards/${customerId}`, token);
+    return response?.data;
+  };
+
+  const { data: cardData, isLoading: cardLoading } = useQuery({
+    queryKey: ["cardData", customerId],
+    queryFn: getCardData,
+    enabled: !!customerId && !!token,
+  });
    const cvc = "****"
    const pathname = usePathname()
   const addCardHref = `/payment/add-new-card?customerId=${customerId || ''}&redirect=${encodeURIComponent(pathname || '/')}`
@@ -56,7 +77,7 @@ export default function StepTwo({totalAmount }:any) {
     <div className="mt-6">
       {/* <PaymentForm totalAmount={totalAmount} data={data}/> */}
       <div className="mb-6 flex justify-end lg:pr-10">
-      {cardData?.data  && <Link href={addCardHref} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gap-2 bg-primaryColor hover:bg-primaryColor/90 transition-colors"> <FaPlus/> Add New Card</Link>}
+      {cardData?.data?.length > 0  && <Link href={addCardHref} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gap-2 bg-primaryColor hover:bg-primaryColor/90 transition-colors"> <FaPlus/> Add New Card</Link>}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
         {cardLoading ? (

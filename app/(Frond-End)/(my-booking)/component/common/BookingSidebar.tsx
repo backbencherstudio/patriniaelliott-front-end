@@ -36,16 +36,18 @@ const BookingSidbar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     try {
       // Call logout service which will clear all data
       UserService?.logout();
-      
       // Redirect to home page after logout
-      router.push('/');
+      router.replace('/');
+      // Force hard redirect to ensure full reset
+      if (typeof window !== 'undefined') window.location.href = '/';
       
       // Close sidebar
       onClose();
     } catch (error) {
       console.error('Logout error:', error);
       // Even if there's an error, redirect to home page
-      router.push('/');
+      router.replace('/');
+      if (typeof window !== 'undefined') window.location.href = '/';
     }
   };
   

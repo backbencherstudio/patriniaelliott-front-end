@@ -13,10 +13,6 @@ interface UserModalProps {
 
 export default function Usermodal({  onClose, userData  }: UserModalProps) {
  
-
-
-
-
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose?.();
   };
@@ -69,7 +65,7 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
               </div>
              }
             
-              <span className="text-[#4a4c56] flex items-center gap-1 text-base"><FaStar className='text-yellow-400'/> { userData?.average_rating.toFixed(1) || 0}</span>
+              <span className="text-[#4a4c56] flex items-center gap-1 text-base"><FaStar className='text-yellow-400'/> { userData?.average_rating?.toFixed(1) || 0}</span>
             </div>
 
             <div className="flex flex-col gap-4">

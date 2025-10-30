@@ -4,72 +4,49 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { BiEditAlt } from "react-icons/bi";
 import { toast } from "react-toastify";
 export default function EditPropertyDialog({data,
   open,
   onOpenChange,
-  listingData,
-  setListingData,
 }: any) {
-
-
   const  {token}=useToken()
-  const [loading,setLoading]=useState(false)
+  const queryClient = useQueryClient()
   const { register, handleSubmit, reset, control } = useForm({
     defaultValues: {
       description: data?.description || "description",
       name:data?.name || "Eclipse Haven",
       price: data?.price || "$4999",
-      status: data?.status === 1 ? "1" : "0", // Convert to string for Select
+      status: data?.status === "Available" ? "1" : "0", // Convert to string for Select
     },
   });
 
-  const onSubmit = async(formData: any) => {
-    // Convert status string back to number
-    const submitData = {
-      ...formData,
-      status: parseInt(formData.status) // Convert "0" or "1" to 0 or 1
-    };
-    setLoading(true)
-  try {
-     const response = await UserService.updateData(`/admin/listing-management/${data?.id}`,submitData,token);
+  // React Query mutation for updating property
+  const updatePropertyMutation = useMutation({
+    mutationFn: async (formData: any) => {
+      // Convert status string back to number
+      const submitData = {
+        ...formData,
+        status: parseInt(formData.status) // Convert "0" or "1" to 0 or 1
+      };
+      const response = await UserService.updateData(`/admin/listing-management/${data?.id}`, submitData, token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Property updated successfully!");
+      onOpenChange(false);
+      reset();
+      queryClient.invalidateQueries({ queryKey: ["listingData"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+  });
 
-      if(response?.data?.success){
-       toast.success(response?.data?.message);
-       onOpenChange(false);
-  
-       // Update the listing data manually
-       if(listingData && setListingData) {
-         const updatedData = listingData.map((item: any) => {
-           if(item.id === data?.id) {
-             return {
-               ...item,
-               name: formData.name,
-               description: formData.description,
-               price: formData.price,
-               status: formData.status == 1 ? "Available" : "Pending", // Convert to number
-             };
-           }
-           return item;
-         });
-         setListingData(updatedData);
-       }
-        setLoading(false)
-       reset();
-      }else{
-      toast.error(response?.data?.message);
-     }
-  } catch (error) {
-    toast.error("Something went wrong");
-     setLoading(false)
-    
-  }finally{
-    setLoading(false)
-  }
-    
+  const onSubmit = (formData: any) => {
+    updatePropertyMutation.mutate(formData);
   };
 
   return (
@@ -117,8 +94,8 @@ export default function EditPropertyDialog({data,
           </div>
 
           <div className="pt-4 flex justify-end">
-            <button aria-label="Save Changes" type="submit" disabled={loading} className="bg-primaryColor disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-white px-6 py-2 rounded-md">
-            {loading ? "Saving..." : "Save Changes"}
+            <button aria-label="Save Changes" type="submit" disabled={updatePropertyMutation.isPending} className="bg-primaryColor disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-white px-6 py-2 rounded-md">
+            {updatePropertyMutation.isPending ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

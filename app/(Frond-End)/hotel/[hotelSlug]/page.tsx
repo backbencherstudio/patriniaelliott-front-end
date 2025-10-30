@@ -8,6 +8,7 @@ import { UserService } from "@/service/user/user.service";
 import { ChevronRight } from "lucide-react";
 import dynamic from 'next/dynamic';
 import { cookies } from "next/headers";
+import { toast } from "react-toastify";
 
 
 // ✅ Dynamic imports for all client components
@@ -69,7 +70,7 @@ async function HotelDetailsPage(props: {
     const res = await UserService.getData(`/admin/vendor-package/${hotelSlug}`, token);
     vendorPackage = res?.data?.data ?? {};
   } catch (error) {
-    console.log(error);
+    toast.error(error?.response?.data?.message?.message || "Something went wrong");
   }
   let hotelData: any = [];
   try {
@@ -77,10 +78,9 @@ async function HotelDetailsPage(props: {
     
     hotelData = res?.data?.data ?? [];
   } catch (error) {
-    console.log(error);
+    toast.error(error?.response?.data?.message?.message || "Something went wrong");
 
   }
-  console.log(vendorPackage);
 
   return (
     <div>
@@ -126,7 +126,7 @@ async function HotelDetailsPage(props: {
       <div className=" py-14 lg:py-20 ">
         <div className="lg:grid flex flex-col-reverse grid-cols-6 gap-8 container">
           <div className=" col-span-4 ">
-            <PolicyDetails />
+            <PolicyDetails vendorPackage={vendorPackage} />
             {/* ✅ Dynamic import - Client component */}
             <ReviewSection singleApartment={vendorPackage} />
           </div>

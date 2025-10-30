@@ -21,9 +21,10 @@ function MenuDropDown({ setMenuOpen, data }: any) {
     try {
       // Call logout service which will clear all data
       UserService?.logout();
-      
       // Redirect to home page after logout
-      router.push('/');
+      router.replace('/');
+      // Force hard redirect to ensure full reset
+      if (typeof window !== 'undefined') window.location.href = '/';
       
       // Close any open menus
       if (setMenuOpen) {
@@ -32,7 +33,8 @@ function MenuDropDown({ setMenuOpen, data }: any) {
     } catch (error) {
       console.error('Logout error:', error);
       // Even if there's an error, redirect to home page
-      router.push('/');
+      router.replace('/');
+      if (typeof window !== 'undefined') window.location.href = '/';
     }
   }
   return (
@@ -95,7 +97,7 @@ function MenuDropDown({ setMenuOpen, data }: any) {
                     </Link>
                       </DropdownMenuItem>
                         <DropdownMenuItem className="py-2 group transition-all hover:!bg-secondaryColor/10  w-full focus:bg-transparent">
-            <Link aria-label="Vendor Account"  onClick={() => setMenuOpen(false)} href="/profile-info" className="w-full flex items-center gap-2.5">
+            <Link aria-label="Vendor Account"  onClick={() => setMenuOpen(false)} href="/payment-method" className="w-full flex items-center gap-2.5">
                           <div className="w-8 h-8 p-1 bg-[#fffbee] group-hover:bg-whiteColor rounded-full flex items-center justify-center overflow-hidden">
                             <Image
                               src="/admin/vendor.svg"

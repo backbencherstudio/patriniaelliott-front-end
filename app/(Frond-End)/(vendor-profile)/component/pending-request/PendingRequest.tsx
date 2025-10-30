@@ -85,6 +85,12 @@ export default function PendingRequest() {
 
   useEffect(() => { reload() }, [handleApiCall])
 
+  // reset to first page when filters change to keep pagination in syncc
+  useEffect(() => {
+    setCurrentPage(1)
+    reload(1)
+  }, [activeTab, selectedDateRange])
+
   const dateRanges = [
     { value: 'all', label: 'All Time' },
     { value: '7', label: 'Last 7 days' },
@@ -326,6 +332,7 @@ export default function PendingRequest() {
             data={filteredProperties}
             currentPage={currentPage}
             itemsPerPage={5}
+            totalItems={totalCount}
             onPageChange={(page) => { setCurrentPage(page); reload(page); }}
             noDataMessage="No data found."
           />

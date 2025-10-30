@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"; // Adjust
 import HighLight from './HighLight';
 import LocationOnMap from './LocationOnMap ';
 import Overview from './Overview';
+import PolicyDetails from './PolicyDetails';
 
 const ApatmentTabs = ({ singleApartment }: any) => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -60,7 +61,7 @@ const ApatmentTabs = ({ singleApartment }: any) => {
           <LocationOnMap />
         </TabsContent>
         <TabsContent value="policies" className="pt-10 pb-8">
-          <p>{singleApartment?.cancellation_policy_id}</p>
+          <PolicyDetails vendorPackage={singleApartment} />
         </TabsContent>
         {/* <TabsContent value="reviews" className="pt-10 pb-8">
           <p>Reviews content goes here...</p>

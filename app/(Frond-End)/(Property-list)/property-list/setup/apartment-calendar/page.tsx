@@ -1,6 +1,7 @@
 "use client";
 
 import { useToken } from "@/hooks/useToken";
+import { useUserType } from "@/hooks/useUserType";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import { UserService } from "@/service/user/user.service";
 import { useRouter } from "next/navigation";
@@ -61,6 +62,7 @@ export default function Page() {
   const router = useRouter();
   const { listProperty, updateListProperty } = usePropertyContext();
   const { token } = useToken();
+  const { isUser, isVendor, loading: userTypeLoading } = useUserType();
 
   // calendar view state
   const [viewDate, setViewDate] = useState<Date>(new Date());
@@ -279,7 +281,17 @@ export default function Page() {
         }
         localStorage.removeItem("propertyData");
         setTimeout(() => {
-          router.push("/payment-method");
+          // Conditional redirection based on user type
+          if (isUser) {
+            // For users (first time property add), redirect to payment method
+            router.push("/payment-method");
+          } else if (isVendor) {
+            // For vendors (verified vendors), redirect to pending request
+            router.push("/pending-request");
+          } else {
+            // Fallback to payment method if user type is unknown
+            router.push("/payment-method");
+          }
         }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");

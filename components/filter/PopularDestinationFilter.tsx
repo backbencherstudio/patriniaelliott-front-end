@@ -12,8 +12,6 @@ import {
 } from "../ui/accordion";
 import FilterHeading from "./FilterHeading";
 
-const destinations = ["Indonesia", "Bali", "Dubai", "Japan", "Italy", "Paris"];
-
 const PopularDestinationFilter = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -37,28 +35,27 @@ const PopularDestinationFilter = () => {
           setLoading(false)
         }
        }
-
          useEffect(()=>{
         fetchData()
        },[endpoint])
   
 
   useEffect(() => {
-    const param = searchParams.get("destinations");
-    if (param) {
-      setSelectedDestinations(param.split(","));
+    const params = searchParams.getAll("destinations");
+    if (params.length > 0) {
+      setSelectedDestinations(params);
     }
-  }, []);
+  }, [searchParams]);
 
   const updateSearchParams = (values: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
 
-    if (values.length) {
-      params.set("destinations", values.join(","));
-    } else {
-      params.delete("destinations");
-    }
-
+    // Remove all existing destinations parameters
+    params.delete("destinations");
+    // Add each destination as a separate parameter
+    values.forEach(destination => {
+      params.append("destinations", destination);
+    });
     // ✅ Prevent scroll-to-top here
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };

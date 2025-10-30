@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -17,30 +18,23 @@ import CustomButton from "../reusable/CustomButton";
 
 export default function TourList() {
   const [currentIndex, setCurrentIndex] = useState(1);
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const {token} = useToken()
   const swiperRef = useRef<any>(null);
- const endpoint = `/admin/vendor-package?type=tour&limit=${10}&page=${1}`
-  useEffect(() => {
-    if (!endpoint ) return; // Skip if URL or token is missing
 
-    const fetchData = async () => {
-      try {
-        setLoading(true); // Set loading to true when starting request
-        const response = await UserService.getData(endpoint,token)
-        setData(response.data); // Save the response data
-      } catch (err) {
-        setError(err.message || "Something went wrong"); // Handle error
-      } finally {
-        setLoading(false); 
-      }
-    };
+  // React Query for fetching tour data
+  const getTourData = async () => {
+    const endpoint = `/admin/vendor-package?type=tour&limit=${10}&page=${1}`;
+    const response = await UserService.getData(endpoint, token);
+    return response?.data;
+  };
 
-    fetchData(); 
-  }, [endpoint, token]);
-  const packageData = data ? data?.data : []
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["tourData"],
+    queryFn: getTourData,
+  });
+
+  const packageData = data?.data || [];
+
   const goNext = useCallback(() => {
     if (swiperRef.current) {
       swiperRef.current.slideNext();
@@ -77,7 +71,7 @@ export default function TourList() {
             <FaChevronRight className="text-black text-sm" />
           </button>
           {/* Content */}
-          {loading ? (
+          {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-10">
               {Array.from({ length: 3 }, (_, i) => (
                 <CardSkeleton key={i} />

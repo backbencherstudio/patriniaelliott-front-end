@@ -2,12 +2,13 @@
 
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import BigCardSkleton from "../apartment/BigCardSkleton";
 import HotelCard from "../card/HotelCard";
-import PaginationPage from "../reusable/PaginationPage";
 import FilterHeader from "../filter/FilterHeader";
+import PaginationPage from "../reusable/PaginationPage";
 
 
 
@@ -23,10 +24,6 @@ function HotelPage() {
     const people = searchParams.get("people");
     const rooms = searchParams.get("rooms");
     const { token } = useToken()
-    const [data, setData] = useState(null);
-    const [pagination, setPagination] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     // Get all ratings parameters (multiple ratings can be selected)
     const allParams = Array.from(searchParams.entries());
     const ratings = allParams
@@ -39,7 +36,6 @@ function HotelPage() {
     // Build query parameters dynamically
     const buildQueryParams = () => {
         const params = new URLSearchParams();
-
         // Always include these parameters
         params.append('type', 'hotel');
         params.append('limit', itemsPerPage.toString());
@@ -49,56 +45,53 @@ function HotelPage() {
         if (people) params.append('max_capacity', people);
         if (rooms) params.append('total_bedrooms', rooms);
         // Only add parameters that have values
-        if (startDate) params.append('duration_start', startDate);
-        if (endDate) params.append('duration_end', endDate);
+     if (startDate) params.append('start_date', startDate);
+        if (endDate) params.append('end_date', endDate);
         if (min) params.append('budget_start', min);
         if (max) params.append('budget_end', max);
-
         // Add each rating as a separate parameter
         if (ratings && ratings.length > 0) {
             ratings.forEach(rating => {
                 params.append('ratings', rating);
             });
         }
-
         return params.toString();
     };
 
-    const endpoint = `/application/packages?${buildQueryParams()}`
-    useEffect(() => {
-        if (!endpoint) return; // Skip if URL or token is missing
+    // React Query for fetching hotel data
+    const getHotelData = async () => {
+        const endpoint = `/application/packages?${buildQueryParams()}`;
+        const response = await UserService.getData(endpoint, token);
+        return response?.data;
+    };
 
-        const fetchData = async () => {
-            try {
-                setLoading(true); // Set loading to true when starting request
-                const response = await UserService.getData(endpoint, token)
-                setData(response.data?.data); // Save the response data
-                console.log(response.data?.data);
-                setPagination(response?.data?.data?.meta)
-            } catch (err) {
-                setError(err.message || "Something went wrong"); // Handle error
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [endpoint]);
+    const { data: hotelResponse, isLoading } = useQuery({
+        queryKey: ["hotelData", currentPage, startDate, endDate, searchName, destinations, min, max, people, rooms, ratings],
+        queryFn: getHotelData,
+    });
 
+    const data = hotelResponse?.data || [];
+    const pagination = hotelResponse?.meta;
 
     return (
         <div>
             <FilterHeader title="Hotel" data={data} />
 
             <div className="">
-                {loading ? <div className="grid grid-cols-1 gap-5 pb-10">
+                {isLoading ? 
+                <div className="grid grid-cols-1 gap-5 pb-10">
                     {Array.from({ length: 5 }, (_, i) => (
                         <BigCardSkleton key={i} />
                     ))}
-                </div> : data?.length > 0 ? data?.map((tour: any, index) => (
+                </div> 
+                : 
+                data?.length > 0 ? data?.map((tour: any, index) => (
                     <div key={index} className=" py-4">
                         <HotelCard hotel={tour} />
                     </div>
-                )) : <div className="text-center text-2xl font-bold text-grayColor1 py-10">Not found data !</div>
+                )) 
+                : 
+                <div className="text-center text-2xl font-bold text-grayColor1 py-10">Not found data !</div>
                 }
             </div>
 

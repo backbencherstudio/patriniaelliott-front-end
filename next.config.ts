@@ -62,19 +62,19 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "shipping-embedded-validity-cbs.trycloudflare.com",
+        hostname: "wives-draw-physician-tied.trycloudflare.com",
       },
       {
         protocol: "https",
-        hostname: "blind-domain-lat-net.trycloudflare.com",
+        hostname: "presenting-hope-propecia-pet.trycloudflare.com",
       },
       {
         protocol: "https",
-        hostname: "buffer-highly-outlets-tubes.trycloudflare.com",
+        hostname: "backend.naamstay.comhttps",
       },
       {
         protocol: "https",
-        hostname: "val-jewel-atlas-sagem.trycloudflare.com",
+        hostname: "cache-staff-merchant-privacy.trycloudflare.com",
       },
       {
         protocol: "https",

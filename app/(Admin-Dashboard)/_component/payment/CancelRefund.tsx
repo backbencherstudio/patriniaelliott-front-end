@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   Dialog,
   DialogContent,
@@ -8,51 +7,47 @@ import {
 } from "@/components/ui/dialog";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
 import { toast } from "react-toastify";
 
 interface CancelRefundModalProps {
-  onOptimisticUpdate: (id: any, status: any) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  data:any;
+  data: any;
 }
 
 export default function CancelRefund({
-  onOptimisticUpdate,
   open,
   onOpenChange,
   data,
 }: CancelRefundModalProps) {
  
   const {token} = useToken()
- const [loading, setLoading] = useState(false)
-  const handleRefund = async () => {
-    setLoading(true)
-    const formdata={
-    status:"canceled",
-     partial_refund:false,
-    }
+  const queryClient = useQueryClient()
 
-        
-    try {
-      const res = await UserService.createData(`/dashboard/payments/transactions/refund-request/${data?.booking_id}`,formdata ,token)
-      console.log(res);
-      if(res.data.success){
-        toast.success(res.data.message || "Refunded successfully")
-        onOptimisticUpdate(data?.booking_id, "canceled")
-      }else{
-        toast.error(res.data.message || "Refunded failed")
-      }
-    } catch (error) {
-      console.log(error);
-      onOptimisticUpdate(data?.booking_id, "cancel")
-    }finally{
-      onOpenChange(false)
-      setLoading(false)
+  // React Query mutation for cancel refund
+  const cancelRefundMutation = useMutation({
+    mutationFn: async () => {
+      const formdata = {
+        status: "canceled",
+        partial_refund: false,
+      };
+      const response = await UserService.createData(`/dashboard/payments/transactions/refund-request/${data?.booking_id}`, formdata, token);
+      return response;
+    },
+    onSuccess: (data) => {
+      toast.success(data?.data?.message || "Refund canceled successfully");
+      onOpenChange(false);
+      queryClient.invalidateQueries({ queryKey: ["paymentData"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to cancel refund");
     }
+  });
+
+  const handleRefund = () => {
+    cancelRefundMutation.mutate();
   };
 
   return (
@@ -81,8 +76,18 @@ export default function CancelRefund({
           >
             Back
           </button>
-          <button aria-label="Confirm" onClick={handleRefund} disabled={loading} className="bg-redColor disabled:cursor-not-allowed disabled:bg-red-500/50 w-full flex items-center justify-center gap-2 py-2.5 rounded-md text-white cursor-pointer  ">
-            {loading ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading...</span>  : "Confirm"}
+          <button 
+            aria-label="Confirm" 
+            onClick={handleRefund} 
+            disabled={cancelRefundMutation.isPending} 
+            className="bg-redColor disabled:cursor-not-allowed disabled:bg-red-500/50 w-full flex items-center justify-center gap-2 py-2.5 rounded-md text-white cursor-pointer"
+          >
+            {cancelRefundMutation.isPending ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" /> 
+                Processing...
+              </span>
+            ) : "Confirm"}
           </button>
       
         </div>
