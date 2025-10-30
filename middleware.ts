@@ -155,7 +155,6 @@ export const config = {
     // Admin routes
     '/dashboard/:path*',
     '/admin/login',
-    
     // Protected user routes
     '/profile-info/:path*',
     '/apartment-history/:path*',
