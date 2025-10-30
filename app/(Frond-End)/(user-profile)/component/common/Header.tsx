@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import Image from 'next/image';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { UserService } from "@/service/user/user.service";
 import React, { useState } from 'react';
 import { IoIosArrowDown } from "react-icons/io";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -20,9 +21,18 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }: HeaderProps
 
   const [isShow, seIsShow] = useState<boolean>(false)
   const router = useRouter()
-  const handleLogout = () => {
- console.log("logout");
- 
+  const handleLogout = async () => {
+    try {
+      // Clear all auth and app data, then redirect user to landing
+      UserService?.logout();
+      router.replace('/');
+      // Force a hard navigation to ensure all caches/state are reset immediately
+      if (typeof window !== 'undefined') window.location.href = '/';
+    } catch (error) {
+      // On any error, still take the user to landing page
+      router.replace('/');
+      if (typeof window !== 'undefined') window.location.href = '/';
+    }
   };
   return (
     <nav className="bg-primaryColor py-3">
