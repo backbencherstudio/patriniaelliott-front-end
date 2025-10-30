@@ -351,7 +351,7 @@ export default function Profile() {
             <div className="flex   gap-3 w-full md:w-auto items-start md:justify-between">
               <div className="flex flex-col gap-4">
                 <div className="text-2xl font-medium text-[#070707]">Profile Information</div>
-                <div className="text-sm text-[#777980]">Update your info and get started as a vendor.</div>
+                <div className="text-sm text-[#777981]">Update your info and get started as a vendor.</div>
               </div>
                             <div className="flex gap-2">
                 {/* Debug button for development */}
