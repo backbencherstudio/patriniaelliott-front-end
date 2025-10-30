@@ -56,7 +56,7 @@ const ProfileSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <button aria-label="Close" onClick={onClose}><X /></button>
         </div>
 
-        {/* Account Section */}
+        {/* Account Sectionn */}
         <div className="mb-4">
           <h2 className="text-sm font-normal text-gray-500 mb-3">My Booking</h2>
           <nav className="flex flex-col gap-1">
