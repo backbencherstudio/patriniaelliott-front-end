@@ -87,7 +87,6 @@ export async function middleware(request: NextRequest) {
       url.search = '';
       return NextResponse.redirect(url);
     }
-
     // Get user details to check user type
     const userDetails = await getUserDetails(token);
     
