@@ -85,7 +85,7 @@ export default function PendingRequest() {
 
   useEffect(() => { reload() }, [handleApiCall])
 
-  // reset to first page when filters change to keep pagination in sync
+  // reset to first page when filters change to keep pagination in syncc
   useEffect(() => {
     setCurrentPage(1)
     reload(1)
