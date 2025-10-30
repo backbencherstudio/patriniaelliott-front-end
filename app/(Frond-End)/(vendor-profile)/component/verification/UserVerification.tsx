@@ -87,7 +87,6 @@ export default function UserVerification() {
         const packageList = (res?.data?.data || res?.data || res) as PackageData[]
         setPackages(packageList || [])
       } catch (error) {
-        console.error('Error fetching packages:', error)
         setPackages([])
       } finally {
         setLoading(false)
@@ -123,7 +122,6 @@ export default function UserVerification() {
       setSubmitted(true)
       // keep submitting=true to disable button
     } catch (error) {
-      console.error('Error submitting verification:', error)
       toast.error('Failed to submit documents. Please try again.')
       setSubmitting(false)
       isSubmittingRef.current = false

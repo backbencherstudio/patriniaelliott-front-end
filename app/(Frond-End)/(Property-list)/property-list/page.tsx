@@ -5,13 +5,20 @@ import { useEffect, useState } from 'react';
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import tourIcon from '@/public/toure/travel-agency.png'
 import Image from 'next/image';
+import { useToken } from '@/hooks/useToken';
 
 
 function page() {
   const router = useRouter();
+  const { token } = useToken();
   const { listProperty, updateListProperty } = usePropertyContext();
   const [selectPropertyType, setSelectedPropertyType] = useState("");
   const handleSelection = (select: string) => {
+    // Require login before allowing property listing setup
+    if (!token) {
+      router.push('/login');
+      return;
+    }
     setSelectedPropertyType(select);
     updateListProperty({
       type: select

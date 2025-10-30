@@ -148,13 +148,10 @@ export default function Profile() {
   // Populate form when vendor data is loaded
   useEffect(() => {
     if (!vendorData) {
-      console.log('No vendor data available yet');
       return;
     }
     
-    console.log('Vendor data loaded, populating form:', vendorData);
-    console.log('Vendor verification:', vendorData.vendor_verification);
-    console.log('User info:', vendorData.user_info);
+    
     
     // Populate form with vendor data from new API structure
     const firstName = vendorData.vendor_verification?.first_name || vendorData.user_info?.first_name || '';
@@ -179,16 +176,7 @@ export default function Profile() {
       setAvatarPreview("/vendor/avatar.png");
     }
     
-    console.log('Setting form values:', {
-      firstName,
-      email,
-      phoneNumber,
-      address,
-      businessWebsite,
-      vendorType,
-      taxId,
-      avatarUrl: vendorData.user_info?.avatar_url
-    });
+    
     
     setValue('firstName', firstName);
     setValue('email', email);
@@ -198,13 +186,11 @@ export default function Profile() {
     setValue('vendorType', vendorType);
     setValue('taxId', taxId);
     
-    console.log('Form populated with vendor data successfully');
   }, [vendorData, setValue]);
 
   const onSubmit = async (data: FormData) => {
     try {
       if (!vendorData?.vendor_verification?.id) {
-        console.error('No vendor verification ID available');
         return;
       }
 
@@ -226,26 +212,20 @@ export default function Profile() {
         setAvatarUploading(true);
       }
 
-      console.log('Updating vendor profile with data:', updateData);
-      console.log('Vendor ID:', vendorId);
-      console.log('Current vendor data:', vendorData);
+      
 
       // Update vendor profile using the hook
       const result = await updateVendorData(updateData);
-      console.log('Update result:', result);
       
       // Update avatar preview if avatar was uploaded
       if (avatarFile && result?.data?.user_info?.avatar_url) {
         setAvatarPreview(result.data.user_info.avatar_url);
-        console.log('Avatar updated to:', result.data.user_info.avatar_url);
       }
       
       setIsEditing(false);
       toast.success('Profile updated successfully!');
       
-      console.log('Profile updated successfully');
     } catch (error: any) {
-      console.error('Error updating profile:', error);
       toast.error('Failed to update profile. Please try again.');
     } finally {
       setAvatarUploading(false);
@@ -414,7 +394,6 @@ export default function Profile() {
                   
                   // Force form to re-populate with current data
                   if (vendorData) {
-                    console.log('Edit button clicked, populating form with:', vendorData);
                     
                     const firstName = vendorData.vendor_verification?.first_name || vendorData.user_info?.first_name || '';
                     const email = vendorData.user_info?.email || '';
@@ -432,7 +411,6 @@ export default function Profile() {
                     setValue('vendorType', vendorType);
                     setValue('taxId', taxId);
                     
-                    console.log('Form populated for editing');
                   }
                 }}
                 className="pl-1.5 pr-2 py-1.5 bg-[#0068ef] rounded flex items-center gap-2"
@@ -602,7 +580,6 @@ export default function Profile() {
                   
                   // Reset form to original vendor data
                   if (vendorData) {
-                    console.log('Cancel button clicked, resetting form to:', vendorData);
                     
                     const firstName = vendorData.vendor_verification?.first_name || vendorData.user_info?.first_name || '';
                     const email = vendorData.user_info?.email || '';
@@ -620,7 +597,6 @@ export default function Profile() {
                     setValue('vendorType', vendorType);
                     setValue('taxId', taxId);
                     
-                    console.log('Form reset to original data');
                   }
                 }}
               className="md:mt-4 bg-gray-500 text-white py-2 md:py-3 px-5 md:px-8 rounded-lg hover:bg-gray-600 transition-colors"
