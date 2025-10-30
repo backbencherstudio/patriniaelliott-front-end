@@ -19,6 +19,7 @@ interface DynamicTableProps {
   currentPage: number;
   itemsPerPage: number;
   totalPages:number;
+  totalItems?: number;
   onPageChange: (page: number) => void;
   onView?: (row: any) => void;
   onDelete?: (id: any) => void;
@@ -34,6 +35,7 @@ export default function DynamicTableWithPagination({
   loading,
   itemsPerPage,
   totalPages,
+  totalItems,
   onPageChange,
   onView,
   onDelete,
@@ -149,11 +151,13 @@ export default function DynamicTableWithPagination({
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mt-6 gap-4">
           {/* Page Info */}
           <div className="text-sm text-[#777980] order-2 lg:order-1">
-            {data.length > 0 ? (
-              <>Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, data.length)} of {data.length} entries</>
-            ) : (
-              <>No entries to display</>
-            )}
+            {(() => {
+              const total = typeof totalItems === 'number' ? totalItems : data.length;
+              if (!total || total === 0) return <>No entries to display</>;
+              const from = (currentPage - 1) * itemsPerPage + 1;
+              const to = Math.min(currentPage * itemsPerPage, total);
+              return <>Showing {from} to {to} of {total} entries</>;
+            })()}
           </div>
           
           {/* Pagination Controls */}
