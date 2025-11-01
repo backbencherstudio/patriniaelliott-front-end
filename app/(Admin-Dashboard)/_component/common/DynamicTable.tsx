@@ -19,6 +19,7 @@ interface DynamicTableProps {
   currentPage: number;
   itemsPerPage: number;
   totalPages:number;
+  totalItems?: number;
   onPageChange: (page: number) => void;
   onView?: (row: any) => void;
   onDelete?: (id: any) => void;
@@ -34,6 +35,7 @@ export default function DynamicTableWithPagination({
   loading,
   itemsPerPage,
   totalPages,
+  totalItems,
   onPageChange,
   onView,
   onDelete,
@@ -149,11 +151,13 @@ export default function DynamicTableWithPagination({
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mt-6 gap-4">
           {/* Page Info */}
           <div className="text-sm text-[#777980] order-2 lg:order-1">
-            {data.length > 0 ? (
-              <>Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, data.length)} of {data.length} entries</>
-            ) : (
-              <>No entries to display</>
-            )}
+            {(() => {
+              const total = typeof totalItems === 'number' ? totalItems : data.length;
+              if (!total || total === 0) return <>No entries to display</>;
+              const from = (currentPage - 1) * itemsPerPage + 1;
+              const to = Math.min(currentPage * itemsPerPage, total);
+              return <>Showing {from} to {to} of {total} entries</>;
+            })()}
           </div>
           
           {/* Pagination Controls */}
@@ -162,7 +166,7 @@ export default function DynamicTableWithPagination({
             <button
               aria-label="First page"
               onClick={() => onPageChange(1)}
-              disabled={currentPage === 1}
+              disabled={currentPage === 1 || loading}
               className="px-3 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="First page"
             >
@@ -173,7 +177,7 @@ export default function DynamicTableWithPagination({
             <button
               aria-label="Previous"
               onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
+              disabled={currentPage === 1 || loading}
               className="px-4 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
               <span className="text-lg">‹</span>
@@ -187,7 +191,7 @@ export default function DynamicTableWithPagination({
                   key={i}
                   aria-label="Page number"
                   onClick={() => typeof page === "number" && onPageChange(page)}
-                  disabled={page === "..."}
+                  disabled={page === "..." || loading}
                   className={`px-2 lg:px-3 py-2 rounded-lg cursor-pointer text-sm font-medium transition-colors ${
                     page === currentPage 
                       ? "bg-[#0068ef] text-white" 
@@ -205,7 +209,7 @@ export default function DynamicTableWithPagination({
             <button
               aria-label="Next"
               onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || loading}
               className="px-4 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
               <span className="text-sm font-medium">Next</span>
@@ -216,7 +220,7 @@ export default function DynamicTableWithPagination({
             <button
               aria-label="Last page"
               onClick={() => onPageChange(totalPages)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || loading}
               className="px-3 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="Last page"
             >
