@@ -64,7 +64,6 @@ const saveFormData = (data: Partial<FormData>) => {
     const updatedData = { ...parsedData, ...data };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
   } catch (error) {
-    console.error('Error saving form data:', error);
   }
 };
 
@@ -109,7 +108,6 @@ export default function VendorVerification() {
           methods.setValue(key as keyof FormData, value);
         });
       } catch (error) {
-        console.error('Error parsing saved data:', error);
       }
     }
   }, [methods]);
@@ -126,7 +124,6 @@ export default function VendorVerification() {
           })) || []
         };
         saveFormData(formattedValue as FormData);
-        console.log('Current Form Data:', formattedValue);
       }
     });
     return () => subscription.unsubscribe();
@@ -136,11 +133,9 @@ export default function VendorVerification() {
   const submitFormData = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
-      console.log('Submitting Form Data:', formData);
       const response = await submitVerification(formData);
       
       if (response.success) {
-        console.log('Form submitted successfully:', response);
         CustomToast.show('Vendor verification submitted successfully');
         // Clear localStorage after successful submission
         localStorage.removeItem(STORAGE_KEY);
@@ -149,7 +144,6 @@ export default function VendorVerification() {
         throw new Error(response.error || 'Failed to submit verification data');
       }
     } catch (error) {
-      console.error('Error submitting form data:', error);
       CustomToast.show(error instanceof Error ? error.message : 'Failed to submit verification data. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -214,7 +208,6 @@ export default function VendorVerification() {
           methods.setValue(key as keyof FormData, value);
         });
       } catch (error) {
-        console.error('Error parsing saved data:', error);
       }
     }
     setCurrentStep(4);

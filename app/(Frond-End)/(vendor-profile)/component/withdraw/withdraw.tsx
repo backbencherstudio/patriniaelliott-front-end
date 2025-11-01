@@ -102,7 +102,6 @@ export default function Withdraw() {
           setWithdrawals(withdrawalResult.data);
         }
       } catch (error) {
-        console.error('Failed to load data:', error);
       }
     };
     loadData();
@@ -145,7 +144,6 @@ export default function Withdraw() {
 
   const handleDeleteTransaction = (transactionId: string) => {
     // Handle delete logic here
-    console.log('Delete transaction:', transactionId);
   };
 
   const columns = [

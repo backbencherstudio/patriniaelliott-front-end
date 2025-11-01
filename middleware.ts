@@ -32,6 +32,7 @@ const PROTECTED_ROUTES = [
   '/hotel-history',
   '/tour-history',
   '/delete-account',
+  '/property-list',
   '/toure/:path*/booking',  // Tour booking pages require login
   '/apartment/:path*/booking',  // Apartment booking pages require login
   '/hotel/:path*/booking'   // Hotel booking pages require login
@@ -49,8 +50,7 @@ const ADMIN_ROUTES = [
 // explicitly restricted without impacting other routes.
 const VENDOR_ROUTES = [
   '/vendor-profile',
-  '/vendor-verification',
-  '/property-list'
+  '/vendor-verification'
 ];
 
 // Define public routes that should redirect logged-in users
@@ -210,7 +210,6 @@ export const config = {
     // Vendor routes
     '/vendor-profile/:path*',
     '/vendor-verification/:path*',
-    '/property-list/:path*',
 
     // Protected user routes
     '/profile-info/:path*',
@@ -218,6 +217,7 @@ export const config = {
     '/hotel-history/:path*', 
     '/tour-history/:path*',
     '/delete-account/:path*',
+    '/property-list/:path*',
     '/toure/:path*/booking',  // Tour booking pages require login
     '/apartment/:path*/booking',  // Apartment booking pages require login
     '/hotel/:path*/booking',   // Hotel booking pages require login
