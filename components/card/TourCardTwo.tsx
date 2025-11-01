@@ -88,12 +88,12 @@ function TourCardTwo({tour}:any) {
                    Hotel + All inclusive
                 </span>
           <div className="py-1">
-            <Link
-              href={`/toure/${tour?.id}`}
+            <h2
+             
               className="text-xl font-semibold text-black mb-2"
             >
               {tour?.name}
-            </Link>
+            </h2>
           </div>
 
           <div className="flex gap-2 items-center">
@@ -155,12 +155,11 @@ function TourCardTwo({tour}:any) {
           </h5>
           <p className="text-sm text-gray-500">per night</p>
         </div>
-        <Link
-          href={`/toure/${tour?.id}`}
+          <button
           className="bg-secondaryColor mt-4 lg:mt-0 font-medium flex justify-center items-center gap-1  py-2 px-3 rounded-full cursor-pointer text-blackColor transition-colors"
         >
           Check Details <FaArrowRight />
-        </Link>
+        </button>
       </div>
     </Link>
 

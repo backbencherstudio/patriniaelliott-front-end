@@ -86,6 +86,33 @@ export default function MyProfile() {
   // Load authenticated user's profile and populate inputs
   const { me, loading: meLoading, updateMe, updateMeWithAvatar, fetchMe } = useMyProfile();
 
+  // Helper function to normalize image URL
+  const normalizeImageUrl = (avatarUrl: string | null | undefined, avatar: string | null | undefined): string | null => {
+    // If avatar_url is provided and is a full URL, use it
+    if (avatarUrl) {
+      // Check if it's already a valid URL (http://, https://, blob:, or starts with /)
+      if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://') || avatarUrl.startsWith('blob:') || avatarUrl.startsWith('/')) {
+        return avatarUrl;
+      }
+      // If avatar_url is just a filename, construct the full URL
+      const baseUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://humanitarian-crimes-too-producing.trycloudflare.com";
+      return `${baseUrl}/public/storage/avatar/${avatarUrl}`;
+    }
+    
+    // If only avatar filename is provided, construct the full URL
+    if (avatar) {
+      // Check if it's already a valid URL
+      if (avatar.startsWith('http://') || avatar.startsWith('https://') || avatar.startsWith('blob:') || avatar.startsWith('/')) {
+        return avatar;
+      }
+      // Construct the full URL from the filename
+      const baseUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://humanitarian-crimes-too-producing.trycloudflare.com";
+      return `${baseUrl}/public/storage/avatar/${avatar}`;
+    }
+    
+    return null;
+  };
+
   useEffect(() => {
     if (!me) return;
     // Normalize API shape -> form fields
@@ -109,11 +136,8 @@ export default function MyProfile() {
     setValue('passportNumber', me.passport_number ?? '');
     setValue('passportExpiryDate', me.passport_expiry_date ? new Date(me.passport_expiry_date) : null);
     // avatar preview if available - use avatar_url if available, otherwise use avatar
-    if (me.avatar_url) {
-      setPreviewImage(me.avatar_url);
-    } else if (me.avatar) {
-      setPreviewImage(me.avatar);
-    }
+    const normalizedAvatar = normalizeImageUrl(me.avatar_url, me.avatar);
+    setPreviewImage(normalizedAvatar);
   }, [me, setValue]);
 
   // Options for dropdowns
@@ -256,9 +280,13 @@ export default function MyProfile() {
               width={46}
               height={46}
               className="rounded-full w-full h-full object-cover"
+              unoptimized={previewImage?.startsWith('blob:') ? true : undefined}
               onError={(e) => {
                 // Fallback to default avatar if image fails to load
-                e.currentTarget.src = "/usericon/avatar.png";
+                const target = e.currentTarget as HTMLImageElement;
+                if (target) {
+                  target.src = "/usericon/avatar.png";
+                }
               }}
             />
             <input
@@ -305,13 +333,8 @@ export default function MyProfile() {
               setIsEditing(prev => !prev);
               if (isEditing) {
                 // Reset to original avatar when canceling
-                if (me?.avatar_url) {
-                  setPreviewImage(me.avatar_url);
-                } else if (me?.avatar) {
-                  setPreviewImage(me.avatar);
-                } else {
-                  setPreviewImage(null);
-                }
+                const normalizedAvatar = normalizeImageUrl(me?.avatar_url, me?.avatar);
+                setPreviewImage(normalizedAvatar);
                 // Reset the file input
                 if (fileInputRef.current) {
                   fileInputRef.current.value = '';

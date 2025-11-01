@@ -35,6 +35,14 @@ const BudgetFilter = () => {
     setMinValue(MIN);
     setMaxValue(MAX);
     setHasInteracted(false); // ✅ Reset interaction
+    
+    // Remove min and max from URL params
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.delete("min");
+    currentParams.delete("max");
+    
+    const newParams = currentParams.toString();
+    router.replace(newParams ? `?${newParams}` : Pathname, { scroll: false });
   };
   useEffect(() => {
     const minParam = searchParams.get("min");
