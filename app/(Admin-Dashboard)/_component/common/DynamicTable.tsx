@@ -19,7 +19,7 @@ interface DynamicTableProps {
   currentPage: number;
   itemsPerPage: number;
   totalPages:number;
-  totalItems?: number;
+  totalItems?:any;
   onPageChange: (page: number) => void;
   onView?: (row: any) => void;
   onDelete?: (id: any) => void;
@@ -155,8 +155,8 @@ export default function DynamicTableWithPagination({
               const total = typeof totalItems === 'number' ? totalItems : data.length;
               if (!total || total === 0) return <>No entries to display</>;
               const from = (currentPage - 1) * itemsPerPage + 1;
-              const to = Math.min(currentPage * itemsPerPage, total);
-              return <>Showing {from} to {to} of {total} entries</>;
+              const to = Math.min(currentPage * itemsPerPage);
+              return <>Showing {from} to {to} of {totalItems || 0} entries</>;
             })()}
           </div>
           

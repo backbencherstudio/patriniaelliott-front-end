@@ -1,20 +1,19 @@
 "use client";
-import Image from "next/image";
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 
+import DateFilter from "@/components/reusable/DateFilter";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
+import { useSearchParams } from "next/navigation";
 import DynamicTableWithPagination from "../common/DynamicTable";
 import BokingStatuse from "./BokingStatuse";
 import BookingAction from "./BookingAction";
 import BookingDetailsDialog from "./BookingCard";
 import BookingPymentStatuse from "./BookingPymentStatuse";
 import DateCheck from "./DateCheck";
-
-
 
 export default function BookingPage() {
   const [isModalOpen, setIsModalOpen] = React.useState<any>(false);
@@ -24,30 +23,25 @@ export default function BookingPage() {
   >("all");
   const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
-  const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
-    "all"
-  );
-
   const {token} = useToken();
-  const queryClient = useQueryClient();
-
+  const searchParams= useSearchParams()
+  const dateFilter = searchParams.get("dateFilter")
   // React Query for fetching booking data
   const getBookingData = async () => {
-    const endpoint = `/admin/booking?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`;
+    const endpoint = `/admin/booking?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}&${dateFilter ? `dateFilter=${dateFilter}` : ''}`;
     const response = await UserService.getData(endpoint, token);
     return response?.data;
   };
 
   const { data: bookingResponse, error: apiError, isLoading } = useQuery({
-    queryKey: ["bookingData", selectedRole, currentPage, itemsPerPage],
+    queryKey: ["bookingData", selectedRole, currentPage, itemsPerPage,dateFilter],
     queryFn: getBookingData,
     enabled: !!token,
   });
 
   const data = bookingResponse;
   const totalPages = data?.pagination?.total_pages || 0;
-
-
+  const totalItems = data?.pagination?.total_items || 0;
   const handleViewDetails = async   (user: any) => {
   try {
       const response = await UserService.getData(`/admin/booking/${user?.id}`,token);
@@ -58,8 +52,6 @@ export default function BookingPage() {
     }
    
   };
-
-
   // // Optimistic update function - update React Query cache
   // const handleOptimisticUpdate = useCallback((bookingId: string, newStatus: string, payment_status: string) => {
   //   // Update the cache optimistically
@@ -157,6 +149,10 @@ export default function BookingPage() {
   // Use the data directly from React Query cache (optimistic updates are handled in cache)
   const bookingData = data?.data || [];
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [dateFilter]);
+
   return (
     <div className="flex flex-col gap-5">
       {/* Overview */}
@@ -193,27 +189,7 @@ export default function BookingPage() {
             <div>
               <button aria-label="Export as PDF" onClick={handleExportPDF} className=" cursor-pointer text-sm lg:text-base py-2 px-5 rounded-md bg-[#0068EF]  text-whiteColor">Export as PDF</button>
             </div>
-            <div className=" items-center flex gap-1  md:gap-2 text-sm text-[#0068ef] border p-2 rounded">
-              <Image
-                src="/dashboard/icon/filter.svg"
-                alt="filter"
-                width={14}
-                height={14}
-              />
-              <select
-                aria-label="Date Range"
-                value={dateRange}
-                onChange={(e) =>
-                  setDateRange(e.target.value as "all" | "7" | "15" | "30")
-                }
-                className="bg-transparent text-[#0068ef] text-sm md:text-base  cursor-pointer"
-              >
-                <option className="text-xs" value="all">All Time</option>
-                <option className="text-xs" value="7"> Last 7 days</option>
-                <option className="text-xs" value="15">Last 15 days</option>
-                <option className="text-xs" value="30">Last 30 days</option>
-              </select>
-            </div>
+            <DateFilter/>
           </div>
         </div>
         <div>
@@ -226,6 +202,7 @@ export default function BookingPage() {
             itemsPerPage={itemsPerPage}
             aria-label="Booking Table"
             onPageChange={(page) => setCurrentPage(page)}
+            totalItems={totalItems}
           />
         </div>
       </div>
