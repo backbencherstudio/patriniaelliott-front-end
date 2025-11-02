@@ -10,8 +10,6 @@ import HotelCard from "../card/HotelCard";
 import FilterHeader from "../filter/FilterHeader";
 import PaginationPage from "../reusable/PaginationPage";
 
-
-
 function HotelPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const searchParams = useSearchParams();
