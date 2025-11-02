@@ -1,20 +1,27 @@
-import useFetchData from '@/hooks/useFetchData';
+
+import { useToken } from '@/hooks/useToken';
+import { UserService } from '@/service/user/user.service';
+import { useQuery } from '@tanstack/react-query';
 import StatCard from './StatCard';
 
 function StateSection() {
-    const {data , loading}=useFetchData("/admin/user/overview")
-    console.log(data);
-    
+    const {token}=useToken();
+   const {data:overviewData,isLoading:overviewLoading}=useQuery({
+    queryKey: ["overviewData",token],
+    queryFn: ()=>UserService.getData("/admin/user/overview",token),
+    enabled: !!token
+   });
+   
     const stats = [
-  { title: "All Users", count: data?.data?.totalUsers || 0, iconPath: "/dashboard/icon/all.svg" },
-  { title: "Admin", count: data?.data?.totalAdmins || 0, iconPath: "/dashboard/icon/admin.svg" },
-  { title: "Total Host", count: data?.data?.totalHost || 0, iconPath: "/dashboard/icon/host.svg" },
-  { title: "Total Guest", count: data?.data?.totalGuest || 0, iconPath: "/dashboard/icon/guest.svg" },
+  { title: "All Users", count: overviewData?.data?.data?.totalUsers || 0, iconPath: "/dashboard/icon/all.svg" },
+  { title: "Admin", count: overviewData?.data?.data?.totalAdmins || 0, iconPath: "/dashboard/icon/admin.svg" },
+  { title: "Total Host", count: overviewData?.data?.data?.totalHost || 0, iconPath: "/dashboard/icon/host.svg" },
+  { title: "Total Guest", count: overviewData?.data?.data?.totalGuest || 0, iconPath: "/dashboard/icon/guest.svg" },
 ];
   return (
     <div>
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {loading ? (
+        {overviewLoading ? (
           // Skeleton Loading - 4 cards
           Array.from({ length: 4 }).map((_, index) => (
             <div key={index} className="flex-1 xl:p-8 p-2 bg-neutral-50 rounded-lg flex items-center gap-1.5 md:gap-2.5 animate-pulse">

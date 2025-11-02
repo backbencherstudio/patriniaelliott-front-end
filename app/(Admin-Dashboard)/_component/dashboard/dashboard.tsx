@@ -30,7 +30,7 @@ export default function Dashboard() {
   const [selectedRole, setSelectedRole] = React.useState<
     "All" | "vendor" | "user"
   >("All");
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
   const searchParams = useSearchParams()
@@ -55,7 +55,7 @@ export default function Dashboard() {
 
   const data = usersData?.data || [];
   const totalPages = usersData?.pagination?.totalPages || 0;
-
+  const totalItems = usersData?.pagination?.totalCount || 0;
   const columns = [
     // { label: "User ID", accessor: "id" },
     { label: "User Name", accessor: "name" ,width : "130px"},
@@ -179,11 +179,11 @@ useEffect(() => {
             columns={columns}
             data={data}
             currentPage={currentPage}
-            itemsPerPage={8}
+            itemsPerPage={itemsPerPage}
             loading={isLoading || !data}
             totalPages={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
-           
+            totalItems={totalItems}
             editLoading={deletingUserId !== null}
           />
         </div>

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Select,
@@ -22,6 +22,8 @@ import ReviewDetails from "./ReviewDetails";
 import ReviewStatuse from "./ReviewStatuse";
 import SatisfactionCard from "./SatisfactionCard";
 import TotalReview from "./TotalReview";
+import DateFilter from "@/components/reusable/DateFilter";
+import { useSearchParams } from "next/navigation";
 
 
 export default function ReviewPage() {
@@ -31,7 +33,8 @@ export default function ReviewPage() {
   const [selectedRole, setSelectedRole] = useState<
     "All" | "Approved" | "Pending" | "Rejected"
   >("All");
-  const [dateRange, setDateRange] = useState<"all" | "7" | "15" | "30">("all");
+  const searchParams= useSearchParams()
+  const dateFilter = searchParams.get("dateFilter")
   const [currentPage, setCurrentPage] = useState(1);
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -41,12 +44,12 @@ export default function ReviewPage() {
   };
   // React Query for fetching reviews data
   const getReviewsData = async () => {
-    const response = await UserService.getData(`/admin/reviews?page=${currentPage}&limit=${10}`, token);
+    const response = await UserService.getData(`/admin/reviews?page=${currentPage}&limit=${10}&${dateFilter ? `dateFilter=${dateFilter}` : ''}`, token);
     return response?.data;
   };
 
   const { data: reviewsResponse, error: apiError, isLoading } = useQuery({
-    queryKey: ["reviewsData", currentPage],
+    queryKey: ["reviewsData", currentPage,dateFilter ],
     queryFn: getReviewsData,
     enabled: !!token,
   });
@@ -79,12 +82,12 @@ export default function ReviewPage() {
 
   const reviewData = reviewsResponse?.data || [];
   const totalPages = reviewsResponse?.pagination?.total_pages || 0;
-
+  const totalItems = reviewsResponse?.pagination?.total_items || 0;
 const columns = [
     { label: "User Name", accessor: "user", width:"168px" ,
       formatter: (value, row) => (
         <div className=" flex gap-2 items-center"><div className=" w-6 h-6 rounded-full overflow-hidden ">
-           <Image src={row?.avatar} alt={row?.name} width={24} height={24} />
+           <Image src={row?.avatar?.url || "/empty.png"} alt={row?.name} width={24} height={24} />
            </div> <span className="text-headerColor text-xs">{value?.name}</span> </div>
       ),
     },
@@ -137,6 +140,9 @@ const columns = [
     },
 ];
  
+useEffect(() => {
+  setCurrentPage(1);
+}, [dateFilter]);
 
   
   return (
@@ -180,36 +186,7 @@ const columns = [
           </div>
 
           {/* Date Range Dropdown */}
-          <div className=" mt-4 md:mt-0 justify-end flex gap-2">
-           
-            <div className=" items-center flex gap-1  md:gap-2 text-sm ">
-              <Select
-                value={dateRange}
-                onValueChange={(value) =>
-                  setDateRange(value as "all" | "7" | "15" | "30")
-                }
-              >
-                <SelectTrigger aria-label="Date range" className="rounded-sm border border-[#0068ef] text-[#0068ef] bg-transparent ">
-                  <Image
-                    src="/dashboard/icon/filter.svg"
-                    alt="filter"
-                    width={14}
-                    height={14}
-                  />
-                  <SelectValue
-                    placeholder="All Time"
-                    className="text-[#0068ef]"
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Time</SelectItem>
-                  <SelectItem value="PayPal">Last 7 days</SelectItem>
-                  <SelectItem value="Credit Card">Last 15 days</SelectItem>
-                  <SelectItem value="Stripe">Last 30 days</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+         <DateFilter/>
         </div>
 
         {/* Table */}
@@ -223,6 +200,7 @@ const columns = [
             totalPages={totalPages}
             itemsPerPage={10}
             onPageChange={(page) => setCurrentPage(page)}
+            totalItems={totalItems}
           />
           )}
          

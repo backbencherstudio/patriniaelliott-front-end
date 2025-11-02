@@ -1,14 +1,15 @@
 "use client";
-import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
+import DateFilter from "@/components/reusable/DateFilter";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
+import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import EditPropertyDialog from "./EditPropertyDialog";
 import ListingAction from "./ListingAction";
@@ -24,32 +25,31 @@ export default function ListingPage() {
   const [selectedRole, setSelectedRole] = React.useState<
     "All" | "Hotel" | "Apartment" | "Tour"
   >("All");
-  const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
-    "all"
-  );
+
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const {token} = useToken();
   const queryClient = useQueryClient();
-
+  const searchParams= useSearchParams()
+  const dateFilter = searchParams.get("dateFilter")
   // Normalize role for API (lowercase)
   const apiRole = selectedRole.toLowerCase();
-
   // React Query for fetching listing data
   const getListingData = async () => {
-    const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}`;
+    const endpoint = `/admin/listing-management/all-properties?type=${apiRole}&limit=${itemsPerPage}&page=${currentPage}&${dateFilter ? `dateFilter=${dateFilter}` : ''}`;
     const response = await UserService.getData(endpoint, token);
     return response?.data;
   };
 
   const { data: listingResponse, error: apiError, isLoading } = useQuery({
-    queryKey: ["listingData", apiRole, currentPage, itemsPerPage],
+    queryKey: ["listingData", apiRole, currentPage, itemsPerPage,dateFilter ],
     queryFn: getListingData,
     enabled: !!token,
   });
 
   const data = listingResponse;
   const totalPages = data?.pagination?.totalPages || 0;
+  const totalItems = data?.pagination?.totalCount || 0;
   const lisntingData = data?.data || [];
   const handleViewDetails = async(user: any) => {
      try {
@@ -122,6 +122,10 @@ export default function ListingPage() {
   const handleDelete = (id: any) => {
     deleteListingMutation.mutate(id);
   };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [dateFilter]);
 
   // Prefer API data; fallback to demo data
   const listingItems = (data?.data && data.data.length ? data.data : []);
@@ -256,36 +260,7 @@ export default function ListingPage() {
                 Export as PDF
               </button>
             </div>
-            <div className=" items-center flex gap-1  md:gap-2 text-sm text-[#0068ef] border p-2 rounded">
-              <Image
-                src="/dashboard/icon/filter.svg"
-                alt="filter"
-                width={14}
-                height={14}
-              />
-              <select
-                aria-label="Date range"
-                value={dateRange}
-                onChange={(e) =>
-                  setDateRange(e.target.value as "all" | "7" | "15" | "30")
-                }
-                className="bg-transparent text-[#0068ef] text-sm md:text-base  cursor-pointer"
-              >
-                <option className="text-xs" value="all">
-                  All Time
-                </option>
-                <option className="text-xs" value="7">
-                  {" "}
-                  Last 7 days
-                </option>
-                <option className="text-xs" value="15">
-                  Last 15 days
-                </option>
-                <option className="text-xs" value="30">
-                  Last 30 days
-                </option>
-              </select>
-            </div>
+           <DateFilter/>
           </div>
         </div>
 
@@ -299,6 +274,7 @@ export default function ListingPage() {
             totalPages={totalPages || 0}
             itemsPerPage={itemsPerPage}
             onPageChange={(page) => setCurrentPage(page)}
+            totalItems={totalItems}
           />
         </div>
       </div>

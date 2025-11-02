@@ -15,8 +15,6 @@ import BookingDetailsDialog from "./BookingCard";
 import BookingPymentStatuse from "./BookingPymentStatuse";
 import DateCheck from "./DateCheck";
 
-
-
 export default function BookingPage() {
   const [isModalOpen, setIsModalOpen] = React.useState<any>(false);
   const [selectedUser, setSelectedUser] = React.useState<any | null>(null);
@@ -25,12 +23,7 @@ export default function BookingPage() {
   >("all");
   const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
-  const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
-    "all"
-  );
-
   const {token} = useToken();
-  const queryClient = useQueryClient();
   const searchParams= useSearchParams()
   const dateFilter = searchParams.get("dateFilter")
   // React Query for fetching booking data
@@ -48,8 +41,7 @@ export default function BookingPage() {
 
   const data = bookingResponse;
   const totalPages = data?.pagination?.total_pages || 0;
-
-
+  const totalItems = data?.pagination?.total_items || 0;
   const handleViewDetails = async   (user: any) => {
   try {
       const response = await UserService.getData(`/admin/booking/${user?.id}`,token);
@@ -60,8 +52,6 @@ export default function BookingPage() {
     }
    
   };
-
-
   // // Optimistic update function - update React Query cache
   // const handleOptimisticUpdate = useCallback((bookingId: string, newStatus: string, payment_status: string) => {
   //   // Update the cache optimistically
@@ -212,6 +202,7 @@ export default function BookingPage() {
             itemsPerPage={itemsPerPage}
             aria-label="Booking Table"
             onPageChange={(page) => setCurrentPage(page)}
+            totalItems={totalItems}
           />
         </div>
       </div>

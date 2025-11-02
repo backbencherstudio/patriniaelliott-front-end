@@ -47,6 +47,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "blades-allowed-sympathy-production.trycloudflare.com",
       },
+      {
+        protocol: "https",
+        hostname: "cache-staff-merchant-privacy.trycloudflare.com",
+      },
+      {
+        protocol: "http",
+        hostname: "cache-staff-merchant-privacy.trycloudflare.com",
+      },
     ],
   },
 };
