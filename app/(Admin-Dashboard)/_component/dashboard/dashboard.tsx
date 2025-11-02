@@ -1,16 +1,16 @@
 "use client";
-import Loader from "@/components/reusable/Loader";
+import DateFilter from "@/components/reusable/DateFilter";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
-import React, { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { toast } from "react-toastify";
 import DynamicTableWithPagination from "../common/DynamicTable";
 import Usermodal from "../modal/usermodal";
 import StateSection from "./StateSection";
-import { Loader2 } from "lucide-react";
 
 interface UserData {
   id: string;
@@ -26,9 +26,6 @@ interface UserData {
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
-  const [dateRange, setDateRange] = React.useState<"all" | "7" | "15" | "30">(
-    "all"
-  );
   const { token } = useToken();
   const [selectedRole, setSelectedRole] = React.useState<
     "All" | "vendor" | "user"
@@ -36,19 +33,22 @@ export default function Dashboard() {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
+  const searchParams = useSearchParams()
+  const dateFilter = searchParams.get("dateFilter")
+  console.log("dateFilter",dateFilter);
   const queryClient = useQueryClient();
   // React Query for fetching users data
   const getUsersData = async () => {
     const endpoint = selectedRole === "All" 
-      ? `/admin/user/all-users?limit=${itemsPerPage}&page=${currentPage}` 
-      : `/admin/user/all-users?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`;
+      ? `/admin/user/all-users?limit=${itemsPerPage}&page=${currentPage}&dateFilter=${dateFilter}` 
+      : `/admin/user/all-users?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}&dateFilter=${dateFilter}`;
     
     const response = await UserService?.getData(endpoint, token);
     return response?.data;
   };
 
   const { data: usersData, error: apiError, isLoading } = useQuery({
-    queryKey: ["usersData", selectedRole, currentPage, itemsPerPage],
+    queryKey: ["usersData", selectedRole, currentPage, itemsPerPage,dateFilter],
     queryFn: getUsersData,
     enabled: !!token,
   });
@@ -116,6 +116,9 @@ export default function Dashboard() {
     }
     
   };
+useEffect(() => {
+  setCurrentPage(1);
+}, [dateFilter]);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -167,27 +170,7 @@ export default function Dashboard() {
           </div>
 
           {/* Date Range Dropdown */}
-          <div className=" items-center flex gap-1  md:gap-2 text-sm text-[#0068ef] border p-2 rounded">
-            <Image
-              src="/dashboard/icon/filter.svg"
-              alt="filter"
-              width={14}
-              height={14}
-            />
-            <select
-              aria-label="Date range"
-              value={dateRange}
-              onChange={(e) =>
-                setDateRange(e.target.value as "all" | "7" | "15" | "30")
-              }
-              className="bg-transparent text-[#0068ef] text-sm md:text-base  cursor-pointer"
-            >
-              <option className="text-xs" value="all">All Time</option>
-              <option className="text-xs" value="7">7 days</option>
-              <option className="text-xs" value="15">15 days</option>
-              <option className="text-xs" value="30">30 days</option>
-            </select>
-          </div>
+         <DateFilter/>
         </div>
 
         {/* Table */}
