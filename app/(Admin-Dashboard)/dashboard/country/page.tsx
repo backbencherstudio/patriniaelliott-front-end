@@ -1,9 +1,9 @@
-import React from 'react'
+import CountryPage from '../../_component/country/CountryPage'
 
 function page() {
   return (
     <div>
-      country page
+     <CountryPage/>
     </div>
   )
 }
