@@ -57,6 +57,26 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "backend.naamstay.com",
+      },
+      {
+        protocol: "https",
+        hostname: "statutes-cases-accompanied-rapidly.trycloudflare.com",
+      },
+      {
+        protocol: "https",
+        hostname: "going-bestsellers-competitors-richards.trycloudflare.com",
+      },
+      {
+        protocol: "https",
+        hostname: "edition-deborah-raised-committed.trycloudflare.com",
+      },
+      {
+        protocol: "https",
+        hostname: "presenting-hope-propecia-pet.trycloudflare.com",
+      },
+      {
+        protocol: "https",
         hostname: "lower-microphone-administrators-cycling.trycloudflare.com",
       },
     ],
