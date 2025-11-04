@@ -2,17 +2,12 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import DateFilter from "@/components/reusable/DateFilter";
 import useFetchData from "@/hooks/useFetchData";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { FaRegStar } from "react-icons/fa";
 import { toast } from "react-toastify";
 import DynamicTableWithPagination from "../common/DynamicTable";
@@ -22,8 +17,6 @@ import ReviewDetails from "./ReviewDetails";
 import ReviewStatuse from "./ReviewStatuse";
 import SatisfactionCard from "./SatisfactionCard";
 import TotalReview from "./TotalReview";
-import DateFilter from "@/components/reusable/DateFilter";
-import { useSearchParams } from "next/navigation";
 
 
 export default function ReviewPage() {
@@ -87,17 +80,17 @@ const columns = [
     { label: "User Name", accessor: "user", width:"168px" ,
       formatter: (value, row) => (
         <div className=" flex gap-2 items-center"><div className=" w-6 h-6 rounded-full overflow-hidden ">
-           <Image src={row?.avatar?.url || "/empty.png"} alt={row?.name} width={24} height={24} />
+           <Image src={value?.avatar?.url || "/profile.png"} alt={"profile image"} width={24} height={24} />
            </div> <span className="text-headerColor text-xs">{value?.name}</span> </div>
       ),
     },
     { label: "Reservation", accessor: "reservation" ,width:"238px",
       formatter: (value, row) => (
         <div className=" flex gap-2 items-center"><div className=" w-17 h-10 rounded-md overflow-hidden ">
-           <Image src={value?.package_image?.url || "/empty.png"} alt={value?.name} width={68} height={40} className="w-full h-full object-cover" />
+           <Image src={value?.package_image?.url || "/empty.png"} alt={value?.package_name} width={68} height={40} className="w-full h-full object-cover" />
            </div><div>
            <p className="text-headerColor font-medium text-xs">{value?.package_name}</p>
-           <p className=" text-xs mt-1">{row?.package_type}</p>
+           <p className=" text-xs mt-1">{value?.package_type}</p>
             </div> </div>
       ),
     },

@@ -56,7 +56,7 @@ const nextConfig: NextConfig = {
         hostname: "cache-staff-merchant-privacy.trycloudflare.com",
       },
       {
-        protocol: "http",
+        protocol: "https",
         hostname: "lower-microphone-administrators-cycling.trycloudflare.com",
       },
     ],

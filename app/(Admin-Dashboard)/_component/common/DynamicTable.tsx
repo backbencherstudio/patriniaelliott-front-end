@@ -149,7 +149,7 @@ export default function DynamicTableWithPagination({
       </div>
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mt-6 gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-end lg:items-center mt-6 gap-4">
           {/* Page Info */}
           <div className="text-sm text-[#777980] order-2 lg:order-1">
             {(() => {
@@ -167,7 +167,7 @@ export default function DynamicTableWithPagination({
               aria-label="First page"
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1 || loading}
-              className="px-2 py-1 border border-[#E2E8F0] rounded-sm cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-2 py-1 border hidden md:block border-[#E2E8F0] rounded-sm cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="First page"
             >
               <span className="text-sm font-medium">««</span>
@@ -221,7 +221,7 @@ export default function DynamicTableWithPagination({
               aria-label="Last page"
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages || loading}
-              className="px-2 py-1 border border-[#E2E8F0] rounded-sm cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-2 py-1 border hidden md:block border-[#E2E8F0] rounded-sm cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="Last page"
             >
               <span className="text-sm font-medium">»»</span>
