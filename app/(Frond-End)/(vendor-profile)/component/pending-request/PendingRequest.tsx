@@ -167,7 +167,6 @@ export default function PendingRequest() {
       form.append('mobile', mobile)
       // Assumed endpoint based on API list: upload document
       // Note: This should be updated to use the proper service method
-      console.log('Document upload functionality needs to be implemented with proper service')
       setDocFront(null); setDocBack(null); setDocPassport(null); setMobile('')
     } catch (e) {
       // ignore

@@ -1,4 +1,5 @@
 "use client"
+import DateFilter from '@/components/reusable/DateFilter';
 import { useToken } from '@/hooks/useToken';
 import cancelIcon from '@/public/dashboard/icon/cross.svg';
 import pendingIcon from '@/public/dashboard/icon/loading.svg';
@@ -7,14 +8,16 @@ import { UserService } from '@/service/user/user.service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import DynamicTableWithPagination from '../common/DynamicTable';
 import DocumentDetails from './DocumentDetails';
 import VendorDocumentAction from './VendorDocumentAction';
 
 function VendorPage() {
-    const [dateRange, setDateRange] = useState<"all" | "7" | "15" | "30">("all");
     const { token } = useToken()
+    const searchParams= useSearchParams()
+    const dateFilter = searchParams.get("dateFilter")
     const [currentPage, setCurrentPage] = useState(1)
     const [limit, setLimit] = useState(10)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -22,22 +25,23 @@ function VendorPage() {
     const queryClient = useQueryClient();
     // React Query for fetching vendor documents data
     const getVendorDocumentsData = async () => {
-        const response = await UserService?.getData(`/admin/vendor-user-verification/documents?status=all&page=${currentPage}&limit=${limit}`, token);
+        const response = await UserService?.getData(`/admin/vendor-user-verification/documents?status=all&page=${currentPage}&limit=${limit}&${dateFilter ? `dateFilter=${dateFilter}` : ''}`, token);
         return response?.data;
     };
 
     const { data: vendorData, error: apiError, isLoading } = useQuery({
-        queryKey: ["vendorDocumentsData", currentPage, limit],
+        queryKey: ["vendorDocumentsData", currentPage, limit,dateFilter ],
         queryFn: getVendorDocumentsData,
         enabled: !!token,
     });
 
     const data = vendorData?.data || [];
     const totalPages = vendorData?.meta?.totalPages || 0;
+    const totalItems = vendorData?.meta?.total || 0;
 
     const handleOptimisticUpdate = (id: any, status: any) => {
         // Update the cache optimistically
-        queryClient.setQueryData(["vendorDocumentsData", currentPage, limit], (oldData: any) => {
+        queryClient.setQueryData(["vendorDocumentsData", currentPage, limit,dateFilter], (oldData: any) => {
             if (!oldData) return oldData;
             return {
                 ...oldData,
@@ -75,7 +79,6 @@ function VendorPage() {
         },
     ];
     const handleView = (row: any) => {
-        console.log("check", row);
         setSelectedData(row)
         setIsModalOpen(true)
     }
@@ -94,42 +97,11 @@ function VendorPage() {
             </div>
             {/* Table Section */}
             <div className="w-full bg-white rounded-xl p-3 md:p-4 max-w-screen-xl mx-auto">
-                <div className="md:flex justify-end items-center gap-2 md:gap-4 mb-4">
+                <div className="md:flex justify-between items-center gap-2 md:gap-4 mb-4">
                     {/* Role Filters */}
-
+                    <h2 className='text-xl font-medium text-[#22262e] mb-1'>Vendor Documents</h2>
                     {/* Date Range Dropdown */}
-                    <div className=" mt-4 md:mt-0 justify-end flex gap-2">
-
-                        <div className=" items-center flex gap-1  md:gap-2 text-sm text-[#0068ef] border p-2 rounded">
-                            <Image
-                                src="/dashboard/icon/filter.svg"
-                                alt="filter"
-                                width={14}
-                                height={14}
-                            />
-                            <select
-                                value={dateRange}
-                                onChange={(e) =>
-                                    setDateRange(e.target.value as "all" | "7" | "15" | "30")
-                                }
-                                className="bg-transparent text-[#0068ef] text-sm md:text-base  cursor-pointer"
-                            >
-                                <option className="text-xs" value="all">
-                                    All Time
-                                </option>
-                                <option className="text-xs" value="7">
-                                    {" "}
-                                    Last 7 days
-                                </option>
-                                <option className="text-xs" value="15">
-                                    Last 15 days
-                                </option>
-                                <option className="text-xs" value="30">
-                                    Last 30 days
-                                </option>
-                            </select>
-                        </div>
-                    </div>
+                   <DateFilter/>
                 </div>
 
                 {/* Table */}
@@ -142,6 +114,7 @@ function VendorPage() {
                         totalPages={totalPages || 0}
                         itemsPerPage={limit}
                         onPageChange={(page) => setCurrentPage(page)}
+                        totalItems={totalItems}
                     />
                 </div>
             </div>

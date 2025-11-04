@@ -74,7 +74,6 @@ export default function PaymentPage() {
         const parsed = JSON.parse(stored)
         setCompletedVerifications(new Set(parsed))
       } catch (error) {
-        console.error('Error parsing completed verifications:', error)
       }
     }
   }, [])
@@ -113,33 +112,21 @@ export default function PaymentPage() {
   // Function to check Stripe account status
   const checkStripeAccountStatus = async (accountId: string, completedVerificationsSet: Set<string>) => {
     try {
-      console.log('Checking Stripe account status for:', accountId)
       // Use the correct API endpoint with account ID as path parameter
       const statusRes: any = await handleApiCall(VendorService.getPaymentAccountStatus, accountId)
-      console.log('Account status API response:', statusRes)
       
       if (statusRes?.data?.success && statusRes?.data?.data) {
         const accountData = statusRes.data.data
-        console.log('Account data from status API:', accountData)
         
         // Check if account is verified based on Stripe status
         const stripeVerified = accountData.details_submitted && accountData.charges_enabled
         const userCompletedVerification = completedVerificationsSet.has(accountId)
-        
-        console.log('Account verification check:', {
-          details_submitted: accountData.details_submitted,
-          charges_enabled: accountData.charges_enabled,
-          stripeVerified: stripeVerified,
-          userCompletedVerification: userCompletedVerification,
-          isVerified: stripeVerified && userCompletedVerification
-        })
         
         // Only return verified if both Stripe is ready AND user has completed verification
         return (stripeVerified && userCompletedVerification) ? 'verified' : 'pending'
       }
       return 'pending'
     } catch (error) {
-      console.error('Error checking account status:', error)
       return 'pending'
     }
   }
@@ -148,9 +135,7 @@ export default function PaymentPage() {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        console.log('Fetching payment accounts...')
         const res: any = await handleApiCall(VendorService.getPaymentAccounts)
-        console.log('Payment accounts API response:', res)
         
         if (res?.data?.success && res?.data?.data) {
           // For existing Stripe accounts, fetch onboarding links and check status
@@ -160,12 +145,10 @@ export default function PaymentPage() {
                 try {
                   // Check account status first
                   const statusResult = await checkStripeAccountStatus(account.account_id, completedVerifications)
-                  console.log('Account status for', account.account_id, ':', statusResult)
                   
                   // Fetch onboarding link if not verified
                   let onboardingUrl = account.onboarding_url
                   if (statusResult !== 'verified' && !onboardingUrl) {
-                    console.log('Fetching onboarding link for existing account:', account.account_id)
                     const onboardingRes: any = await handleApiCall(VendorService.getStripeOnboardingLink, account.account_id)
                     
                     if (onboardingRes?.data?.success && onboardingRes?.data?.data?.url) {
@@ -196,10 +179,9 @@ export default function PaymentPage() {
                       bankStatus = bank?.status ?? bank?.bank_account?.status
                       bankLast4 = bank?.last4 ?? bank?.bank_account?.last4
                       bankName = bank?.bank_name ?? bank?.bank_account?.bank_name
-                      console.log('Extracted bank info:', { bankRoutingNumber, bankStatus, bankLast4, bankName })
                     }
                   } catch (statusError) {
-                    console.error('Error fetching business/bank info:', statusError)
+                    
                   }
                   
                   return {
@@ -214,7 +196,6 @@ export default function PaymentPage() {
                     bank_name: bankName
                   }
                 } catch (onboardingError) {
-                  console.error('Error processing Stripe account:', account.account_id, onboardingError)
                   return {
                     ...account,
                     status: 'pending',
@@ -231,14 +212,11 @@ export default function PaymentPage() {
           )
           
           setAccounts(accountsWithOnboarding)
-          console.log('Payment accounts loaded with onboarding links:', accountsWithOnboarding)
           setHasLoadedOnce(true)
         } else {
-          console.log('No payment accounts found or API response format unexpected')
           setHasLoadedOnce(true)
         }
       } catch (error) {
-        console.error('Error fetching payment accounts:', error)
         setHasLoadedOnce(true)
       }
     }
@@ -258,8 +236,6 @@ export default function PaymentPage() {
         tax_information: data.taxInformation,
         billing_address: data.billingAddress
       }
-
-      console.log('Creating payment account with data:', accountData)
       
       const res: any = await handleApiCall(VendorService.createPaymentAccount, accountData)
       
@@ -268,17 +244,14 @@ export default function PaymentPage() {
         
         // Get the account_id from the response (for Stripe API call)
         const accountId = res?.data?.data?.account_id
-        console.log('Created account ID:', accountId)
         
         // If it's a Stripe account, fetch the onboarding link
         if (accountId && data.payoutMethod.toLowerCase() === 'stripe') {
           try {
-            console.log('Fetching Stripe onboarding link for account:', accountId)
             const onboardingRes: any = await handleApiCall(VendorService.getStripeOnboardingLink, accountId)
             
             if (onboardingRes?.data?.success && onboardingRes?.data?.data?.url) {
               const onboardingUrl = onboardingRes.data.data.url
-              console.log('Onboarding URL received:', onboardingUrl)
               
               // Update the account with onboarding URL
               const updatedAccount = {
@@ -293,11 +266,9 @@ export default function PaymentPage() {
               setPollingAccountId(accountId)
               toast.success('Stripe onboarding link generated! Click the card to complete verification.')
             } else {
-              console.error('Failed to get onboarding link:', onboardingRes)
               toast.error('Account created but failed to get verification link')
             }
           } catch (onboardingError) {
-            console.error('Error fetching onboarding link:', onboardingError)
             toast.error('Account created but failed to get verification link')
           }
         } else {
@@ -313,7 +284,6 @@ export default function PaymentPage() {
         toast.error('Failed to create payment account')
       }
     } catch (error: any) {
-      console.error('Error creating payment account:', error)
       toast.error(error?.message || 'Failed to create payment account')
     } finally {
       setSubmitting(false)

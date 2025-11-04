@@ -12,9 +12,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useFetchData from "@/hooks/useFetchData";
 import { useToken } from "@/hooks/useToken";
 import { cn } from "@/lib/utils";
+import { UserService } from "@/service/user/user.service";
+import { useQuery } from "@tanstack/react-query";
 import MenuDropDown from "./MenuDropDown";
 
 const menuItems = [
@@ -36,9 +37,18 @@ export default function Navbar() {
     }
     return pathname.startsWith(href);
   };
-  const endpoint ="/auth/me"
-      const {data,loading,error}= useFetchData(endpoint)
-  
+
+  const fetchMyData = async () => {
+    const data = await UserService.getData("/auth/me",token)
+   return data?.data
+  }
+
+      const {data,isLoading,error}= useQuery({
+        queryKey: ['user'],
+        queryFn: () => fetchMyData(),
+        enabled: !!token, // Only run query if token exists
+      })
+
   return (
     <header className="bg-primaryColor py-4 ">
       <div className="container mx-auto flex justify-between items-center">

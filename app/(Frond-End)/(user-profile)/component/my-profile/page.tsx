@@ -79,11 +79,39 @@ export default function MyProfile() {
   const [isIssuingCountryOpen, setIsIssuingCountryOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Load authenticated user's profile and populate inputs
   const { me, loading: meLoading, updateMe, updateMeWithAvatar, fetchMe } = useMyProfile();
+
+  // Helper function to normalize image URL
+  const normalizeImageUrl = (avatarUrl: string | null | undefined, avatar: string | null | undefined): string | null => {
+    // If avatar_url is provided and is a full URL, use it
+    if (avatarUrl) {
+      // Check if it's already a valid URL (http://, https://, blob:, or starts with /)
+      if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://') || avatarUrl.startsWith('blob:') || avatarUrl.startsWith('/')) {
+        return avatarUrl;
+      }
+      // If avatar_url is just a filename, construct the full URL
+      const baseUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://humanitarian-crimes-too-producing.trycloudflare.com";
+      return `${baseUrl}/public/storage/avatar/${avatarUrl}`;
+    }
+    
+    // If only avatar filename is provided, construct the full URL
+    if (avatar) {
+      // Check if it's already a valid URL
+      if (avatar.startsWith('http://') || avatar.startsWith('https://') || avatar.startsWith('blob:') || avatar.startsWith('/')) {
+        return avatar;
+      }
+      // Construct the full URL from the filename
+      const baseUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || "https://humanitarian-crimes-too-producing.trycloudflare.com";
+      return `${baseUrl}/public/storage/avatar/${avatar}`;
+    }
+    
+    return null;
+  };
 
   useEffect(() => {
     if (!me) return;
@@ -108,11 +136,8 @@ export default function MyProfile() {
     setValue('passportNumber', me.passport_number ?? '');
     setValue('passportExpiryDate', me.passport_expiry_date ? new Date(me.passport_expiry_date) : null);
     // avatar preview if available - use avatar_url if available, otherwise use avatar
-    if (me.avatar_url) {
-      setPreviewImage(me.avatar_url);
-    } else if (me.avatar) {
-      setPreviewImage(me.avatar);
-    }
+    const normalizedAvatar = normalizeImageUrl(me.avatar_url, me.avatar);
+    setPreviewImage(normalizedAvatar);
   }, [me, setValue]);
 
   // Options for dropdowns
@@ -185,6 +210,7 @@ export default function MyProfile() {
 
   const onSubmit = async (data: FormData) => {
     try {
+      setSubmitting(true);
       const payload = {
         first_name: data.firstName,
         last_name: data.lastName,
@@ -217,8 +243,9 @@ export default function MyProfile() {
       await fetchMe();
       toast.success('Profile updated successfully!');
     } catch (error) {
-      console.error('Error submitting form:', error);
       toast.error('Failed to update profile. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -231,7 +258,7 @@ export default function MyProfile() {
       {/* Profile Header */}
       <div className="p-7 bg-white rounded-2xl flex justify-between items-center">
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl font-medium">{me?.first_name} {me?.last_name}</h2>
+          <h2 className="text-2xl font-medium">{me?.name || me?.display_name || me?.email || 'Unnamed User'}</h2>
           <p className="text-gray-500">Update your info and find out how it's used.</p>
         </div>
         <div className="relative">
@@ -253,9 +280,13 @@ export default function MyProfile() {
               width={46}
               height={46}
               className="rounded-full w-full h-full object-cover"
+              unoptimized={previewImage?.startsWith('blob:') ? true : undefined}
               onError={(e) => {
                 // Fallback to default avatar if image fails to load
-                e.currentTarget.src = "/usericon/avatar.png";
+                const target = e.currentTarget as HTMLImageElement;
+                if (target) {
+                  target.src = "/usericon/avatar.png";
+                }
               }}
             />
             <input
@@ -302,13 +333,8 @@ export default function MyProfile() {
               setIsEditing(prev => !prev);
               if (isEditing) {
                 // Reset to original avatar when canceling
-                if (me?.avatar_url) {
-                  setPreviewImage(me.avatar_url);
-                } else if (me?.avatar) {
-                  setPreviewImage(me.avatar);
-                } else {
-                  setPreviewImage(null);
-                }
+                const normalizedAvatar = normalizeImageUrl(me?.avatar_url, me?.avatar);
+                setPreviewImage(normalizedAvatar);
                 // Reset the file input
                 if (fileInputRef.current) {
                   fileInputRef.current.value = '';
@@ -687,9 +713,10 @@ export default function MyProfile() {
             <button
               aria-label="Save Profile Changes"
               type="submit"
-              className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors"
+              disabled={submitting}
+              className="w-fit px-8 py-3 rounded-lg border border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors disabled:opacity-50"
             >
-              Save
+              {submitting ? 'Saving...' : 'Save'}
             </button>
           )}
         </div>
