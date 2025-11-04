@@ -56,11 +56,11 @@ const navItems: NavItem[] = [
     label: "Manage review",
     href: "/dashboard/reviews",
   },
-  // {
-  //   icon: "/admin/notification-02.svg",
-  //   label: "Manage notifications",
-  //   href: "/dashboard/notifications",
-  // },
+  {
+    icon: "/admin/globe.svg",
+    label: "Country management",
+    href: "/dashboard/country",
+  },
   // {
   //   icon: "/admin/settings-01.svg",
   //   label: "Platform setting",

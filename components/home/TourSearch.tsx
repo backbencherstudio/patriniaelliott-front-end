@@ -5,9 +5,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useToken } from "@/hooks/useToken";
+import { countryList } from "@/DemoAPI/country";
 import usericon from "@/public/icon/user.svg";
-import { UserService } from "@/service/user/user.service";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,7 +14,6 @@ import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import HomeAllFilter from "../filter/HomeAllFilter";
-import { countryList } from "@/DemoAPI/country";
 
 export default function TourSearch({ typesearch }: any) {
   const router = useRouter();
@@ -32,16 +30,9 @@ export default function TourSearch({ typesearch }: any) {
     [Date | null, Date | null]
   >([null, null]);
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [monthsToShow, setMonthsToShow] = useState(1);
   const [openFilter, setOpenFilter] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-   const [loading, setLoading]=useState(true);
-       const [error, setError]=useState(null);
-      const {token} = useToken()
-      const [selectedDestinations, setSelectedDestinations] = useState(  );
        
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -65,16 +56,6 @@ export default function TourSearch({ typesearch }: any) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [openFilter]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setMonthsToShow(window.innerWidth >= 640 ? 2 : 1);
-    };
-
-    handleResize(); // initial load
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
   type Room = {
     id: number;
     people: number;
@@ -256,8 +237,6 @@ export default function TourSearch({ typesearch }: any) {
               selected={dateRange[0]}
               onChange={(dates: [Date, Date]) => {
                 setDateRange(dates);
-                setStartDate(dates[0]);
-                setEndDate(dates[1]);
               }}
               startDate={dateRange[0]}
               endDate={dateRange[1]}
