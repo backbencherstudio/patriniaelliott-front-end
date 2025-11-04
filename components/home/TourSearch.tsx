@@ -6,7 +6,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { countryList } from "@/DemoAPI/country";
+import { useToken } from "@/hooks/useToken";
 import usericon from "@/public/icon/user.svg";
+import { UserService } from "@/service/user/user.service";
+import { useQuery } from "@tanstack/react-query";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -25,7 +28,7 @@ export default function TourSearch({ typesearch }: any) {
     null,
     null,
   ]);
-
+const {token} = useToken();
   const [appliedDateRange, setAppliedDateRange] = useState<
     [Date | null, Date | null]
   >([null, null]);
@@ -61,6 +64,16 @@ export default function TourSearch({ typesearch }: any) {
     people: number;
   };
 
+  const fetchCountries = async () => {
+    const response = await UserService?.getData(`/admin/country?limit=400`, token);
+    return response?.data?.data;
+  }
+
+  const { data, isLoading: countriesLoading } = useQuery({
+    queryKey: ["countriesData"],
+    queryFn: fetchCountries,
+  });
+  const countriesData = data ? data : countryList;
   const [rooms, setRooms] = useState<Room[]>([
     { id: 1, people: 2 },
   ]);
@@ -159,11 +172,10 @@ export default function TourSearch({ typesearch }: any) {
               onChange={(e) => setLocationInput(e.target.value)}
             />
             <ul className="mt-2 max-h-60 overflow-auto">
-              {countryList
-                .filter((item :any) =>
+              { countriesData?.filter((item :any) =>
                   item.name?.toLowerCase().includes(locationInput.toLowerCase())
                 )
-                .map((loc :any) => (
+                .sort((a :any, b :any) => a?.name?.localeCompare(b?.name)).map((loc :any) => (
                   <li
                     key={loc?.code}
                     aria-label="Location item"

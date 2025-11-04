@@ -7,7 +7,7 @@ import { useToken } from '@/hooks/useToken'
 import { UserService } from '@/service/user/user.service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
-import { useEffect, useState    } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 
@@ -93,14 +93,14 @@ const [loading, setLoading] = useState(false)
           </div>
           <div className="space-y-2">
             <Label htmlFor="dial_code">Dial Code</Label>
-            <Input id="dial_code" placeholder="+967" {...register('dial_code', { required: 'Dial code is required' })} />
+            <Input type='number' id="dial_code" placeholder="+967" {...register('dial_code', { required: 'Dial code is required' })} />
             {errors.dial_code && <p className="text-sm text-red-600">{errors.dial_code.message}</p>}
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={isSubmitting || createMutation.isPending || updateMutation.isPending || loading}>
-              {isEditMode ? loading ?<div className='flex items-center gap-2'><Loader2 size={18} className="text-whiteColor animate-spin" /> Updating...</div>  : 'Update'  : isSubmitting ? <div className='flex items-center gap-2'><Loader2 size={18} className="text-whiteColor animate-spin" /> Creating...</div> : 'Create'}
+            <Button type="submit" disabled={isSubmitting || createMutation.isPending || updateMutation.isPending || loading} className='cursor-pointer bg-blue-600 hover:bg-blue-700 text-white'>
+              {isEditMode ? loading ?<div className='flex items-center gap-2'><Loader2 size={18} className="text-whiteColor animate-spin" /> Updating...</div>  : 'Update'  : loading ? <div className='flex items-center gap-2'><Loader2 size={18} className="text-whiteColor animate-spin" /> Creating...</div> : 'Create'}
             </Button>
           </div>
         </form>
