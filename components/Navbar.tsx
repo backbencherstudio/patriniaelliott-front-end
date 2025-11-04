@@ -50,7 +50,7 @@ export default function Navbar() {
       })
 
   return (
-    <header className="bg-primaryColor py-4 ">
+    <header className="bg-primaryColor py-4  sticky top-0 z-50 left-0 w-full">
       <div className="container mx-auto flex justify-between items-center">
         <Link aria-label="Logo" href="/" className="text-white text-2xl md:text-3xl font-semibold tracking-wide">
           LOGO

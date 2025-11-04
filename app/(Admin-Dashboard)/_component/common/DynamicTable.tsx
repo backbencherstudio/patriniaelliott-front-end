@@ -51,16 +51,16 @@ export default function DynamicTableWithPagination({
       // Show all pages if 7 or fewer
       pages = Array.from({ length: totalPages }, (_, i) => i + 1);
     } else {
-      // Show smart pagination with ellipsis
-      if (currentPage <= 4) {
-        // Show first 5 pages, then ellipsis, then last page
-        pages = [1, 2, 3, 4, 5, "...", totalPages];
-      } else if (currentPage >= totalPages - 3) {
-        // Show first page, ellipsis, then last 5 pages
-        pages = [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+      // Single ellipsis policy: show ellipsis ONLY at start OR end, not both
+      if (currentPage <= 3) {
+        // Near start: 1 2 3 4 ... last
+        pages = [1, 2, 3, 4, "...", totalPages];
+      } else if (currentPage >= totalPages - 2) {
+        // Near end: 1 ... last-3 last-2 last-1 last
+        pages = [1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
       } else {
-        // Show first page, ellipsis, current-1, current, current+1, ellipsis, last page
-        pages = [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+        // Middle: 1 current-1 current current+1 ... last (single ellipsis at end)
+        pages = [1, currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
       }
     }
     return pages;
@@ -69,7 +69,8 @@ export default function DynamicTableWithPagination({
   return (
     <div>
     
-      <div className={`overflow-x-auto ${className || ''}`}>
+      <div className={`overflow-x-auto h-[400px] ${className || ''}`}>
+
         <table className="w-full text-left table-auto">
           <colgroup>
             {columns.map((col, index) => (
@@ -79,7 +80,7 @@ export default function DynamicTableWithPagination({
               <col style={{ width: "120px" }} />
             )}
           </colgroup>
-          <thead className="bg-neutral-50">
+          <thead className="bg-neutral-50 sticky top-0 left-0 w-full">
             <tr>
               {columns.map((col, index) => (
                 <th 
@@ -148,7 +149,7 @@ export default function DynamicTableWithPagination({
       </div>
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mt-6 gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-end lg:items-center mt-6 gap-4">
           {/* Page Info */}
           <div className="text-sm text-[#777980] order-2 lg:order-1">
             {(() => {
@@ -159,7 +160,6 @@ export default function DynamicTableWithPagination({
               return <>Showing {from} to {to} of {totalItems || 0} entries</>;
             })()}
           </div>
-          
           {/* Pagination Controls */}
           <div className="flex items-center gap-1 lg:gap-2 order-1 lg:order-2 flex-wrap">
             {/* First Page Button */}
@@ -167,7 +167,7 @@ export default function DynamicTableWithPagination({
               aria-label="First page"
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1 || loading}
-              className="px-3 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-2 py-1 border hidden md:block border-[#E2E8F0] rounded-sm cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="First page"
             >
               <span className="text-sm font-medium">««</span>
@@ -178,10 +178,10 @@ export default function DynamicTableWithPagination({
               aria-label="Previous"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1 || loading}
-              className="px-4 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+              className="px-2 py-1 border border-[#E2E8F0] rounded-sm cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
-              <span className="text-lg">‹</span>
-              <span className="text-sm font-medium">Previous</span>
+              <span className="text-base">‹</span>
+              <span className="text-xs font-medium">Previous</span>
             </button>
             
             {/* Page Numbers */}
@@ -192,7 +192,7 @@ export default function DynamicTableWithPagination({
                   aria-label="Page number"
                   onClick={() => typeof page === "number" && onPageChange(page)}
                   disabled={page === "..." || loading}
-                  className={`px-2 lg:px-3 py-2 rounded-lg cursor-pointer text-sm font-medium transition-colors ${
+                  className={`px-2 lg:px-2 py-1 rounded-sm cursor-pointer text-sm font-medium transition-colors ${
                     page === currentPage 
                       ? "bg-[#0068ef] text-white" 
                       : page === "..." 
@@ -210,10 +210,10 @@ export default function DynamicTableWithPagination({
               aria-label="Next"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages || loading}
-              className="px-4 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+              className="px-2 py-1 border border-[#E2E8F0] rounded-sm cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
-              <span className="text-sm font-medium">Next</span>
-              <span className="text-lg">›</span>
+              <span className="text-xs font-medium">Next</span>
+              <span className="text-base">›</span>
             </button>
             
             {/* Last Page Button */}
@@ -221,7 +221,7 @@ export default function DynamicTableWithPagination({
               aria-label="Last page"
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages || loading}
-              className="px-3 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-2 py-1 border hidden md:block border-[#E2E8F0] rounded-sm cursor-pointer hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="Last page"
             >
               <span className="text-sm font-medium">»»</span>

@@ -5,9 +5,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { countryList } from "@/DemoAPI/country";
 import { useToken } from "@/hooks/useToken";
 import usericon from "@/public/icon/user.svg";
 import { UserService } from "@/service/user/user.service";
+import { useQuery } from "@tanstack/react-query";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,7 +17,6 @@ import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import HomeAllFilter from "../filter/HomeAllFilter";
-import { countryList } from "@/DemoAPI/country";
 
 export default function TourSearch({ typesearch }: any) {
   const router = useRouter();
@@ -27,21 +28,14 @@ export default function TourSearch({ typesearch }: any) {
     null,
     null,
   ]);
-
+const {token} = useToken();
   const [appliedDateRange, setAppliedDateRange] = useState<
     [Date | null, Date | null]
   >([null, null]);
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [monthsToShow, setMonthsToShow] = useState(1);
   const [openFilter, setOpenFilter] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-   const [loading, setLoading]=useState(true);
-       const [error, setError]=useState(null);
-      const {token} = useToken()
-      const [selectedDestinations, setSelectedDestinations] = useState(  );
        
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -65,21 +59,21 @@ export default function TourSearch({ typesearch }: any) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [openFilter]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setMonthsToShow(window.innerWidth >= 640 ? 2 : 1);
-    };
-
-    handleResize(); // initial load
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
   type Room = {
     id: number;
     people: number;
   };
 
+  const fetchCountries = async () => {
+    const response = await UserService?.getData(`/admin/country?limit=400`, token);
+    return response?.data?.data;
+  }
+
+  const { data, isLoading: countriesLoading } = useQuery({
+    queryKey: ["countriesData"],
+    queryFn: fetchCountries,
+  });
+  const countriesData = data ? data : countryList;
   const [rooms, setRooms] = useState<Room[]>([
     { id: 1, people: 2 },
   ]);
@@ -178,11 +172,10 @@ export default function TourSearch({ typesearch }: any) {
               onChange={(e) => setLocationInput(e.target.value)}
             />
             <ul className="mt-2 max-h-60 overflow-auto">
-              {countryList
-                .filter((item :any) =>
+              { countriesData?.filter((item :any) =>
                   item.name?.toLowerCase().includes(locationInput.toLowerCase())
                 )
-                .map((loc :any) => (
+                .sort((a :any, b :any) => a?.name?.localeCompare(b?.name)).map((loc :any) => (
                   <li
                     key={loc?.code}
                     aria-label="Location item"
@@ -256,8 +249,6 @@ export default function TourSearch({ typesearch }: any) {
               selected={dateRange[0]}
               onChange={(dates: [Date, Date]) => {
                 setDateRange(dates);
-                setStartDate(dates[0]);
-                setEndDate(dates[1]);
               }}
               startDate={dateRange[0]}
               endDate={dateRange[1]}
