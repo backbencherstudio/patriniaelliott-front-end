@@ -34,7 +34,7 @@ export default function Page() {
     const [selectedRegion, setSelectedRegion] = useState('');
     const [selectedCountry, setSelectedCountry] = useState('');
     const [mapSrc, setMapSrc] = useState(
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215209179342!2d-73.98784492401708!3d40.74844097138971!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1712345678901!5m2!1sen!2sus"
+        "https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=Paris,France"
     );
 
     const [hostProperty, setHostProperty] = useState(false);
@@ -42,11 +42,37 @@ export default function Page() {
     const [hostNeighborhood, setHostNeighborhood] = useState(false)
     const [formData, setFormData] = useState({});
     const [user, setUser] = useState(null);
-    const [property,setProperty] = useState('');
-    const [host,setHost] = useState('');
-    const [city,setCity] = useState('');
-    const [street,setStreet] = useState('');
-    const [zipcode,setZipcode] = useState('');
+    const [property, setProperty] = useState('');
+    const [host, setHost] = useState('');
+    const [city, setCity] = useState('');
+    const [street, setStreet] = useState('');
+    const [zipcode, setZipcode] = useState('');
+
+    // Function to generate map URL based on address
+    // Function to generate OpenStreetMap URL
+    const generateMapUrl = (country: string, city: string, street: string, zipcode: string) => {
+        const addressParts = [];
+        if (street) addressParts.push(street);
+        if (city) addressParts.push(city);
+        if (zipcode) addressParts.push(zipcode);
+        if (country) addressParts.push(country);
+
+        const addressQuery = encodeURIComponent(addressParts.join(', '));
+
+        if (addressQuery) {
+            return `https://www.openstreetmap.org/export/embed.html?bbox=-0.490,51.280,0.236,51.686&layer=mapnik&marker=${addressQuery}`;
+        }
+
+        // Default map view
+        return "https://www.openstreetmap.org/export/embed.html?bbox=-0.490,51.280,0.236,51.686&layer=mapnik";
+    };
+
+    // Update map when address components change
+    useEffect(() => {
+        const selectedCountryName = countries.find(c => c.code === selectedCountry)?.name || selectedCountry;
+        const newMapSrc = generateMapUrl(selectedCountryName, city, street, zipcode);
+        setMapSrc(newMapSrc);
+    }, [selectedCountry, city, street, zipcode, countries]);
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -160,7 +186,7 @@ export default function Page() {
                                         </div>
                                     </div>
                                     <div>
-                                        <textarea name="propertyintro" required id="propertyintro" disabled={!hostProperty} value={property} onChange={(e)=>setProperty(e.target?.value)} placeholder="Enter property intro" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none"></textarea>
+                                        <textarea name="propertyintro" required id="propertyintro" disabled={!hostProperty} value={property} onChange={(e) => setProperty(e.target?.value)} placeholder="Enter property intro" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none"></textarea>
                                     </div>
                                 </div>
 
@@ -178,11 +204,11 @@ export default function Page() {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostname" className="text-[#070707]">Host name</label>
-                                    <input type="text"value={user?.name} required disabled={!aboutHost} name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
+                                    <input type="text" value={user?.name} required disabled={!aboutHost} name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostabout" className="text-[#070707]">About the host</label>
-                                    <textarea disabled={!aboutHost} value={host} onChange={(e)=>setHost(e.target?.value)} name="hostabout" id="hostabout" placeholder="Write about the host" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" />
+                                    <textarea disabled={!aboutHost} value={host} onChange={(e) => setHost(e.target?.value)} name="hostabout" id="hostabout" placeholder="Write about the host" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" />
                                 </div>
                             </div>
 
@@ -195,7 +221,7 @@ export default function Page() {
                         <div className="flex w-full gap-6">
                             <div className="space-y-5 flex-1">
                                 <div className="bg-white rounded-[16px] p-6 space-y-5">
-                                    <h3>What’s the name and location of your place?</h3>
+                                    <h3>What's the name and location of your place?</h3>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="email" className="text-[#070707]">Email address</label>
                                         <input type="email" value={user?.email} required name="email" id="email" className="border border-[#E9E9EA] text-[#777980] rounded-[8px] p-4 outline-none" />
@@ -211,15 +237,39 @@ export default function Page() {
                                     <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="city" className="text-[#070707]">City</label>
-                                        <input type="text" value={city} onChange={(e)=>setCity(e.target?.value)} required name="city" id="city" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
+                                        <input
+                                            type="text"
+                                            value={city}
+                                            onChange={(e) => setCity(e.target?.value)}
+                                            required
+                                            name="city"
+                                            id="city"
+                                            className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]"
+                                        />
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="street" className="text-[#070707]">Street name and house number</label>
-                                        <input type="text" value={street} onChange={(e)=>setStreet(e.target?.value)} required name="street" id="street" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
+                                        <input
+                                            type="text"
+                                            value={street}
+                                            onChange={(e) => setStreet(e.target?.value)}
+                                            required
+                                            name="street"
+                                            id="street"
+                                            className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]"
+                                        />
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="zipcode" className="text-[#070707]">Zip code</label>
-                                        <input type="text" value={zipcode} onChange={(e)=>setZipcode(e.target?.value)} required name="zipcode" id="zipcode" className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]" />
+                                        <input
+                                            type="text"
+                                            value={zipcode}
+                                            onChange={(e) => setZipcode(e.target?.value)}
+                                            required
+                                            name="zipcode"
+                                            id="zipcode"
+                                            className="border border-[#E9E9EA] rounded-[8px] p-4 outline-none text-[#777980]"
+                                        />
                                     </div>
                                     <h3 className="text-[#23262F] font-medium text-2xl">Pin the location of your property</h3>
                                     <div className="space-y-3">
@@ -237,6 +287,7 @@ export default function Page() {
                                                 loading="lazy"
                                                 referrerPolicy="no-referrer-when-downgrade"
                                                 className="w-full h-full rounded-[12px]"
+                                                title="Property Location Map"
                                             ></iframe>
                                         </div>
                                     </div>
