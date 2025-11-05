@@ -48,8 +48,6 @@ const [reviewStats, setReviewStats] = useState([
 ]);
 
   const totalReviews = reviewStats.reduce((acc, item) => acc + item.count, 0);
-
-
   const ratingNu = reviewData?.summary?.averageRating ? reviewData?.summary?.averageRating : 0
   const averageRating =
     totalReviews > 0
@@ -71,11 +69,21 @@ const [reviewStats, setReviewStats] = useState([
         queryClient.invalidateQueries({ queryKey: ['reviews', singleApartment?.id] });
       } else {
         toast.warning(res?.data?.message);
+        
       }
     },
-    onError: (error) => {
-      console.log(error.message);
+    onError: (error: any) => {
+      if(error?.response?.status === 400){
       toast.error("please select a rating");
+      }if(error?.response?.status === 401){
+        toast.error("please login to add a review");
+      }if(error?.response?.status === 403){
+        toast.error("you are not authorized to add a review");
+      }if(error?.response?.status === 404){
+        toast.error("review not found");
+      }if(error?.response?.status === 500){
+        toast.error("please select a rating");
+      }
     },
   });
 
@@ -207,7 +215,7 @@ const [reviewStats, setReviewStats] = useState([
 
         {/* Rating Section */}
         <div className="bg-white border rounded-lg p-6">
-          <div className="lg:grid grid-cols-10 items-center space-x-4 mb-4">
+          <div className="lg:grid grid-cols-10 items-center space-x-4 ">
             <div className=" col-span-2 flex-col flex items-center">
               <div className="relative w-20 h-20">
                 {/* Center Rating Text */}

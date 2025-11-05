@@ -11,13 +11,16 @@ export default function FilterSidebar({toure}:any) {
 
   return (
     <div className="w-full   space-y-6  bg-white mb-30 rounded-xl">
-      <div className="overflow-hidden rounded-lg shadow-md">
+      <div className='px-3'>
+
+      <div className="overflow-hidden rounded-lg shadow-md ">
         <iframe
           className="w-full h-40"
           src="https://maps.google.com/maps?q=New+York&t=&z=13&ie=UTF8&iwloc=&output=embed"
           allowFullScreen
           loading="lazy"
         ></iframe>
+      </div>
       </div>
       <div className="w-full p-4  space-y-3 shadow-xl bg-white  rounded-xl">
       <div className=' '>

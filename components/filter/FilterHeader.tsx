@@ -28,19 +28,19 @@ const FilterHeader = ({ data, title }: { data: any[], title: string }) => {
 
   return (
     <div className="items-center mb-4">
-      <h4 className="text-2xl font-semibold text-headerColor">
+      <h4 className="text-xl sm:text-2xl font-semibold text-headerColor">
         {title} found: {data?.length} available {title}
       </h4>
 
       <div className="flex gap-3 mt-2">
 
         <>
-          <p className="text-base text-grayColor1">
+          <p className="text-sm sm:text-base text-grayColor1">
             {filterCount} {filterCount === 1 ? "Filter" : "Filters"} applied
           </p>
           <button
             onClick={handleClearAll}
-            className="text-blueColor text-base cursor-pointer"
+            className="text-blueColor text-sm sm:text-base cursor-pointer"
           >
             Clear All
           </button>
