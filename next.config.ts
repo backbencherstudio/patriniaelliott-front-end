@@ -79,6 +79,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "lower-microphone-administrators-cycling.trycloudflare.com",
       },
+      {
+        protocol: "https",
+        hostname: "flagcdn.com",
+      },
+      {
+        protocol: "http",
+        hostname: "flagcdn.com",
+      },
     ],
   },
 };
