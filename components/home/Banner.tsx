@@ -68,7 +68,7 @@ export default function Banner() {
                 <div className="absolute inset-0 " />
                 <div className="absolute inset-0 z-30 flex justify-center text-center items-center px-5 md:px-10 lg:px-20 text-white container">
                   <div className="max-w-3xl">
-                    <h1 className="text-4xl  md:text-[42px]  md:pr-48 lg:pr-0 lg:text-[60px] text-white font-bold leading-[126%] ">
+                    <h1 className="text-4xl  md:text-[42px]  md:px-20 lg:px-0 lg:text-[60px] text-white font-bold leading-[126%] ">
                       {banner.title}
                     </h1>
                     <p className="mt-6 text-base leading-[150%] text-white ">

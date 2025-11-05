@@ -44,7 +44,7 @@ function Accommodation() {
  
   return (
     <section className=" bg-bgColor py-12">
-      <div className="container px-4 md:px-16  relative">
+      <div className="container md:px-16  relative">
         <div className="lg:my-20">
           <h2 className="text-3xl lg:text-5xl font-medium text-blackColor text-center mb-8">
             Our Popular Accommodation

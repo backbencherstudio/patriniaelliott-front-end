@@ -6,17 +6,12 @@ import { useState } from "react";
 import { BsGlobe2 } from "react-icons/bs";
 import { HiOutlineMenu, HiX } from "react-icons/hi";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useToken } from "@/hooks/useToken";
 import { cn } from "@/lib/utils";
 import { UserService } from "@/service/user/user.service";
 import { useQuery } from "@tanstack/react-query";
 import MenuDropDown from "./MenuDropDown";
+import LanguageSwitcher from "./reusable/LanguageSwitcher";
 
 const menuItems = [
   { en: "Home", slug: "/" },
@@ -72,20 +67,10 @@ export default function Navbar() {
           ))}
         </nav>
         <div className="hidden md:flex items-center space-x-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="text-white text-base flex items-center gap-2 cursor-pointer">
-              <BsGlobe2 /> {language.toUpperCase()}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setLanguage("en")}>
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem >
-                  German
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+          <div className="flex items-center  ">
+            
+            <LanguageSwitcher/>
+          </div>
           {token && data?.success  ? (
             <>
               <Link
