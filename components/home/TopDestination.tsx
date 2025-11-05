@@ -131,8 +131,8 @@ function TopDestination() {
           {data?.length > 0 ? data?.map((des, index) => (
             <SwiperSlide key={index}>
               <Link href={`/toure/${des?.id}`}>
-              <div className=" w-full flex justify-center flex-col items-center ">
-                <div className=" xl:w-[190px] lg:w-[170px] lg:h-[170px] h-[120px] md:w-[156px] md:h-[156px] w-[120px] xl:h-[190px] rounded-full overflow-hidden">
+              <div className=" w-full flex justify-center flex-col items-center  ">
+                <div className=" border xl:w-[190px] lg:w-[170px] lg:h-[170px] h-[100px] md:w-[156px] md:h-[156px] w-[100px] xl:h-[190px] rounded-full overflow-hidden">
                 <CustomImage
                     src={getSlideSrc(`${des?.img}`, index)}
                     alt={`des ${index + 1}`}
@@ -144,8 +144,8 @@ function TopDestination() {
                   />
                 </div>
                 <div className=" text-center mt-4">
-                  <h3 className=" text-lg md:text-2xl font-medium ">{des?.country}</h3>
-                  <p className="text-sm md:text-base text-descriptionColor leading-[150%] ">{des?.count} Times Tour</p>
+                  <h3 className=" text-[14px] sm:text-lg md:text-2xl font-medium ">{des?.country}</h3>
+                  <p className="text-[13px] md:text-base text-descriptionColor leading-[150%] ">{des?.count} Times Tour</p>
                 </div>
               </div>
               </Link>

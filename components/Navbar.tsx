@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { BsGlobe2 } from "react-icons/bs";
 import { HiOutlineMenu, HiX } from "react-icons/hi";
 
 import { useToken } from "@/hooks/useToken";
@@ -74,24 +73,24 @@ export default function Navbar() {
           {token && data?.success  ? (
             <>
               <Link
-                aria-label="List your proparty"
+                aria-label="List your property"
                 href="/property-list"
                 prefetch={true}
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
               >
-                List your proparty
+                List your property
               </Link>
              <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data }/>
             </>
           ) : (
             <>
             <Link
-                aria-label="List your proparty"
+                aria-label="List your property"
                   prefetch={true}
                 href={token ? "/property-list" : "/login"}
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
               >
-                List your proparty
+                List your property
               </Link>
                 <Link aria-label="Login" prefetch={true} href="/login" className="text-white text-base">
                 Login
@@ -176,40 +175,21 @@ export default function Navbar() {
           ))}
           {/* Language Dropdown (Mobile) */}
           <div className="flex items-center gap-2 mt-4">
-            <BsGlobe2 className="text-white" />
-            <select
-              value={language}
-              aria-label="Language"
-              onChange={(e) => setLanguage(e.target.value as "en" )}
-              className="bg-transparent outline-none text-white"
-            >
-              <option value="en" className="text-black">English</option>
-              <option value="ger" className="text-black">German</option>
-            </select>
+           <LanguageSwitcher/>
           </div>
           {/* Auth Buttons */}
           <div className="mt-4 flex flex-col text-center gap-3">
-              {token && data?.success ? <>
+              
                 <Link
-                  aria-label="List your proparty"
+                  aria-label="List your property"
                 prefetch={true}
                   href={token ? "/property-list" : "/login"}
                   onClick={() => setMenuOpen(false)}
                   className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
                 >
-                  List your proparty
+                  List your property
                 </Link>      
-              </> : <>
-                <Link
-                  aria-label="Login"
-                  prefetch={true}
-                  href="/login"
-                  className="text-white text-base"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Login
-                </Link>
-              </>}
+           
            
           </div>
         </div>
