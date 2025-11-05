@@ -312,6 +312,12 @@ const AddTour = () => {
   }, [selectedRegion]);
 
   useEffect(() => {
+    if (!listProperty?.type) {
+      router.push('/property-list')
+    }
+  }, [])
+
+  useEffect(() => {
     setValue('name', listProperty?.tour_plan?.title)
     setDescription(listProperty?.tour_plan?.description)
     setImages(listProperty?.tour_plan?.tourImages || [])
@@ -695,15 +701,15 @@ const AddTour = () => {
                       type="text"
                       inputMode="numeric"
                       placeholder="Service fee"
-                      {...register("service_fee", { 
+                      {...register("service_fee", {
                         required: true,
-                          pattern: {
-                            value: /^[0-9]*$/,
-                            message: "Service fee is required"
-                          },
-                          onChange: (e) => {
-                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                          }
+                        pattern: {
+                          value: /^[0-9]*$/,
+                          message: "Service fee is required"
+                        },
+                        onChange: (e) => {
+                          e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                        }
                       })}
                       className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
                       aria-invalid={!!errors.service_fee}
@@ -793,11 +799,11 @@ const AddTour = () => {
                           type="text"
                           value={extraService.price}
                           placeholder="Enter price"
-                          pattern= "/^[0-9]*$/"
+                          pattern="/^[0-9]*$/"
                           onChange={(e) => {
                             e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                            if(e.target.value){
-                                setExtraService((prev) => ({ ...prev, price: e.target.value }))
+                            if (e.target.value) {
+                              setExtraService((prev) => ({ ...prev, price: e.target.value }))
                             }
                           }}
                           className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600 max-w-[150px]"

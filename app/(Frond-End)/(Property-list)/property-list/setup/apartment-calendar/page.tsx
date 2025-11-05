@@ -68,7 +68,7 @@ export default function Page() {
   const [viewDate, setViewDate] = useState<Date>(new Date());
   const nextMonthViewDate = useMemo(() => addMonths(viewDate, 1), [viewDate]);
 
-  // selection / meta
+
   const [licenses, setLicenses] = useState(false);
   const [termsPolicy, setTermsPolicy] = useState(false);
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -76,7 +76,6 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [price, setPrice] = useState<number>(0);
 
-  // days grid memo
   const { daysInMonth, startDay } = useMemo(() => {
     const year = viewDate.getFullYear();
     const month = viewDate.getMonth();
@@ -85,7 +84,6 @@ export default function Page() {
     return { daysInMonth: days, startDay: sDay };
   }, [viewDate]);
 
-  // (Optional next month precompute, kept for parity with your code)
   const { daysInNextMonth, nextMonthStartDay } = useMemo(() => {
     const year = nextMonthViewDate.getFullYear();
     const month = nextMonthViewDate.getMonth();
@@ -94,7 +92,6 @@ export default function Page() {
     return { daysInNextMonth: days, nextMonthStartDay: sDay };
   }, [nextMonthViewDate]);
 
-  // hydrate price from localStorage (safe parse)
   useEffect(() => {
     const nightly = listProperty?.type === "Tour"
       ? listProperty?.tour_plan?.price
@@ -102,10 +99,15 @@ export default function Page() {
     setPrice(Number(nightly) || 0);
   }, []);
 
+  // useEffect(() => {
+  //   if (!listProperty?.type) {
+  //     router.push('/property-list')
+  //   }
+  // }, [])
+
   const daysNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
   const handlePrevMonth = () => {
-    // prevent going before current real month/year if you want this guard
     const now = new Date();
     const guard =
       viewDate.getMonth() !== now.getMonth() ||
@@ -122,7 +124,6 @@ export default function Page() {
   const handleSubmit = async () => {
     setLoading(true);
 
-    // store to context (use clean ISO dates for interoperability)
     updateListProperty({
       calendar_start_date: toISODate(startDate),
       calendar_end_date: toISODate(endDate),
@@ -279,20 +280,15 @@ export default function Page() {
         } else {
           toast.success("Property setup completed.");
         }
-        localStorage.removeItem("propertyData");
-        setTimeout(() => {
-          // Conditional redirection based on user type
-          if (isUser) {
-            // For users (first time property add), redirect to payment method
-            router.push("/payment-method");
-          } else if (isVendor) {
-            // For vendors (verified vendors), redirect to pending request
-            router.push("/pending-request");
-          } else {
-            // Fallback to payment method if user type is unknown
-            router.push("/payment-method");
-          }
-        }, 1000);
+        // setTimeout(() => {
+        //   if (isUser) {
+        //     router.push("/payment-method");
+        //   } else if (isVendor) {
+        //     router.push("/pending-request");
+        //   } else {
+        //     router.push("/payment-method");
+        //   }
+        // }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");
       }

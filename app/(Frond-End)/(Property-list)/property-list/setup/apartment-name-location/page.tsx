@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from 'next/navigation';
 import Dropdownmenu from "@/components/reusable/Dropdownmenu";
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
@@ -27,15 +27,29 @@ type countryType = {
     region: string;
 }
 
+type Coordinates = {
+    lat: number;
+    lng: number;
+}
+
+declare global {
+    interface Window {
+        google: any;
+    }
+}
+
 export default function Page() {
     const router = useRouter();
     const { listProperty, updateListProperty } = usePropertyContext();
     const [countries, setCountries] = useState<countryType[]>(country.country);
     const [selectedRegion, setSelectedRegion] = useState('');
     const [selectedCountry, setSelectedCountry] = useState('');
-    const [mapSrc, setMapSrc] = useState(
-        "https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=Paris,France"
-    );
+
+    // Map state
+    const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
+    const [map, setMap] = useState<any>(null);
+    const [marker, setMarker] = useState<any>(null);
+    const mapRef = useRef<HTMLDivElement>(null);
 
     const [hostProperty, setHostProperty] = useState(false);
     const [aboutHost, setAboutHost] = useState(false);
@@ -44,37 +58,78 @@ export default function Page() {
     const [user, setUser] = useState(null);
     const [property, setProperty] = useState('');
     const [host, setHost] = useState('');
+    const [hostName, setHostName] = useState('');
+    const [hostEmail, setHostEmail] = useState('');
     const [city, setCity] = useState('');
     const [street, setStreet] = useState('');
     const [zipcode, setZipcode] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    // Function to generate map URL based on address
-    // Function to generate OpenStreetMap URL
-    const generateMapUrl = (country: string, city: string, street: string, zipcode: string) => {
-        const addressParts = [];
-        if (street) addressParts.push(street);
-        if (city) addressParts.push(city);
-        if (zipcode) addressParts.push(zipcode);
-        if (country) addressParts.push(country);
+    // Initialize map
+    const initMap = () => {
+        if (!mapRef.current || !window.google) return;
 
-        const addressQuery = encodeURIComponent(addressParts.join(', '));
+        const defaultLocation = { lat: 40.748440, lng: -73.987844 };
+        const newMap = new window.google.maps.Map(mapRef.current, {
+            zoom: 15,
+            center: defaultLocation,
+            mapTypeId: window.google.maps.MapTypeId.ROADMAP,
+            gestureHandling: "greedy"
+        });
+        const newMarker = new window.google.maps.Marker({
+            position: defaultLocation,
+            map: newMap,
+            draggable: true,
+            title: "Drag me to your property location!"
+        });
+        setCoordinates(defaultLocation);
+        newMap.addListener('click', (e: any) => {
+            const clickedLocation = {
+                lat: e.latLng.lat(),
+                lng: e.latLng.lng()
+            };
 
-        if (addressQuery) {
-            return `https://www.openstreetmap.org/export/embed.html?bbox=-0.490,51.280,0.236,51.686&layer=mapnik&marker=${addressQuery}`;
-        }
+            newMarker.setPosition(clickedLocation);
+            setCoordinates(clickedLocation);
 
-        // Default map view
-        return "https://www.openstreetmap.org/export/embed.html?bbox=-0.490,51.280,0.236,51.686&layer=mapnik";
+            newMap.setCenter(clickedLocation);
+        });
+
+        newMarker.addListener('dragend', (e: any) => {
+            const draggedLocation = {
+                lat: e.latLng.lat(),
+                lng: e.latLng.lng()
+            };
+            setCoordinates(draggedLocation);
+
+            newMap.setCenter(draggedLocation);
+        });
+
+        setMap(newMap);
+        setMarker(newMarker);
     };
 
-    // Update map when address components change
     useEffect(() => {
-        const selectedCountryName = countries.find(c => c.code === selectedCountry)?.name || selectedCountry;
-        const newMapSrc = generateMapUrl(selectedCountryName, city, street, zipcode);
-        setMapSrc(newMapSrc);
-    }, [selectedCountry, city, street, zipcode, countries]);
+        if (!window.google) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
+            script.async = true;
+            script.defer = true;
+            script.onload = initMap;
+            document.head.appendChild(script);
+        } else {
+            initMap();
+        }
+
+        return () => {
+            if (marker) {
+                marker.setMap(null);
+            }
+        };
+    }, []);
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true);
         e.preventDefault();
         const form = e.currentTarget;
         const formElements = form.elements as typeof form.elements & {
@@ -89,8 +144,7 @@ export default function Page() {
             country: HTMLInputElement;
         };
 
-        setFormData(prev => ({
-            ...prev,
+        const formData = {
             propertyintro: formElements.propertyintro.value,
             hostname: formElements.hostname.value,
             hostabout: formElements.hostabout.value,
@@ -99,8 +153,11 @@ export default function Page() {
             street: formElements.street.value,
             zipcode: formElements.zipcode.value,
             city: formElements.city.value,
-            country: selectedCountry
-        }));
+            country: selectedCountry,
+            coordinates: coordinates
+        };
+
+        setFormData(formData);
 
         updateListProperty({
             about_property: formElements.propertyintro.value,
@@ -111,10 +168,15 @@ export default function Page() {
             street: formElements.street.value,
             zip_code: formElements.zipcode.value,
             city: formElements.city.value,
-            country: selectedCountry
+            country: selectedCountry,
+            // latitude: coordinates?.lat,
+            // longitude: coordinates?.lng
         });
 
-        router.push("/property-list/setup/property-setup")
+        setTimeout(() => {
+            setLoading(false);
+            router.push("/property-list/setup/property-setup")
+        }, 1000);
     }
 
     const handleRegionChange = (e: React.FormEvent<HTMLFormElement>) => {
@@ -154,7 +216,30 @@ export default function Page() {
         setCity(listProperty?.city);
         setStreet(listProperty?.street);
         setZipcode(listProperty?.zip_code);
+
+        // Set initial coordinates if available
+        // if (listProperty?.latitude && listProperty?.longitude) {
+        //     setCoordinates({
+        //         lat: listProperty.latitude,
+        //         lng: listProperty.longitude
+        //     });
+        // }
     }, []);
+
+    // Update marker position when coordinates change
+    useEffect(() => {
+        if (marker && coordinates) {
+            marker.setPosition(coordinates);
+            if (map) {
+                map.setCenter(coordinates);
+            }
+        }
+    }, [coordinates, marker, map]);
+
+    useEffect(() => {
+        setHostName(user?.name);
+        setHostEmail(user?.email);
+    }, [user])
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
@@ -170,6 +255,7 @@ export default function Page() {
                                         yourself, your property, and your neighborhood. This info will appear on
                                         your property page.
                                     </p>
+
                                 </div>
                                 <div className="space-y-3">
                                     <div className="space-x-2 flex items-center">
@@ -204,7 +290,7 @@ export default function Page() {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostname" className="text-[#070707]">Host name</label>
-                                    <input type="text" value={user?.name} required disabled={!aboutHost} name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
+                                    <input type="text" value={hostName} onChange={(e) => setHostName(e.currentTarget.value)} required disabled={!aboutHost} name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostabout" className="text-[#070707]">About the host</label>
@@ -224,7 +310,7 @@ export default function Page() {
                                     <h3>What's the name and location of your place?</h3>
                                     <div className="flex flex-col gap-2">
                                         <label htmlFor="email" className="text-[#070707]">Email address</label>
-                                        <input type="email" value={user?.email} required name="email" id="email" className="border border-[#E9E9EA] text-[#777980] rounded-[8px] p-4 outline-none" />
+                                        <input type="email" value={hostEmail} onChange={(e) => setHostEmail(e.currentTarget?.value)} required name="email" id="email" className="border border-[#E9E9EA] text-[#777980] rounded-[8px] p-4 outline-none" />
                                     </div>
                                     <div className="space-y-3">
                                         <p className="text-[#777980] text-sm">
@@ -277,26 +363,27 @@ export default function Page() {
                                             This is the location we'll show to guests on our site. Drag the map so
                                             the pin matches the exact location of your place.
                                         </p>
-                                        <div className="w-full h-[400px] rounded-[12px]">
-                                            <iframe
-                                                src={mapSrc}
-                                                width="100%"
-                                                height="100%"
-                                                style={{ border: 0 }}
-                                                allowFullScreen
-                                                loading="lazy"
-                                                referrerPolicy="no-referrer-when-downgrade"
-                                                className="w-full h-full rounded-[12px]"
-                                                title="Property Location Map"
-                                            ></iframe>
-                                        </div>
+                                        {coordinates && (
+                                            <div className="p-3 bg-gray-50 rounded-lg">
+                                                <p className="text-sm text-gray-700">
+                                                    <strong>Selected Location:</strong><br />
+                                                    Latitude: {coordinates.lat.toFixed(6)}<br />
+                                                    Longitude: {coordinates.lng.toFixed(6)}
+                                                </p>
+                                            </div>
+                                        )}
+                                        {/* Interactive Map */}
+                                        <div
+                                            ref={mapRef}
+                                            className="w-full h-[400px] rounded-[12px]"
+                                        />
                                     </div>
                                 </div>
 
                                 {/* Submit Buttons */}
                                 <div className="flex justify-between w-full space-x-3 px-4">
                                     <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
-                                    <button type="submit" className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer">Continue</button>
+                                    <button type="submit" disabled={loading} className={`text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] ${loading?"cursor-not-allowed opacity-50":"cursor-pointer"}`}>{loading ? "Loading..." : "Continue"}</button>
                                 </div>
                             </div>
                             <div className="space-y-4 w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block">
@@ -331,3 +418,5 @@ export default function Page() {
         </div>
     )
 }
+
+

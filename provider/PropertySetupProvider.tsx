@@ -125,9 +125,9 @@ type tourType = {
 
 interface parkingType {
     cost: number;
-    available: boolean;
+    available: string;
     type?: string;
-    reserveParkingSpot: boolean;
+    reserveParkingSpot: string;
     parkingType: boolean;
 }
 
@@ -203,4 +203,5 @@ interface formDataType {
     calendar_end_date: string;
     total_bedroom: number;
     tour_plan: tourType;
+    imagePreview: string[];
 }

@@ -39,15 +39,17 @@ export default function page() {
     const [occupancy, setOccupancy] = useState([{ occupancy: "3", price: "150" }]);
     const [cancelPolicies, setCancelPolicies] = useState(["Guests can cancel their bookings for free up to 1 day before their arrival", "Guests who cancel within 24 hours will have their cancellation fee waived"])
     const [refundPolicies, setRefundPolicies] = useState(["Guests will pay 10% less than the standard rate for a non- refundable rate", "Guests can't cancel their bookings for free anytime"])
-    const [checkinPolicy,setCheckinPolicy] = useState('');
-    const [checkoutPolicy,setCheckoutPolicy] = useState('');
-    const [specialCheckinPolicy,setSpecialCheckinPolicy] = useState('');
-    const [childrenExtra,setChildrenExtra] = useState('');
-    const [refundPolicy,setRefundPolicy] = useState('');
-    const [nonRefundPolicy,setNonRefundPolicy] = useState('');
+    const [checkinPolicy, setCheckinPolicy] = useState('');
+    const [checkoutPolicy, setCheckoutPolicy] = useState('');
+    const [specialCheckinPolicy, setSpecialCheckinPolicy] = useState('');
+    const [childrenExtra, setChildrenExtra] = useState('');
+    const [refundPolicy, setRefundPolicy] = useState('');
+    const [nonRefundPolicy, setNonRefundPolicy] = useState('');
+    const [loading, setLoading] = useState(false);
 
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true);
         e.preventDefault()
         console.log(e);
         setFormData({
@@ -73,8 +75,10 @@ export default function page() {
             checkinPolicy,
             checkoutPolicy
         })
-
-        router.push("/property-list/setup/apartment-calendar")
+        setTimeout(() => {
+            setLoading(false);
+            router.push("/property-list/setup/apartment-calendar")
+        }, 1000);
     }
     const handleOccupancyChange = (value: string, index: number) => {
         setOccupancy(prev => {
@@ -99,6 +103,23 @@ export default function page() {
         setOccupancy(prev => prev.filter((_, index) => index !== id));
 
     }
+
+    useEffect(() => {
+        if (listProperty?.price_per_night)
+            setGuestPrice(listProperty?.price_per_night || 0);
+        if (listProperty?.checkinPolicy)
+            setCheckinPolicy(listProperty?.checkinPolicy);
+        if (listProperty?.checkoutPolicy)
+            setCheckoutPolicy(listProperty?.checkoutPolicy);
+        if (listProperty?.specialCheckinPolicy)
+            setSpecialCheckinPolicy(listProperty?.specialCheckinPolicy);
+        if (listProperty?.childrenExtra)
+            setChildrenExtra(listProperty?.childrenExtra);
+        if (listProperty?.refundPolicy)
+            setRefundPolicy(listProperty?.refundPolicy)
+        if (listProperty?.nonRefundPolicy)
+            setNonRefundPolicy(listProperty?.nonRefundPolicy)
+    }, [])
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
@@ -206,7 +227,7 @@ export default function page() {
                                         <div className="space-y-2">
                                             <h2 className="text-[#070707] font-medium">Price guests pay</h2>
                                             <div className="border border-[#0068EF] flex gap-1 p-4 rounded-lg items-center text-[#777980] text-sm">
-                                                $<input type="number" id="price" name="price" value={guestPrice} onChange={(e) => setGuestPrice(parseInt(e.currentTarget.value))} className="outline-none flex-1" />
+                                                $<input type="number" required id="price" name="price" value={guestPrice} onChange={(e) => setGuestPrice(parseInt(e.currentTarget.value))} className="outline-none flex-1" />
                                             </div>
                                             <p className="text-[#4A4C56] text-sm">Including taxes, commission, and fees</p>
                                         </div>
@@ -292,7 +313,7 @@ export default function page() {
                                 <div>
                                     <CreateBlog
                                         content={checkinPolicy}
-                                        onContentChange={(data) => {setCheckinPolicy(data);console.log(data)}}
+                                        onContentChange={(data) => { setCheckinPolicy(data); console.log(data) }}
                                         title="Check-in policy"
                                         subtitle="Check-in"
                                     />
@@ -506,7 +527,7 @@ export default function page() {
                                     </div>
                                     <div className="flex justify-between w-full space-x-3 px-4">
                                         <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
-                                        <button type="submit" className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer">Continue</button>
+                                        <button type="submit" disabled={loading} className={`text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] ${loading ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}>{loading ? "Loading..." : "Continue"}</button>
                                     </div>
                                 </div>
                                 <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block">

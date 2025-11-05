@@ -21,7 +21,7 @@ import { Switch } from "@/components/ui/switch";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import { Check } from "lucide-react";
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import AddExtraServices from "../_components/AddExtraServices";
 import PolicyEditor from '../../_components/PolicyEditor';
 import toast, { Toaster } from "react-hot-toast";
@@ -51,19 +51,8 @@ export default function page() {
             size_sqm?: number;
             price: number;
         }[]
-    >([{
-        name: "alsdkfjlaskdjf;lasd fkalsdjf",
-        description: "alskdjflaksjdf;lkasjdf;lkajs",
-        bedrooms: {
-            single_bed: 2,
-            double_bed: 1,
-            large_bed: 0,
-            extra_large_bed: 0
-        },
-        max_guests: 3,
-        bathrooms: 2,
-        price: 120
-    }]);
+    >([]);
+    const [loading,setLoading] = useState(false);
 
 
     interface bedTypes {
@@ -174,18 +163,16 @@ export default function page() {
         };
 
         if (editingIndex !== null) {
-            // Update existing bedroom
             setBedRooms((prev) => {
                 const updated = [...prev];
                 updated[editingIndex] = newBedroom;
                 return updated;
             });
         } else {
-            // Add new bedroom
             setBedRooms((prev) => [...prev, newBedroom]);
         }
 
-        // Close dialog and reset state
+
         setDialogOpen(false);
         setNewBedroomTitle("");
         setNewBedCounts({
@@ -236,6 +223,7 @@ export default function page() {
     const checkOutUntilOptions = ampmTimes;
 
     const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true);
         e.preventDefault();
         setFormData({
             name: propertyName,
@@ -272,8 +260,8 @@ export default function page() {
             },
             breakfast_available: guestFood.breakfast === "yes",
             parking: {
-                available: guestParking.isavailable === "yes_free" || guestParking.isavailable === "yes_paid",
-                reserveParkingSpot: guestParking.reservation === "yes",
+                available: guestParking.isavailable,
+                reserveParkingSpot: guestParking.reservation,
                 parkingType: guestParking.parkingtype === 'public',
                 cost: guestParking.price,
                 type: guestParking.reservation === "yes_free" ? "free" : "paid"
@@ -295,9 +283,59 @@ export default function page() {
             extra_services: services,
             // apartment_size: apartmentsize.toString()
         })
-
-        router.push("/property-list/setup/apartment-photos")
+        setTimeout(() => {
+            setLoading(false);
+            router.push("/property-list/setup/apartment-photos")
+        }, 1000);
     }
+
+
+    useEffect(() => {
+        setPropertyName(listProperty?.name || '');
+        setPropertyDescription(listProperty?.property_description || "");
+        setGuestGeneral({
+            air_condition: listProperty?.general?.air_conditioning,
+            free_wifi: listProperty?.general?.wifi,
+            heating: listProperty?.general?.heating,
+            ev_charging: listProperty?.general?.electric_vehicle_charging_station
+        })
+        setBedRooms(listProperty?.bedrooms || []);
+        setGuestCooking({
+            kitchen: listProperty?.cooking_cleaning?.kitchen,
+            kitchenette: listProperty?.cooking_cleaning?.kitchenette,
+            washing_machine: listProperty?.cooking_cleaning?.washing_machine
+        })
+        setGuestEntertainment({
+            flat_tv: listProperty?.entertainment?.flat_screen_tv,
+            pool: listProperty?.entertainment?.swimming_pool,
+            minibar: listProperty?.entertainment?.minibar,
+            sauna: listProperty?.entertainment?.sauna
+        })
+        setServices(listProperty?.extra_services || []);
+        setGuestFood({
+            breakfast: listProperty?.breakfast_available ? "yes" : "no"
+        });
+        setHouseRules({
+            smoking: listProperty?.house_rules?.no_smoking,
+            pets: listProperty?.house_rules?.no_pets,
+            children: listProperty?.house_rules?.no_children,
+            events: listProperty?.house_rules?.parties_allowed
+        })
+        setCheckIn({
+            from: listProperty?.check_in_from || "",
+            until: listProperty?.check_in_untill || ""
+        })
+        setCheckOut({
+            from: listProperty?.check_out_from || "",
+            until: listProperty?.check_out_untill || ""
+        })
+        setGuestParking({
+            price: listProperty?.parking?.cost,
+            isavailable: listProperty?.parking?.available,
+            reservation: listProperty?.parking?.reserveParkingSpot,
+            parkingtype: listProperty?.parking?.type
+        })
+    }, [])
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7] relative">
@@ -313,7 +351,7 @@ export default function page() {
                                 <h3>Property Details</h3>
                                 <div>
                                     <label htmlFor="property-name" className="block text-[#070707] font-medium mb-3">Property Name</label>
-                                    <input type="text" name="property-name" id="property-name" placeholder="Enter property name" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" onChange={(e) => setPropertyName(e.target.value)} />
+                                    <input value={propertyName} required type="text" name="property-name" id="property-name" placeholder="Enter property name" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" onChange={(e) => setPropertyName(e.target.value)} />
                                 </div>
                                 <div>
                                     <label htmlFor="property-description" className="block text-[#070707] font-medium mb-3">Property Description</label>
@@ -321,7 +359,7 @@ export default function page() {
                                 </div>
                                 <div className="space-y-3">
                                     <label htmlFor="bedrooms" className="block text-[#070707] font-medium">Bedrooms</label>
-                                    {bedrooms.map((room, idx) => (
+                                    {bedrooms?.map((room, idx) => (
                                         <div key={idx} className="p-3 rounded-lg border cursor-pointer relative group space-y-3" onClick={() => openEditDialog(idx)}>
                                             <button
                                                 type="button"
@@ -360,7 +398,7 @@ export default function page() {
                                                     <span>Bathrooms : </span>
                                                     <span>{room?.bathrooms}</span>
                                                 </div>
-                                                {room?.size_sqm&&<div>
+                                                {room?.size_sqm && <div>
                                                     <span>Size : </span>
                                                     <span>{room?.size_sqm} sqrm</span>
                                                 </div>}
@@ -794,7 +832,7 @@ export default function page() {
                                 <div className="space-y-3">
                                     <h3 className="text-[#070707] font-medium">Do you serve guests breakfast?</h3>
                                     <div>
-                                        <RadioGroup defaultValue={guestFood["breakfast"]} onValueChange={(e) => setGuestFood(prev => ({ ...prev, ["breakfast"]: e }))}>
+                                        <RadioGroup value={guestFood["breakfast"]} onValueChange={(e) => setGuestFood(prev => ({ ...prev, ["breakfast"]: e }))}>
                                             <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="yes" id="yes" />
                                                 <Label htmlFor="yes" className="text-sm font-normal">Yes</Label>
@@ -823,10 +861,10 @@ export default function page() {
                                         <h2>How much does parking cost?</h2>
                                         <div className="space-y-2">
                                             <div className="flex flex-col lg:flex-row gap-2">
-                                                <input type="number" placeholder="US$" value={guestParking["price"]} onChange={(e) => setGuestParking(prev => ({ ...prev, ["price"]: parseInt(e.target.value) }))} className="flex-1 outline-none border border-[#E9E9EA] rounded-[8px] p-4 text-[#777980] text-sm flex items-center" />
-                                                <div className="w-[165px]">
+                                                <input type="number" required placeholder="US$" value={guestParking["price"]} onChange={(e) => setGuestParking(prev => ({ ...prev, ["price"]: parseInt(e.target.value) }))} className="flex-1 outline-none border border-[#E9E9EA] rounded-[8px] p-4 text-[#777980] text-sm flex items-center" />
+                                                {/* <div className="w-[165px]">
                                                     <Dropdownmenu data={[{ code: "square_meter", name: "Square meters" }]} handleSelect={handleApartmentSizeType} selectedData={selectedApartmentSizeType} title="type" showTitle={false} />
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </div>
                                     </div>
@@ -1056,7 +1094,7 @@ export default function page() {
 
                                 <div className="flex justify-between w-full space-x-3 px-4">
                                     <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
-                                    <button type="submit" className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer">Continue</button>
+                                    <button type="submit" disabled={loading} className={`text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] ${loading?"cursor-not-allowed opacity-50":"cursor-pointer"}`}>{loading ? "Loading..." : "Continue"}</button>
                                 </div>
                             </div>
                             <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block">

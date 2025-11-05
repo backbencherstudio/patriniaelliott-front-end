@@ -16,6 +16,7 @@ export default function Dropdownmenu({data,selectedData,handleSelect,title,showT
                 name="region"
                 id="region"
                 value={selectedData}
+                required
                 onChange={(e) => handleSelect(e)}
                 className="border border-[#E9E9EA] rounded-[8px] text-[#777980] p-4 outline-none appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiA5bDYgNiA2LTYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=')] bg-no-repeat bg-[right_1rem_center] bg-[length:1rem] cursor-pointer"
             >
