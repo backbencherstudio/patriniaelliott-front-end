@@ -33,7 +33,6 @@ export default function LoginForm() {
       console.log(res?.data?.type);
       const userType = res?.data?.type
       const token = res?.data?.authorization?.token
-      
       if (res?.data?.success == true) {
         toast.success(res?.data?.message)
         CookieHelper.set({ key: "tourAccessToken", value: token })

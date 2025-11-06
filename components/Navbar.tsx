@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { HiOutlineMenu, HiX } from "react-icons/hi";
 
 import { useToken } from "@/hooks/useToken";
@@ -11,6 +11,8 @@ import { UserService } from "@/service/user/user.service";
 import { useQuery } from "@tanstack/react-query";
 import MenuDropDown from "./MenuDropDown";
 import LanguageSwitcher from "./reusable/LanguageSwitcher";
+import { CookieHelper } from "@/helper/cookie.helper";
+
 
 const menuItems = [
   { en: "Home", slug: "/" },
@@ -25,6 +27,18 @@ export default function Navbar() {
   const [language, setLanguage] = useState<"en">("en");
   const [menuOpen, setMenuOpen] = useState(false);
   const {token}=useToken()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  useEffect(() => {
+    if(searchParams.get('token')){
+     const redirect = searchParams.get('token')
+     CookieHelper.set({ key: "tourAccessToken", value: redirect })
+     router.push('/')
+    }
+  }, [searchParams])
+  
+  
     const isActive = (href: string): boolean => {
     if (href === "/") {
       return pathname === "/";
