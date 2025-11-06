@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "blades-allowed-sympathy-production.trycloudflare.com",
+        hostname: "bills-spine-unique-paths.trycloudflare.com",
       },
       {
         protocol: "https",
@@ -69,7 +69,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "bills-spine-unique-paths.trycloudflare.com",
+        hostname: "edition-deborah-raised-committed.trycloudflare.com",
       },
       {
         protocol: "https",
