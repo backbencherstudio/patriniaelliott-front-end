@@ -21,7 +21,7 @@ import { Switch } from "@/components/ui/switch";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import { Check } from "lucide-react";
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import AddExtraServices from "../_components/AddExtraServices";
 import PolicyEditor from '../../_components/PolicyEditor';
 import toast, { Toaster } from "react-hot-toast";
@@ -46,24 +46,13 @@ export default function page() {
             name: string;
             description: string;
             bedrooms: bedTypes;
-            max_guests: number;
+            // max_guests: number;
             bathrooms: number;
             size_sqm?: number;
-            price: number;
+            // price: number;
         }[]
-    >([{
-        name: "alsdkfjlaskdjf;lasd fkalsdjf",
-        description: "alskdjflaksjdf;lkasjdf;lkajs",
-        bedrooms: {
-            single_bed: 2,
-            double_bed: 1,
-            large_bed: 0,
-            extra_large_bed: 0
-        },
-        max_guests: 3,
-        bathrooms: 2,
-        price: 120
-    }]);
+    >([]);
+    const [loading, setLoading] = useState(false);
 
 
     interface bedTypes {
@@ -136,8 +125,8 @@ export default function page() {
         setDialogOpen(true);
         setApartmentsize(room?.size_sqm);
         setNewBedroomDesc(room?.description);
-        setNewBedroomPrice(room?.price);
-        setNumberOfGuest(room?.max_guests);
+        // setNewBedroomPrice(room?.price);
+        // setNumberOfGuest(room?.max_guests);
         setnumberOfBathRooms(room?.bathrooms);
     };
 
@@ -167,25 +156,23 @@ export default function page() {
             name: newBedroomTitle,
             bedrooms: { ...newBedCounts },
             description: newBedroomDesc,
-            max_guests: numberOfGuest,
+            // max_guests: numberOfGuest,
             bathrooms: numberOfBathRooms,
             size_sqm: apartmentsize,
-            price: newBedroomPrice
+            // price: newBedroomPrice
         };
 
         if (editingIndex !== null) {
-            // Update existing bedroom
             setBedRooms((prev) => {
                 const updated = [...prev];
                 updated[editingIndex] = newBedroom;
                 return updated;
             });
         } else {
-            // Add new bedroom
             setBedRooms((prev) => [...prev, newBedroom]);
         }
 
-        // Close dialog and reset state
+
         setDialogOpen(false);
         setNewBedroomTitle("");
         setNewBedCounts({
@@ -236,6 +223,7 @@ export default function page() {
     const checkOutUntilOptions = ampmTimes;
 
     const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true);
         e.preventDefault();
         setFormData({
             name: propertyName,
@@ -252,6 +240,8 @@ export default function page() {
 
         updateListProperty({
             name: propertyName,
+            // price_per_night: newBedroomPrice,
+            number_of_guest_allowed: numberOfGuest,
             property_description: propertyDescription,
             general: {
                 wifi: guestGeneral.free_wifi,
@@ -272,8 +262,8 @@ export default function page() {
             },
             breakfast_available: guestFood.breakfast === "yes",
             parking: {
-                available: guestParking.isavailable === "yes_free" || guestParking.isavailable === "yes_paid",
-                reserveParkingSpot: guestParking.reservation === "yes",
+                available: guestParking.isavailable,
+                reserveParkingSpot: guestParking.reservation,
                 parkingType: guestParking.parkingtype === 'public',
                 cost: guestParking.price,
                 type: guestParking.reservation === "yes_free" ? "free" : "paid"
@@ -295,9 +285,59 @@ export default function page() {
             extra_services: services,
             // apartment_size: apartmentsize.toString()
         })
-
-        router.push("/property-list/setup/apartment-photos")
+        setTimeout(() => {
+            setLoading(false);
+            router.push("/property-list/setup/apartment-photos")
+        }, 1000);
     }
+
+
+    useEffect(() => {
+        setPropertyName(listProperty?.name || '');
+        setPropertyDescription(listProperty?.property_description || "");
+        setGuestGeneral({
+            air_condition: listProperty?.general?.air_conditioning,
+            free_wifi: listProperty?.general?.wifi,
+            heating: listProperty?.general?.heating,
+            ev_charging: listProperty?.general?.electric_vehicle_charging_station
+        })
+        setBedRooms(listProperty?.bedrooms || []);
+        setGuestCooking({
+            kitchen: listProperty?.cooking_cleaning?.kitchen,
+            kitchenette: listProperty?.cooking_cleaning?.kitchenette,
+            washing_machine: listProperty?.cooking_cleaning?.washing_machine
+        })
+        setGuestEntertainment({
+            flat_tv: listProperty?.entertainment?.flat_screen_tv,
+            pool: listProperty?.entertainment?.swimming_pool,
+            minibar: listProperty?.entertainment?.minibar,
+            sauna: listProperty?.entertainment?.sauna
+        })
+        setServices(listProperty?.extra_services || []);
+        setGuestFood({
+            breakfast: listProperty?.breakfast_available ? "yes" : "no"
+        });
+        setHouseRules({
+            smoking: listProperty?.house_rules?.no_smoking,
+            pets: listProperty?.house_rules?.no_pets,
+            children: listProperty?.house_rules?.no_children,
+            events: listProperty?.house_rules?.parties_allowed
+        })
+        setCheckIn({
+            from: listProperty?.check_in_from || "8:00 AM",
+            until: listProperty?.check_in_untill || "6:00 PM"
+        })
+        setCheckOut({
+            from: listProperty?.check_out_from || "8:00 AM",
+            until: listProperty?.check_out_untill || "11:00 AM"
+        })
+        setGuestParking({
+            price: listProperty?.parking?.cost,
+            isavailable: listProperty?.parking?.available,
+            reservation: listProperty?.parking?.reserveParkingSpot,
+            parkingtype: listProperty?.parking?.type
+        })
+    }, [])
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7] relative">
@@ -313,7 +353,7 @@ export default function page() {
                                 <h3>Property Details</h3>
                                 <div>
                                     <label htmlFor="property-name" className="block text-[#070707] font-medium mb-3">Property Name</label>
-                                    <input type="text" name="property-name" id="property-name" placeholder="Enter property name" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" onChange={(e) => setPropertyName(e.target.value)} />
+                                    <input value={propertyName} required type="text" name="property-name" id="property-name" placeholder="Enter property name" className="outline-none  w-full border px-2 py-2 md:p-3 rounded-lg" onChange={(e) => setPropertyName(e.target.value)} />
                                 </div>
                                 <div>
                                     <label htmlFor="property-description" className="block text-[#070707] font-medium mb-3">Property Description</label>
@@ -321,7 +361,7 @@ export default function page() {
                                 </div>
                                 <div className="space-y-3">
                                     <label htmlFor="bedrooms" className="block text-[#070707] font-medium">Bedrooms</label>
-                                    {bedrooms.map((room, idx) => (
+                                    {bedrooms?.map((room, idx) => (
                                         <div key={idx} className="p-3 rounded-lg border cursor-pointer relative group space-y-3" onClick={() => openEditDialog(idx)}>
                                             <button
                                                 type="button"
@@ -348,19 +388,19 @@ export default function page() {
                                                 </ul>
                                             </div>
                                             <div className="flex items-center gap-4 text-sm">
-                                                <div>
+                                                {/* <div>
                                                     <span>Price: </span>
                                                     <span>${room?.price}</span>
-                                                </div>
-                                                <div>
+                                                </div> */}
+                                                {/* <div>
                                                     <span>Maximum guests: </span>
                                                     <span>{room?.max_guests}</span>
-                                                </div>
+                                                </div> */}
                                                 <div>
                                                     <span>Bathrooms : </span>
                                                     <span>{room?.bathrooms}</span>
                                                 </div>
-                                                {room?.size_sqm&&<div>
+                                                {room?.size_sqm && <div>
                                                     <span>Size : </span>
                                                     <span>{room?.size_sqm} sqrm</span>
                                                 </div>}
@@ -449,7 +489,7 @@ export default function page() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="space-y-2">
+                                                {/* <div className="space-y-2">
                                                     <label htmlFor="price" className="text-sm text-gray-600">Price</label>
                                                     <input
                                                         type="number"
@@ -459,7 +499,7 @@ export default function page() {
                                                         value={newBedroomPrice}
                                                         onChange={(e) => setNewBedroomPrice(Number(e.target.value))}
                                                     />
-                                                </div>
+                                                </div> */}
                                                 <div className="flex flex-col gap-1">
                                                     <label htmlFor="desc">Enter bedroom description</label>
                                                     <textarea
@@ -470,23 +510,6 @@ export default function page() {
                                                         onChange={(e) => setNewBedroomDesc(e.target.value)}
                                                         className="outline-none border px-2 py-2 rounded-lg resize-none h-[120px]"
                                                     />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <h3 className="text-[#070707] font-medium">How many guests can stay?</h3>
-                                                    <div className="w-fit px-[10px] py-[13px] border border-[#E9E9EA] rounded-[8px] flex gap-4 select-none">
-                                                        <div className="border border-[#D6AE29] rounded-full cursor-pointer p-[6px] flex items-center justify-center" onClick={() => setNumberOfGuest(prev => (prev > 0 ? prev - 1 : prev))}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                                <path fillRule="evenodd" clipRule="evenodd" d="M11.5545 7.99913C11.5545 8.11701 11.5076 8.23005 11.4243 8.3134C11.3409 8.39675 11.2279 8.44358 11.11 8.44358H4.8878C4.76993 8.44358 4.65688 8.39675 4.57353 8.3134C4.49018 8.23005 4.44336 8.11701 4.44336 7.99913C4.44336 7.88126 4.49018 7.76821 4.57353 7.68486C4.65688 7.60151 4.76993 7.55469 4.8878 7.55469H11.11C11.2279 7.55469 11.3409 7.60151 11.4243 7.68486C11.5076 7.76821 11.5545 7.88126 11.5545 7.99913Z" fill="#D6AE29" />
-                                                            </svg>
-                                                        </div>
-                                                        <div className="text-[#4A4C56] text-sm flex items-center justify-center w-[20px]">{numberOfGuest < 9 ? `0${numberOfGuest}` : numberOfGuest}</div>
-                                                        <div className="bg-[#D6AE29] border border-[#D6AE29] rounded-full cursor-pointer p-[6px] flex items-center justify-center" onClick={() => setNumberOfGuest(prev => prev + 1)}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                                <path d="M8.00057 12C7.70032 12 7.45703 11.7567 7.45703 11.4565V4.54354C7.45703 4.24329 7.70032 4 8.00057 4C8.30082 4 8.54411 4.24329 8.54411 4.54354V11.4565C8.54411 11.7567 8.30082 12 8.00057 12Z" fill="black" />
-                                                                <path d="M11.4565 8.54411H4.54354C4.24329 8.54411 4 8.30082 4 8.00057C4 7.70032 4.24329 7.45703 4.54354 7.45703H11.4565C11.7567 7.45703 12 7.70032 12 8.00057C12 8.30082 11.7567 8.54411 11.4565 8.54411Z" fill="black" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                                 <div className="space-y-2">
                                                     <h3 className="text-[#070707] font-medium">How many bathrooms are there?</h3>
@@ -537,6 +560,34 @@ export default function page() {
                                         </DialogContent>
 
                                     </Dialog>
+                                    {/* <div className="space-y-2">
+                                        <label htmlFor="price" className="text-sm text-gray-600">Price per night</label>
+                                        <input
+                                            type="number"
+                                            id="price"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            placeholder="Enter price"
+                                            value={newBedroomPrice}
+                                            onChange={(e) => setNewBedroomPrice(Number(e.target.value))}
+                                        />
+                                    </div> */}
+                                    <div className="space-y-2">
+                                        <h3 className="text-[#070707] font-medium">How many guests can stay?</h3>
+                                        <div className="w-fit px-[10px] py-[13px] border border-[#E9E9EA] rounded-[8px] flex gap-4 select-none">
+                                            <div className="border border-[#D6AE29] rounded-full cursor-pointer p-[6px] flex items-center justify-center" onClick={() => setNumberOfGuest(prev => (prev > 0 ? prev - 1 : prev))}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                    <path fillRule="evenodd" clipRule="evenodd" d="M11.5545 7.99913C11.5545 8.11701 11.5076 8.23005 11.4243 8.3134C11.3409 8.39675 11.2279 8.44358 11.11 8.44358H4.8878C4.76993 8.44358 4.65688 8.39675 4.57353 8.3134C4.49018 8.23005 4.44336 8.11701 4.44336 7.99913C4.44336 7.88126 4.49018 7.76821 4.57353 7.68486C4.65688 7.60151 4.76993 7.55469 4.8878 7.55469H11.11C11.2279 7.55469 11.3409 7.60151 11.4243 7.68486C11.5076 7.76821 11.5545 7.88126 11.5545 7.99913Z" fill="#D6AE29" />
+                                                </svg>
+                                            </div>
+                                            <div className="text-[#4A4C56] text-sm flex items-center justify-center w-[20px]">{numberOfGuest < 9 ? `0${numberOfGuest}` : numberOfGuest}</div>
+                                            <div className="bg-[#D6AE29] border border-[#D6AE29] rounded-full cursor-pointer p-[6px] flex items-center justify-center" onClick={() => setNumberOfGuest(prev => prev + 1)}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                    <path d="M8.00057 12C7.70032 12 7.45703 11.7567 7.45703 11.4565V4.54354C7.45703 4.24329 7.70032 4 8.00057 4C8.30082 4 8.54411 4.24329 8.54411 4.54354V11.4565C8.54411 11.7567 8.30082 12 8.00057 12Z" fill="black" />
+                                                    <path d="M11.4565 8.54411H4.54354C4.24329 8.54411 4 8.30082 4 8.00057C4 7.70032 4.24329 7.45703 4.54354 7.45703H11.4565C11.7567 7.45703 12 7.70032 12 8.00057C12 8.30082 11.7567 8.54411 11.4565 8.54411Z" fill="black" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 {/* <div className="space-y-2">
                                     <h3 className="text-[#070707] font-medium">How many guests can stay?</h3>
@@ -794,7 +845,7 @@ export default function page() {
                                 <div className="space-y-3">
                                     <h3 className="text-[#070707] font-medium">Do you serve guests breakfast?</h3>
                                     <div>
-                                        <RadioGroup defaultValue={guestFood["breakfast"]} onValueChange={(e) => setGuestFood(prev => ({ ...prev, ["breakfast"]: e }))}>
+                                        <RadioGroup value={guestFood["breakfast"]} onValueChange={(e) => setGuestFood(prev => ({ ...prev, ["breakfast"]: e }))}>
                                             <div className="flex items-center space-x-2">
                                                 <RadioGroupItem value="yes" id="yes" />
                                                 <Label htmlFor="yes" className="text-sm font-normal">Yes</Label>
@@ -823,10 +874,10 @@ export default function page() {
                                         <h2>How much does parking cost?</h2>
                                         <div className="space-y-2">
                                             <div className="flex flex-col lg:flex-row gap-2">
-                                                <input type="number" placeholder="US$" value={guestParking["price"]} onChange={(e) => setGuestParking(prev => ({ ...prev, ["price"]: parseInt(e.target.value) }))} className="flex-1 outline-none border border-[#E9E9EA] rounded-[8px] p-4 text-[#777980] text-sm flex items-center" />
-                                                <div className="w-[165px]">
+                                                <input type="number" required placeholder="US$" value={guestParking["price"]} onChange={(e) => setGuestParking(prev => ({ ...prev, ["price"]: parseInt(e.target.value) }))} className="flex-1 outline-none border border-[#E9E9EA] rounded-[8px] p-4 text-[#777980] text-sm flex items-center" />
+                                                {/* <div className="w-[165px]">
                                                     <Dropdownmenu data={[{ code: "square_meter", name: "Square meters" }]} handleSelect={handleApartmentSizeType} selectedData={selectedApartmentSizeType} title="type" showTitle={false} />
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </div>
                                     </div>
@@ -1056,7 +1107,7 @@ export default function page() {
 
                                 <div className="flex justify-between w-full space-x-3 px-4">
                                     <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
-                                    <button type="submit" className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer">Continue</button>
+                                    <button type="submit" disabled={loading} className={`text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] ${loading ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}>{loading ? "Loading..." : "Continue"}</button>
                                 </div>
                             </div>
                             <div className="w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block">
