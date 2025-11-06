@@ -69,7 +69,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "edition-deborah-raised-committed.trycloudflare.com",
+        hostname: "bills-spine-unique-paths.trycloudflare.com",
       },
       {
         protocol: "https",
