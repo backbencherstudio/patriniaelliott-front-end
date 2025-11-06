@@ -1,14 +1,12 @@
 'use client'
 
-import { useEffect, useState, useRef } from "react"
-import { useRouter } from 'next/navigation';
 import Dropdownmenu from "@/components/reusable/Dropdownmenu";
 import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
-import country from '@/public/toure/countries.json'
-import { UserService } from "@/service/user/user.service";
-import { CookieHelper } from "@/helper/cookie.helper";
+import country from '@/public/toure/countries.json';
 import { MyProfileService } from "@/service/user/myprofile.service";
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 const regions = [
@@ -34,7 +32,7 @@ type Coordinates = {
 
 declare global {
     interface Window {
-        google: any;
+        google: { translate: { TranslateElement: new (config: { pageLanguage: string; includedLanguages: string; autoDisplay: boolean; }) => void; }; };
     }
 }
 
@@ -110,15 +108,31 @@ export default function Page() {
     };
 
     useEffect(() => {
-        if (!window.google) {
+        const ensureLoadedAndInit = () => {
+            if (window.google && (window as any).google.maps) {
+                initMap();
+                return;
+            }
+            const interval = setInterval(() => {
+                if (window.google && (window as any).google.maps) {
+                    clearInterval(interval);
+                    initMap();
+                }
+            }, 100);
+            setTimeout(() => clearInterval(interval), 5000);
+        };
+
+        // Load the script once with a callback
+        if (!document.querySelector('#google-maps-script')) {
+            (window as any).initMap = ensureLoadedAndInit;
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
+            script.id = 'google-maps-script';
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`;
             script.async = true;
             script.defer = true;
-            script.onload = initMap;
             document.head.appendChild(script);
         } else {
-            initMap();
+            ensureLoadedAndInit();
         }
 
         return () => {
