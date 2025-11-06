@@ -1,6 +1,5 @@
 'use client'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { countryList } from '@/DemoAPI/country';
 import { useMyProfile } from '@/hooks/useMyProfile';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
@@ -81,6 +80,8 @@ export default function MyProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [countries, setCountries] = useState<string[]>([]);
+  const [loadingCountries, setLoadingCountries] = useState(true);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -114,6 +115,34 @@ export default function MyProfile() {
     return null;
   };
 
+  // Fetch countries from REST Countries API
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        setLoadingCountries(true);
+        const response = await fetch('https://restcountries.com/v3.1/all?fields=name');
+        if (!response.ok) {
+          throw new Error('Failed to fetch countries');
+        }
+        const data = await response.json();
+        // Sort countries alphabetically by name
+        const sortedCountries = data
+          .map((country: { name: { common: string } }) => country.name.common)
+          .sort((a: string, b: string) => a.localeCompare(b));
+        setCountries(sortedCountries);
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+        toast.error('Failed to load countries. Please refresh the page.');
+        // Fallback to empty array or you could use a default list
+        setCountries([]);
+      } finally {
+        setLoadingCountries(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
   useEffect(() => {
     if (!me) return;
     // Normalize API shape -> form fields
@@ -143,7 +172,7 @@ export default function MyProfile() {
 
   // Options for dropdowns
   const genderOptions = ['Female', 'Male', 'Non-binary', 'Prefer not to say'];
-  const countryOptions = countryList.map((c) => c.name);
+  const countryOptions = countries;
 
   // Custom dropdown component
   const CustomDropdown = ({ 
@@ -486,16 +515,22 @@ export default function MyProfile() {
               name="country"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <Select value={value} onValueChange={onChange} disabled={!isEditing}>
+                <Select value={value} onValueChange={onChange} disabled={!isEditing || loadingCountries}>
                   <SelectTrigger className="select-input h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-                    <SelectValue placeholder="Select country" />
+                    <SelectValue placeholder={loadingCountries ? "Loading countries..." : "Select country"} />
                   </SelectTrigger>
-                  <SelectContent>
-                    {countryOptions.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
+                  <SelectContent className="max-h-[300px]">
+                    {loadingCountries ? (
+                      <div className="px-5 py-3 text-gray-500 text-center">Loading countries...</div>
+                    ) : countryOptions.length > 0 ? (
+                      countryOptions.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-5 py-3 text-gray-500 text-center">No countries available</div>
+                    )}
                   </SelectContent>
                 </Select>
               )}
@@ -613,16 +648,22 @@ export default function MyProfile() {
                 name="issuingCountry"
                 control={control}
                 render={({ field: { value, onChange } }) => (
-                  <Select value={value} onValueChange={onChange} disabled={!isEditing}>
+                  <Select value={value} onValueChange={onChange} disabled={!isEditing || loadingCountries}>
                     <SelectTrigger className="select-input h-14 px-5 rounded-lg border border-gray-200 focus-within:border-blue-600">
-                      <SelectValue placeholder="Select issuing country" />
+                      <SelectValue placeholder={loadingCountries ? "Loading countries..." : "Select issuing country"} />
                     </SelectTrigger>
-                    <SelectContent>
-                      {countryOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
+                    <SelectContent className="max-h-[300px]">
+                      {loadingCountries ? (
+                        <div className="px-5 py-3 text-gray-500 text-center">Loading countries...</div>
+                      ) : countryOptions.length > 0 ? (
+                        countryOptions.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="px-5 py-3 text-gray-500 text-center">No countries available</div>
+                      )}
                     </SelectContent>
                   </Select>
                 )}
