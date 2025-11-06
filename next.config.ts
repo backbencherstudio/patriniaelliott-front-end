@@ -57,7 +57,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "lower-microphone-administrators-cycling.trycloudflare.com",
+        hostname: "bills-spine-unique-paths.trycloudflare.com",
+      },
+      {
+        protocol: "http",
+        hostname: "bills-spine-unique-paths.trycloudflare.com",
       },
       {
         protocol: "https",
