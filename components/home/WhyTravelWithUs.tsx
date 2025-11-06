@@ -29,7 +29,7 @@ const travelFeatures = [
 
 export default function WhyTravelWithUs() {
   return (
-    <section className="bg-bgColor  py-20 px-4 md:px-16">
+    <section className="bg-bgColor  py-20  md:px-16">
         <div className=' container'>
   <h2 className="text-3xl lg:text-5xl leading-[150%] font-semibold text-center mb-12">
         Why Travel with Us

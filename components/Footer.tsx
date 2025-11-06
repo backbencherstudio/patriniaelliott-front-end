@@ -21,12 +21,12 @@ const quickLinks = [
 ];
 export default function Footer() {
   return (
-    <footer className="bg-primaryColor px-4">
+    <footer className="bg-primaryColor md:px-4">
       <div className=" text-white py-12 ">
 <div className=" container grid grid-cols-1 md:grid-cols-12 gap-10">
         {/* Column 1: Logo & Newsletter */}
         <div className=" md:col-span-6 lg:col-span-4">
-          <div className=" w-[328px]">
+          <div className=" max-w-[328px]">
             <h2 className="text-5xl font-bold mb-8">LOGO</h2>
             <p className="text-base leading-[150%] mb-6">
               Explore the world with us! Find inspiration, plan adventures, and
@@ -36,9 +36,9 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="px-4 py-3 text-base rounded-l-md rounded-[8px] border border-[#EDFAFF]/50 bg-[#EDFAFF]/10 text-[#D2D2D5] w-full  focus:outline-none"
+                className="px-4 py-2 md:py-3  rounded-l-md rounded-[8px] border border-[#EDFAFF]/50 bg-[#EDFAFF]/10 text-[#D2D2D5] w-full text-sm md:text-base  focus:outline-none"
               />
-              <button aria-label="Sign Up" className=" absolute top-1/2 -translate-1/2 -right-13  bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 text-base leading-[150%] rounded-md font-medium">
+              <button aria-label="Sign Up" className=" absolute top-1/2 -translate-1/2 -right-11 md:-right-13  bg-yellow-400 hover:bg-yellow-500 text-black md:px-4 px-2 py-1 md:py-2 text-base leading-[150%] rounded-md font-medium">
                 Sign Up →
               </button>
             </div>

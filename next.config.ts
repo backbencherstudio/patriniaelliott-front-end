@@ -15,6 +15,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "bills-spine-unique-paths.trycloudflare.com",
       },
+      {
+        protocol: "https",
+        hostname: "flagcdn.com",
+      },
+      {
+        protocol: "http",
+        hostname: "flagcdn.com",
+      },
     ],
   },
 };

@@ -9,6 +9,7 @@ import { ChevronRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import { cookies } from "next/headers";
 import { toast } from "react-toastify";
+import { Suspense } from "react";
 const BookingForm = dynamic(() => import('@/components/apartment/BookingForm'), {
   loading: () => (
     <div className="p-6 bg-[#D6AE29]/8 shadow-xl border border-secondaryColor rounded-lg space-y-4">
@@ -77,6 +78,7 @@ async function ApartmnetDetailsPage(props: {
     toast.error(error?.response?.data?.message?.message || "Something went wrong");
 
   }
+  
 
   return (
     <div>
@@ -104,7 +106,7 @@ async function ApartmnetDetailsPage(props: {
       </div>
       <div className=" bg-bgColor relative lg:mt-15 py-12 lg:py-20">
         <div className="hidden md:block container absolute left-1/2 -translate-1/2 -top-2">
-          <AvailabilitySearchBox />
+         <Suspense fallback={<div>Loading...</div>}><AvailabilitySearchBox /></Suspense>
         </div>
         <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  container">
           {hotelData.map((tour: any, index) => (

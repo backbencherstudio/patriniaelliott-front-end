@@ -1,22 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { BsGlobe2 } from "react-icons/bs";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { HiOutlineMenu, HiX } from "react-icons/hi";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useToken } from "@/hooks/useToken";
 import { cn } from "@/lib/utils";
 import { UserService } from "@/service/user/user.service";
 import { useQuery } from "@tanstack/react-query";
 import MenuDropDown from "./MenuDropDown";
+import LanguageSwitcher from "./reusable/LanguageSwitcher";
+import { CookieHelper } from "@/helper/cookie.helper";
+
 
 const menuItems = [
   { en: "Home", slug: "/" },
@@ -31,6 +27,18 @@ export default function Navbar() {
   const [language, setLanguage] = useState<"en">("en");
   const [menuOpen, setMenuOpen] = useState(false);
   const {token}=useToken()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  useEffect(() => {
+    if(searchParams.get('token')){
+     const redirect = searchParams.get('token')
+     CookieHelper.set({ key: "tourAccessToken", value: redirect })
+     router.push('/')
+    }
+  }, [searchParams])
+  
+  
     const isActive = (href: string): boolean => {
     if (href === "/") {
       return pathname === "/";
@@ -72,41 +80,31 @@ export default function Navbar() {
           ))}
         </nav>
         <div className="hidden md:flex items-center space-x-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="text-white text-base flex items-center gap-2 cursor-pointer">
-              <BsGlobe2 /> {language.toUpperCase()}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setLanguage("en")}>
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem >
-                  German
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+          <div className="flex items-center  ">
+            
+            <LanguageSwitcher/>
+          </div>
           {token && data?.success  ? (
             <>
               <Link
-                aria-label="List your proparty"
+                aria-label="List your property"
                 href="/property-list"
                 prefetch={true}
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
               >
-                List your proparty
+                List your property
               </Link>
              <MenuDropDown setMenuOpen={setMenuOpen} data={data?.data || data }/>
             </>
           ) : (
             <>
             <Link
-                aria-label="List your proparty"
+                aria-label="List your property"
                   prefetch={true}
                 href={token ? "/property-list" : "/login"}
                 className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
               >
-                List your proparty
+                List your property
               </Link>
                 <Link aria-label="Login" prefetch={true} href="/login" className="text-white text-base">
                 Login
@@ -191,40 +189,21 @@ export default function Navbar() {
           ))}
           {/* Language Dropdown (Mobile) */}
           <div className="flex items-center gap-2 mt-4">
-            <BsGlobe2 className="text-white" />
-            <select
-              value={language}
-              aria-label="Language"
-              onChange={(e) => setLanguage(e.target.value as "en" )}
-              className="bg-transparent outline-none text-white"
-            >
-              <option value="en" className="text-black">English</option>
-              <option value="ger" className="text-black">German</option>
-            </select>
+           <LanguageSwitcher/>
           </div>
           {/* Auth Buttons */}
           <div className="mt-4 flex flex-col text-center gap-3">
-              {token && data?.success ? <>
+              
                 <Link
-                  aria-label="List your proparty"
+                  aria-label="List your property"
                 prefetch={true}
                   href={token ? "/property-list" : "/login"}
                   onClick={() => setMenuOpen(false)}
                   className="bg-secondaryColor text-blackColor font-medium cursor-pointer text-base px-4 py-2 rounded-full"
                 >
-                  List your proparty
+                  List your property
                 </Link>      
-              </> : <>
-                <Link
-                  aria-label="Login"
-                  prefetch={true}
-                  href="/login"
-                  className="text-white text-base"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Login
-                </Link>
-              </>}
+           
            
           </div>
         </div>

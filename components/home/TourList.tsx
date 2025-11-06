@@ -49,7 +49,7 @@ export default function TourList() {
 
 
   return (
-    <section className="container px-4 md:px-16  relative">
+    <section className="container md:px-16  relative">
       <div className="my-20">
         <h2 className="text-3xl lg:text-5xl font-medium text-blackColor text-center mb-2 lg:mb-5">
           Top Travel Packages
