@@ -1,5 +1,6 @@
 'use client'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { countryList } from '@/DemoAPI/country';
 import { useMyProfile } from '@/hooks/useMyProfile';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
@@ -142,11 +143,7 @@ export default function MyProfile() {
 
   // Options for dropdowns
   const genderOptions = ['Female', 'Male', 'Non-binary', 'Prefer not to say'];
-  const countryOptions = [
-    'United States', 'United Kingdom', 'Canada', 'Australia', 
-    'Germany', 'France', 'Japan', 'China', 'India', 'Brazil',
-    'Mexico', 'Spain', 'Italy', 'Netherlands', 'Singapore'
-  ];
+  const countryOptions = countryList.map((c) => c.name);
 
   // Custom dropdown component
   const CustomDropdown = ({ 

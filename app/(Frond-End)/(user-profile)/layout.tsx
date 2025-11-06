@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ProfileSidebar from "./component/common/Sidebar";
 
 
@@ -12,17 +12,45 @@ interface bookingLayoutProps {
 
 const BookingLayout: React.FC<bookingLayoutProps> = ({ children }) => {
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+    const [isSticky, setIsSticky] = useState<boolean>(false);
+    const sidebarRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const openSidebar = () => setSidebarOpen(true);
     const closeSidebar = () => setSidebarOpen(false);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            // Get navbar height dynamically or use a fixed value
+            const navbar = document.querySelector('header');
+            const navbarHeight = navbar ? navbar.offsetHeight : 100;
+            const scrollY = window.scrollY;
+
+            if (scrollY >= navbarHeight) {
+                setIsSticky(true);
+            } else {
+                setIsSticky(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Check initial state
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
     return (
-        <div className="bg-bgColor min-h-screen flex flex-col py-12">
+        <div className="bg-bgColor min-h-screen flex flex-col py-12" ref={containerRef}>
             <div className="container flex-1 flex flex-col gap-3 xl:flex-row">
                 <div
+                    ref={sidebarRef}
                     className={`
-                        fixed xl:relative
-                        !top-20 xl:!top-0 left-0 h-full
+                        fixed xl:${isSticky ? 'sticky' : 'relative'}
+                        ${isSticky ? 'xl:top-0' : ''}
+                        !top-20 xl:!top-0 left-0 
+                        xl:self-start
                         w-[312px]
                         transition-transform duration-300 ease-in-out z-50
                         xl:translate-x-0 
