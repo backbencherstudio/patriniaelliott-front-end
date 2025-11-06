@@ -312,6 +312,12 @@ const AddTour = () => {
   }, [selectedRegion]);
 
   useEffect(() => {
+    if (!listProperty?.type) {
+      router.push('/property-list')
+    }
+  }, [])
+
+  useEffect(() => {
     setValue('name', listProperty?.tour_plan?.title)
     setDescription(listProperty?.tour_plan?.description)
     setImages(listProperty?.tour_plan?.tourImages || [])
@@ -567,14 +573,15 @@ const AddTour = () => {
                       <input
                         type="text"
                         inputMode="numeric"
-                        pattern="[0-9]*"
                         placeholder="Enter min. travellers"
-                        {...register("min_traveller", {
-                          required: "Min. travellers is required",
-                          min: { value: 1, message: "Must be at least 1" },
+                        {...register('min_traveller', {
+                          required: true,
                           pattern: {
-                            value: /^[1-9]\d*$/,
-                            message: "Must be a valid number"
+                            value: /^[0-9]*$/,
+                            message: "Min. travellers is required"
+                          },
+                          onChange: (e) => {
+                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
                           }
                         })}
                         className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
@@ -595,11 +602,13 @@ const AddTour = () => {
                         pattern="[0-9]*"
                         placeholder="Enter max. travellers"
                         {...register("max_traveller", {
-                          required: "Maximum travellers is required",
-                          min: { value: 1, message: "Must be at least 1" },
+                          required: true,
                           pattern: {
-                            value: /^[1-9]\d*$/,
-                            message: "Must be a valid number"
+                            value: /^[0-9]*$/,
+                            message: "Maximum travellers is required"
+                          },
+                          onChange: (e) => {
+                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
                           }
                         })}
                         className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
@@ -669,7 +678,16 @@ const AddTour = () => {
                       type="text"
                       inputMode="numeric"
                       placeholder="Discount"
-                      {...register("discount", { required: true })}
+                      {...register("discount", {
+                        required: true,
+                        pattern: {
+                          value: /^[0-9]*$/,
+                          message: "Discount price is required"
+                        },
+                        onChange: (e) => {
+                          e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                        }
+                      })}
                       className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
                       aria-invalid={!!errors.discount}
                     />
@@ -683,7 +701,16 @@ const AddTour = () => {
                       type="text"
                       inputMode="numeric"
                       placeholder="Service fee"
-                      {...register("service_fee", { required: true })}
+                      {...register("service_fee", {
+                        required: true,
+                        pattern: {
+                          value: /^[0-9]*$/,
+                          message: "Service fee is required"
+                        },
+                        onChange: (e) => {
+                          e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                        }
+                      })}
                       className="w-full p-3 text-black rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600"
                       aria-invalid={!!errors.service_fee}
                     />
@@ -772,15 +799,19 @@ const AddTour = () => {
                           type="text"
                           value={extraService.price}
                           placeholder="Enter price"
-                          onChange={(e) =>
-                            setExtraService((prev) => ({ ...prev, price: e.target.value }))
-                          }
+                          pattern="/^[0-9]*$/"
+                          onChange={(e) => {
+                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                            if (e.target.value) {
+                              setExtraService((prev) => ({ ...prev, price: e.target.value }))
+                            }
+                          }}
                           className="text-base text-[#333] w-full p-3 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-purple-600 max-w-[150px]"
                         />
 
                       </div>
 
-                      
+
                     )}
                     {showExtraService && (
                       <div className="space-x-3">

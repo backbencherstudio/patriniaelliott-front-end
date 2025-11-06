@@ -51,11 +51,16 @@ function isWithinRange(day: Date, start: Date, end: Date) {
 }
 
 function toISODate(d: Date) {
-  // yyyy-mm-dd (no time) – nice for backends
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+// Interface for date prices
+interface DatePrice {
+  date: string; // ISO date string "YYYY-MM-DD"
+  price: number;
 }
 
 export default function Page() {
@@ -68,24 +73,24 @@ export default function Page() {
   const [viewDate, setViewDate] = useState<Date>(new Date());
   const nextMonthViewDate = useMemo(() => addMonths(viewDate, 1), [viewDate]);
 
-  // selection / meta
   const [licenses, setLicenses] = useState(false);
   const [termsPolicy, setTermsPolicy] = useState(false);
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
-  const [price, setPrice] = useState<number>(0);
+  const [basePrice, setBasePrice] = useState<number>(0);
+  const [datePrices, setDatePrices] = useState<DatePrice[]>([]);
+  const [editingDate, setEditingDate] = useState<string | null>(null);
+  const [editPrice, setEditPrice] = useState<string>("");
 
-  // days grid memo
   const { daysInMonth, startDay } = useMemo(() => {
     const year = viewDate.getFullYear();
     const month = viewDate.getMonth();
     const days = getDaysForMonth(year, month);
-    const sDay = startOfMonth(viewDate).getDay(); // 0..6
+    const sDay = startOfMonth(viewDate).getDay();
     return { daysInMonth: days, startDay: sDay };
   }, [viewDate]);
 
-  // (Optional next month precompute, kept for parity with your code)
   const { daysInNextMonth, nextMonthStartDay } = useMemo(() => {
     const year = nextMonthViewDate.getFullYear();
     const month = nextMonthViewDate.getMonth();
@@ -94,18 +99,99 @@ export default function Page() {
     return { daysInNextMonth: days, nextMonthStartDay: sDay };
   }, [nextMonthViewDate]);
 
-  // hydrate price from localStorage (safe parse)
+  // Initialize base price and date prices
   useEffect(() => {
     const nightly = listProperty?.type === "Tour"
       ? listProperty?.tour_plan?.price
       : listProperty?.price_per_night;
-    setPrice(Number(nightly) || 0);
-  }, []);
+    const initialPrice = Number(nightly) || 0;
+    setBasePrice(initialPrice);
+
+    // Initialize date prices with base price for all dates in range
+    if (startDate && endDate && initialPrice) {
+      initializeDatePrices(startDate, endDate, initialPrice);
+    }
+  }, [listProperty]);
+
+  // Update date prices when start/end dates change
+  useEffect(() => {
+    if (startDate && endDate && basePrice) {
+      initializeDatePrices(startDate, endDate, basePrice);
+    }
+  }, [startDate, endDate, basePrice]);
+
+  const initializeDatePrices = (start: Date, end: Date, price: number) => {
+    const newDatePrices: DatePrice[] = [];
+    const current = new Date(start);
+
+    while (current <= end) {
+      const dateStr = toISODate(current);
+      const existingPrice = datePrices.find(dp => dp.date === dateStr);
+
+      newDatePrices.push({
+        date: dateStr,
+        price: existingPrice ? existingPrice.price : price
+      });
+
+      current.setDate(current.getDate() + 1);
+    }
+    console.log("New date prices : ", newDatePrices)
+    setDatePrices(newDatePrices);
+  };
+
+  const getPriceForDate = (date: Date): number => {
+    const dateStr = toISODate(date);
+    const datePrice = datePrices.find(dp => dp.date === dateStr);
+    return datePrice ? datePrice.price : basePrice;
+  };
+
+  const handlePriceEdit = (date: Date) => {
+    const dateStr = toISODate(date);
+    const currentPrice = getPriceForDate(date);
+    setEditingDate(dateStr);
+    setEditPrice(currentPrice.toString());
+  };
+
+  const savePriceEdit = () => {
+    if (!editingDate || !editPrice) return;
+
+    const priceValue = parseFloat(editPrice);
+    if (isNaN(priceValue) || priceValue < 0) {
+      toast.error("Please enter a valid price");
+      return;
+    }
+
+    setDatePrices(prev => {
+      const existingIndex = prev.findIndex(dp => dp.date === editingDate);
+      if (existingIndex >= 0) {
+        const updated = [...prev];
+        updated[existingIndex] = { date: editingDate, price: priceValue };
+        return updated;
+      } else {
+        return [...prev, { date: editingDate, price: priceValue }];
+      }
+    });
+
+    setEditingDate(null);
+    setEditPrice("");
+  };
+
+  const cancelPriceEdit = () => {
+    setEditingDate(null);
+    setEditPrice("");
+  };
+
+  const handlePriceInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      savePriceEdit();
+    } else if (e.key === 'Escape') {
+      cancelPriceEdit();
+    }
+  };
 
   const daysNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
   const handlePrevMonth = () => {
-    // prevent going before current real month/year if you want this guard
     const now = new Date();
     const guard =
       viewDate.getMonth() !== now.getMonth() ||
@@ -120,23 +206,23 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
+    // setLoading(true);
+    console.log("Updated dateprice : ", datePrices)
 
-    // store to context (use clean ISO dates for interoperability)
+    // Update context with date prices
     updateListProperty({
       calendar_start_date: toISODate(startDate),
       calendar_end_date: toISODate(endDate),
+      date_prices: datePrices,
     });
-
-    console.log("Form data : ", listProperty);
 
     const propertyData = {
       ...listProperty,
       calendar_start_date: toISODate(startDate),
       calendar_end_date: toISODate(endDate),
+      date_prices: datePrices,
     }
 
-    console.log("Property data : ", propertyData)
     const fd = new FormData();
 
     const amenities = {
@@ -169,11 +255,14 @@ export default function Page() {
       fd.append('tour_type', String(propertyData?.tourType ?? ''));
       fd.append('meting_points', String(propertyData?.tour_plan?.meetingPoint ?? ''));
       fd.append('language', JSON.stringify(propertyData?.tour_plan?.language));
-      // fd.append('cancellation_policy', JSON.stringify(propertyData?.tour_plan?.cancellation_policy));
       fd.append('discount', String(propertyData?.tour_plan?.discount))
       fd.append('policy_description', String(propertyData?.tour_plan?.policy_description));
       fd.append('package_policies', JSON.stringify(propertyData?.tour_plan?.package_policies));
       fd.append('service_fee', String(propertyData?.tour_plan?.service_fee));
+
+      // Add date prices for tours
+      fd.append('date_prices', JSON.stringify(propertyData.date_prices));
+
       const trip_plan = [];
       for (let i = 0; i < listProperty?.tour_plan?.tripPlan?.length; i++) {
         const title = `Day ${i + 1}`;
@@ -192,7 +281,6 @@ export default function Page() {
       }
 
       fd.append('trip_plans', JSON.stringify(trip_plan))
-
       fd.append('extra_services', JSON.stringify(propertyData?.tour_plan?.extra_service));
       propertyData?.tour_plan?.tourImages?.forEach(img =>
         fd.append('package_files', img)
@@ -209,12 +297,14 @@ export default function Page() {
       fd.append('country', String(propertyData?.tour_plan?.country));
       fd.append('city', String(propertyData?.tour_plan?.city));
     } else {
-      // append with safe string conversions
       fd.append("name", String(propertyData?.name ?? ""));
       fd.append("description", String(propertyData?.about_property ?? ""));
       fd.append("price", String(propertyData?.price_per_night ?? "0"));
       fd.append("type", String(propertyData?.type ?? ""));
-      // fd.append("room_photos", JSON.stringify(propertyData?.photos ?? []));
+
+      // Add date prices for properties
+      fd.append('date_prices', JSON.stringify(propertyData.date_prices));
+
       propertyData?.photos?.forEach(photo => {
         fd.append('room_photos', photo);
       })
@@ -224,21 +314,12 @@ export default function Page() {
       fd.append("city", String(propertyData?.city ?? ""));
       fd.append("address", String(propertyData?.street ?? ""));
       fd.append("postal_code", String(propertyData?.zip_code ?? ""));
-      fd.append("bedrooms", JSON.stringify(propertyData?.bedrooms ?? "0")); // fixed
-      fd.append("bathrooms", String(propertyData?.bathrooms ?? "0"));
-      fd.append(
-        "max_capacity",
-        propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
-      );
+      fd.append("bedrooms", JSON.stringify(propertyData?.bedrooms ?? "0"));
       fd.append("check_in", JSON.stringify(check_in));
       fd.append("check_out", JSON.stringify(check_out));
       fd.append(
         "breakfast_available",
         String(Boolean(propertyData?.breakfast_available))
-      );
-      fd.append(
-        "max_guests",
-        propertyData?.number_of_guest_allowed ? String(Number(propertyData.number_of_guest_allowed)) : "1"
       );
       fd.append("calendar_start_date", toISODate(startDate));
       fd.append("calendar_end_date", toISODate(endDate));
@@ -269,7 +350,6 @@ export default function Page() {
         },
       ]))
     }
-
     const endpoint = "/admin/vendor-package";
     try {
       const res = await UserService?.createPropertyData(endpoint, fd, token);
@@ -279,20 +359,6 @@ export default function Page() {
         } else {
           toast.success("Property setup completed.");
         }
-        localStorage.removeItem("propertyData");
-        setTimeout(() => {
-          // Conditional redirection based on user type
-          if (isUser) {
-            // For users (first time property add), redirect to payment method
-            router.push("/payment-method");
-          } else if (isVendor) {
-            // For vendors (verified vendors), redirect to pending request
-            router.push("/pending-request");
-          } else {
-            // Fallback to payment method if user type is unknown
-            router.push("/payment-method");
-          }
-        }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");
       }
@@ -304,7 +370,6 @@ export default function Page() {
     }
   };
 
-  // UI helpers for labels
   const formatted = (d: Date) =>
     d.toLocaleDateString("en-US", {
       month: "long",
@@ -385,6 +450,8 @@ export default function Page() {
                         startDate.getMonth(),
                         startDate.getDate()
                       );
+                    const dayPrice = getPriceForDate(day);
+                    const isEditing = editingDate === toISODate(day);
 
                     return (
                       <div
@@ -402,26 +469,45 @@ export default function Page() {
 
                         {/* Status */}
                         {available ? (
-                          <div className="text-[12px] w-full text-start flex flex-col">
+                          <div className="text-[12px] w-full text-start flex flex-col gap-1">
                             <span className="text-[#A4A4A4] font-medium truncate">
                               Available
                             </span>
-                            <div className="text-[#4A4C56] text-[10px] lg:text-sm font-medium flex items-center gap-[2px]">
-                              ${price}
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="15"
-                                height="14"
-                                viewBox="0 0 15 14"
-                                fill="none"
-                              >
-                                <path
-                                  d="M11.0703 5.25003C11.0703 5.25003 8.49262 8.75 7.57031 8.75C6.64795 8.75 4.07031 5.25 4.07031 5.25"
-                                  stroke="#141B34"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
+                            <div
+                              className={`text-[#4A4C56] text-[10px] lg:text-sm font-medium flex items-center gap-[2px] cursor-pointer hover:bg-gray-100 rounded p-1 ${isEditing?"bg-gray-100":""}`}
+                              onClick={() => handlePriceEdit(day)}
+                            >
+                              {isEditing ? (
+                                <div className="flex items-center gap-1">
+                                  <input
+                                    type="text"
+                                    value={editPrice}
+                                    onChange={(e) => setEditPrice(e.target.value)}
+                                    onKeyDown={handlePriceInputKeyDown}
+                                    onBlur={savePriceEdit}
+                                    className="w-full border outline-none rounded px-1 text-xs"
+                                    min="0"
+                                    step="1"
+                                    autoFocus
+                                  />
+                                  {/* <button 
+                                    onClick={savePriceEdit}
+                                    className="text-xs bg-green-500 text-white px-1 rounded"
+                                  >
+                                    ✓
+                                  </button>
+                                  <button 
+                                    onClick={cancelPriceEdit}
+                                    className="text-xs bg-red-500 text-white px-1 rounded"
+                                  >
+                                    ✕
+                                  </button> */}
+                                </div>
+                              ) : (
+                                <>
+                                  ${dayPrice}
+                                </>
+                              )}
                             </div>
                           </div>
                         ) : beforeWindow ? (
@@ -445,6 +531,7 @@ export default function Page() {
               </div>
             </div>
 
+            {/* Rest of your existing UI remains the same */}
             {/* FAQs / Info */}
             <div className="space-y-6 max-w-2xl bg-white rounded-lg p-6">
               <h3 className="text-[#23262F] text-2xl font-medium">

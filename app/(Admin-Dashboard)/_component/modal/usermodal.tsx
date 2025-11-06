@@ -41,7 +41,7 @@ export default function Usermodal({  onClose, userData  }: UserModalProps) {
 
             <div className="flex flex-col items-center">
               <div className="w-[100px] h-[100px] mb-4">
-                <Image src={userData?.avatar_url} width={100} height={100} alt="profile" className="rounded-full w-full h-full object-cover" />
+                <Image src={userData?.avatar_url || "/profile.png"} width={100} height={100} alt="profile" className="rounded-full w-full h-full object-cover" />
               </div>
               <div className="text-center w-full">
                 <h3 className="text-[#22262e] text-xl font-medium mb-2">{userData?.display_name}</h3>

@@ -46,9 +46,19 @@ interface bedTypes {
     extra_large_bed?: number;
 }
 
+interface DatePrice {
+  date: string; // ISO date string "YYYY-MM-DD"
+  price: number;
+}
+
 interface bedroomsType {
-    title: string;
-    beds: bedTypes;
+    name: string;
+    description: string;
+    bedrooms: bedTypes;
+    // max_guests: number;
+    bathrooms: number;
+    size_sqm?: number;
+    // price: number;
 }
 
 interface generalType {
@@ -120,9 +130,9 @@ type tourType = {
 
 interface parkingType {
     cost: number;
-    available: boolean;
+    available: string;
     type?: string;
-    reserveParkingSpot: boolean;
+    reserveParkingSpot: string;
     parkingType: boolean;
 }
 
@@ -160,7 +170,7 @@ interface formDataType {
     max_guests: number;
     bedrooms: bedroomsType[],
     number_of_guest_allowed: number;
-    checkinPolicy:string;
+    checkinPolicy: string;
     checkoutPolicy: string;
     specialCheckinPolicy: string;
     childrenExtra: string;
@@ -198,4 +208,6 @@ interface formDataType {
     calendar_end_date: string;
     total_bedroom: number;
     tour_plan: tourType;
+    imagePreview: string[];
+    date_prices: DatePrice[];
 }

@@ -1,19 +1,13 @@
 "use client";
-import Image from "next/image";
 import { useState } from "react";
 import DynamicTableWithPagination from "../common/DynamicTable";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import DateFilter from "@/components/reusable/DateFilter";
 import { useToken } from "@/hooks/useToken";
 import { UserService } from "@/service/user/user.service";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import { useSearchParams } from "next/navigation";
 import CancelRefund from "./CancelRefund";
 import CancelRefundDetails from "./CancelRefundDetails";
 import ConfirmRefundDetails from "./ConfirmRefundDetails";
@@ -30,20 +24,21 @@ export default function PaymentPage() {
   const [selectedRole, setSelectedRole] = useState<
     "all" | "order" | "refund"
   >("all");
-  const [dateRange, setDateRange] = useState<"all" | "7" | "15" | "30">("all");
+  const searchParams= useSearchParams()
+  const dateFilter = searchParams.get("dateFilter")
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 1;
   const {token} = useToken();
 
   // React Query for fetching payment data
   const getPaymentData = async () => {
-    const endpoint = `/dashboard/payments/transactions?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}`;
+    const endpoint = `/dashboard/payments/transactions?type=${selectedRole}&limit=${itemsPerPage}&page=${currentPage}&${dateFilter ? `dateFilter=${dateFilter}` : ''}`;
     const response = await UserService.getData(endpoint, token);
     return response?.data;
   };
 
   const { data: paymentResponse, error: apiError, isLoading } = useQuery({
-    queryKey: ["paymentData", selectedRole, currentPage, itemsPerPage],
+    queryKey: ["paymentData", selectedRole, currentPage, itemsPerPage,dateFilter ],
     queryFn: getPaymentData,
     enabled: !!token,
   });
@@ -53,11 +48,10 @@ export default function PaymentPage() {
     const response = await UserService.getData(`/dashboard/payments/transactions/${transactionId}`, token);
     return response?.data?.data;
   };
-
-
   const data = paymentResponse?.data;
   const totalPages = data?.transactions?.pagination?.totalPages || 0;
   const paymentData = data?.transactions?.data || [];
+  const totalItems = data?.transactions?.pagination?.total || 0;
   const paymentHistory = data?.statistics;
   const handleViewDetails = async (user: any) => {
     try {
@@ -79,7 +73,6 @@ export default function PaymentPage() {
     setSelectedData(user);
     setCancelRefund(true);
   };
-
 
   const columns = [
     { label: "Booking ID", accessor: "booking_id" },
@@ -151,8 +144,6 @@ export default function PaymentPage() {
       ),
     },
   ];
-
-  
   const stats = [
     {
       title: "Total Bookings",
@@ -179,8 +170,6 @@ export default function PaymentPage() {
       color: "#C9A634",
     },
   ];
-
-
   
   return (
     <div className="flex flex-col gap-5">
@@ -223,56 +212,8 @@ export default function PaymentPage() {
 
           {/* Date Range Dropdown */}
           <div className=" mt-4 md:mt-0 justify-end flex gap-2">
-            {/* <div className=" items-center flex gap-1  md:gap-2 text-sm ">
-              <Select
-                value={payment}
-                onValueChange={(value) =>
-                  setPayment(
-                    value as "all" | "PayPal" | "Credit Card" | "Stripe"
-                  )
-                }
-              >
-                <SelectTrigger className="rounded-sm border border-[#0068ef] text-[#0068ef] bg-transparent focus:ring-0 focus:ring-offset-0">
-                  <SelectValue
-                    placeholder="Payment Method"
-                    className="text-[#0068ef] placeholder:text-[#0068ef]"
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Methods</SelectItem>
-                  <SelectItem value="PayPal">PayPal</SelectItem>
-                  <SelectItem value="Credit Card">Credit Card</SelectItem>
-                  <SelectItem value="Stripe">Stripe</SelectItem>
-                </SelectContent>
-              </Select>
-            </div> */}
-            <div className=" items-center flex gap-1  md:gap-2 text-sm ">
-              <Select
-                value={dateRange}
-                onValueChange={(value) =>
-                  setDateRange(value as "all" | "7" | "15" | "30")
-                }
-              >
-                <SelectTrigger aria-label="Date range" className="rounded-sm border border-[#0068ef] text-[#0068ef] bg-transparent ">
-                  <Image
-                    src="/dashboard/icon/filter.svg"
-                    alt="filter"
-                    width={14}
-                    height={14}
-                  />
-                  <SelectValue
-                    placeholder="All Time"
-                    className="text-[#0068ef]"
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Time</SelectItem>
-                  <SelectItem value="PayPal">Last 7 days</SelectItem>
-                  <SelectItem value="Credit Card">Last 15 days</SelectItem>
-                  <SelectItem value="Stripe">Last 30 days</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+           
+            <DateFilter/>
           </div>
         </div>
 
@@ -286,6 +227,7 @@ export default function PaymentPage() {
               currentPage={currentPage}
               itemsPerPage={itemsPerPage}
               loading={isLoading || !paymentData}
+              totalItems={totalItems}
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
@@ -298,6 +240,7 @@ export default function PaymentPage() {
               itemsPerPage={itemsPerPage}
               loading={isLoading || !paymentData}
               onPageChange={(page) => setCurrentPage(page)}
+              totalItems={totalItems}
             />
           )}
           {selectedRole === "refund" && (
@@ -309,6 +252,7 @@ export default function PaymentPage() {
               itemsPerPage={itemsPerPage}
               loading={isLoading || !paymentData}
               onPageChange={(page) => setCurrentPage(page)}
+              totalItems={totalItems}
             />
           )}
         </div>

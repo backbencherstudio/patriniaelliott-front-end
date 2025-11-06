@@ -1,6 +1,7 @@
 "use client";
 
 import FilterSidebar from "@/components/filter/Sidebar";
+import { X } from "lucide-react";
 import { useState } from "react";
 import { FiFilter } from "react-icons/fi"; // Importing Filter Icon from Feather Icons
 import Pathname from "../reusable/Pathname";
@@ -41,15 +42,20 @@ export default function ApartmentHotelClient({
         {/* Main content */}
         <div
           className={`col-span-12 relative md:col-span-12 lg:col-span-9 ${
-            isSidebarOpen ? "pl-4" : ""
+            isSidebarOpen ? "pl-4  " : ""
           }`}
         >
+          {/* Mobile modal-style overlay */}
           <div
-            className={`${
-              isSidebarOpen ? "block" : "hidden"
-            }  col-span-5 lg:col-span-3 lg:hidden absolute top-0 -left-5 z-50`}
+            className={`${isSidebarOpen ? "flex" : "hidden"} lg:hidden fixed inset-0 z-50 bg-black/50`}
           >
-            <FilterSidebar />
+            <div className="w-80 overflow-y-auto max-w-full h-full bg-white shadow-xl ">
+              <div className="flex px-3 justify-between items-center py-4">
+                <h2 className="text-xl font-bold">Filter Properties</h2>
+                <button onClick={toggleSidebar} className="  bg-primaryColor font-bold p-1.5 rounded-full flex items-center space-x-2"><X className="w-5 h-5 text-whiteColor"/></button>
+              </div>
+              <FilterSidebar />
+            </div>
           </div>
           {children}
         </div>

@@ -28,6 +28,7 @@ export default function OtpVerificationForm() {
   const router = useRouter();
   const pathname = usePathname()
   const [loading, setLoading] = useState(false)
+  const [Email, setEmail] = useState<string|null>();
   const otpRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -57,10 +58,13 @@ export default function OtpVerificationForm() {
     }
   };
 
-
+useEffect(()=>{
+      const Email = localStorage.getItem("verifyemail")
+      setEmail(Email)
+},[])
 
   const onSubmit = async (data: OTPFormValues) => {
-    const Email = localStorage.getItem("verifyemail")
+
     const otpCode = `${data.otp1}${data.otp2}${data.otp3}${data.otp4}${data.otp5}${data.otp6}`;
     const formData: any = {};
     formData.email = Email;
@@ -101,7 +105,7 @@ export default function OtpVerificationForm() {
             We have sent a verification code to email address
           </p>
           <p>
-            <span className="text-descriptionColor leading-[150%] font-normal text-lg">pristia@gmail.com</span>.{' '}
+            <span className="text-descriptionColor leading-[150%] font-normal text-lg">{Email}</span>.{' '}
             <Link href="/forgot-password" className="text-redColor font-normal hover:underline">
               Wrong Email?
             </Link>

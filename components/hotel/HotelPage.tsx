@@ -10,8 +10,6 @@ import HotelCard from "../card/HotelCard";
 import FilterHeader from "../filter/FilterHeader";
 import PaginationPage from "../reusable/PaginationPage";
 
-
-
 function HotelPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const searchParams = useSearchParams();
@@ -45,8 +43,8 @@ function HotelPage() {
         if (people) params.append('max_capacity', people);
         if (rooms) params.append('total_bedrooms', rooms);
         // Only add parameters that have values
-        if (startDate) params.append('duration_start', startDate);
-        if (endDate) params.append('duration_end', endDate);
+     if (startDate) params.append('start_date', startDate);
+        if (endDate) params.append('end_date', endDate);
         if (min) params.append('budget_start', min);
         if (max) params.append('budget_end', max);
         // Add each rating as a separate parameter

@@ -50,14 +50,11 @@ function MenuDropDown({ setMenuOpen, data }: any) {
                 >
                   <div className="md:w-[46px] md:h-[46px] w-8 h-8 relative rounded-full bg-white/10 border border-white/10">
                     <Image
-                      src={data?.avatar_url || data?.avatar || "/profile.png"}
+                      src={data?.avatar_url || "/profile.png"}
                       alt="User Avatar"
                       fill
                       className="object-cover rounded-full"
-                      onError={(e) => {
-                        // Fallback to default avatar if image fails to load
-                        e.currentTarget.src = "/profile.png";
-                      }}
+                     
                     />
                   </div>
                   <IoIosArrowDown className="text-white" />
@@ -66,14 +63,11 @@ function MenuDropDown({ setMenuOpen, data }: any) {
                   <div className="pb-3 border-b border-[#e9e9ea] flex items-center gap-2.5 w-full">
                     <div className="w-8 h-8 relative rounded-full">
                       <Image
-                        src={data?.avatar_url || data?.avatar || "/profile.png"}
+                        src={data?.avatar_url || "/profile.png"}
                         alt="User Avatar"
                         fill
                         className="rounded-full object-cover"
-                        onError={(e) => {
-                          // Fallback to default avatar if image fails to load
-                          e.currentTarget.src = "/profile.png";
-                        }}
+                       
                       />
                       <div className="w-8 h-8 left-0 top-0 absolute opacity-10 rounded-full border border-black" />
                     </div>

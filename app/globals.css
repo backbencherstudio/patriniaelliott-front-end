@@ -311,3 +311,8 @@ h2.react-datepicker__current-month {
 .pdf-capture [style*="border-color:"] {
   border-color: inherit !important;
 }
+
+.bookingchage .booking{
+  display: none !important;
+  opacity: 0 !important;
+}

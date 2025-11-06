@@ -95,7 +95,6 @@ const BookingForm = ({ singleApartments, type }: any) => {
           toast.error(response?.response?.data?.message?.message);
         }
         } catch (error) {
-          console.log(error);
           toast.error(error?.response?.data?.message?.message);
       // router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
           setLoading(false);

@@ -9,7 +9,7 @@ const ProfileCard = ({ user }) => {
     <div className="bg-[#D6AE29]/8 border border-secondaryColor rounded-lg p-6 lg:p-4 lg:py-6 xl:p-6 ">
       <div className="flex items-center space-x-4">
         <Image
-          src={user?.user?.avatar_url || "/profile.png"}
+          src={user?.user?.avatar_url || "/empty.png"}
           alt="Profile"
           className="w-20 h-20 rounded-full"
           width={100}

@@ -307,13 +307,6 @@ export default function MyProfile() {
               height={46}
               className="rounded-full w-full h-full object-cover"
               unoptimized={previewImage?.startsWith('blob:') ? true : undefined}
-              onError={(e) => {
-                // Fallback to default avatar if image fails to load
-                const target = e.currentTarget as HTMLImageElement;
-                if (target) {
-                  target.src = "/usericon/avatar.png";
-                }
-              }}
             />
             <input
               type="file"

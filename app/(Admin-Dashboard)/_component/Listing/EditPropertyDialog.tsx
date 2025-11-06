@@ -12,7 +12,6 @@ export default function EditPropertyDialog({data,
   open,
   onOpenChange,
 }: any) {
-
   const  {token}=useToken()
   const queryClient = useQueryClient()
   const { register, handleSubmit, reset, control } = useForm({
@@ -20,7 +19,7 @@ export default function EditPropertyDialog({data,
       description: data?.description || "description",
       name:data?.name || "Eclipse Haven",
       price: data?.price || "$4999",
-      status: data?.status === 1 ? "1" : "0", // Convert to string for Select
+      status: data?.status === "Available" ? "1" : "0", // Convert to string for Select
     },
   });
 

@@ -13,7 +13,7 @@ function TourePage() {
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
   const searchName = searchParams.get("q");
-  const destinations = searchParams.get("destinations");
+  const destinations = searchParams.getAll("destinations");
   const people = searchParams.get("people");
   const rooms = searchParams.get("rooms");
   const min = searchParams.get("min");
@@ -24,7 +24,6 @@ function TourePage() {
     .map(([, value]) => value);
   const itemsPerPage = 6
   const { token } = useToken()
-  
   const buildQueryParams = () => {
     const params = new URLSearchParams();
     // Always include these parameters
@@ -32,22 +31,25 @@ function TourePage() {
     params.append('limit', itemsPerPage.toString());
     params.append('page', currentPage.toString());
     if (searchName) params.append('q', searchName);
-    if (destinations) params.append('destinations', destinations);
+    // Add each destination as a separate parameter
+    if (destinations && destinations.length > 0) {
+      destinations.forEach(destination => {
+        params.append('destinations', destination);
+      });
+    }
     if (people) params.append('max_capacity', people);
     if (rooms) params.append('total_bedrooms', rooms);
     // Only add parameters that have values
-    if (startDate) params.append('duration_start', startDate);
-    if (endDate) params.append('duration_end', endDate);
+    if (startDate) params.append('start_date', startDate);
+        if (endDate) params.append('end_date', endDate);
     if (min) params.append('budget_start', min);
     if (max) params.append('budget_end', max);
-
     // Add each rating as a separate parameter
     if (ratings && ratings.length > 0) {
       ratings.forEach(rating => {
         params.append('ratings', rating);
       });
     }
-
     return params.toString();
   };
 

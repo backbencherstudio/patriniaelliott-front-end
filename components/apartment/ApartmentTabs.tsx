@@ -8,51 +8,38 @@ import PolicyDetails from './PolicyDetails';
 
 const ApatmentTabs = ({ singleApartment }: any) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const tabs = [
+    { key: 'overview', label: 'Overview' },
+    { key: 'highlights', label: 'Highlights' },
+    { key: 'map', label: 'Map' },
+    { key: 'policies', label: 'Policies' },
+  ];
 
   return (
     <div className="w-full">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex lg:space-x-8 border border-gray-200 bg-whiteColor shadow-none py-6 w-full lg:px-40">
-          <TabsTrigger
-            value="overview"
-            className={` text-sm lg:text-lg cursor-pointer  relative font-medium ${activeTab === 'overview' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
-          >
-            Overview
-            <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'overview' ? 'bg-secondaryColor' : 'hidden'}`} />
-          </TabsTrigger>
-          <TabsTrigger
-            value="highlights"
-            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'highlights' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
-          >
-            Highlights
-            <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'highlights' ? 'bg-secondaryColor' : 'hidden'}`} />
-          </TabsTrigger>
-          <TabsTrigger
-            value="map"
-            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'map' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
-          >
-            Map
-            <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'map' ? 'bg-secondaryColor' : 'hidden'}`} />
-          </TabsTrigger>
-          <TabsTrigger
-            value="policies"
-            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'policies' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
-          >
-            Policies
-            <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'policies' ? 'bg-secondaryColor' : 'hidden'}`} />
-          </TabsTrigger>
-          {/* <TabsTrigger
-            value="reviews"
-            className={` text-sm lg:text-lg cursor-pointer relative font-medium ${activeTab === 'reviews' ? 'text-secondaryColor  ' : 'border-0 shadow-none text-gray-600'}`}
-          >
-            Reviews
-            <span className={`absolute -bottom-5 left-0 w-full h-[3px] ${activeTab === 'reviews' ? 'bg-secondaryColor' : 'hidden'}`} />
-          </TabsTrigger> */}
+          {tabs.map((t) => (
+            <TabsTrigger
+              key={t.key}
+              value={t.key}
+              className={` text-sm lg:text-lg cursor-pointer relative font-medium ${
+                activeTab === t.key ? 'text-secondaryColor' : 'border-0 shadow-none text-gray-600'
+              }`}
+            >
+              {t.label}
+              <span
+                className={`absolute -bottom-5 left-0 w-full h-[3px] ${
+                  activeTab === t.key ? 'bg-secondaryColor' : 'hidden'
+                }`}
+              />
+            </TabsTrigger>
+          ))}
         </TabsList>
 
         {/* Tab Contents */}
         <TabsContent value="overview" className="pt-10 pb-8">
-          <Overview overview={singleApartment?.description} />
+          <Overview overview={singleApartment} />
         </TabsContent>
         <TabsContent value="highlights" className="pt-10 pb-8">
           <HighLight aminate={singleApartment?.amenities} bedroom={singleApartment?.bathrooms}/>
@@ -63,9 +50,7 @@ const ApatmentTabs = ({ singleApartment }: any) => {
         <TabsContent value="policies" className="pt-10 pb-8">
           <PolicyDetails vendorPackage={singleApartment} />
         </TabsContent>
-        {/* <TabsContent value="reviews" className="pt-10 pb-8">
-          <p>Reviews content goes here...</p>
-        </TabsContent> */}
+     
       </Tabs>
     </div>
   );

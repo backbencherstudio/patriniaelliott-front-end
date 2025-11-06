@@ -9,6 +9,9 @@ const config = {
 };
 
 export const UserService = {
+  googleLogin: async () => {
+    return await Fetch.get("/api/auth/google/redirect", config);
+  },
   login: async ({ email, password }: { email: string; password: string }) => {
     const data = {
       email: email,
@@ -74,6 +77,7 @@ newPassword: async (data) => {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
       },
+      
     };
     return await Fetch.get(`${endpoint}`, _config);
   },

@@ -84,7 +84,6 @@ const DurationFilter = () => {
               onChange={handleStartDateChange}
               placeholderText="Select a date"
               className="hidden"
-              minDate={new Date()}
             />
             <CalendarIcon className="text-yellow-500" />
           </div>
@@ -107,7 +106,6 @@ const DurationFilter = () => {
               onChange={handleEndDateChange}
               placeholderText="Select a date"
               className="hidden"
-              minDate={startDate || new Date()}
             />
             <CalendarIcon className="text-yellow-500" />
           </div>

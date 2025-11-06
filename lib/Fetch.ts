@@ -59,7 +59,6 @@ export class Fetch {
       return await res.json();
     }
   }
-
   /**
    * put request
    * @param url
