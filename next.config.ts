@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "lower-microphone-administrators-cycling.trycloudflare.com",
+        hostname: "bills-spine-unique-paths.trycloudflare.com",
       },
     ],
   },

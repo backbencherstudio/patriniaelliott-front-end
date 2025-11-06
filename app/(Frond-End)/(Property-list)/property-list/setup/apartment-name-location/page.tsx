@@ -318,7 +318,7 @@ export default function Page() {
                                             sure that the address is correct — it's difficult to make changes to this
                                             later.
                                         </p>
-                                        <Dropdownmenu data={regions} handleSelect={handleRegionChange} selectedData={selectedRegion} title="Country/Region" showTitle={true} />
+                                        {/* <Dropdownmenu data={regions} handleSelect={handleRegionChange} selectedData={selectedRegion} title="Country/Region" showTitle={true} /> */}
                                     </div>
                                     <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
                                     <div className="flex flex-col gap-2">
