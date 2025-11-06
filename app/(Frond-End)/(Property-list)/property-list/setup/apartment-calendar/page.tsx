@@ -359,6 +359,19 @@ export default function Page() {
         } else {
           toast.success("Property setup completed.");
         }
+        setTimeout(() => {
+          // Conditional redirection based on user type
+          if (isUser) {
+            // For users (first time property add), redirect to payment method
+            router.push("/payment-method");
+          } else if (isVendor) {
+            // For vendors (verified vendors), redirect to pending request
+            router.push("/pending-request");
+          } else {
+            // Fallback to payment method if user type is unknown
+            router.push("/payment-method");
+          }
+        }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");
       }
@@ -474,7 +487,7 @@ export default function Page() {
                               Available
                             </span>
                             <div
-                              className={`text-[#4A4C56] text-[10px] lg:text-sm font-medium flex items-center gap-[2px] cursor-pointer hover:bg-gray-100 rounded p-1 ${isEditing?"bg-gray-100":""}`}
+                              className={`text-[#4A4C56] text-[10px] lg:text-sm font-medium flex items-center gap-[2px] cursor-pointer hover:bg-gray-100 rounded p-1 ${isEditing ? "bg-gray-100" : ""}`}
                               onClick={() => handlePriceEdit(day)}
                             >
                               {isEditing ? (

@@ -20,6 +20,7 @@ function page() {
       return;
     }
     setSelectedPropertyType(select);
+    console.log("type : ",select)
     updateListProperty({
       type: select
     });

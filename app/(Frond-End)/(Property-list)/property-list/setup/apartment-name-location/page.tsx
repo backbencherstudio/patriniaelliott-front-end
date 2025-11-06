@@ -34,7 +34,7 @@ type Coordinates = {
 
 declare global {
     interface Window {
-        google: any;
+        google: { translate: { TranslateElement: new (config: { pageLanguage: string; includedLanguages: string; autoDisplay: boolean; }) => void; }; };
     }
 }
 
