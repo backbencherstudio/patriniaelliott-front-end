@@ -26,10 +26,14 @@ const BookingLayout: React.FC<bookingLayoutProps> = ({ children }) => {
             const navbarHeight = navbar ? navbar.offsetHeight : 100;
             const scrollY = window.scrollY;
 
-            if (scrollY >= navbarHeight) {
-                setIsSticky(true);
-            } else {
-                setIsSticky(false);
+            if (sidebarRef.current && window.innerWidth >= 1280) {
+                if (scrollY >= navbarHeight) {
+                    setIsSticky(true);
+                    sidebarRef.current.style.top = '0px';
+                } else {
+                    setIsSticky(false);
+                    sidebarRef.current.style.top = `${navbarHeight}px`;
+                }
             }
         };
 
@@ -47,12 +51,11 @@ const BookingLayout: React.FC<bookingLayoutProps> = ({ children }) => {
                 <div
                     ref={sidebarRef}
                     className={`
-                        fixed xl:${isSticky ? 'sticky' : 'relative'}
-                        ${isSticky ? 'xl:top-0' : ''}
-                        !top-20 xl:!top-0 left-0 
+                        fixed xl:sticky
+                        !top-20 left-0 
                         xl:self-start
                         w-[312px]
-                        transition-transform duration-300 ease-in-out z-50
+                        transition-all duration-300 ease-in-out z-50
                         xl:translate-x-0 
                         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
                         lg:block
