@@ -396,12 +396,9 @@ export default function Page() {
         <Toaster />
 
         <div className="flex flex-col-reverse md:flex-row gap-6 items-center md:items-start">
-          {/* Left Side */}
           <div className="flex-1 space-y-[32px]">
-            {/* Calendar */}
             <div className="flex bg-[#F6F7F7] rounded-lg">
               <div className="flex-1 lg:flex flex-col justify-between">
-                {/* Month Header */}
                 <div className="w-full bg-white rounded-tl-lg rounded-tr-lg">
                   <div className="flex items-center justify-between gap-6 text-sm w-[270px] p-4 bg-white">
                     <button
@@ -429,7 +426,6 @@ export default function Page() {
                   </div>
                 </div>
 
-                {/* Days Header */}
                 <div className="flex flex-wrap border border-[#F1F2F4]">
                   {daysNames.map((day) => (
                     <div
@@ -441,7 +437,6 @@ export default function Page() {
                   ))}
                 </div>
 
-                {/* Days Grid */}
                 <div className="flex flex-wrap">
                   {Array.from({ length: startDay }).map((_, i) => (
                     <div
@@ -772,7 +767,7 @@ export default function Page() {
               <button
                 type="button"
                 disabled={!licenses || !termsPolicy || loading}
-                className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="text-[#fff] cursor-pointer px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] disabled:bg-gray-300 disabled:cursor-not-allowed"
                 onClick={handleSubmit}
               >
                 {loading ? (
