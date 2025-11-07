@@ -15,6 +15,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Select from "react-select";
 import TourPlan from "./TourPlan";
 import PolicyEditor from '../_components/PolicyEditor'
+import { UserService } from "@/service/user/user.service";
 
 const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -25,7 +26,6 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
 
   return (
     <div>
-      {/* Dropzone Area */}
       <div
         {...getRootProps()}
         className={`border border-dashed bg-white flex flex-col items-center rounded-lg py-8 cursor-pointer transition ${isDragActive
@@ -50,7 +50,6 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
                 </p> */}
       </div>
 
-      {/* Image Thumbnails */}
       <div className="mt-4 flex flex-wrap gap-4 justify-start items-start">
         {images?.map((file, idx) => {
           const imageUrl =
@@ -82,7 +81,6 @@ const ImageUploader = ({ images, onImageDrop, onImageDelete }) => {
   );
 };
 
-/** Helpers */
 const getSelectedOptions = (languages, selectedLanguages) => {
   return languages.filter((lang) =>
     selectedLanguages?.some((selected) => selected === lang.value)
@@ -101,8 +99,8 @@ const regions = [
 
 type countryType = {
   name: string;
-  code: string;
-  region: string;
+  country_code: string;
+  id: string;
 }
 
 
@@ -112,7 +110,7 @@ const AddTour = () => {
       destination: '',
       languages: [],
       destination_type: "day",
-      type: "", // user chooses later
+      type: "",
       duration_type: "",
       price: undefined,
       name: "",
@@ -133,7 +131,7 @@ const AddTour = () => {
       max_traveller: ''
     },
   });
-  const [countries, setCountries] = useState<countryType[]>(country.country);
+  const [countries, setCountries] = useState<countryType[]>([]);
   const { listProperty, updateListProperty } = usePropertyContext();
   const router = useRouter();
   const [isDragging, setIsDragging] = useState(false);
@@ -177,7 +175,6 @@ const AddTour = () => {
 
   const previewsRef = useRef(new Set());
 
-  // Handle Image Update (Prevent Duplicates)
   const handleImageUpdate = (dayIndex, acceptedFiles) => {
     setImages((prev) => {
       const uniqueFiles = acceptedFiles.filter(
@@ -188,14 +185,12 @@ const AddTour = () => {
     console.log("Files ", acceptedFiles);
   };
 
-  // Handle Image Delete
   const handleImageDelete = (dayIndex, imageIndex) => {
     setImages((prev) => prev.filter((img, idx) => idx !== imageIndex));
   };
 
   const [selectedMeetingPoint, setSelectedMeetingPoint] = useState("");
 
-  // Language Change Handler
   const handleLanguageChange = (selected) => {
     const codes = selected ? selected.map((s) => s.value) : [];
     console.log("Language : ", codes);
@@ -203,7 +198,6 @@ const AddTour = () => {
     setValue("languages", codes);
   };
 
-  // Handle Extra Services
   const handleExtraServices = () => {
     if (extraService.name === "") return;
     setExtraServices((prev) => [...prev, extraService]);
@@ -211,9 +205,8 @@ const AddTour = () => {
     setShowExtraService(false);
   };
 
-  // Handle Form Submission
   const onSubmit = async (data) => {
-    // Validate media minimums
+    setLoading(true);
     const imageCount = images.filter(
       (f) => f.type !== "video" && !f?.video_url
     ).length;
@@ -227,10 +220,6 @@ const AddTour = () => {
       return;
     }
 
-    if (!selectedRegion) {
-      toast.error('Please select a region');
-      return;
-    }
 
     if (description?.length < 13) {
       console.log("Description : ", description)
@@ -244,7 +233,7 @@ const AddTour = () => {
       tourImages: images,
       meetingPoint: selectedMeetingPoint,
       tripPlan: tourPlan,
-      country: countries?.filter(ct => ct.code === selectedCountry)?.[0]?.name,
+      country: countries?.filter(ct => ct.country_code === selectedCountry)?.[0]?.name,
       city: data?.city,
       minTraveller: data?.min_traveller,
       maxTraveller: data?.max_traveller,
@@ -286,13 +275,11 @@ const AddTour = () => {
       tour_plan: tourData,
     });
 
-    router.push("/property-list/setup/apartment-calendar");
+    setTimeout(() => {
+      setLoading(false)
+      router.push("/property-list/setup/apartment-calendar");
+    }, 1000);
   };
-
-  const handleRegionChange = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSelectedRegion(e.currentTarget.value);
-  }
 
   const handleCountryChange = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -306,16 +293,22 @@ const AddTour = () => {
   // }, [])
 
   useEffect(() => {
-    if (selectedRegion) {
-      setCountries(country.country.filter((c: countryType) => c.region === selectedRegion));
-    }
-  }, [selectedRegion]);
-
-  useEffect(() => {
+    getCountries()
     if (!listProperty?.type) {
       router.push('/property-list')
     }
   }, [])
+
+  const getCountries = async () => {
+    try {
+      const res = await UserService?.getCountry();
+      if(res?.data?.success){
+        setCountries(res?.data?.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
     setValue('name', listProperty?.tour_plan?.title)
@@ -373,13 +366,10 @@ const AddTour = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="bg-white min-h-screen pt-8  pb-6 rounded-lg flex flex-col gap-4">
             <div className="md:grid md:grid-cols-3 gap-8 ">
-              {/* LEFT */}
               <div className="flex flex-col gap-8 col-span-2">
                 <h3 className="text-2xl font-semibold text-[#080613]">
                   Tour Details
                 </h3>
-
-                {/* Tour Title */}
                 <div>
                   <label className="block text-gray-500 text-base font-medium mb-2">
                     Tour Title
@@ -395,8 +385,6 @@ const AddTour = () => {
                     <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
                   )}
                 </div>
-
-                {/* Description */}
                 <div>
                   <label className="block text-gray-500 text-base font-medium mb-2">
                     Tour Description
@@ -412,8 +400,6 @@ const AddTour = () => {
                     <p className="text-red-500 text-xs mt-1">Tour description is required.</p>
                   )}
                 </div>
-
-                {/* Upload Images */}
                 <div className="w-full">
                   <div className="p-4 bg-[#F0F4F9] rounded-lg flex flex-col gap-3">
                     <div className="w-full">
@@ -428,8 +414,6 @@ const AddTour = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* Meeting Point */}
                 <div>
                   <label className="block text-gray-500 text-base font-medium mb-2">
                     Meeting Point
@@ -536,17 +520,15 @@ const AddTour = () => {
                   />
                 </div>
               </div>
-
-              {/* RIGHT */}
               <div className="p-4 bg-secondaryColor/5 border border-secondaryColor rounded-2xl h-fit mt-4 md:mt-0">
                 <div className="flex flex-col gap-4">
                   <div className="flex-1 border p-2 rounded-md">
                     <label className="block text-[#444] text-xl font-medium mb-4">
                       Destination
                     </label>
-                    <div className="space-y-3">
+                    {/* <div className="space-y-3">
                       <Dropdownmenu data={regions} handleSelect={handleRegionChange} selectedData={selectedRegion} title="Country/Region" showTitle={true} />
-                    </div>
+                    </div> */}
                     <Dropdownmenu data={countries} selectedData={selectedCountry} handleSelect={handleCountryChange} title="Country" showTitle={true} />
                     <div>
                       <label className="block text-[#444] text-base font-medium mb-4">
@@ -620,7 +602,6 @@ const AddTour = () => {
                     </div>
                   </div>
 
-                  {/* Duration + Type */}
                   <div className="flex flex-col 2xl:flex-row gap-4">
                     <div className="flex-1">
                       <label className="block text-[#444] text-base font-medium mb-4">
@@ -657,7 +638,6 @@ const AddTour = () => {
                   </div> */}
                   </div>
 
-                  {/* Price */}
                   <div className="space-y-2">
                     <label className="block text-[#444] text-base font-medium">Tour Price ($)</label>
                     <input
@@ -881,10 +861,10 @@ const AddTour = () => {
               </button>
               <button
                 type="submit"
-                className="border cursor-pointer border-[#061D35] px-16 py-3 rounded-full bg-[#061D35] text-base font-semibold text-white hover:bg-white hover:text-[#061D35]"
+                className={`border px-16 py-3 rounded-full bg-[#061D35] text-base font-semibold text-white hover:bg-white hover:text-[#061D35] ${loading?"cursor-progress opacity-50 border-[#061d3580]":"cursor-pointer border-[#061D35]"}`}
                 disabled={loading}
               >
-                Next
+                {loading?"Processing":"Next"}
               </button>
             </div>
           </div>

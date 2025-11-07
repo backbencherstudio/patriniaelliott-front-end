@@ -1,13 +1,3 @@
-import { useState } from "react";
-
-const regions = [
-    { code: 'US', name: 'United States' },
-    { code: 'CA', name: 'Canada' },
-    { code: 'GB', name: 'United Kingdom' },
-    { code: 'AU', name: 'Australia' },
-    // Add more countries as needed
-];
-
 export default function Dropdownmenu({data,selectedData,handleSelect,title,showTitle}) {
     return (
         <div className="flex flex-col gap-2">
@@ -22,8 +12,8 @@ export default function Dropdownmenu({data,selectedData,handleSelect,title,showT
             >
                 <option value="">Select a {title}</option>
                 {data.map((item:typeof data) => (
-                    <option key={item.code} value={item.code}>
-                        {item.name}
+                    <option key={item.country_code} value={item.country_code} title={item?.name}>
+                        {item.name?.slice(0,15)}{item?.name?.length >15?"...":""}
                     </option>
                 ))}
             </select>

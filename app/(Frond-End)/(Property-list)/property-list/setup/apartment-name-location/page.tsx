@@ -5,6 +5,7 @@ import PropertySuggestion from "@/components/reusable/PropertySuggestion";
 import { usePropertyContext } from "@/provider/PropertySetupProvider";
 import country from '@/public/toure/countries.json';
 import { MyProfileService } from "@/service/user/myprofile.service";
+import { UserService } from "@/service/user/user.service";
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -19,12 +20,6 @@ const regions = [
     { code: 'AN', name: 'Antarctica' }
 ];
 
-type countryType = {
-    name: string;
-    code: string;
-    region: string;
-}
-
 type Coordinates = {
     lat: number;
     lng: number;
@@ -36,10 +31,16 @@ declare global {
     }
 }
 
+type countryType = {
+    name: string;
+    country_code: string;
+    id: string;
+}
+
 export default function Page() {
     const router = useRouter();
     const { listProperty, updateListProperty } = usePropertyContext();
-    const [countries, setCountries] = useState<countryType[]>(country.country);
+    const [countries, setCountries] = useState<countryType[]>([]);
     const [selectedRegion, setSelectedRegion] = useState('');
     const [selectedCountry, setSelectedCountry] = useState('');
 
@@ -62,6 +63,7 @@ export default function Page() {
     const [street, setStreet] = useState('');
     const [zipcode, setZipcode] = useState('');
     const [loading, setLoading] = useState(false);
+
 
     // Initialize map
     const initMap = () => {
@@ -142,6 +144,18 @@ export default function Page() {
         };
     }, []);
 
+
+    const getCountries = async () => {
+        try {
+            const res = await UserService?.getCountry();
+            if (res?.data?.success) {
+                setCountries(res?.data?.data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         setLoading(true);
         e.preventDefault();
@@ -193,21 +207,10 @@ export default function Page() {
         }, 1000);
     }
 
-    const handleRegionChange = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setSelectedRegion(e.currentTarget.value);
-    }
-
     const handleCountryChange = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSelectedCountry(e.currentTarget.value);
     }
-
-    useEffect(() => {
-        if (selectedRegion) {
-            setCountries(country.country.filter((c: countryType) => c.region === selectedRegion));
-        }
-    }, [selectedRegion]);
 
     const getUser = async () => {
         try {
@@ -254,6 +257,10 @@ export default function Page() {
         setHostName(user?.name);
         setHostEmail(user?.email);
     }, [user])
+
+    useEffect(()=>{
+        getCountries()
+    },[])
 
     return (
         <div className="flex justify-center items-center w-full bg-[#F6F7F7]">
@@ -397,7 +404,7 @@ export default function Page() {
                                 {/* Submit Buttons */}
                                 <div className="flex justify-between w-full space-x-3 px-4">
                                     <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
-                                    <button type="submit" disabled={loading} className={`text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] ${loading?"cursor-not-allowed opacity-50":"cursor-pointer"}`}>{loading ? "Loading..." : "Continue"}</button>
+                                    <button type="submit" disabled={loading} className={`text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] ${loading ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}>{loading ? "Loading..." : "Continue"}</button>
                                 </div>
                             </div>
                             <div className="space-y-4 w-[300px] lg:w-[400px] xl:w-[583px] hidden md:block">
