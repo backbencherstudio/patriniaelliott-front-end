@@ -206,7 +206,7 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
-    // setLoading(true);
+    setLoading(true);
     console.log("Updated dateprice : ", datePrices)
 
     // Update context with date prices

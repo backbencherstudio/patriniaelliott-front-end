@@ -294,9 +294,9 @@ const AddTour = () => {
 
   useEffect(() => {
     getCountries()
-    // if (!listProperty?.type) {
-    //   router.push('/property-list')
-    // }
+    if (!listProperty?.type) {
+      router.push('/property-list')
+    }
   }, [])
 
   const getCountries = async () => {
