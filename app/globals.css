@@ -316,3 +316,6 @@ h2.react-datepicker__current-month {
   display: none !important;
   opacity: 0 !important;
 }
+.react-datepicker-popper {
+    z-index: 6 !important;
+}
