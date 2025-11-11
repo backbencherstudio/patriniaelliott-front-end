@@ -32,12 +32,6 @@ type Coordinates = {
     lng: number;
 }
 
-declare global {
-    interface Window {
-        google: any;
-    }
-}
-
 export default function Page() {
     const router = useRouter();
     const { listProperty, updateListProperty } = usePropertyContext();
@@ -67,16 +61,17 @@ export default function Page() {
 
     // Initialize map
     const initMap = () => {
-        if (!mapRef.current || !window.google) return;
+        if (!mapRef.current || !(window as any).google) return;
 
         const defaultLocation = { lat: 40.748440, lng: -73.987844 };
-        const newMap = new window.google.maps.Map(mapRef.current, {
+        const google = (window as any).google;
+        const newMap = new google.maps.Map(mapRef.current, {
             zoom: 15,
             center: defaultLocation,
-            mapTypeId: window.google.maps.MapTypeId.ROADMAP,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
             gestureHandling: "greedy"
         });
-        const newMarker = new window.google.maps.Marker({
+        const newMarker = new google.maps.Marker({
             position: defaultLocation,
             map: newMap,
             draggable: true,
@@ -110,7 +105,7 @@ export default function Page() {
     };
 
     useEffect(() => {
-        if (!window.google) {
+        if (!(window as any).google) {
             const script = document.createElement('script');
             script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
             script.async = true;

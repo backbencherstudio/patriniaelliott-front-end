@@ -37,15 +37,15 @@ const ProfileSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     return pathname.startsWith(href);
   };
   return (
-  <div className="h-screen lg:h-auto">
+  <div className="h-screen lg:h-auto ">
       {isOpen && (
         <div 
-          className="absolute top-0 left-0 w-full h-full z-40 xl:hidden" 
+          className="absolute top-0 left-0 w-full h-full z-30 xl:hidden" 
           onClick={onClose}
         />
       )}
       <div className={`
-        ${isOpen ? 'z-50 !h-full overflow-hidden absolute -top-20 left-0' : 'h-full'} 
+        ${isOpen ? 'z-40 !h-full overflow-hidden absolute -top-20 left-0' : 'h-full'} 
         flex flex-col
         min-h-[calc(100vh-100px)] 
         bg-white 
