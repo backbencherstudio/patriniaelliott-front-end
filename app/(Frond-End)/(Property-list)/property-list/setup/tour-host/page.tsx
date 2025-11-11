@@ -13,10 +13,12 @@ export default function Page() {
     const { listProperty, updateListProperty } = usePropertyContext();
     const [formData, setFormData] = useState({});
     const [user, setUser] = useState(null);
-    const [tourInto,setTourIntro] = useState('');
-    const [aboutHost,setAboutHost] = useState('');
+    const [tourInto, setTourIntro] = useState('');
+    const [aboutHost, setAboutHost] = useState('');
+    const [loading,setLoading] = useState(false);
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true);
         e.preventDefault();
         const form = e.currentTarget;
         const formElements = form.elements as typeof form.elements & {
@@ -41,20 +43,23 @@ export default function Page() {
             email: formElements.email.value
         });
 
-        router.push("/property-list/setup/tour-setup")
+        setTimeout(() => {
+            setLoading(false);
+            router.push("/property-list/setup/tour-setup")
+        }, 1000);
     }
 
 
-    useEffect(()=>{
-        if(!listProperty?.type){
+    useEffect(() => {
+        if (!listProperty?.type) {
             router?.push('/property-list')
-        }else{
+        } else {
             setTourIntro(listProperty?.about_property);
             setAboutHost(listProperty?.about_host);
         }
-    },[]) 
-    
-    
+    }, [])
+
+
     const getUser = async () => {
         try {
             const res = await MyProfileService.getMe();
@@ -71,7 +76,14 @@ export default function Page() {
         getUser();
     }, []);
 
-
+    const handleHost = ({ name, email }: { name?: string; email?: string }) => {
+        if (name) {
+            setUser(prev => ({ ...prev, name: name }))
+        }
+        if (email) {
+            setUser(prev => ({ ...prev, email: email }))
+        }
+    }
 
 
     return (
@@ -96,23 +108,23 @@ export default function Page() {
                                         </div>
                                     </div>
                                     <div>
-                                        <textarea name="propertyintro" required id="propertyintro" placeholder="Enter tour introduction" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" value={tourInto} onChange={(e)=>setTourIntro(e.target.value)}></textarea>
+                                        <textarea name="propertyintro" required id="propertyintro" placeholder="Enter tour introduction" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" value={tourInto} onChange={(e) => setTourIntro(e.target.value)}></textarea>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostname" className="text-[#070707]">Host name</label>
-                                    <input type="text" value={user?.name} required name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
+                                    <input type="text" onChange={(e) => handleHost({name:e.target.value})} value={user?.name} required name="hostname" id="hostname" placeholder="Enter host name" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
                                 </div>
-                                
+
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="email" className="text-[#070707]">Host email</label>
-                                    <input type="email" value={user?.email} required name="email" id="email" placeholder="Enter host email" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
+                                    <input type="email" onChange={(e) => handleHost({email:e.target.value})} value={user?.email} required name="email" id="email" placeholder="Enter host email" className="placeholder:text-[#777980] text-[#777980] p-4 w-full border border-[#E9E9EA] rounded-[8px] outline-none" />
                                 </div>
 
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="hostabout" className="text-[#070707]">About the host</label>
-                                    <textarea name="hostabout" id="hostabout" placeholder="Write about the host" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" value={aboutHost} onChange={(e)=>setAboutHost(e.target?.value)}/>
+                                    <textarea name="hostabout" id="hostabout" placeholder="Write about the host" className="border border-[#E9E9EA] rounded-[8px] h-[130px] w-full resize-none p-4 text-[#777980] placeholder:text-[#777980] outline-none" value={aboutHost} onChange={(e) => setAboutHost(e.target?.value)} />
                                 </div>
                             </div>
 
@@ -123,7 +135,7 @@ export default function Page() {
                         {/* Submit Buttons */}
                         <div className="flex justify-between w-full space-x-3 px-4">
                             <div className="text-[#0068EF] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#0068EF] rounded-[8px] cursor-pointer" onClick={() => router.back()}>Back</div>
-                            <button type="submit" className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] cursor-pointer">Continue</button>
+                            <button type="submit" disabled={loading} className={`text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] ${loading?"cursor-progress opacity-50":"cursor-pointer"}`}>{loading?"Continuing...":"Continue"}</button>
                         </div>
                     </form>
                 </div>

@@ -3,7 +3,6 @@ import proImg from "@/public/profile.png";
 import dayjs from "dayjs";
 import Image from "next/image";
 import React, { useState } from "react";
-import { BiLike, BiSolidLike } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import PaginationPage from "../reusable/PaginationPage";
 import Rating from "../reusable/Rating";
@@ -51,14 +50,14 @@ function ReviewList({ reviewData, currentPage, setCurrentPage, totalPages, onDel
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <button
+              {/* <button
                 className={`
                  border text-base border-grayColor1/20 text-[#8F6F65] px-3 py-1 rounded-sm flex items-center space-x-1`}
               >
                 <span>{review.likes % 2 === 0 ? <BiSolidLike /> : <BiLike />}</span>
-                {/* {review.likes % 2 === 0 ? <BiSolidLike /> : <BiLike />} */}
+              
                 <span className="text-descriptionColor">{review.likes}</span>
-              </button>
+              </button> */}
               <button
                 onClick={() => onDelete(review.id)}
                 className={`

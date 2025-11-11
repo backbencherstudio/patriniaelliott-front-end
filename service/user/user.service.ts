@@ -199,4 +199,15 @@ newPassword: async (data) => {
 
     return await Fetch.post("/vendor-verification", data, _config);
   },
+  getCountry: async (context=null) => {
+    const userToken = CookieHelper.get({ key: "token", context });    
+    const _config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        Authorization: "Bearer " + userToken,
+      },
+    };
+
+    return await Fetch.get(`/admin/country`, _config);
+  },
 };

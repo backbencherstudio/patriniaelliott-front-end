@@ -206,7 +206,7 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
-    // setLoading(true);
+    setLoading(true);
     console.log("Updated dateprice : ", datePrices)
 
     // Update context with date prices
@@ -359,6 +359,19 @@ export default function Page() {
         } else {
           toast.success("Property setup completed.");
         }
+        setTimeout(() => {
+          // Conditional redirection based on user type
+          if (isUser) {
+            // For users (first time property add), redirect to payment method
+            router.push("/payment-method");
+          } else if (isVendor) {
+            // For vendors (verified vendors), redirect to pending request
+            router.push("/pending-request");
+          } else {
+            // Fallback to payment method if user type is unknown
+            router.push("/payment-method");
+          }
+        }, 1000);
       } else {
         toast.error(res?.data?.message || "Something went wrong");
       }
@@ -383,12 +396,9 @@ export default function Page() {
         <Toaster />
 
         <div className="flex flex-col-reverse md:flex-row gap-6 items-center md:items-start">
-          {/* Left Side */}
           <div className="flex-1 space-y-[32px]">
-            {/* Calendar */}
             <div className="flex bg-[#F6F7F7] rounded-lg">
               <div className="flex-1 lg:flex flex-col justify-between">
-                {/* Month Header */}
                 <div className="w-full bg-white rounded-tl-lg rounded-tr-lg">
                   <div className="flex items-center justify-between gap-6 text-sm w-[270px] p-4 bg-white">
                     <button
@@ -416,7 +426,6 @@ export default function Page() {
                   </div>
                 </div>
 
-                {/* Days Header */}
                 <div className="flex flex-wrap border border-[#F1F2F4]">
                   {daysNames.map((day) => (
                     <div
@@ -428,7 +437,6 @@ export default function Page() {
                   ))}
                 </div>
 
-                {/* Days Grid */}
                 <div className="flex flex-wrap">
                   {Array.from({ length: startDay }).map((_, i) => (
                     <div
@@ -474,7 +482,7 @@ export default function Page() {
                               Available
                             </span>
                             <div
-                              className={`text-[#4A4C56] text-[10px] lg:text-sm font-medium flex items-center gap-[2px] cursor-pointer hover:bg-gray-100 rounded p-1 ${isEditing?"bg-gray-100":""}`}
+                              className={`text-[#4A4C56] text-[10px] lg:text-sm font-medium flex items-center gap-[2px] cursor-pointer hover:bg-gray-100 rounded p-1 ${isEditing ? "bg-gray-100" : ""}`}
                               onClick={() => handlePriceEdit(day)}
                             >
                               {isEditing ? (
@@ -759,7 +767,7 @@ export default function Page() {
               <button
                 type="button"
                 disabled={!licenses || !termsPolicy || loading}
-                className="text-[#fff] px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="text-[#fff] cursor-pointer px-6 sm:px-[32px] py-2 sm:py-3 border border-[#fff] bg-[#0068EF] rounded-[8px] disabled:bg-gray-300 disabled:cursor-not-allowed"
                 onClick={handleSubmit}
               >
                 {loading ? (
