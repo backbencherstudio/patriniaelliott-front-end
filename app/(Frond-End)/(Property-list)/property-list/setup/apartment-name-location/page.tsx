@@ -25,18 +25,6 @@ type Coordinates = {
     lng: number;
 }
 
-declare global {
-    interface Window {
-        google: { translate: { TranslateElement: new (config: { pageLanguage: string; includedLanguages: string; autoDisplay: boolean; }) => void; }; };
-    }
-}
-
-type countryType = {
-    name: string;
-    country_code: string;
-    id: string;
-}
-
 export default function Page() {
     const router = useRouter();
     const { listProperty, updateListProperty } = usePropertyContext();
@@ -67,16 +55,17 @@ export default function Page() {
 
     // Initialize map
     const initMap = () => {
-        if (!mapRef.current || !window.google) return;
+        if (!mapRef.current || !(window as any).google) return;
 
         const defaultLocation = { lat: 40.748440, lng: -73.987844 };
-        const newMap = new window.google.maps.Map(mapRef.current, {
+        const google = (window as any).google;
+        const newMap = new google.maps.Map(mapRef.current, {
             zoom: 15,
             center: defaultLocation,
-            mapTypeId: window.google.maps.MapTypeId.ROADMAP,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
             gestureHandling: "greedy"
         });
-        const newMarker = new window.google.maps.Marker({
+        const newMarker = new google.maps.Marker({
             position: defaultLocation,
             map: newMap,
             draggable: true,
@@ -110,23 +99,7 @@ export default function Page() {
     };
 
     useEffect(() => {
-        const ensureLoadedAndInit = () => {
-            if (window.google && (window as any).google.maps) {
-                initMap();
-                return;
-            }
-            const interval = setInterval(() => {
-                if (window.google && (window as any).google.maps) {
-                    clearInterval(interval);
-                    initMap();
-                }
-            }, 100);
-            setTimeout(() => clearInterval(interval), 5000);
-        };
-
-        // Load the script once with a callback
-        if (!document.querySelector('#google-maps-script')) {
-            (window as any).initMap = ensureLoadedAndInit;
+        if (!(window as any).google) {
             const script = document.createElement('script');
             script.id = 'google-maps-script';
             script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`;

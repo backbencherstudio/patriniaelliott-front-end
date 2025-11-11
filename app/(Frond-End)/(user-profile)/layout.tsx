@@ -55,7 +55,7 @@ const BookingLayout: React.FC<bookingLayoutProps> = ({ children }) => {
                         !top-20 left-0 
                         xl:self-start
                         w-[312px]
-                        transition-all duration-300 ease-in-out z-50
+                        transition-all duration-300 ease-in-out z-40
                         xl:translate-x-0 
                         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
                         lg:block
@@ -66,7 +66,7 @@ const BookingLayout: React.FC<bookingLayoutProps> = ({ children }) => {
 
                 {sidebarOpen && (
                     <div
-                        className="fixed inset-0 bg-black/50 xl:hidden z-40"
+                        className="fixed inset-0 bg-black/50 xl:hidden z-30"
                         onClick={closeSidebar}
                     />
                 )}

@@ -87,6 +87,10 @@ const nextConfig: NextConfig = {
         protocol: "http",
         hostname: "flagcdn.com",
       },
+      {
+        protocol: "https",
+        hostname: "backend.naamstay.com",
+      }
     ],
   },
 };
